@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Year of Z: Iron Winter (v4.0) — Playable 5-in-1 Greybox Prototype Gym | 《Z年纪事：凛冬铁轨》可玩灰盒测试场</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans SC', sans-serif;
+      background-color: #080a0d;
+      color: #e2e8f0;
+      user-select: none;
+      overflow-x: hidden;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .cracked-lens {
+      filter: contrast(1.08) drop-shadow(2px 0 0 rgba(239,68,68,0.35));
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.96); opacity: 0.9; }
+      50% { transform: scale(1.04); opacity: 1; }
+      100% { transform: scale(0.96); opacity: 0.9; }
+    }
+    .qte-pulse {
+      animation: pulseRing 0.45s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#080a0d] text-slate-200">
+
+  <!-- Top Control & Telemetry Header -->
+  <header class="border-b border-slate-800 bg-[#0f1319]/95 backdrop-blur sticky top-0 z-30 px-4 py-2">
+    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-2.5 h-8 bg-amber-500 rounded-sm shadow-[0_0_12px_rgba(245,158,11,0.8)]"></div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm sm:text-base font-bold text-white tracking-tight" id="uiTitle">
+              《Z年纪事：凛冬铁轨 v4.0》5合1 可玩灰盒原型测试场
+            </h1>
+            <span class="mono text-[10px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
+              GREYBOX GYM · ROOMS A–E
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400" id="uiSubtitle">
+            WASD移动 · Shift冲刺 · Ctrl蹲伏潜行(躲蒸汽管阴影) · G投掷空罐头(借刀杀人) · E交互/撬棍卡门 · Space挥击 · Q喝水 · Tab翻阅《工作日志》
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Room Teleport & Language / Audio Toggles -->
+      <div class="flex flex-wrap items-center gap-1.5 text-xs">
+        <button type="button" data-room="A" class="room-tp-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 mono text-[11px]">
+          Room A (借刀)
+        </button>
+        <button type="button" data-room="B" class="room-tp-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 mono text-[11px]">
+          Room B (卡门)
+        </button>
+        <button type="button" data-room="C" class="room-tp-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 mono text-[11px]">
+          Room C (半人/卌)
+        </button>
+        <button type="button" data-room="D" class="room-tp-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 mono text-[11px]">
+          Room D (狼犬三态)
+        </button>
+        <button type="button" data-room="E" class="room-tp-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 mono text-[11px]">
+          Room E (锁骨卡刀)
+        </button>
+
+        <span class="text-slate-700 mx-0.5">|</span>
+
+        <button type="button" id="btnToggleLogbook" class="px-2.5 py-1 rounded bg-amber-500/20 border border-amber-500/50 text-amber-300 hover:bg-amber-500/30 font-semibold transition">
+          📓 工作日志 [Tab]
+        </button>
+        <button type="button" id="btnToggleGlasses" class="px-2 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 mono text-[11px]">
+          👓 眼镜: 完好
+        </button>
+        <button type="button" id="btnToggleAudio" class="px-2 py-1 rounded bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 mono text-[11px]">
+          🔊 音效: 开
+        </button>
+        <button type="button" id="btnToggleLang" class="px-2.5 py-1 rounded bg-blue-600 text-white font-bold hover:bg-blue-500 transition mono text-[11px]">
+          🌐 EN / 中文
+        </button>
+        <button type="button" id="btnResetGym" class="px-2 py-1 rounded bg-rose-600/20 border border-rose-500/40 text-rose-300 hover:bg-rose-600/30 text-[11px]">
+          ↺ 重置全场
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 max-w-[1600px] w-full mx-auto p-3 grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
+
+    <!-- Left 9 Cols: Interactive 2.5D Top-Down Canvas Arena -->
+    <div class="lg:col-span-9 flex flex-col bg-[#0c0f14] border border-slate-800 rounded-lg overflow-hidden shadow-2xl relative">
+
+      <!-- Top Telemetry Strip -->
+      <div class="px-3 py-2 bg-[#121721] border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex flex-wrap items-center gap-4">
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400" id="lblZone">当前区域:</span>
+            <span class="font-bold text-amber-300 mono" id="hudCurrentRoom">ROOM A · 探照灯借刀与冻雪泥</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400" id="lblStance">姿态:</span>
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 mono text-[11px]" id="hudStance">WALK (正常步行)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400" id="lblDog">灰狼犬“灰烬”:</span>
+            <span class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 mono text-[11px]" id="hudDogState">🐾 巡航跟随</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4 mono text-xs">
+          <div>
+            <span class="text-slate-400">HP:</span>
+            <span class="text-emerald-400 font-bold" id="hudHp">100%</span>
+          </div>
+          <div>
+            <span class="text-slate-400">BPM:</span>
+            <span class="text-amber-400 font-bold" id="hudBpm">76</span>
+          </div>
+          <div>
+            <span class="text-slate-400" id="lblCans">空罐头[G]:</span>
+            <span class="text-blue-300 font-bold" id="hudCans">5</span>
+          </div>
+          <div>
+            <span class="text-slate-400" id="lblWeapon">武器:</span>
+            <span class="text-rose-300 font-bold" id="hudWeapon">铸铁道钉撬棍</span>
+          </div>
+          <div>
+            <span class="text-slate-400" id="lblTally">卌划痕:</span>
+            <span class="text-rose-400 font-bold" id="hudTally">0 / 5</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas Wrapper -->
+      <div class="relative w-full aspect-[16/10] bg-[#07090c] overflow-hidden cursor-crosshair" id="canvasWrap">
+        <canvas id="gymCanvas" class="w-full h-full block"></canvas>
+
+        <!-- Collarbone Blade Jam QTE Modal Overlay (Room E) -->
+        <div id="qteOverlay" class="hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-20">
+          <div class="bg-[#1b1214] border-2 border-rose-500 rounded-xl p-6 max-w-md w-full text-center shadow-[0_0_40px_rgba(239,68,68,0.5)] qte-pulse">
+            <div class="mono text-xs font-bold text-rose-400 uppercase tracking-widest mb-1" id="qteTag">
+              BLADE JAMMED IN COLLARBONE · 锁骨卡刀阻滞！
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2" id="qteTitle">
+              宽背砍骨刀死死卡进了瓦西里的左锁骨缝！
+            </h3>
+            <p class="text-xs text-slate-300 mb-4" id="qteDesc">
+              快速连按【Space 空格键】或点击下方按钮 6 次拔出刀刃！随着鲜血涌出，他眼中的紫黑血翳正在消退……
+            </p>
+            <div class="w-full bg-slate-900 h-4 rounded-full overflow-hidden border border-rose-500/40 mb-4">
+              <div id="qteBar" class="bg-rose-500 h-full transition-all duration-100" style="width: 0%;"></div>
+            </div>
+            <button type="button" id="btnQteMash" class="w-full py-2.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm shadow-lg transition">
+              🗡️ 用力拔刀！ [SPACE / CLICK] (0 / 6)
+            </button>
+          </div>
+        </div>
+
+        <!-- Choice A Modal Overlay (Room C Regressing Half-Human) -->
+        <div id="choiceAModal" class="hidden absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-20 p-4">
+          <div class="bg-[#141820] border-2 border-amber-500/70 rounded-xl p-5 max-w-lg w-full shadow-2xl">
+            <div class="flex items-center justify-between mb-2">
+              <span class="mono text-xs font-bold text-amber-400">ROOM C · CHOICE_A INTERACTION</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Regressing Half-Human</span>
+            </div>
+            <h3 class="text-base font-bold text-white mb-2" id="choiceATitle">
+              涵洞墙角的“回退期半人”（手背灰鳞剥落）
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4" id="choiceADesc">
+              灰狼犬“灰烬”压低耳朵发出悲悯的低鸣。眼前的青年体温正在从40℃回退，瞳孔恢复了深褐色，正抱着头痛苦低泣：“……水……给口水……我看见你妹妹拉娜被押在铁壳号第三节车厢……”
+            </p>
+            <div class="space-y-2 text-xs">
+              <button type="button" id="btnChooseA1" class="w-full text-left p-3 rounded border border-emerald-500/60 bg-emerald-950/40 hover:bg-emerald-900/50 text-emerald-200 transition flex items-center justify-between">
+                <span><strong>[A1] 喂他半壶阿司匹林温水</strong>（助其退烧，获知老伊万水塔暗号与拉娜线索）</span>
+                <span class="mono font-bold text-emerald-400">良知▲ · +0划痕</span>
+              </button>
+              <button type="button" id="btnChooseA3" class="w-full text-left p-3 rounded border border-rose-500/60 bg-rose-950/40 hover:bg-rose-900/50 text-rose-200 transition flex items-center justify-between">
+                <span><strong>[A3] 怕他引来清杀队，一撬棍砸死并搜刮黑麦罐头</strong></span>
+                <span class="mono font-bold text-rose-400">良知▼ · +2道卌划痕</span>
+              </button>
+              <button type="button" id="btnChooseA2" class="w-full text-center py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                [A2] 暂时绕行离开（保持中立）
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diegetic Dual Logbook Modal Overlay (Tab) -->
+        <div id="logbookModal" class="hidden absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-30 p-4">
+          <div class="bg-[#1b1713] border-2 border-[#4a3f35] rounded-xl max-w-3xl w-full p-5 shadow-2xl text-xs">
+            <div class="flex items-center justify-between border-b border-[#3a3129] pb-3 mb-4">
+              <div>
+                <span class="mono text-[11px] text-amber-400">DIEGETIC LOGBOOK · РАБОЧИЙ ЖУРНАЛ</span>
+                <h3 class="text-base font-bold text-amber-100" id="logModalTitle">
+                  阿列克谢的《双面工作日志》（正面官样电传表 / 背面真名录与“卌”字划痕）
+                </h3>
+              </div>
+              <button type="button" id="btnCloseLogbook" class="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 mono">
+                ✕ 关闭 [Tab]
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Left Page: Verified Real Names & Clues -->
+              <div class="bg-[#241f1a] border border-[#3d342b] rounded-lg p-3.5">
+                <div class="text-amber-300 font-bold mb-2 border-b border-[#3d342b] pb-1 flex justify-between">
+                  <span id="logLeftHeader">【背面左页：钢笔手写活人真名录】</span>
+                  <span class="mono text-[10px]">FOR 302 BROADCAST</span>
+                </div>
+                <ul class="space-y-2 mono text-[11px] text-slate-300" id="logNamesList">
+                  <!-- Populated dynamically -->
+                </ul>
+              </div>
+
+              <!-- Right Page: Russian 5-Stroke Tally Marks (卌) -->
+              <div class="bg-[#241f1a] border border-[#3d342b] rounded-lg p-3.5 flex flex-col justify-between">
+                <div>
+                  <div class="text-rose-300 font-bold mb-2 border-b border-[#3d342b] pb-1 flex justify-between">
+                    <span id="logRightHeader">【背面右页：俄式“卌”字良知亏欠账】</span>
+                    <span class="mono text-[10px]" id="logTallyLabel">0 / 5 STROKES</span>
+                  </div>
+                  <div class="flex items-center gap-4 my-2">
+                    <div class="w-20 h-20 bg-[#14110e] border border-[#3d342b] rounded flex items-center justify-center shrink-0">
+                      <svg viewBox="0 0 100 100" class="w-14 h-14">
+                        <line id="logSt1" x1="22" y1="20" x2="20" y2="80" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="opacity-15" />
+                        <line id="logSt2" x1="40" y1="18" x2="39" y2="80" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="opacity-15" />
+                        <line id="logSt3" x1="58" y1="20" x2="57" y2="81" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="opacity-15" />
+                        <line id="logSt4" x1="76" y1="19" x2="75" y2="80" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="opacity-15" />
+                        <line id="logSt5" x1="12" y1="68" x2="88" y2="30" stroke="#ef4444" stroke-width="7" stroke-linecap="round" class="opacity-15" />
+                      </svg>
+                    </div>
+                    <p class="text-[11px] text-slate-300 leading-relaxed" id="logTallyDesc">
+                      当前背面纸页干净（0道划痕）。若保持零划痕至终局鹰嘴崖，可救活第三节车厢里的妹妹拉娜（0420）。
+                    </p>
+                  </div>
+                </div>
+                <div class="p-2 rounded bg-black/30 border border-[#3d342b] text-[11px] text-amber-200/90 mono">
+                  📎 夹页附件：妹妹拉娜（0420）一寸黑白照 + 古丽娅《灰鳞高热自愈临床手稿（3页）》
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Action Buttons Bar for Mouse/Touch Players -->
+        <div class="absolute bottom-2.5 left-3 right-3 flex flex-wrap items-center justify-between gap-2 bg-slate-950/90 border border-slate-800 rounded-lg px-3 py-1.5 text-xs">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" id="btnActCrouch" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">
+              🕵️ 蹲伏潜行 [Ctrl]
+            </button>
+            <button type="button" id="btnActThrowCan" class="px-2.5 py-1 rounded bg-blue-600/25 hover:bg-blue-600/40 text-blue-300 border border-blue-500/40">
+              🥫 投掷空罐头借刀 [G]
+            </button>
+            <button type="button" id="btnActInteract" class="px-2.5 py-1 rounded bg-amber-500/25 hover:bg-amber-500/40 text-amber-300 border border-amber-500/40 font-semibold">
+              🔧 撬棍卡门 / 交互 [E]
+            </button>
+            <button type="button" id="btnActAttack" class="px-2.5 py-1 rounded bg-rose-600/25 hover:bg-rose-600/40 text-rose-300 border border-rose-500/40">
+              ⚔️ 近战挥击 [Space]
+            </button>
+            <button type="button" id="btnActDrink" class="px-2.5 py-1 rounded bg-cyan-600/25 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/40">
+              💧 喝水回体力 [Q]
+            </button>
+          </div>
+          <div class="mono text-[11px] text-slate-400" id="hudPromptHint">
+            靠近目标按 [E] 交互，或按 [G] 向准星方向扔空罐头
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right 3 Cols: Live Event Log & 5-Room Verification Checklist -->
+    <div class="lg:col-span-3 flex flex-col gap-3">
+
+      <!-- 5-Room Greybox Checklist Card -->
+      <div class="bg-[#11151d] border border-slate-800 rounded-lg p-3.5 shadow-lg">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2.5">
+          <h2 class="text-xs font-bold text-white uppercase tracking-wider" id="chkHeader">
+            📋 5合1 灰盒验证清单 (Greybox Tasks)
+          </h2>
+          <span class="mono text-[10px] text-emerald-400" id="chkProgress">0 / 5 已验证</span>
+        </div>
+        <ul class="space-y-2 text-xs" id="checklistContainer">
+          <!-- Populated via JS -->
+        </ul>
+      </div>
+
+      <!-- Active Room Briefing Card -->
+      <div class="bg-[#11151d] border border-slate-800 rounded-lg p-3.5 shadow-lg">
+        <div class="mono text-[10px] text-amber-400 font-bold mb-1" id="briefCode">ROOM_SPECIFICATION</div>
+        <h3 class="text-sm font-bold text-white mb-1.5" id="briefTitle">Room A：探照灯借刀与冻雪泥</h3>
+        <p class="text-xs text-slate-300 leading-relaxed" id="briefDesc">
+          按 [Ctrl] 蹲在蒸汽管道阴影下可 100% 躲避内务清杀兵（ОСК）的 45° 探照灯。将鼠标对准右侧游荡的灰鳞狂暴者并按 [G] 投掷空罐头，清杀兵会立刻转向声源并开火替你消灭感染者（借刀杀人）！
+        </p>
+      </div>
+
+      <!-- Real-Time Narrative & Telemetry Feed -->
+      <div class="bg-[#11151d] border border-slate-800 rounded-lg p-3.5 shadow-lg flex-1 flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+          <h3 class="text-xs font-bold text-white" id="feedHeader">📻 诺沃斯克-17 实时电传与内心独白</h3>
+          <span class="mono text-[10px] text-slate-500">LIVE_FEED</span>
+        </div>
+        <div id="eventFeed" class="space-y-2 text-[11px] max-h-[270px] overflow-y-auto pr-1 font-mono">
+          <!-- Logs appended dynamically -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // BILINGUAL DICTIONARY (ZH / EN)
+    // =========================================================================
+    const I18N = {
+      zh: {
+        title: "《Z年纪事：凛冬铁轨 v4.0》5合1 可玩灰盒原型测试场",
+        subtitle: "WASD移动 · Shift冲刺 · Ctrl蹲伏潜行(躲蒸汽管阴影) · G投掷空罐头(借刀杀人) · E交互/撬棍卡门 · Space挥击 · Q喝水 · Tab翻阅《工作日志》",
+        btnLogbook: "📓 工作日志 [Tab]",
+        glassesOk: "👓 眼镜: 完好",
+        glassesCracked: "👓 眼镜: 碎裂(-40%视距)",
+        audioOn: "🔊 音效: 开",
+        audioOff: "🔇 音效: 关",
+        resetBtn: "↺ 重置全场",
+        lblZone: "当前区域:",
+        lblStance: "姿态:",
+        lblDog: "灰狼犬“灰烬”:",
+        lblCans: "空罐头[G]:",
+        lblWeapon: "武器:",
+        lblTally: "卌划痕:",
+        stanceWalk: "WALK (正常步行)",
+        stanceCrouch: "STEALTH (蒸汽管阴影隐匿)",
+        stanceSprint: "SPRINT (恐慌冲刺)",
+        stanceSlush: "SLUSH (涉雪泥减速)",
+        dogFollow: "🐾 巡航跟随",
+        dogBark: "🔥 炸毛狂吠 (发现狂暴者!)",
+        dogWhimper: "💧 压耳低鸣 (回退期活人!)",
+        dogWag: "🐾 摇尾碰靴 (安全/求救家属)",
+        wpnCrowbar: "铸铁道钉撬棍 (Лом)",
+        wpnCleaver: "东街生锈砍骨刀 (Секач)",
+        chkHeader: "📋 5合1 灰盒验证清单 (Greybox Tasks)",
+        feedHeader: "📻 诺沃斯克-17 实时电传与内心独白",
+        tasks: [
+          { id: "taskA", text: "Room A: 投掷空罐头[G]诱使清杀兵射杀狂暴者(借刀)" },
+          { id: "taskB", text: "Room B: 用道钉撬棍卡死变形门[E] & 门底推铝饭盒" },
+          { id: "taskC", text: "Room C: 记录谢尔盖母子真名 & 抉择A处置回退半人" },
+          { id: "taskD", text: "Room D: 带灰狼犬“灰烬”嗅探三座铁笼并对话安娜(0419)" },
+          { id: "taskE", text: "Room E: 拾取砍骨刀触发瓦西里【锁骨卡刀QTE】与渴耳鸣" }
+        ],
+        rooms: {
+          A: {
+            name: "ROOM A · 探照灯借刀与冻雪泥",
+            desc: "按 [Ctrl] 蹲在灰色高架蒸汽管旁可 100% 躲避内务清杀兵（ОСК）的 45° 探照灯。将鼠标指向游荡的灰鳞狂暴者并按 [G] 投掷空沙丁鱼罐头，清杀兵会立刻转向声源并开火替你清场！"
+          },
+          B: {
+            name: "ROOM B · 道钉撬棍卡门与门底推饭盒",
+            desc: "靠近上方变形铁门按 [E] 可将撬棍插进导轨锁死门体 15 秒；靠近右侧带 12cm 底缝的铁丝网门按 [E]，用撬棍弯头将温热的黑麦铝饭盒推给里面快饿晕的装卸工。"
+          },
+          C: {
+            name: "ROOM C · 账面死人、回退半人与《卌字账》",
+            desc: "左侧电传终端报错【当前坐标0人】，按 [E] 在工作日志背面写下谢尔盖母子真名；右侧涵洞里蜷缩着手背灰鳞剥落的回退期半人，靠近按 [E] 触发【抉择 A（喂药 vs 撬棍灭口记划痕）】。"
+          },
+          D: {
+            name: "ROOM D · 灰狼犬“灰烬”三态嗅觉 AI 测试",
+            desc: "带着“灰烬”依次靠近三座苏式铁笼，观察狼犬对【Ⅰ狂暴者（狂吠）】、【Ⅱ皮带自缚退烧的安娜0419（低鸣）】、【Ⅲ绑红塑料袋送胰岛素的父亲（摇尾）】的100%准确辨识，并按 [E] 听安娜说出妹妹拉娜的下落。"
+          },
+          E: {
+            name: "ROOM E · 东街食堂后厨（锁骨卡刀与“Пить渴”）",
+            desc: "先靠近备餐台按 [E] 拾取【东街宽背砍骨刀】，随后靠近右侧杂物间触发瓦西里破门扑击！按 [Space] 挥刀将 100% 触发【锁骨卡刀 6连按 QTE】与死者瞳孔回色喊出“……Пить（渴）……”，并解锁按 [Q] 喝水时的 PTSD 幻听。"
+          }
+        }
+      },
+      en: {
+        title: "Year of Z: Iron Winter (v4.0) — Playable 5-in-1 Greybox Prototype Gym",
+        subtitle: "WASD Move · Shift Sprint · Ctrl Crouch (Steam-Pipe Stealth) · G Throw Tin Can (Borrow Knife) · E Interact/Wedge · Space Swing · Q Drink · Tab Logbook",
+        btnLogbook: "📓 Logbook [Tab]",
+        glassesOk: "👓 Glasses: Intact",
+        glassesCracked: "👓 Glasses: Cracked (-40% FoV)",
+        audioOn: "🔊 SFX: ON",
+        audioOff: "🔇 SFX: MUTE",
+        resetBtn: "↺ Reset Gym",
+        lblZone: "Zone:",
+        lblStance: "Stance:",
+        lblDog: "Wolfdog 'Ash':",
+        lblCans: "Tin Cans[G]:",
+        lblWeapon: "Weapon:",
+        lblTally: "卌 Tally:",
+        stanceWalk: "WALK (Normal)",
+        stanceCrouch: "STEALTH (Pipe Shadow Hidden)",
+        stanceSprint: "SPRINT (Loud Ripple)",
+        stanceSlush: "SLUSH (-35% Speed / Wet Prints)",
+        dogFollow: "🐾 Trailing",
+        dogBark: "🔥 BRISTLING BARK (Rabid Ahead!)",
+        dogWhimper: "💧 LOW WHIMPER (Regressing Human!)",
+        dogWag: "🐾 WAGGING TAIL (Safe Civilian)",
+        wpnCrowbar: "Railway Crowbar (Лом)",
+        wpnCleaver: "East St. Butcher Cleaver (Секач)",
+        chkHeader: "📋 5-in-1 Greybox Validation Tasks",
+        feedHeader: "📻 Novorsk-17 Live Teletype & Monologue",
+        tasks: [
+          { id: "taskA", text: "Room A: Throw Tin Can [G] so O.S.K. shoots Rabid Infected" },
+          { id: "taskB", text: "Room B: Wedge Steel Door [E] & Push Lunchbox Under Fence" },
+          { id: "taskC", text: "Room C: Record Sergey's Real Name & Resolve Choice A" },
+          { id: "taskD", text: "Room D: Test Wolfdog 'Ash' at 3 Cages & Speak to Anna (0419)" },
+          { id: "taskE", text: "Room E: Equip Cleaver, Trigger Vasily Collarbone Jam QTE & PTSD" }
+        ],
+        rooms: {
+          A: {
+            name: "ROOM A · Searchlight 'Borrowing the Knife' & Slush",
+            desc: "Hold [Ctrl] beside the overhead steam pipe for 100% concealment from the O.S.K. soldier's 45° searchlight. Aim at the roaming Rabid Infected and press [G] to throw an empty sardine tin—the O.S.K. soldier will pivot and eliminate them for you!"
+          },
+          B: {
+            name: "ROOM B · Crowbar Door Wedge & Under-Fence Lunchbox",
+            desc: "Press [E] near the upper deformed steel door to jam your railway crowbar into the track for 15s; press [E] near the right wire-mesh fence (12cm bottom gap) to push the warm buckwheat lunchbox through to the starving loader."
+          },
+          C: {
+            name: "ROOM C · The Paper Dead, Half-Human & '卌' Tally",
+            desc: "The teletype terminal reads [ERROR: 0 PERSONS AT COORDINATE]—press [E] to record Sergey & Maria's real names in your Logbook. Approach the trembling Regressing Half-Human in the culvert and press [E] for Choice A (Feed Aspirin vs. Crowbar Kill)."
+          },
+          D: {
+            name: "ROOM D · Wolfdog 'Ash' (Пепел) Tri-State Olfactory AI",
+            desc: "Walk past the 3 cages with 'Ash' to verify automatic olfactory reactions: [Cage I: Rabid → Fierce Bark], [Cage II: Self-Bound Anna 0419 → Whimper], [Cage III: Father with Insulin → Tail Wag]. Press [E] at Cage II to learn about Sister Lana in Carriage No. 3."
+          },
+          E: {
+            name: "ROOM E · East St. Canteen Kitchen (Collarbone Jam & 'Пить')",
+            desc: "Press [E] at the butcher block to equip the Rusty Butcher Cleaver, then approach the pantry door as Vasily bursts out in 40°C delirium! Press [Space] to strike—triggering the 6-hit Collarbone Blade Jam QTE, his blue eyes clearing as he whispers '…Пить (Thirsty)…', and permanent PTSD when drinking water [Q]."
+          }
+        }
+      }
+    };
+
+    // =========================================================================
+    // PROCEDURAL WEB AUDIO SYNTHESIZER (Zero External Assets Needed)
+    // =========================================================================
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function ensureAudio() {
+      if (!soundEnabled) return null;
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSfx(type) {
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      if (type === "can") {
+        // Metallic tin can clatter
+        [520, 780, 610].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, now + i * 0.06);
+          gain.gain.setValueAtTime(0.15, now + i * 0.06);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.12);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(now + i * 0.06);
+          osc.stop(now + i * 0.06 + 0.13);
+        });
+      } else if (type === "akm") {
+        // Suppressed AKM 3-round burst
+        for (let i = 0; i < 3; i++) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(190, now + i * 0.08);
+          osc.frequency.exponentialRampToValueAtTime(45, now + i * 0.08 + 0.06);
+          gain.gain.setValueAtTime(0.22, now + i * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.07);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(now + i * 0.08);
+          osc.stop(now + i * 0.08 + 0.075);
+        }
+      } else if (type === "wedge") {
+        // Heavy iron crowbar scrape
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.linearRampToValueAtTime(95, now + 0.25);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === "beep") {
+        // Soviet teletype terminal double beep
+        [980, 1320].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "square";
+          osc.frequency.setValueAtTime(freq, now + i * 0.09);
+          gain.gain.setValueAtTime(0.08, now + i * 0.09);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.07);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(now + i * 0.09);
+          osc.stop(now + i * 0.09 + 0.08);
+        });
+      } else if (type === "bonejam") {
+        // Visceral bone impact crunch
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(110, now);
+        osc.frequency.exponentialRampToValueAtTime(32, now + 0.35);
+        gain.gain.setValueAtTime(0.32, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } else if (type === "thirst") {
+        // Eerie low sigh "Пить..."
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(290, now);
+        osc.frequency.exponentialRampToValueAtTime(165, now + 0.75);
+        gain.gain.setValueAtTime(0.16, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.82);
+      }
+    }
+
+    // =========================================================================
+    // GAME WORLD STATE & 5-ROOM GEOMETRY (1100 x 680 Logical Arena)
+    // =========================================================================
+    const WORLD_W = 1100;
+    const WORLD_H = 680;
+
+    const canvas = document.getElementById("gymCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let lang = "zh";
+    const keys = {};
+
+    const game = {
+      tick: 0,
+      glassesCracked: false,
+      ptsdUnlocked: false,
+      ptsdFlashTimer: 0,
+      tallyStrokes: 0,
+      verifiedNames: [
+        { zh: "卡佳妈妈 (第3居住区602室 · 尿毒症透析锚点)", en: "Mama Katya (District 3 Apt 602 · Dialysis Anchor)" }
+      ],
+      tasksDone: {
+        taskA: false,
+        taskB: false,
+        taskC: false,
+        taskD: false,
+        taskE: false
+      },
+      player: {
+        x: 95,
+        y: 185,
+        r: 13,
+        angle: 0,
+        hp: 100,
+        bpm: 76,
+        crouching: false,
+        sprinting: false,
+        inPipeShadow: false,
+        inSlush: false,
+        cans: 5,
+        weapon: "crowbar", // "crowbar" | "cleaver"
+        swingTimer: 0
+      },
+      dog: {
+        x: 68,
+        y: 195,
+        state: "follow" // "follow" | "bark" | "whimper" | "wag"
+      },
+      mouse: { x: 250, y: 185 },
+      ripples: [],
+      bootprints: [],
+      thrownCans: [],
+      bullets: [],
+      floatingTexts: [],
+      qte: {
+        active: false,
+        count: 0,
+        needed: 6
+      },
+      // Entities resettable on Reset
+      oskSoldier: null,
+      rabidsA: [],
+      doorB: null,
+      fenceLunchbox: null,
+      sergeyTerminal: null,
+      halfHumanC: null,
+      cagesD: [],
+      cleaverPickup: null,
+      vasilyE: null
+    };
+
+    // Room Bounding Boxes (5 Connected Rooms A, B, C, D, E)
+    const ROOM_ZONES = [
+      { id: "A", x: 20, y: 20, w: 420, h: 310, titleZh: "ROOM A · 探照灯借刀与冻雪泥", titleEn: "ROOM A · Searchlight & Slush" },
+      { id: "B", x: 455, y: 20, w: 300, h: 310, titleZh: "ROOM B · 撬棍卡门与门底推饭盒", titleEn: "ROOM B · Door Wedge & Fence Gap" },
+      { id: "C", x: 770, y: 20, w: 310, h: 310, titleZh: "ROOM C · 账面0人与回退半人(卌)", titleEn: "ROOM C · Paper Dead & Choice A" },
+      { id: "D", x: 20, y: 350, w: 520, h: 310, titleZh: "ROOM D · 灰狼犬“灰烬”三态嗅觉测试", titleEn: "ROOM D · Wolfdog 'Ash' Tri-State AI" },
+      { id: "E", x: 555, y: 350, w: 525, h: 310, titleZh: "ROOM E · 东街食堂后厨(锁骨卡刀QTE)", titleEn: "ROOM E · East St. Kitchen (Blade Jam)" }
+    ];
+
+    // Environmental Features inside Rooms
+    const SLUSH_RECT = { x: 65, y: 210, w: 155, h: 90 };
+    const STEAM_PIPE_RECT = { x: 155, y: 105, w: 140, h: 24 };
+
+    function initEntities() {
+      game.tallyStrokes = 0;
+      game.ptsdUnlocked = false;
+      game.ptsdFlashTimer = 0;
+      game.verifiedNames = [
+        { zh: "卡佳妈妈 (第3居住区602室 · 尿毒症透析锚点)", en: "Mama Katya (District 3 Apt 602 · Dialysis Anchor)" }
+      ];
+      game.tasksDone = { taskA: false, taskB: false, taskC: false, taskD: false, taskE: false };
+
+      game.player.x = 85;
+      game.player.y = 145;
+      game.player.hp = 100;
+      game.player.bpm = 76;
+      game.player.cans = 5;
+      game.player.weapon = "crowbar";
+      game.dog.x = 60;
+      game.dog.y = 155;
+
+      // Room A: O.S.K. Purge Soldier + 2 Rabid Infected
+      game.oskSoldier = {
+        x: 245,
+        y: 65,
+        patrolMinX: 165,
+        patrolMaxX: 380,
+        dir: 1,
+        angle: Math.PI / 2,
+        targetAngle: Math.PI / 2,
+        alertTimer: 0,
+        fireCooldown: 0
+      };
+      game.rabidsA = [
+        { id: "rab1", x: 355, y: 225, hp: 100, alive: true },
+        { id: "rab2", x: 395, y: 265, hp: 100, alive: true }
+      ];
+
+      // Room B: Deformed Steel Door + 12cm Wire-Mesh Fence Lunchbox
+      game.doorB = {
+        x: 545,
+        y: 115,
+        w: 85,
+        h: 14,
+        wedgedTimer: 0
+      };
+      game.fenceLunchbox = {
+        x: 655,
+        y: 235,
+        delivered: false
+      };
+
+      // Room C: Sergey & Maria Terminal + Regressing Half-Human
+      game.sergeyTerminal = {
+        x: 845,
+        y: 105,
+        recorded: false
+      };
+      game.halfHumanC = {
+        x: 985,
+        y: 235,
+        status: "unresolved" // "unresolved" | "saved_A1" | "killed_A3"
+      };
+
+      // Room D: 3 Side-by-Side Cages (I: Rabid, II: Anna 0419, III: Insulin Father)
+      game.cagesD = [
+        {
+          id: "cage1",
+          type: "rabid",
+          x: 115,
+          y: 445,
+          labelZh: "Ⅰ号笼：高热狂暴者 (>40℃)",
+          labelEn: "Cage I: Febrile Rabid (>40°C)",
+          inspected: false
+        },
+        {
+          id: "cage2",
+          type: "anna",
+          x: 275,
+          y: 445,
+          labelZh: "Ⅱ号笼：皮带自缚的安娜 (0419)",
+          labelEn: "Cage II: Self-Bound Anna (0419)",
+          inspected: false
+        },
+        {
+          id: "cage3",
+          type: "father",
+          x: 435,
+          y: 445,
+          labelZh: "Ⅲ号笼：绑红袋送胰岛素的父亲",
+          labelEn: "Cage III: Father w/ Red Strip & Insulin",
+          inspected: false
+        }
+      ];
+
+      // Room E: Butcher Block Cleaver + Vasily in Pantry
+      game.cleaverPickup = {
+        x: 650,
+        y: 560,
+        taken: false
+      };
+      game.vasilyE = {
+        x: 960,
+        y: 495,
+        state: "locked", // "locked" | "charging" | "jammed" | "resolved"
+        lastWordsTimer: 0
+      };
+
+      game.ripples = [];
+      game.bootprints = [];
+      game.thrownCans = [];
+      game.bullets = [];
+      game.floatingTexts = [];
+
+      addFeed(
+        "【系统初始化】欢迎进入诺沃斯克-17（Новорск-17）5合1灰盒测试场。你可以自由走动或点击顶部 Room A~E 按钮快速传送测试。",
+        "[SYSTEM INIT] Welcome to the Novorsk-17 5-in-1 Greybox Gym. Walk freely or click Room A–E buttons above to teleport."
+      );
+      updateChecklistUI();
+      updateLogbookUI();
+    }
+
+    function addFeed(zhText, enText, colorClass = "text-slate-300") {
+      const feed = document.getElementById("eventFeed");
+      const item = document.createElement("div");
+      const timeStr = new Date().toTimeString().slice(0, 8);
+      item.className = `p-2 rounded bg-slate-900/90 border border-slate-800/80 ${colorClass}`;
+      item.textContent = `[${timeStr}] ${lang === "zh" ? zhText : enText}`;
+      item.dataset.zh = `[${timeStr}] ${zhText}`;
+      item.dataset.en = `[${timeStr}] ${enText}`;
+      feed.prepend(item);
+    }
+
+    function spawnRipple(x, y, maxR, color, labelZh = "", labelEn = "") {
+      game.ripples.push({
+        x,
+        y,
+        r: 4,
+        maxR,
+        color,
+        labelZh,
+        labelEn
+      });
+    }
+
+    function spawnFloatingText(x, y, zh, en, color = "#fde047") {
+      game.floatingTexts.push({
+        x,
+        y,
+        zh,
+        en,
+        color,
+        life: 95
+      });
+    }
+
+    // =========================================================================
+    // CORE ACTIONS: THROW CAN [G], INTERACT/WEDGE [E], SWING [SPACE], DRINK [Q]
+    // =========================================================================
+    function actionThrowCan() {
+      if (game.player.cans <= 0) {
+        addFeed("空沙丁鱼罐头已用完！", "Out of empty sardine tin cans!", "text-rose-400");
+        return;
+      }
+      game.player.cans -= 1;
+      const targetX = game.mouse.x;
+      const targetY = game.mouse.y;
+      playSfx("can");
+
+      game.thrownCans.push({
+        x: game.player.x,
+        y: game.player.y,
+        tx: targetX,
+        ty: targetY,
+        progress: 0
+      });
+    }
+
+    function actionInteract() {
+      const px = game.player.x;
+      const py = game.player.y;
+
+      // 1. Room B: Deformed Steel Door Wedge
+      const doorDist = Math.hypot(px - (game.doorB.x + game.doorB.w / 2), py - game.doorB.y);
+      if (doorDist < 65) {
+        game.doorB.wedgedTimer = 15 * 60; // 15 seconds at 60fps
+        playSfx("wedge");
+        spawnFloatingText(game.doorB.x + 40, game.doorB.y - 12, "🔧 道钉撬棍已卡死导轨 (15.0s)", "🔧 Crowbar Wedged Door (15.0s)", "#fbbf24");
+        addFeed(
+          "【Room B · 撬棍卡门】你将俄式铸铁道钉撬棍死死插进变形铁门导轨，门体已物理锁死 15 秒！",
+          "[Room B · Door Wedge] You jammed your cast-iron railway crowbar into the door track—locked shut for 15 seconds!",
+          "text-amber-300"
+        );
+        if (game.fenceLunchbox.delivered) game.tasksDone.taskB = true;
+        updateChecklistUI();
+        return;
+      }
+
+      // 2. Room B: Wire-Mesh Fence 12cm Gap Lunchbox Push
+      const fenceDist = Math.hypot(px - game.fenceLunchbox.x, py - game.fenceLunchbox.y);
+      if (fenceDist < 70 && !game.fenceLunchbox.delivered) {
+        game.fenceLunchbox.delivered = true;
+        playSfx("wedge");
+        spawnFloatingText(game.fenceLunchbox.x, game.fenceLunchbox.y - 15, "🍱 已从12cm门底窄缝推入铝饭盒！", "🍱 Pushed Buckwheat Lunchbox Under 12cm Gap!", "#34d399");
+        game.verifiedNames.push({
+          zh: "北雨棚铁丝网门内高热装卸工 (已推入黑麦铝饭盒·存活)",
+          en: "North Canopy Quarantined Loader (Fed Buckwheat Lunchbox · Alive)"
+        });
+        addFeed(
+          "【Room B · 门底推饭盒】你用道钉撬棍弯头将装满热黑麦的铝饭盒从 12cm 排水缝推了进去。门内刮烂的手臂缩回阴影里，狼吞虎咽起来。",
+          "[Room B · Under-Fence Delivery] Using your crowbar hook, you pushed the warm buckwheat lunchbox through the 12cm drainage gap.",
+          "text-emerald-300"
+        );
+        game.tasksDone.taskB = true;
+        updateChecklistUI();
+        updateLogbookUI();
+        return;
+      }
+
+      // 3. Room C: Sergey & Maria Paper Dead Terminal
+      const termDist = Math.hypot(px - game.sergeyTerminal.x, py - game.sergeyTerminal.y);
+      if (termDist < 75 && !game.sergeyTerminal.recorded) {
+        game.sergeyTerminal.recorded = true;
+        playSfx("beep");
+        spawnFloatingText(game.sergeyTerminal.x, game.sergeyTerminal.y - 15, "✍️ 已在日志背面记录：谢尔盖、玛丽亚", "✍️ Recorded Real Names: Sergey & Maria", "#34d399");
+        game.verifiedNames.push({
+          zh: "谢尔盖、玛丽亚 (南库3号柱滞留活人 · 电传报错0人)",
+          en: "Sergey & Maria (Cold Storage Pillar 3 Survivors · Scanner Read 0)"
+        });
+        addFeed(
+          "【Room C · 账面死人】苏制电传终端红灯闪烁：『档案0892已移交，当前坐标在册人数：0』。你翻开《工作日志》背面，用钢笔写下了谢尔盖与玛丽亚的真名。",
+          "[Room C · The Paper Dead] The Soviet terminal flashes: 'CURRENT COORDINATE HEADCOUNT: 0.' You opened the back of your Logbook and wrote Sergey and Maria's real names.",
+          "text-emerald-300"
+        );
+        if (game.halfHumanC.status !== "unresolved") game.tasksDone.taskC = true;
+        updateChecklistUI();
+        updateLogbookUI();
+        return;
+      }
+
+      // 4. Room C: Regressing Half-Human Choice A Modal
+      const hhDist = Math.hypot(px - game.halfHumanC.x, py - game.halfHumanC.y);
+      if (hhDist < 75 && game.halfHumanC.status === "unresolved") {
+        document.getElementById("choiceAModal").classList.remove("hidden");
+        return;
+      }
+
+      // 5. Room D: Speak to Anna (0419) in Cage II
+      const cage2 = game.cagesD[1];
+      if (Math.hypot(px - cage2.x, py - cage2.y) < 80) {
+        cage2.inspected = true;
+        playSfx("beep");
+        spawnFloatingText(cage2.x, cage2.y - 20, "🔑 安娜(0419)：拉娜在铁壳号第三节车厢！", "🔑 Anna (0419): Sister Lana is in Carriage No. 3!", "#38bdf8");
+        if (!game.verifiedNames.some(n => n.zh.includes("安娜"))) {
+          game.verifiedNames.push({
+            zh: "安娜 (0419号自愈吹哨人) & 妹妹拉娜 (0420号·锁在三号车厢)",
+            en: "Anna (File 0419 Recovered Witness) & Sister Lana (0420 · In Carriage No. 3)"
+          });
+        }
+        addFeed(
+          "【Room D · 安娜0419证言】用皮带自缚双手熬过退烧的安娜认出了拉娜的照片：『阿列克谢！拉娜的烧已经退了，她昨晚被清杀队锁进了铁壳号第三节闷罐车厢！』",
+          "[Room D · Anna 0419 Testimony] Self-bound Anna recognized Lana's photo: 'Alyosha! Lana's fever broke—last night they locked her inside Carriage No. 3 of the Buran!'",
+          "text-cyan-300"
+        );
+        game.tasksDone.taskD = true;
+        updateChecklistUI();
+        updateLogbookUI();
+        return;
+      }
+
+      // 6. Room E: Pick up East Street Rusty Butcher Cleaver
+      const clvDist = Math.hypot(px - game.cleaverPickup.x, py - game.cleaverPickup.y);
+      if (clvDist < 70 && !game.cleaverPickup.taken) {
+        game.cleaverPickup.taken = true;
+        game.player.weapon = "cleaver";
+        playSfx("wedge");
+        spawnFloatingText(game.cleaverPickup.x, game.cleaverPickup.y - 15, "🔪 已拾取：东街宽背生锈砍骨刀", "🔪 Equipped: East St. Rusty Butcher Cleaver", "#f87171");
+        addFeed(
+          "【Room E · 备餐砧板】你从冻硬的甜菜头旁抓起了那把宽背生锈砍骨刀。靠近右侧杂物间木门将触发瓦西里破门冲锋！",
+          "[Room E · Butcher Block] You picked up the wide-backed rusty butcher cleaver. Approach the right pantry door to trigger Vasily's breach!",
+          "text-amber-300"
+        );
+        return;
+      }
+
+      addFeed(
+        "附近没有可交互的目标。请靠近铁门、铁丝网、电传终端、涵洞半人、安娜铁笼或厨房砧板后按 [E]。",
+        "No interactive target in range. Move closer to doors, terminals, NPCs, or the butcher block and press [E].",
+        "text-slate-400"
+      );
+    }
+
+    function actionSwingWeapon() {
+      if (game.qte.active) {
+        advanceBladeJamQte();
+        return;
+      }
+      game.player.swingTimer = 14;
+      playSfx("wedge");
+
+      // Check if Vasily is charging or near in Room E
+      const vDist = Math.hypot(game.player.x - game.vasilyE.x, game.player.y - game.vasilyE.y);
+      if (vDist < 75 && (game.vasilyE.state === "charging" || game.vasilyE.state === "locked")) {
+        game.vasilyE.state = "jammed";
+        game.qte.active = true;
+        game.qte.count = 0;
+        playSfx("bonejam");
+        document.getElementById("qteOverlay").classList.remove("hidden");
+        updateQteModalUI();
+      }
+    }
+
+    function advanceBladeJamQte() {
+      if (!game.qte.active) return;
+      game.qte.count += 1;
+      playSfx("wedge");
+      updateQteModalUI();
+
+      if (game.qte.count >= game.qte.needed) {
+        game.qte.active = false;
+        document.getElementById("qteOverlay").classList.add("hidden");
+        game.vasilyE.state = "resolved";
+        game.vasilyE.lastWordsTimer = 240;
+        game.ptsdUnlocked = true;
+        game.player.bpm = 168;
+        playSfx("thirst");
+
+        spawnFloatingText(game.vasilyE.x, game.vasilyE.y - 22, "💧 瓦西里瞳孔回色：“……Пить（渴）……”", "💧 Vasily's eyes clear to blue: '…Пить (Thirsty)…'", "#38bdf8");
+        game.verifiedNames.push({
+          zh: "瓦西里·费奥多罗维奇 (东街食堂 · 锁骨卡刀，死前瞳孔回色喊出“Пить渴”)",
+          en: "Vasily Fyodorovich (East St. Canteen · Eyes cleared before dying, whispered 'Пить')"
+        });
+        addFeed(
+          "【Room E · 锁骨卡刀与觉醒】你拔出了卡在瓦西里左锁骨缝里的砍骨刀！随着鲜血喷涌，他眼中的紫黑血翳消退，恢复了二十岁小伙子清澈的蓝眼睛，吐出半个俄语词：『……Пить（渴）……』！你已解锁永久【PTSD 干渴耳鸣】（按 Q 喝水可体验）。",
+          "[Room E · Collarbone Blade Jam] You wrenched the cleaver free! As his fever broke in blood loss, Vasily's eyes cleared to blue and he whispered: '…Пить (Thirsty)…'! Unlocked permanent [PTSD Thirst Tinnitus] when drinking water [Q].",
+          "text-rose-300"
+        );
+        game.tasksDone.taskE = true;
+        updateChecklistUI();
+        updateLogbookUI();
+      }
+    }
+
+    function updateQteModalUI() {
+      const pct = Math.min(100, Math.round((game.qte.count / game.qte.needed) * 100));
+      document.getElementById("qteBar").style.width = pct + "%";
+      document.getElementById("btnQteMash").textContent =
+        lang === "zh"
+          ? `🗡️ 用力拔刀！ [SPACE / CLICK] (${game.qte.count} / ${game.qte.needed})`
+          : `🗡️ Wrench Blade Free! [SPACE / CLICK] (${game.qte.count} / ${game.qte.needed})`;
+    }
+
+    function actionDrinkWater() {
+      playSfx("beep");
+      if (game.ptsdUnlocked) {
+        playSfx("thirst");
+        game.ptsdFlashTimer = 90;
+        game.player.bpm = 152;
+        spawnFloatingText(
+          game.player.x,
+          game.player.y - 24,
+          "🧠 [PTSD耳鸣] 喉咙像吞了火炭，耳边回荡：“……Пить（渴）……”",
+          "🧠 [PTSD TINNITUS] Throat burns like charcoal—echoing: '…Пить (Thirsty)…'",
+          "#f43f5e"
+        );
+        addFeed(
+          "【PTSD 干渴幻听触发】你仰头喝下一口冰水，但吞咽末尾耳道里再次响起瓦西里临死前带着血泡的气音：『……Пить（渴）……』，心率飙升至 152 BPM！",
+          "[PTSD Thirst Tinnitus] You swallowed cold water, but at the end of the gulp Vasily's dying whisper echoed in your ears: '…Пить (Thirsty)…'! Heart rate spiked to 152 BPM!",
+          "text-rose-400"
+        );
+      } else {
+        game.player.bpm = Math.max(72, game.player.bpm - 15);
+        spawnFloatingText(game.player.x, game.player.y - 18, "💧 喝水平复心率 (-15 BPM)", "💧 Drank Water (-15 BPM)", "#38bdf8");
+      }
+    }
+
+    // =========================================================================
+    // SIMULATION UPDATE LOOP (60 FPS)
+    // =========================================================================
+    function updateGame() {
+      game.tick += 1;
+      const p = game.player;
+
+      if (game.ptsdFlashTimer > 0) game.ptsdFlashTimer -= 1;
+      if (p.swingTimer > 0) p.swingTimer -= 1;
+      if (game.doorB.wedgedTimer > 0) game.doorB.wedgedTimer -= 1;
+
+      // 1. Player Movement & Stance
+      let dx = 0;
+      let dy = 0;
+      if (keys["KeyW"] || keys["ArrowUp"]) dy -= 1;
+      if (keys["KeyS"] || keys["ArrowDown"]) dy += 1;
+      if (keys["KeyA"] || keys["ArrowLeft"]) dx -= 1;
+      if (keys["KeyD"] || keys["ArrowRight"]) dx += 1;
+
+      const isMoving = dx !== 0 || dy !== 0;
+      p.sprinting = isMoving && (keys["ShiftLeft"] || keys["ShiftRight"]);
+      if (p.sprinting) p.crouching = false;
+
+      // Check Slush & Steam Pipe Shadow in Room A
+      p.inSlush =
+        p.x > SLUSH_RECT.x &&
+        p.x < SLUSH_RECT.x + SLUSH_RECT.w &&
+        p.y > SLUSH_RECT.y &&
+        p.y < SLUSH_RECT.y + SLUSH_RECT.h;
+
+      p.inPipeShadow =
+        p.crouching &&
+        p.x > STEAM_PIPE_RECT.x - 18 &&
+        p.x < STEAM_PIPE_RECT.x + STEAM_PIPE_RECT.w + 18 &&
+        p.y > STEAM_PIPE_RECT.y - 28 &&
+        p.y < STEAM_PIPE_RECT.y + STEAM_PIPE_RECT.h + 38;
+
+      let speed = 2.6;
+      if (p.crouching) speed = 1.4;
+      if (p.sprinting) speed = 4.3;
+      if (p.inSlush) speed *= 0.65;
+
+      if (isMoving && !game.qte.active) {
+        const len = Math.hypot(dx, dy);
+        p.x = Math.max(30, Math.min(WORLD_W - 30, p.x + (dx / len) * speed));
+        p.y = Math.max(30, Math.min(WORLD_H - 30, p.y + (dy / len) * speed));
+
+        // Footstep Acoustic Ripples & Wet Bootprints
+        if (game.tick % (p.sprinting ? 14 : 26) === 0) {
+          let rippleR = p.crouching ? 18 : p.sprinting ? 115 : 48;
+          if (p.inSlush) rippleR *= 1.85;
+          spawnRipple(p.x, p.y, rippleR, p.inSlush ? "#38bdf8" : "rgba(148,163,184,0.45)");
+          if (p.inSlush) {
+            game.bootprints.push({ x: p.x, y: p.y, life: 240 });
+          }
+        }
+      }
+
+      // Orient 90° Vision Cone toward Mouse
+      p.angle = Math.atan2(game.mouse.y - p.y, game.mouse.x - p.x);
+
+      // 2. Companion Wolfdog "Ash" (Пепел) Steering & Tri-State Olfactory AI
+      const targetDogX = p.x - Math.cos(p.angle) * 28;
+      const targetDogY = p.y - Math.sin(p.angle) * 28;
+      game.dog.x += (targetDogX - game.dog.x) * 0.09;
+      game.dog.y += (targetDogY - game.dog.y) * 0.09;
+
+      // Determine Ash's Olfactory State based on proximity to Rabid / Regressing / Civilian
+      let nextDogState = "follow";
+      // Check Room A rabids, Cage I rabid, or Vasily charging
+      const nearRabidA = game.rabidsA.some(r => r.alive && Math.hypot(p.x - r.x, p.y - r.y) < 130);
+      const nearCage1 = Math.hypot(p.x - game.cagesD[0].x, p.y - game.cagesD[0].y) < 95;
+      const nearVasily = game.vasilyE.state === "charging" && Math.hypot(p.x - game.vasilyE.x, p.y - game.vasilyE.y) < 150;
+
+      const nearHalfC = game.halfHumanC.status === "unresolved" && Math.hypot(p.x - game.halfHumanC.x, p.y - game.halfHumanC.y) < 115;
+      const nearCage2 = Math.hypot(p.x - game.cagesD[1].x, p.y - game.cagesD[1].y) < 95;
+
+      const nearCage3 = Math.hypot(p.x - game.cagesD[2].x, p.y - game.cagesD[2].y) < 95;
+      const nearSergey = Math.hypot(p.x - game.sergeyTerminal.x, p.y - game.sergeyTerminal.y) < 95;
+
+      if (nearRabidA || nearCage1 || nearVasily) {
+        nextDogState = "bark";
+      } else if (nearHalfC || nearCage2) {
+        nextDogState = "whimper";
+      } else if (nearCage3 || nearSergey) {
+        nextDogState = "wag";
+      }
+      game.dog.state = nextDogState;
+
+      // 3. Update Thrown Tin Cans & Trigger "Borrowing the Knife" in Room A
+      for (let i = game.thrownCans.length - 1; i >= 0; i--) {
+        const c = game.thrownCans[i];
+        c.progress += 0.06;
+        if (c.progress >= 1) {
+          // Tin can lands! Emit 145px loud metallic acoustic wave
+          spawnRipple(c.tx, c.ty, 145, "#f59e0b", "哐当！空铁罐声波", "CLANG! Tin Can Lure");
+          // Alert O.S.K. Purge Soldier if within Room A/B range
+          if (Math.hypot(c.tx - game.oskSoldier.x, c.ty - game.oskSoldier.y) < 380) {
+            game.oskSoldier.targetAngle = Math.atan2(c.ty - game.oskSoldier.y, c.tx - game.oskSoldier.x);
+            game.oskSoldier.alertTimer = 150;
+          }
+          game.thrownCans.splice(i, 1);
+        }
+      }
+
+      // 4. Update Room A O.S.K. Purge Soldier Patrol & Unconditional Fire
+      const osk = game.oskSoldier;
+      if (osk.alertTimer > 0) {
+        osk.alertTimer -= 1;
+        // Smoothly rotate searchlight toward targetAngle
+        const diff = Math.atan2(Math.sin(osk.targetAngle - osk.angle), Math.cos(osk.targetAngle - osk.angle));
+        osk.angle += diff * 0.14;
+      } else {
+        osk.x += osk.dir * 0.85;
+        if (osk.x > osk.patrolMaxX) osk.dir = -1;
+        if (osk.x < osk.patrolMinX) osk.dir = 1;
+        osk.targetAngle = Math.PI / 2 + (osk.dir * 0.25);
+        osk.angle += (osk.targetAngle - osk.angle) * 0.08;
+      }
+
+      if (osk.fireCooldown > 0) osk.fireCooldown -= 1;
+
+      // Check if any alive Rabid in Room A is inside the O.S.K. Searchlight Cone (or lured near it)
+      game.rabidsA.forEach(rab => {
+        if (!rab.alive) return;
+        // Slight idle wander
+        rab.x += Math.sin(game.tick * 0.04 + (rab.id === "rab1" ? 0 : 2)) * 0.35;
+        const distToOsk = Math.hypot(rab.x - osk.x, rab.y - osk.y);
+        const angToRab = Math.atan2(rab.y - osk.y, rab.x - osk.x);
+        const angDiff = Math.abs(Math.atan2(Math.sin(angToRab - osk.angle), Math.cos(angToRab - osk.angle)));
+
+        if (distToOsk < 260 && angDiff < 0.48 && osk.fireCooldown === 0) {
+          // O.S.K. Soldier fires suppressed AKM burst at Rabid Infected!
+          osk.fireCooldown = 35;
+          playSfx("akm");
+          game.bullets.push({ sx: osk.x, sy: osk.y, tx: rab.x, ty: rab.y, life: 10 });
+          rab.hp -= 55;
+          spawnFloatingText(rab.x, rab.y - 14, "💥 清杀队消音点射! (-55)", "💥 O.S.K. Suppressed Burst! (-55)", "#f87171");
+          if (rab.hp <= 0) {
+            rab.alive = false;
+            spawnFloatingText(rab.x, rab.y - 26, "✅ 借刀杀人成功！狂暴者已清除", "✅ 'Borrowed Knife' Kill Confirmed!", "#34d399");
+            addFeed(
+              "【Room A · 借刀杀人验证通过】内务清杀兵（ОСК）被空罐头声响吸引，用消音 AKM 替你射杀了灰鳞狂暴者！",
+              "[Room A · 'Borrowing the Knife' Verified] Lured by your tin can, the O.S.K. Purge Soldier eliminated the Rabid Infected with a suppressed AKM burst!",
+              "text-emerald-300"
+            );
+            game.tasksDone.taskA = true;
+            updateChecklistUI();
+          }
+        }
+      });
+
+      // Check if Player is caught in O.S.K. Searchlight without Steam-Pipe Shadow
+      const distPlayerOsk = Math.hypot(p.x - osk.x, p.y - osk.y);
+      const angPlayerOsk = Math.atan2(p.y - osk.y, p.x - osk.x);
+      const playerConeDiff = Math.abs(Math.atan2(Math.sin(angPlayerOsk - osk.angle), Math.cos(angPlayerOsk - osk.angle)));
+      if (distPlayerOsk < 215 && playerConeDiff < 0.38 && !p.inPipeShadow && osk.fireCooldown === 0) {
+        osk.fireCooldown = 50;
+        playSfx("akm");
+        game.bullets.push({ sx: osk.x, sy: osk.y, tx: p.x, ty: p.y, life: 10 });
+        p.hp = Math.max(15, p.hp - 12);
+        p.bpm = Math.min(185, p.bpm + 25);
+        spawnFloatingText(p.x, p.y - 20, "⚠️ 暴露在清杀队探照灯下！请按[Ctrl]躲蒸汽管后", "⚠️ Spotted by O.S.K. Searchlight! Hold [Ctrl] behind pipe!", "#ef4444");
+      }
+
+      // 5. Periodic Ambient Audio Ripples from Unseen Entities
+      if (game.tick % 95 === 0) {
+        if (game.halfHumanC.status === "unresolved") {
+          spawnRipple(game.halfHumanC.x, game.halfHumanC.y, 65, "#e2e8f0", "“……Воды（水）……拉娜在三号车厢……”", "'…Воды (Water)… Lana is in Car 3…'");
+        }
+        if (!game.fenceLunchbox.delivered) {
+          spawnRipple(game.fenceLunchbox.x + 28, game.fenceLunchbox.y, 55, "#f59e0b", "刺啦——门底窄缝刮擦声", "Scrape—hand reaching under 12cm gap");
+        }
+      }
+
+      // 6. Room E: Trigger Vasily Pantry Breach when Player has Cleaver and approaches
+      if (
+        game.vasilyE.state === "locked" &&
+        game.cleaverPickup.taken &&
+        Math.hypot(p.x - game.vasilyE.x, p.y - game.vasilyE.y) < 155
+      ) {
+        game.vasilyE.state = "charging";
+        playSfx("bonejam");
+        spawnRipple(game.vasilyE.x, game.vasilyE.y, 120, "#ef4444", "砰！！瓦西里高烧破门扑出！", "CRASH!! Vasily breaches pantry door!");
+        addFeed(
+          "【Room E · 危机爆发】杂物间木门炸裂！高烧 40℃ 的瓦西里冲了出来，快按 [Space] 或点击鼠标挥动砍骨刀自卫！",
+          "[Room E · Breach] The pantry door explodes! Delirious with 40°C fever, Vasily charges—press [Space] to swing your cleaver!",
+          "text-rose-400"
+        );
+      }
+
+      if (game.vasilyE.state === "charging" && !game.qte.active) {
+        const ang = Math.atan2(p.y - game.vasilyE.y, p.x - game.vasilyE.x);
+        game.vasilyE.x += Math.cos(ang) * 1.35;
+        game.vasilyE.y += Math.sin(ang) * 1.35;
+        if (Math.hypot(p.x - game.vasilyE.x, p.y - game.vasilyE.y) < 34) {
+          actionSwingWeapon();
+        }
+      }
+
+      if (game.vasilyE.lastWordsTimer > 0) game.vasilyE.lastWordsTimer -= 1;
+
+      // 7. Update Ripples, Bootprints, Bullets & Floating Texts
+      for (let i = game.ripples.length - 1; i >= 0; i--) {
+        game.ripples[i].r += 1.4;
+        if (game.ripples[i].r >= game.ripples[i].maxR) game.ripples.splice(i, 1);
+      }
+      for (let i = game.bootprints.length - 1; i >= 0; i--) {
+        game.bootprints[i].life -= 1;
+        if (game.bootprints[i].life <= 0) game.bootprints.splice(i, 1);
+      }
+      for (let i = game.bullets.length - 1; i >= 0; i--) {
+        game.bullets[i].life -= 1;
+        if (game.bullets[i].life <= 0) game.bullets.splice(i, 1);
+      }
+      for (let i = game.floatingTexts.length - 1; i >= 0; i--) {
+        game.floatingTexts[i].y -= 0.35;
+        game.floatingTexts[i].life -= 1;
+        if (game.floatingTexts[i].life <= 0) game.floatingTexts.splice(i, 1);
+      }
+
+      // 8. Update HUD Telemetry
+      updateHudTelemetry();
+    }
+
+    function updateHudTelemetry() {
+      const p = game.player;
+      const d = I18N[lang];
+
+      // Determine current Room A-E
+      const curRoom =
+        ROOM_ZONES.find(r => p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h) ||
+        ROOM_ZONES[0];
+
+      document.getElementById("hudCurrentRoom").textContent =
+        lang === "zh" ? curRoom.titleZh : curRoom.titleEn;
+
+      const roomInfo = d.rooms[curRoom.id];
+      if (roomInfo) {
+        document.getElementById("briefTitle").textContent = roomInfo.name;
+        document.getElementById("briefDesc").textContent = roomInfo.desc;
+      }
+
+      const stanceEl = document.getElementById("hudStance");
+      if (p.inPipeShadow) {
+        stanceEl.textContent = d.stanceCrouch;
+        stanceEl.className = "px-1.5 py-0.5 rounded bg-cyan-500/25 text-cyan-300 mono text-[11px] font-bold";
+      } else if (p.inSlush) {
+        stanceEl.textContent = d.stanceSlush;
+        stanceEl.className = "px-1.5 py-0.5 rounded bg-blue-500/25 text-blue-300 mono text-[11px]";
+      } else if (p.sprinting) {
+        stanceEl.textContent = d.stanceSprint;
+        stanceEl.className = "px-1.5 py-0.5 rounded bg-rose-500/25 text-rose-300 mono text-[11px]";
+      } else {
+        stanceEl.textContent = d.stanceWalk;
+        stanceEl.className = "px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 mono text-[11px]";
+      }
+
+      const dogEl = document.getElementById("hudDogState");
+      if (game.dog.state === "bark") {
+        dogEl.textContent = d.dogBark;
+        dogEl.className = "px-1.5 py-0.5 rounded bg-rose-500/25 text-rose-300 mono text-[11px] font-bold";
+      } else if (game.dog.state === "whimper") {
+        dogEl.textContent = d.dogWhimper;
+        dogEl.className = "px-1.5 py-0.5 rounded bg-amber-500/25 text-amber-300 mono text-[11px] font-bold";
+      } else if (game.dog.state === "wag") {
+        dogEl.textContent = d.dogWag;
+        dogEl.className = "px-1.5 py-0.5 rounded bg-emerald-500/25 text-emerald-300 mono text-[11px]";
+      } else {
+        dogEl.textContent = d.dogFollow;
+        dogEl.className = "px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 mono text-[11px]";
+      }
+
+      document.getElementById("hudHp").textContent = p.hp + "%";
+      document.getElementById("hudBpm").textContent = p.bpm;
+      document.getElementById("hudCans").textContent = p.cans;
+      document.getElementById("hudWeapon").textContent =
+        p.weapon === "cleaver" ? d.wpnCleaver : d.wpnCrowbar;
+      document.getElementById("hudTally").textContent = `${game.tallyStrokes} / 5`;
+    }
+
+    // =========================================================================
+    // RENDER LOOP (2.5D Oblique Top-Down Industrial Winter Aesthetic)
+    // =========================================================================
+    function renderGame() {
+      const dpr = window.devicePixelRatio || 1;
+      const cw = canvas.width;
+      const ch = canvas.height;
+      const sx = cw / WORLD_W;
+      const sy = ch / WORLD_H;
+
+      ctx.save();
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.scale(sx, sy);
+
+      // 1. Draw Background Grid & 5 Connected Greybox Rooms
+      ctx.fillStyle = "#080b10";
+      ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+
+      ROOM_ZONES.forEach(rm => {
+        ctx.save();
+        ctx.fillStyle = "#10151e";
+        ctx.strokeStyle = "#2b3648";
+        ctx.lineWidth = 2.5;
+        ctx.fillRect(rm.x, rm.y, rm.w, rm.h);
+        ctx.strokeRect(rm.x, rm.y, rm.w, rm.h);
+
+        // Room Header Label
+        ctx.fillStyle = "rgba(148, 163, 184, 0.75)";
+        ctx.font = "bold 12px 'JetBrains Mono', 'Noto Sans SC', sans-serif";
+        ctx.fillText(lang === "zh" ? rm.titleZh : rm.titleEn, rm.x + 12, rm.y + 22);
+        ctx.restore();
+      });
+
+      // 2. Room A Geometry: Frozen Slush Puddle & Overhead Steam Pipe
+      ctx.save();
+      ctx.fillStyle = "rgba(14, 116, 144, 0.28)";
+      ctx.strokeStyle = "#0891b2";
+      ctx.setLineDash([4, 4]);
+      ctx.fillRect(SLUSH_RECT.x, SLUSH_RECT.y, SLUSH_RECT.w, SLUSH_RECT.h);
+      ctx.strokeRect(SLUSH_RECT.x, SLUSH_RECT.y, SLUSH_RECT.w, SLUSH_RECT.h);
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#67e8f9";
+      ctx.font = "10px 'Noto Sans SC', sans-serif";
+      ctx.fillText(lang === "zh" ? "冻雪泥坑 (减速35%/留靴印)" : "Frozen Slush (-35% Spd)", SLUSH_RECT.x + 10, SLUSH_RECT.y + 20);
+
+      // Steam Pipe Shadow Zone
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.fillRect(STEAM_PIPE_RECT.x - 10, STEAM_PIPE_RECT.y - 12, STEAM_PIPE_RECT.w + 20, STEAM_PIPE_RECT.h + 34);
+      // Steam Pipe Body
+      ctx.fillStyle = "#475569";
+      ctx.strokeStyle = "#94a3b8";
+      ctx.lineWidth = 2;
+      ctx.fillRect(STEAM_PIPE_RECT.x, STEAM_PIPE_RECT.y, STEAM_PIPE_RECT.w, STEAM_PIPE_RECT.h);
+      ctx.strokeRect(STEAM_PIPE_RECT.x, STEAM_PIPE_RECT.y, STEAM_PIPE_RECT.w, STEAM_PIPE_RECT.h);
+      ctx.fillStyle = "#f8fafc";
+      ctx.font = "bold 10px 'Noto Sans SC', sans-serif";
+      ctx.fillText(lang === "zh" ? "高架供暖蒸汽管 (按Ctrl蹲伏隐匿)" : "Steam Pipe (Hold Ctrl to Hide)", STEAM_PIPE_RECT.x + 6, STEAM_PIPE_RECT.y + 15);
+      ctx.restore();
+
+      // Draw Wet Bootprints
+      game.bootprints.forEach(bp => {
+        ctx.save();
+        ctx.fillStyle = `rgba(56, 189, 248, ${bp.life / 300})`;
+        ctx.beginPath();
+        ctx.arc(bp.x, bp.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Draw O.S.K. Purge Soldier & 45° Searchlight Cone in Room A
+      const osk = game.oskSoldier;
+      ctx.save();
+      const lightGrad = ctx.createRadialGradient(osk.x, osk.y, 8, osk.x, osk.y, 245);
+      lightGrad.addColorStop(0, "rgba(254, 240, 138, 0.42)");
+      lightGrad.addColorStop(0.7, "rgba(250, 204, 21, 0.16)");
+      lightGrad.addColorStop(1, "rgba(250, 204, 21, 0)");
+
+      ctx.beginPath();
+      ctx.moveTo(osk.x, osk.y);
+      ctx.arc(osk.x, osk.y, 245, osk.angle - 0.39, osk.angle + 0.39);
+      ctx.closePath();
+      ctx.fillStyle = lightGrad;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(osk.x, osk.y, 12, 0, Math.PI * 2);
+      ctx.fillStyle = "#64748b";
+      ctx.fill();
+      ctx.strokeStyle = "#facc15";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = "#fef08a";
+      ctx.font = "bold 10px 'Noto Sans SC', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(lang === "zh" ? "内务清杀兵(ОСК)" : "O.S.K. Purge Soldier", osk.x, osk.y - 16);
+      ctx.restore();
+
+      // Draw Room A Rabid Infected
+      game.rabidsA.forEach(rab => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(rab.x, rab.y, 11, 0, Math.PI * 2);
+        ctx.fillStyle = rab.alive ? "#dc2626" : "#334155";
+        ctx.fill();
+        ctx.strokeStyle = rab.alive ? "#fca5a5" : "#475569";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = rab.alive ? "#fca5a5" : "#94a3b8";
+        ctx.font = "10px 'Noto Sans SC', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(
+          rab.alive
+            ? (lang === "zh" ? `灰鳞狂暴者 (${rab.hp}%)` : `Rabid (${rab.hp}%)`)
+            : (lang === "zh" ? "已借刀清除" : "Eliminated"),
+          rab.x,
+          rab.y - 15
+        );
+        ctx.restore();
+      });
+
+      // 3. Room B Geometry: Deformed Steel Door & 12cm Wire-Mesh Fence Gap
+      const db = game.doorB;
+      ctx.save();
+      ctx.fillStyle = db.wedgedTimer > 0 ? "#d97706" : "#334155";
+      ctx.strokeStyle = db.wedgedTimer > 0 ? "#fde047" : "#94a3b8";
+      ctx.lineWidth = 2;
+      ctx.fillRect(db.x, db.y, db.w, db.h);
+      ctx.strokeRect(db.x, db.y, db.w, db.h);
+      ctx.fillStyle = "#fde047";
+      ctx.font = "bold 10px 'Noto Sans SC', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        db.wedgedTimer > 0
+          ? (lang === "zh" ? `🔒 撬棍已卡死 (${(db.wedgedTimer / 60).toFixed(1)}s)` : `🔒 Wedged (${(db.wedgedTimer / 60).toFixed(1)}s)`)
+          : (lang === "zh" ? "变形铁门 [按E用撬棍卡死]" : "Steel Door [Press E to Wedge]"),
+        db.x + db.w / 2,
+        db.y - 8
+      );
+
+      // 12cm Fence Gap & Lunchbox
+      const fl = game.fenceLunchbox;
+      ctx.strokeStyle = "#94a3b8";
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(fl.x + 18, 175);
+      ctx.lineTo(fl.x + 18, 300);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = fl.delivered ? "#10b981" : "#f59e0b";
+      ctx.fillRect(fl.delivered ? fl.x + 30 : fl.x - 12, fl.y - 8, 16, 14);
+      ctx.fillStyle = "#e2e8f0";
+      ctx.font = "10px 'Noto Sans SC', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        fl.delivered
+          ? (lang === "zh" ? "✅ 铝饭盒已推入12cm窄缝" : "✅ Lunchbox Pushed Under Gap")
+          : (lang === "zh" ? "铝饭盒 [按E推过12cm铁网底缝]" : "Lunchbox [Press E to Push]"),
+        fl.x,
+        fl.y - 16
+      );
+      ctx.restore();
+
+      // 4. Room C Geometry: Sergey Terminal & Regressing Half-Human
+      const st = game.sergeyTerminal;
+      ctx.save();
+      ctx.fillStyle = st.recorded ? "#065f46" : "#1e293b";
+      ctx.strokeStyle = st.recorded ? "#34d399" : "#ef4444";
+      ctx.lineWidth = 2;
+      ctx.fillRect(st.x - 22, st.y - 16, 44, 32);
+      ctx.strokeRect(st.x - 22, st.y - 16, 44, 32);
+      ctx.fillStyle = st.recorded ? "#6ee7b7" : "#fca5a5";
+      ctx.font = "bold 10px 'Noto Sans SC', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        st.recorded
+          ? (lang === "zh" ? "✓ 已手写记录谢尔盖母子真名" : "✓ Sergey & Maria Recorded")
+          : (lang === "zh" ? "电传机报错:0人 [按E写下母子真名]" : "Terminal: 0 Persons [Press E]"),
+        st.x,
+        st.y - 24
+      );
+
+      const hh = game.halfHumanC;
+      ctx.beginPath();
+      ctx.arc(hh.x, hh.y, 12, 0, Math.PI * 2);
+      ctx.fillStyle =
+        hh.status === "saved_A1" ? "#10b981" : hh.status === "killed_A3" ? "#7f1d1d" : "#eab308";
+      ctx.fill();
+      ctx.strokeStyle = "#fef08a";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = "#fef08a";
+      ctx.fillText(
+        hh.status === "saved_A1"
+          ? (lang === "zh" ? "已退烧半人(已告知拉娜线索)" : "Recovered Youth (Shared Clue)")
+          : hh.status === "killed_A3"
+          ? (lang === "zh" ? "已灭口 (+2道卌划痕)" : "Executed (+2 Strokes)")
+          : (lang === "zh" ? "回退期半人 [按E触发抉择A]" : "Regressing Youth [Press E: Choice A]"),
+        hh.x,
+        hh.y - 18
+      );
+      ctx.restore();
+
+      // 5. Room D Geometry: 3 Side-by-Side Cages (Wolfdog Tri-State AI)
+      game.cagesD.forEach(cg => {
+        ctx.save();
+        ctx.fillStyle = "#17202c";
+        ctx.strokeStyle = cg.type === "rabid" ? "#ef4444" : cg.type === "anna" ? "#38bdf8" : "#10b981";
+        ctx.lineWidth = 2;
+        ctx.fillRect(cg.x - 48, cg.y - 34, 96, 68);
+        ctx.strokeRect(cg.x - 48, cg.y - 34, 96, 68);
+
+        ctx.beginPath();
+        ctx.arc(cg.x, cg.y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = cg.type === "rabid" ? "#dc2626" : cg.type === "anna" ? "#0284c7" : "#059669";
+        ctx.fill();
+
+        ctx.fillStyle = "#f1f5f9";
+        ctx.font = "bold 10px 'Noto Sans SC', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(lang === "zh" ? cg.labelZh : cg.labelEn, cg.x, cg.y - 42);
+        if (cg.type === "anna") {
+          ctx.fillStyle = "#7dd3fc";
+          ctx.fillText(lang === "zh" ? "[靠近按E询问妹妹拉娜下落]" : "[Press E to Ask About Sister Lana]", cg.x, cg.y + 48);
+        }
+        ctx.restore();
+      });
+
+      // 6. Room E Geometry: East Street Kitchen Butcher Block & Vasily
+      const cp = game.cleaverPickup;
+      ctx.save();
+      ctx.fillStyle = "#291d18";
+      ctx.strokeStyle = cp.taken ? "#64748b" : "#f59e0b";
+      ctx.lineWidth = 2;
+      ctx.fillRect(cp.x - 42, cp.y - 20, 84, 40);
+      ctx.strokeRect(cp.x - 42, cp.y - 20, 84, 40);
+      ctx.fillStyle = cp.taken ? "#94a3b8" : "#fde047";
+      ctx.font = "bold 10px 'Noto Sans SC', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        cp.taken
+          ? (lang === "zh" ? "备餐砧板 (已拿取砍骨刀)" : "Butcher Block (Cleaver Taken)")
+          : (lang === "zh" ? "🔪 备餐砧板 [按E拾取砍骨刀]" : "🔪 Butcher Block [Press E for Cleaver]"),
+        cp.x,
+        cp.y - 28
+      );
+
+      const vas = game.vasilyE;
+      ctx.beginPath();
+      ctx.arc(vas.x, vas.y, 13, 0, Math.PI * 2);
+      ctx.fillStyle =
+        vas.state === "resolved" ? "#0284c7" : vas.state === "charging" ? "#ef4444" : "#991b1b";
+      ctx.fill();
+      ctx.strokeStyle = vas.state === "resolved" ? "#7dd3fc" : "#fca5a5";
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillText(
+        vas.state === "resolved"
+          ? (lang === "zh" ? "瓦西里 (瞳孔回色·“……Пить渴……”)" : "Vasily (Eyes Clear · '…Пить…')")
+          : (lang === "zh" ? "瓦西里 (40℃高烧谵妄) [按Space挥刀]" : "Vasily (40°C Delirium) [Press Space]"),
+        vas.x,
+        vas.y - 20
+      );
+      ctx.restore();
+
+      // 7. Draw Acoustic Ripples
+      game.ripples.forEach(rp => {
+        ctx.save();
+        const alpha = Math.max(0, 1 - rp.r / rp.maxR);
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+        ctx.strokeStyle = rp.color;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        if (rp.labelZh) {
+          ctx.fillStyle = rp.color;
+          ctx.font = "italic 10px 'Noto Sans SC', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(lang === "zh" ? rp.labelZh : rp.labelEn, rp.x, rp.y - rp.r * 0.6);
+        }
+        ctx.restore();
+      });
+
+      // 8. Draw Thrown Cans & Suppressed AKM Tracer Lines
+      game.thrownCans.forEach(tc => {
+        const cx = tc.x + (tc.tx - tc.x) * tc.progress;
+        const cy = tc.y + (tc.ty - tc.y) * tc.progress;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "#fbbf24";
+        ctx.fill();
+        ctx.restore();
+      });
+
+      game.bullets.forEach(b => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(b.sx, b.sy);
+        ctx.lineTo(b.tx, b.ty);
+        ctx.strokeStyle = "#fde047";
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // 9. Draw Player 90° Directional Vision Cone
+      const p = game.player;
+      const visionR = game.glassesCracked ? 165 : 275;
+      ctx.save();
+      const vGrad = ctx.createRadialGradient(p.x, p.y, 10, p.x, p.y, visionR);
+      vGrad.addColorStop(0, "rgba(59, 130, 246, 0.26)");
+      vGrad.addColorStop(0.75, "rgba(59, 130, 246, 0.09)");
+      vGrad.addColorStop(1, "rgba(59, 130, 246, 0)");
+
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.arc(p.x, p.y, visionR, p.angle - Math.PI / 4, p.angle + Math.PI / 4);
+      ctx.closePath();
+      ctx.fillStyle = vGrad;
+      ctx.fill();
+      ctx.strokeStyle = game.glassesCracked ? "rgba(244, 63, 94, 0.5)" : "rgba(96, 165, 250, 0.45)";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.restore();
+
+      // 10. Draw Companion Wolfdog "Ash" (Пепел)
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(game.dog.x, game.dog.y, 8, 0, Math.PI * 2);
+      ctx.fillStyle =
+        game.dog.state === "bark"
+          ? "#ef4444"
+          : game.dog.state === "whimper"
+          ? "#f59e0b"
+          : "#94a3b8";
+      ctx.fill();
+      ctx.strokeStyle = "#f8fafc";
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "bold 9px 'Noto Sans SC', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(lang === "zh" ? "灰烬(Пепел)" : "Ash (Пепел)", game.dog.x, game.dog.y - 12);
+      ctx.restore();
+
+      // 11. Draw Player Token (Aleksei) & Melee Swing Arc
+      ctx.save();
+      if (p.swingTimer > 0) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 36, p.angle - 0.65, p.angle + 0.65);
+        ctx.strokeStyle = p.weapon === "cleaver" ? "#ef4444" : "#fbbf24";
+        ctx.lineWidth = 5;
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.inPipeShadow ? "#0284c7" : "#10b981";
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.fillStyle = "#042f2e";
+      ctx.font = "bold 10px 'JetBrains Mono', monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("P", p.x, p.y + 3.5);
+      ctx.restore();
+
+      // 12. PTSD Thirst Screen Vignette Flash
+      if (game.ptsdFlashTimer > 0) {
+        ctx.save();
+        ctx.fillStyle = `rgba(190, 18, 60, ${(game.ptsdFlashTimer / 90) * 0.28})`;
+        ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+        ctx.restore();
+      }
+
+      // 13. Floating Feedback Texts
+      game.floatingTexts.forEach(ft => {
+        ctx.save();
+        ctx.fillStyle = ft.color;
+        ctx.globalAlpha = Math.min(1, ft.life / 35);
+        ctx.font = "bold 11px 'Noto Sans SC', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(lang === "zh" ? ft.zh : ft.en, ft.x, ft.y);
+        ctx.restore();
+      });
+
+      ctx.restore();
+    }
+
+    // =========================================================================
+    // UI UPDATERS: CHECKLIST, LOGBOOK & LANGUAGE SWITCH
+    // =========================================================================
+    function updateChecklistUI() {
+      const d = I18N[lang];
+      const listEl = document.getElementById("checklistContainer");
+      let doneCount = 0;
+
+      listEl.innerHTML = d.tasks
+        .map(t => {
+          const isDone = game.tasksDone[t.id];
+          if (isDone) doneCount += 1;
+          return `
+            <li class="p-2 rounded border transition flex items-start gap-2 ${
+              isDone
+                ? "bg-emerald-950/35 border-emerald-500/40 text-emerald-300"
+                : "bg-slate-900/70 border-slate-800 text-slate-400"
+            }">
+              <span class="mono font-bold">${isDone ? "✓" : "○"}</span>
+              <span>${t.text}</span>
+            </li>
+          `;
+        })
+        .join("");
+
+      document.getElementById("chkProgress").textContent =
+        lang === "zh" ? `${doneCount} / 5 已验证` : `${doneCount} / 5 Verified`;
+    }
+
+    function updateLogbookUI() {
+      const namesEl = document.getElementById("logNamesList");
+      namesEl.innerHTML = game.verifiedNames
+        .map(
+          item => `
+          <li class="flex items-center justify-between border-b border-[#332b23] pb-1">
+            <span>✓ ${lang === "zh" ? item.zh : item.en}</span>
+            <span class="text-emerald-400">VERIFIED</span>
+          </li>
+        `
+        )
+        .join("");
+
+      for (let i = 1; i <= 5; i++) {
+        const line = document.getElementById("logSt" + i);
+        if (i <= game.tallyStrokes) {
+          line.setAttribute("class", "opacity-100");
+        } else {
+          line.setAttribute("class", "opacity-15");
+        }
+      }
+      document.getElementById("logTallyLabel").textContent = `${game.tallyStrokes} / 5 STROKES`;
+      document.getElementById("logTallyDesc").textContent =
+        game.tallyStrokes === 0
+          ? lang === "zh"
+            ? "当前背面纸页干净（0道划痕）。若保持零划痕至终局鹰嘴崖，可救活第三节车厢里的妹妹拉娜（0420）。"
+            : "Back page is unstained (0 strokes). Maintaining zero strokes to Eagle's Crag saves Sister Lana (0420)."
+          : lang === "zh"
+          ? `当前已划下 ${game.tallyStrokes} 道血痕（卌）。在鹰嘴崖终局将触发【结局 B：荒诞解放（破门但痛失妹妹）】。`
+          : `Carved ${game.tallyStrokes} blood strokes (卌). Will trigger [Ending B: Absurd Liberation (Gates open, Sister lost)].`;
+    }
+
+    function applyLanguageUI() {
+      const d = I18N[lang];
+      document.getElementById("uiTitle").textContent = d.title;
+      document.getElementById("uiSubtitle").textContent = d.subtitle;
+      document.getElementById("btnToggleLogbook").textContent = d.btnLogbook;
+      document.getElementById("btnToggleGlasses").textContent = game.glassesCracked ? d.glassesCracked : d.glassesOk;
+      document.getElementById("btnToggleAudio").textContent = soundEnabled ? d.audioOn : d.audioOff;
+      document.getElementById("btnResetGym").textContent = d.resetBtn;
+      document.getElementById("lblZone").textContent = d.lblZone;
+      document.getElementById("lblStance").textContent = d.lblStance;
+      document.getElementById("lblDog").textContent = d.lblDog;
+      document.getElementById("lblCans").textContent = d.lblCans;
+      document.getElementById("lblWeapon").textContent = d.lblWeapon;
+      document.getElementById("lblTally").textContent = d.lblTally;
+      document.getElementById("chkHeader").textContent = d.chkHeader;
+      document.getElementById("feedHeader").textContent = d.feedHeader;
+
+      // Update existing feed items
+      document.querySelectorAll("#eventFeed > div").forEach(el => {
+        el.textContent = lang === "zh" ? el.dataset.zh : el.dataset.en;
+      });
+
+      updateChecklistUI();
+      updateLogbookUI();
+      updateQteModalUI();
+    }
+
+    // =========================================================================
+    // INPUT & BUTTON EVENT BINDINGS
+    // =========================================================================
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+    }
+
+    canvas.addEventListener("mousemove", e => {
+      const rect = canvas.getBoundingClientRect();
+      game.mouse.x = ((e.clientX - rect.left) / rect.width) * WORLD_W;
+      game.mouse.y = ((e.clientY - rect.top) / rect.height) * WORLD_H;
+    });
+
+    canvas.addEventListener("mousedown", () => {
+      if (game.qte.active) {
+        advanceBladeJamQte();
+      }
+    });
+
+    window.addEventListener("keydown", e => {
+      keys[e.code] = true;
+      if (e.code === "ControlLeft" || e.code === "ControlRight") {
+        game.player.crouching = !game.player.crouching;
+      } else if (e.code === "KeyG") {
+        actionThrowCan();
+      } else if (e.code === "KeyE") {
+        actionInteract();
+      } else if (e.code === "Space") {
+        e.preventDefault();
+        actionSwingWeapon();
+      } else if (e.code === "KeyQ") {
+        actionDrinkWater();
+      } else if (e.code === "Tab") {
+        e.preventDefault();
+        document.getElementById("logbookModal").classList.toggle("hidden");
+      }
+    });
+
+    window.addEventListener("keyup", e => {
+      keys[e.code] = false;
+    });
+
+    // Quick Room Teleport Buttons
+    const ROOM_SPAWNS = {
+      A: { x: 85, y: 145 },
+      B: { x: 525, y: 205 },
+      C: { x: 845, y: 185 },
+      D: { x: 115, y: 555 },
+      E: { x: 635, y: 500 }
+    };
+    document.querySelectorAll(".room-tp-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const rm = btn.dataset.room;
+        const pt = ROOM_SPAWNS[rm];
+        if (pt) {
+          game.player.x = pt.x;
+          game.player.y = pt.y;
+          game.dog.x = pt.x - 24;
+          game.dog.y = pt.y + 10;
+          playSfx("beep");
+        }
+      });
+    });
+
+    // Bottom Bar Action Buttons
+    document.getElementById("btnActCrouch").addEventListener("click", () => {
+      game.player.crouching = !game.player.crouching;
+    });
+    document.getElementById("btnActThrowCan").addEventListener("click", actionThrowCan);
+    document.getElementById("btnActInteract").addEventListener("click", actionInteract);
+    document.getElementById("btnActAttack").addEventListener("click", actionSwingWeapon);
+    document.getElementById("btnActDrink").addEventListener("click", actionDrinkWater);
+    document.getElementById("btnQteMash").addEventListener("click", advanceBladeJamQte);
+
+    // Choice A Modal Buttons (Room C)
+    document.getElementById("btnChooseA1").addEventListener("click", () => {
+      game.halfHumanC.status = "saved_A1";
+      document.getElementById("choiceAModal").classList.add("hidden");
+      playSfx("beep");
+      spawnFloatingText(game.halfHumanC.x, game.halfHumanC.y - 20, "💊 [A1] 已喂阿司匹林温水 (良知▲ · +0划痕)", "💊 [A1] Fed Aspirin Water (+0 Strokes)", "#34d399");
+      game.verifiedNames.push({
+        zh: "广轨涵洞退烧青年 (获阿司匹林救助 · 证实拉娜在三号车厢)",
+        en: "Culvert Recovered Youth (Saved via Choice A1 · Confirmed Lana in Car 3)"
+      });
+      addFeed(
+        "【Room C · 抉择 A1 完成】青年喝下阿司匹林温水后停止了抽搐，感激地告诉你老伊万在西站水塔的暗号。工作日志保持 0 道划痕！",
+        "[Room C · Choice A1 Complete] The youth's fever subsided after drinking the aspirin water. He shared Old Ivan's water-tower cipher. Logbook remains at 0 strokes!",
+        "text-emerald-300"
+      );
+      if (game.sergeyTerminal.recorded) game.tasksDone.taskC = true;
+      updateChecklistUI();
+      updateLogbookUI();
+    });
+
+    document.getElementById("btnChooseA3").addEventListener("click", () => {
+      game.halfHumanC.status = "killed_A3";
+      game.tallyStrokes = Math.min(5, game.tallyStrokes + 2);
+      game.player.cans += 2;
+      document.getElementById("choiceAModal").classList.add("hidden");
+      playSfx("bonejam");
+      spawnFloatingText(game.halfHumanC.x, game.halfHumanC.y - 20, "🩸 [A3] 撬棍灭口搜刮 (+2道卌字血划痕!)", "🩸 [A3] Crowbar Execution (+2 Tally Strokes!)", "#f43f5e");
+      addFeed(
+        "【Room C · 抉择 A3 警告】你用撬棍砸死了正在退烧的半人青年，搜出两只罐头，并在《工作日志》背面划下了两道刺眼的血痕（卌）！",
+        "[Room C · Choice A3 Warning] You executed the regressing youth with your crowbar and carved 2 blood strokes (卌) onto the back of your Work Logbook!",
+        "text-rose-400"
+      );
+      if (game.sergeyTerminal.recorded) game.tasksDone.taskC = true;
+      updateChecklistUI();
+      updateLogbookUI();
+    });
+
+    document.getElementById("btnChooseA2").addEventListener("click", () => {
+      document.getElementById("choiceAModal").classList.add("hidden");
+    });
+
+    // Top Utility Buttons
+    document.getElementById("btnToggleLogbook").addEventListener("click", () => {
+      document.getElementById("logbookModal").classList.toggle("hidden");
+    });
+    document.getElementById("btnCloseLogbook").addEventListener("click", () => {
+      document.getElementById("logbookModal").classList.add("hidden");
+    });
+    document.getElementById("btnToggleGlasses").addEventListener("click", () => {
+      game.glassesCracked = !game.glassesCracked;
+      const wrap = document.getElementById("canvasWrap");
+      if (game.glassesCracked) wrap.classList.add("cracked-lens");
+      else wrap.classList.remove("cracked-lens");
+      applyLanguageUI();
+    });
+    document.getElementById("btnToggleAudio").addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      applyLanguageUI();
+    });
+    document.getElementById("btnToggleLang").addEventListener("click", () => {
+      lang = lang === "zh" ? "en" : "zh";
+      applyLanguageUI();
+    });
+    document.getElementById("btnResetGym").addEventListener("click", () => {
+      initEntities();
+    });
+
+    // Main Loop
+    function loop() {
+      updateGame();
+      renderGame();
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("load", () => {
+      resizeCanvas();
+      initEntities();
+      applyLanguageUI();
+      requestAnimationFrame(loop);
+    });
+  </script>
+</body>
+</html>

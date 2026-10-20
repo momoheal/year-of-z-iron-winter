@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>《Z年纪事：凛冬铁轨 v4.0》俄式极寒双线叙事与五结局触发沙盘</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans SC', sans-serif;
+      background-color: #090b0e;
+      color: #e2e8f0;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .paper-card {
+      background: linear-gradient(145deg, #161b22 0%, #10141a 100%);
+    }
+    .tally-stroke {
+      transition: all 0.25s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#090b0e] text-slate-200">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-[#10141b]/95 backdrop-blur sticky top-0 z-30 px-4 py-3">
+    <div class="max-w-[1550px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-2.5 h-8 bg-amber-500 rounded-sm shadow-[0_0_12px_rgba(245,158,11,0.7)]"></div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight">《Z年纪事：凛冬铁轨 v4.0》俄式极寒双线叙事与五结局模拟器</h1>
+            <span class="mono text-[11px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">NOVORSK-17 · IRON WINTER</span>
+          </div>
+          <p class="text-xs text-slate-400">白昼守母（赫鲁晓夫楼602室卡佳妈妈） × 黑夜寻妹（装甲专列“铁壳号”第三节车厢拉娜·0420） · 实时推演《工作日志》“卌”字划痕与终局分流</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 text-xs">
+        <button type="button" id="btnPresetTrue" class="px-3 py-1.5 rounded bg-emerald-600/20 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-600/30 transition font-medium">
+          ✨ 预设：隐藏真结局 α（再见拉娜）
+        </button>
+        <button type="button" id="btnPresetOutland" class="px-3 py-1.5 rounded bg-orange-600/20 border border-orange-500/50 text-orange-300 hover:bg-orange-600/30 transition font-medium">
+          🔥 预设：失母荒原真结局 β（荒原之火）
+        </button>
+        <button type="button" id="btnPresetTragic" class="px-3 py-1.5 rounded bg-rose-600/20 border border-rose-500/50 text-rose-300 hover:bg-rose-600/30 transition font-medium">
+          💔 预设：结局B（破门但痛失妹妹）
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-[1550px] w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+    <!-- Left Column: Interactive Decision Simulator (5 cols) -->
+    <div class="lg:col-span-5 flex flex-col gap-4">
+
+      <!-- Choice A -->
+      <div class="paper-card border border-slate-800 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-2">
+          <span class="mono text-xs font-bold text-blue-400">CHOICE_A · 第一~三幕每夜常驻</span>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">广轨盲道夜潜</span>
+        </div>
+        <h2 class="text-sm font-bold text-white mb-1">抉择 A：涵洞墙角正在褪去灰鳞的“回退期半人”</h2>
+        <p class="text-xs text-slate-400 mb-3">夜潜时遇到手背灰鳞剥落、用俄语低泣呼喊孩子名字的半转化者，内务清杀队（ОСК）的探照灯正在逼近：</p>
+        <div class="grid grid-cols-1 gap-2 text-xs" id="groupA">
+          <button type="button" data-val="A1" class="choice-a-btn text-left p-2.5 rounded border border-emerald-500 bg-emerald-500/15 text-white transition flex items-center justify-between">
+            <span><strong>A1 · 冒险喂阿司匹林温水</strong>（助其退烧，获知老伊万水塔暗号）</span>
+            <span class="mono text-emerald-300 font-bold">良知▲ · +0划痕</span>
+          </button>
+          <button type="button" data-val="A2" class="choice-a-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>A2 · 贴蒸汽管阴影绕行</strong>（省下药水，任其被清杀队射杀）</span>
+            <span class="mono text-slate-400">中立 · +0划痕</span>
+          </button>
+          <button type="button" data-val="A3" class="choice-a-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>A3 · 道钉撬棍灭口搜刮</strong>（怕他出声引警，砸死他抢黑麦罐头）</span>
+            <span class="mono text-rose-400 font-bold">良知▼ · +2道划痕</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Choice B -->
+      <div class="paper-card border border-slate-800 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-2">
+          <span class="mono text-xs font-bold text-purple-400">CHOICE_B · 第二幕关键转折</span>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">决定【自愈真相】是否存活</span>
+        </div>
+        <h2 class="text-sm font-bold text-white mb-1">抉择 B：古丽娅与梁诺夫医生的三页《回退临床手稿》</h2>
+        <p class="text-xs text-slate-400 mb-3">女医师古丽娅将证明“熬过4天高热即自然退烧恢复”的手稿与妹妹拉娜（0420）转运底单塞给你，门外内务督察组砸门：</p>
+        <div class="grid grid-cols-1 gap-2 text-xs" id="groupB">
+          <button type="button" data-val="B2" class="choice-b-btn text-left p-2.5 rounded border border-emerald-500 bg-emerald-500/15 text-white transition flex items-center justify-between">
+            <span><strong>B2 · 撬棍卡门掩护师徒并隐瞒保存</strong>（挨一枪托，保住手稿原件）</span>
+            <span class="mono text-emerald-300 font-bold">真相存活 · +0划痕</span>
+          </button>
+          <button type="button" data-val="B3" class="choice-b-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>B3 · 交给老列车长“老轨”伊万走黑市扩散</strong>（塞进机车煤水箱流传）</span>
+            <span class="mono text-emerald-300 font-bold">真相存活 · +0划痕</span>
+          </button>
+          <button type="button" data-val="B1" class="choice-b-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>B1 · 当场上交督察官换取腹透液</strong>（古丽娅被捕，手稿扔进火炉）</span>
+            <span class="mono text-rose-400 font-bold">真相被埋 · +2道划痕</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mid-Game Split (Mother's Dialysis) & Choice C -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="paper-card border border-slate-800 rounded-lg p-3.5 shadow-lg">
+          <div class="mono text-[11px] font-bold text-amber-400 mb-1">CHAPTER_08 · 中盘分水岭</div>
+          <h3 class="text-xs font-bold text-white mb-2">卡佳妈妈腹膜透析状态（602室）</h3>
+          <div class="flex flex-col gap-2 text-xs" id="groupMother">
+            <button type="button" data-val="alive" class="mother-btn text-left p-2 rounded border border-emerald-500 bg-emerald-500/15 text-white transition">
+              🏠 <strong>保住母亲（家园线）</strong><br><span class="text-[11px] text-slate-300">按时带回腹透液，卡佳妈妈存活</span>
+            </button>
+            <button type="button" data-val="dead" class="mother-btn text-left p-2 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition">
+              🔥 <strong>腹透断绝（失母荒原线）</strong><br><span class="text-[11px] text-slate-400">背72斤母亲遗体撬门出墙</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="paper-card border border-slate-800 rounded-lg p-3.5 shadow-lg">
+          <div class="mono text-[11px] font-bold text-cyan-400 mb-1">CHOICE_C · 第三幕黑市交易</div>
+          <h3 class="text-xs font-bold text-white mb-2">对待重伤寻亲幸存者老谢苗</h3>
+          <div class="flex flex-col gap-2 text-xs" id="groupC">
+            <button type="button" data-val="C1" class="choice-c-btn text-left p-2 rounded border border-emerald-500 bg-emerald-500/15 text-white transition">
+              🤝 <strong>C1/C3 · 合作或分药相助</strong><br><span class="text-[11px] text-emerald-300">守住底线 · +0划痕</span>
+            </button>
+            <button type="button" data-val="C2" class="choice-c-btn text-left p-2 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition">
+              🗡️ <strong>C2 · 锁门背叛抢走盘尼西林</strong><br><span class="text-[11px] text-rose-400">背叛同类 · +1道划痕</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Endgame Gate D -->
+      <div class="paper-card border border-amber-500/40 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-2">
+          <span class="mono text-xs font-bold text-amber-400">ENDGAME_GATE_D · 第四幕乌拉尔鹰嘴崖脱轨车厢</span>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">终局分流闸</span>
+        </div>
+        <h2 class="text-sm font-bold text-white mb-1">终局闸 D：面对三号车厢里的妹妹拉娜与清杀专员灭口令</h2>
+        <p class="text-xs text-slate-400 mb-3">侧翻车厢里全是正在退烧醒来的活人，妹妹拉娜喊出“阿廖沙，带我回家”，门外清杀队举起铝热剂燃烧弹核对销毁数字：</p>
+        <div class="grid grid-cols-1 gap-2 text-xs" id="groupD">
+          <button type="button" data-val="D1" class="choice-d-btn text-left p-2.5 rounded border border-amber-400 bg-amber-500/20 text-white transition flex items-center justify-between">
+            <span><strong>D1 · 砸窗救人 + 冲上302高地向全城实名广播</strong>（帕维尔顶闸，进入良知判定）</span>
+            <span class="mono text-amber-300 font-bold">进入良知检定</span>
+          </button>
+          <button type="button" data-val="D2" class="choice-d-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>D2 · 配合清杀队锁死车厢</strong>（守住账面数字，换取防化服编制与牛肉罐头）</span>
+            <span class="mono text-rose-400 font-bold">直通结局 A</span>
+          </button>
+          <button type="button" data-val="D3" class="choice-d-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>D3 · 沉默转身逃离雪谷</strong>（或向茹科夫专员交出证据换取特护病房苟活）</span>
+            <span class="mono text-slate-400 font-bold">直通结局 C</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Diegetic Logbook Tally & Visual Ending Flowchart (7 cols) -->
+    <div class="lg:col-span-7 flex flex-col gap-4">
+
+      <!-- Top Panel: Diegetic Dual Ledger Back Page Simulation -->
+      <div class="bg-[#181512] border-2 border-[#3d352e] rounded-lg p-4 shadow-xl relative overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between border-b border-[#332c26] pb-2.5 mb-3 gap-2">
+          <div>
+            <span class="mono text-[11px] text-amber-400/90">DIEGETIC_UI · 《双面工作日志（Рабочий Журнал）》背面实时状态</span>
+            <h3 class="text-sm font-bold text-amber-100">阿列克谢的旧工作本（背面：真名录 & 俄式“卌”字五道划痕账）</h3>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="px-2.5 py-1 rounded bg-black/40 border border-slate-700 mono" id="truthStatusBadge">
+              📄 自愈手稿：存活 (B2)
+            </span>
+            <span class="px-2.5 py-1 rounded bg-black/40 border border-slate-700 mono" id="conscienceBadge">
+              ⚖️ 良知检定：达标 (0 道划痕)
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Left Page: Verified Real Names -->
+          <div class="bg-[#211d19] border border-[#3a322b] rounded p-3 text-xs">
+            <div class="text-amber-300/90 font-semibold mb-2 flex items-center justify-between border-b border-[#332c26] pb-1">
+              <span>【背面左页：钢笔核实真名录】</span>
+              <span class="mono text-[10px]">FOR 302 BROADCAST</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-300 mono text-[11px]" id="realNamesList">
+              <li class="flex items-center justify-between"><span>✓ 谢尔盖、玛丽亚 (南库3号柱滞留)</span><span class="text-emerald-400">已核实</span></li>
+              <li class="flex items-center justify-between"><span>✓ 莉莉娅、婴儿米沙 (白桦林402死窗)</span><span class="text-emerald-400">已记录</span></li>
+              <li class="flex items-center justify-between"><span>✓ 瓦西里 (东街食堂·死前喊Пить渴)</span><span class="text-amber-400">带血渍</span></li>
+              <li class="flex items-center justify-between"><span>✓ 安娜 (0419号·退烧自愈吹哨人)</span><span class="text-emerald-400">活体铁证</span></li>
+              <li class="flex items-center justify-between font-bold text-white"><span>★ 拉娜·莫罗佐娃 (0420号·三号车厢胞妹)</span><span class="text-amber-300" id="sisterLedgerTag">待营救</span></li>
+            </ul>
+          </div>
+
+          <!-- Right Page: Visual Russian 5-Stroke Tally Marks (卌) -->
+          <div class="bg-[#211d19] border border-[#3a322b] rounded p-3 text-xs flex flex-col justify-between">
+            <div class="text-rose-300/90 font-semibold mb-2 flex items-center justify-between border-b border-[#332c26] pb-1">
+              <span>【背面右页：“卌”字良知亏欠划痕】</span>
+              <span class="mono text-[10px]" id="tallyCountText">当前划痕：0 / 5</span>
+            </div>
+
+            <div class="flex items-center gap-4 my-1">
+              <!-- SVG Russian 5-Line Tally (4 verticals + 1 diagonal slash) -->
+              <div class="w-20 h-20 bg-[#14110f] border border-[#3a322b] rounded flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 100 100" class="w-14 h-14">
+                  <!-- Stroke 1: Vertical 1 -->
+                  <line id="st1" x1="22" y1="20" x2="20" y2="80" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="tally-stroke opacity-10" />
+                  <!-- Stroke 2: Vertical 2 -->
+                  <line id="st2" x1="40" y1="18" x2="39" y2="80" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="tally-stroke opacity-10" />
+                  <!-- Stroke 3: Vertical 3 -->
+                  <line id="st3" x1="58" y1="20" x2="57" y2="81" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="tally-stroke opacity-10" />
+                  <!-- Stroke 4: Vertical 4 -->
+                  <line id="st4" x1="76" y1="19" x2="75" y2="80" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="tally-stroke opacity-10" />
+                  <!-- Stroke 5: Diagonal Slash across all 4 -->
+                  <line id="st5" x1="12" y1="68" x2="88" y2="30" stroke="#ef4444" stroke-width="7" stroke-linecap="round" class="tally-stroke opacity-10" />
+                </svg>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed" id="tallyReasonText">
+                阿列克谢守住了底线：未对回退期半人挥下撬棍，保住了古丽娅的自愈手稿，也未在黑市背叛老谢苗。纸页干净，没有任何亏欠血痕。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Panel: Interactive Visual Branching Flowchart -->
+      <div class="paper-card border border-slate-800 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold text-white">🔀 双线汇聚与五结局动态流程图（高亮卡片为当前激活结局）</h3>
+          <span class="mono text-[11px] text-slate-400">LIVE_FLOW_GRAPH</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-2.5 text-xs">
+          <div id="endCardA" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-rose-400 font-bold mb-1">ENDING A (选 D2)</div>
+            <div class="font-bold text-white mb-1">【击毙仁慈】</div>
+            <p class="text-[11px] text-slate-400 leading-snug">配合清杀烧毁三号车厢，领到印有妹妹<strong>拉娜(0420)</strong>的清零功勋表。</p>
+          </div>
+
+          <div id="endCardC" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-slate-400 font-bold mb-1">ENDING C (选 D3)</div>
+            <div class="font-bold text-white mb-1">【荒诞麻木】</div>
+            <p class="text-[11px] text-slate-400 leading-snug">从雪谷沉默逃离或妥协，在永不停歇的俄语广播声中麻木苟活。</p>
+          </div>
+
+          <div id="endCardB" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-amber-400 font-bold mb-1">ENDING B (D1+有划痕)</div>
+            <div class="font-bold text-white mb-1">【荒诞解放】</div>
+            <p class="text-[11px] text-slate-400 leading-snug">广播唤醒工人砸开城门，但因前期的杀戮/背叛，妹妹拉娜死于黎明前。</p>
+          </div>
+
+          <div id="endCardTrueHome" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-emerald-400 font-bold mb-1">TRUE α (D1+零划痕+保母)</div>
+            <div class="font-bold text-white mb-1">【再见拉娜】</div>
+            <p class="text-[11px] text-slate-400 leading-snug">兄妹二人与轮椅上的卡佳妈妈及全城工人合力掀开主铁闸，走入天光。</p>
+          </div>
+
+          <div id="endCardTrueOutland" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-orange-400 font-bold mb-1">TRUE β (D1+零划痕+失母)</div>
+            <div class="font-bold text-white mb-1">【荒原之火】</div>
+            <p class="text-[11px] text-slate-400 leading-snug">白桦林坟前烧掉特赦令，替妹妹系上母亲旧羊毛围巾，驾卡车驶向北方矿区。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Panel: Active Ending Full Cutscene Preview -->
+      <div class="paper-card border-2 border-emerald-500/60 rounded-lg p-5 shadow-xl" id="activeEndingBox">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-3">
+          <div>
+            <span class="mono text-xs font-bold text-emerald-400" id="outEndingCode">HIDDEN TRUE ENDING α · 隐藏真结局（家园团圆线）</span>
+            <h2 class="text-lg font-bold text-white mt-0.5" id="outEndingTitle">【极夜破晓 · 再见拉娜】</h2>
+          </div>
+          <span class="text-xs px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold" id="outEndingCondition">
+            触发条件：终局选 D1 + 良知达标(零划痕) + 卡佳妈妈存活
+          </span>
+        </div>
+
+        <div class="space-y-3 text-xs sm:text-sm text-slate-200 leading-relaxed" id="outEndingCutscene">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const simState = {
+      choiceA: "A1",     // A1, A2, A3
+      choiceB: "B2",     // B1, B2, B3
+      choiceC: "C1",     // C1, C2
+      mother: "alive",   // alive, dead
+      choiceD: "D1"      // D1, D2, D3
+    };
+
+    const ENDING_DETAILS = {
+      A: {
+        code: "ENDING A · 体制顺从结局（对应 handover 结局A + 原E4）",
+        title: "【击毙仁慈 · 功勋名单上的妹妹】",
+        cond: "触发条件：第四幕终局闸选 D2（配合内务清杀队锁死并烧毁第三节车厢）",
+        borderClass: "paper-card border-2 border-rose-500/70 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-semibold",
+        codeClass: "mono text-xs font-bold text-rose-400",
+        desc: `
+          <p>面对清杀督察专员的铁皮扩音器与黑洞洞的 AKM 枪口，阿列克谢松开了握住道钉撬棍的手。他退出了侧翻的第三节车厢，听从指令替清杀队挂上了车厢外锁，听着身后车厢里传来铝热剂燃烧的轰鸣与妹妹拉娜被火焰吞没的哭喊。</p>
+          <p>次日清晨，暴风雪弥漫的街道空无一人。曾经最依赖他的灰狼犬“灰烬”冲着身穿崭新铅灰防化服的阿列克谢狂吠一声，掉头跑进了白桦林。阿列克谢在区管委领到了两箱特供牛肉罐头和一份盖着红章的《零号肃清功勋销账表》——他低头一看，销毁名单第 14 行赫然印着：<strong>【档案 0420 · 莫罗佐娃·拉娜 · 关系：胞妹 · 状态：已物理清零】</strong>。</p>
+        `
+      },
+      C: {
+        code: "ENDING C · 逃避妥协结局（对应 handover 结局C + 原E2）",
+        title: "【荒诞麻木 · 半死不活的轮回】",
+        cond: "触发条件：第四幕终局闸选 D3（在鹰嘴崖沉默逃离，或交出证据换取苟活）",
+        borderClass: "paper-card border-2 border-slate-500/70 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-slate-700 text-slate-200 border border-slate-500 font-semibold",
+        codeClass: "mono text-xs font-bold text-slate-400",
+        desc: `
+          <p>阿列克谢既没有帮清杀队锁门，也没有勇气冲进枪林弹雨去救第三节车厢，而是趁乱顺着排污暗渠逃回了赫鲁晓夫楼。他用搜刮来的物资换取了苟活的配额，在被从外侧焊死的房间里打开了一听黑麦牛肉罐头。</p>
+          <p>302高地的广播没有响起，城门也没有打开。诺沃斯克-17半死不活地继续运转，街角铁皮喇叭里依然日复一日地循环播放着《致第17工业区全体公民的公开信》，远处另一趟“铁壳号”的汽笛声准时在午夜响起。阿列克谢端起水杯大口喝水，耳边却永远回荡着瓦西里那声微弱的“……Пить（渴）……”与妹妹未说完的呼唤。</p>
+        `
+      },
+      B: {
+        code: "ENDING B · 残缺解放结局（对应 handover 结局B · 良知未达标）",
+        title: "【荒诞解放 · 敞开的城门与撕碎的划痕】",
+        cond: "触发条件：终局选 D1（营救广播） + 良知未达标（日志背面留有“卌”字血划痕）",
+        borderClass: "paper-card border-2 border-amber-500/70 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold",
+        codeClass: "mono text-xs font-bold text-amber-400",
+        desc: `
+          <p>帕维尔老爹用身体顶住万伏高压电闸，阿列克谢在 302 高地吼出了“第三节车厢里全是活人”的真相。次日极夜破晓，全城饥饿的工人扛着空配给袋和十二磅铁锤涌向关卡，清杀队面对成千上万会说话会哭的活人不敢开火，焊死的封控大门终于被推倒了。</p>
+          <p>然而，没有赢家——因为阿列克谢此前在黑夜里曾对回退期半人挥下撬棍（或上交了古丽娅的手稿、背叛了黑市同伴），突围防线在混乱中崩溃，妹妹<strong>拉娜</strong>在黎明前被流弹击中，死在了阿列克谢怀里。他跪在敞开的城门口，翻开工作日志背面数清了上面一道道刺眼的血划痕（卌）：<strong>原来真正害死妹妹的，是此前每一个夜里他为了自保而向同类挥出的屠刀</strong>。他一页页撕碎了日志，远处另一趟“铁壳号”汽笛又响。</p>
+        `
+      },
+      TRUE_HOME: {
+        code: "HIDDEN TRUE ENDING α · 隐藏真结局（家园线完美团圆）",
+        title: "【极夜破晓 · 再见拉娜】",
+        cond: "触发条件：终局选 D1 + 良知达标（零划痕：非A3 + B2/B3 + 非C2） + 卡佳妈妈存活",
+        borderClass: "paper-card border-2 border-emerald-500/80 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold",
+        codeClass: "mono text-xs font-bold text-emerald-400",
+        desc: `
+          <p>极夜破晓，诺沃斯克第一安全区主关卡前。成千上万的铁路工人手举空搪瓷碗、病历单与古丽娅保存下来的《回退自愈手稿》站在防暴盾牌前，年轻哨兵科利亚放下了步枪。左肩缠着渗血绷带的阿列克谢走上前，将弯曲的道钉撬棍插进锁死的升降铁杆齿轮箱！</p>
+          <p>手腕上最后一丝灰鳞已经脱落、完全康复的妹妹<strong>拉娜</strong>走上前，紧紧握住了哥哥满是冻疮的右手；卡佳妈妈坐在轮椅上抵住阿列克谢的后腰，梁诺夫医生、古丽娅、安娜、切尔诺夫中士以及南库谢尔盖母子等所有被记在日志背面的活人一起搭上手——<em>咔嚓！！</em> 锁死的齿轮彻底崩断，铁栏杆被高高掀向晨空！阿列克谢撕掉正面印着“本批次已完结”的公文页，牵着妹妹与母亲走入真正的天光。</p>
+        `
+      },
+      TRUE_OUTLAND: {
+        code: "HIDDEN TRUE ENDING β · 失母荒原线专属真结局",
+        title: "【荒原之火 · 兄妹北行】",
+        cond: "触发条件：终局选 D1 + 良知达标（零划痕） + 第八章卡佳妈妈已去世（荒原线）",
+        borderClass: "paper-card border-2 border-orange-500/80 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-orange-500/20 text-orange-300 border border-orange-500/40 font-semibold",
+        codeClass: "mono text-xs font-bold text-orange-400",
+        desc: `
+          <p>极夜破晓，远处的工业城终于在302高地广播的轰鸣中砸开了铁闸。城外白桦林荒原的高坡上，阿列克谢带着从鹰嘴崖第三节车厢救出来的妹妹<strong>拉娜</strong>，跪在卡佳妈妈的坟前。梁诺夫医生递来一张盖着红章的《恢复原602室户籍与一类配给通知书》，阿列克谢沉默地掏出打火机将其点燃，任由纸灰飘落在母亲坟头。</p>
+          <p>他替刚刚退烧康复的妹妹系紧了脖子上那条用母亲旧蓝格羊毛床单裁成的围巾，拍了拍缺耳灰狼犬“灰烬”的脑袋，兄妹二人一起跨上了帕维尔老爹留下的那辆焊满护甲钢板的乌拉尔卡车。<strong>“妈不用再守那个格子了。拉娜，我们去北边——把那些还没听见广播的矿区铁门，一扇一扇撬开。”</strong> 卡车背对着苏醒的城市，碾过结霜的广轨铁道驶向苍茫雪原。</p>
+        `
+      }
+    };
+
+    function updateSimulation() {
+      let tallyStrokes = 0;
+      const reasons = [];
+
+      if (simState.choiceA === "A3") {
+        tallyStrokes += 2;
+        reasons.push("夜潜撬棍灭口回退期半人 (+2道划痕)");
+      }
+      if (simState.choiceB === "B1") {
+        tallyStrokes += 2;
+        reasons.push("向督察组交出古丽娅《回退手稿》导致真相被埋 (+2道划痕)");
+      }
+      if (simState.choiceC === "C2") {
+        tallyStrokes += 1;
+        reasons.push("在黑市锁门背叛幸存者老谢苗 (+1道划痕)");
+      }
+
+      const truthAlive = simState.choiceB === "B2" || simState.choiceB === "B3";
+      const consciencePass = truthAlive && simState.choiceA !== "A3" && simState.choiceC !== "C2";
+
+      // Update SVG Russian 5-stroke tally
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById("st" + i);
+        if (i <= tallyStrokes) {
+          el.classList.remove("opacity-10");
+          el.classList.add("opacity-100");
+        } else {
+          el.classList.remove("opacity-100");
+          el.classList.add("opacity-10");
+        }
+      }
+
+      document.getElementById("tallyCountText").textContent = `当前划痕：${tallyStrokes} / 5`;
+      document.getElementById("tallyReasonText").textContent =
+        reasons.length === 0
+          ? "阿列克谢守住了底线：未对回退期半人挥下撬棍，保住了古丽娅的自愈手稿，也未在黑市背叛老谢苗。纸页干净，没有任何亏欠血痕。"
+          : "亏欠记录：" + reasons.join("；") + "。每一道血痕都将在鹰嘴崖终局迎来反噬。";
+
+      const truthBadge = document.getElementById("truthStatusBadge");
+      truthBadge.textContent = truthAlive ? `📄 自愈手稿：存活 (${simState.choiceB})` : "📄 自愈手稿：被焚毁 (B1)";
+      truthBadge.className = truthAlive
+        ? "px-2.5 py-1 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 mono"
+        : "px-2.5 py-1 rounded bg-rose-950/60 border border-rose-500/40 text-rose-300 mono";
+
+      const consBadge = document.getElementById("conscienceBadge");
+      consBadge.textContent = consciencePass
+        ? "⚖️ 良知检定：达标 (0 道划痕)"
+        : `⚖️ 良知检定：未达标 (${tallyStrokes} 道划痕)`;
+      consBadge.className = consciencePass
+        ? "px-2.5 py-1 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 mono"
+        : "px-2.5 py-1 rounded bg-rose-950/60 border border-rose-500/40 text-rose-300 mono";
+
+      let endingKey = "TRUE_HOME";
+      if (simState.choiceD === "D2") {
+        endingKey = "A";
+      } else if (simState.choiceD === "D3") {
+        endingKey = "C";
+      } else {
+        if (!consciencePass) {
+          endingKey = "B";
+        } else {
+          endingKey = simState.mother === "alive" ? "TRUE_HOME" : "TRUE_OUTLAND";
+        }
+      }
+
+      const sisterTag = document.getElementById("sisterLedgerTag");
+      if (endingKey === "A") {
+        sisterTag.textContent = "已物理清零(死)";
+        sisterTag.className = "text-rose-400";
+      } else if (endingKey === "B" || endingKey === "C") {
+        sisterTag.textContent = "未能救活";
+        sisterTag.className = "text-amber-400";
+      } else {
+        sisterTag.textContent = "成功救出(退烧)";
+        sisterTag.className = "text-emerald-400";
+      }
+
+      const cardMap = {
+        A: "endCardA",
+        C: "endCardC",
+        B: "endCardB",
+        TRUE_HOME: "endCardTrueHome",
+        TRUE_OUTLAND: "endCardTrueOutland"
+      };
+      Object.entries(cardMap).forEach(([k, cardId]) => {
+        const card = document.getElementById(cardId);
+        if (k === endingKey) {
+          card.className = "ending-card p-3 rounded border-2 border-amber-400 bg-amber-500/15 shadow-md transition-all scale-[1.02]";
+        } else {
+          card.className = "ending-card p-3 rounded border border-slate-800 bg-slate-900/50 opacity-55 transition-all";
+        }
+      });
+
+      const detail = ENDING_DETAILS[endingKey];
+      const box = document.getElementById("activeEndingBox");
+      box.className = detail.borderClass;
+      document.getElementById("outEndingCode").className = detail.codeClass;
+      document.getElementById("outEndingCode").textContent = detail.code;
+      document.getElementById("outEndingTitle").textContent = detail.title;
+      document.getElementById("outEndingCondition").className = detail.badgeClass;
+      document.getElementById("outEndingCondition").textContent = detail.cond;
+      document.getElementById("outEndingCutscene").innerHTML = detail.desc;
+    }
+
+    function bindButtonGroup(selector, stateKey) {
+      const buttons = document.querySelectorAll(selector);
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          simState[stateKey] = btn.dataset.val;
+          refreshButtonsUI();
+          updateSimulation();
+        });
+      });
+    }
+
+    function refreshButtonsUI() {
+      const highlight = (selector, currentVal, activeBorder) => {
+        document.querySelectorAll(selector).forEach(btn => {
+          const isAct = btn.dataset.val === currentVal;
+          btn.className = btn.className
+            .replace(/border-(emerald|amber|slate)-[0-9]+/g, "")
+            .replace(/bg-(emerald|amber|slate)-[0-9]+\/[0-9]+/g, "")
+            .trim();
+          if (isAct) {
+            btn.classList.add(activeBorder, "bg-emerald-500/15", "text-white");
+          } else {
+            btn.classList.add("border-slate-800", "bg-slate-900/70", "text-slate-300");
+          }
+        });
+      };
+
+      highlight(".choice-a-btn", simState.choiceA, "border-emerald-500");
+      highlight(".choice-b-btn", simState.choiceB, "border-emerald-500");
+      highlight(".choice-c-btn", simState.choiceC, "border-emerald-500");
+      highlight(".mother-btn", simState.mother, "border-emerald-500");
+      highlight(".choice-d-btn", simState.choiceD, "border-amber-400");
+    }
+
+    bindButtonGroup(".choice-a-btn", "choiceA");
+    bindButtonGroup(".choice-b-btn", "choiceB");
+    bindButtonGroup(".choice-c-btn", "choiceC");
+    bindButtonGroup(".mother-btn", "mother");
+    bindButtonGroup(".choice-d-btn", "choiceD");
+
+    document.getElementById("btnPresetTrue").addEventListener("click", () => {
+      simState.choiceA = "A1";
+      simState.choiceB = "B2";
+      simState.choiceC = "C1";
+      simState.mother = "alive";
+      simState.choiceD = "D1";
+      refreshButtonsUI();
+      updateSimulation();
+    });
+
+    document.getElementById("btnPresetOutland").addEventListener("click", () => {
+      simState.choiceA = "A1";
+      simState.choiceB = "B3";
+      simState.choiceC = "C1";
+      simState.mother = "dead";
+      simState.choiceD = "D1";
+      refreshButtonsUI();
+      updateSimulation();
+    });
+
+    document.getElementById("btnPresetTragic").addEventListener("click", () => {
+      simState.choiceA = "A3";
+      simState.choiceB = "B2";
+      simState.choiceC = "C2";
+      simState.mother = "alive";
+      simState.choiceD = "D1";
+      refreshButtonsUI();
+      updateSimulation();
+    });
+
+    window.addEventListener("load", () => {
+      refreshButtonsUI();
+      updateSimulation();
+    });
+  </script>
+</body>
+</html>

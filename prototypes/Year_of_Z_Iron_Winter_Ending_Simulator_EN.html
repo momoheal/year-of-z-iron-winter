@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Year of Z: Iron Winter (v4.0) — Dual-Anchor Narrative & 5-Ending Tally Simulator</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #090b0e;
+      color: #e2e8f0;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .paper-card {
+      background: linear-gradient(145deg, #161b22 0%, #10141a 100%);
+    }
+    .tally-stroke {
+      transition: all 0.25s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#090b0e] text-slate-200">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-[#10141b]/95 backdrop-blur sticky top-0 z-30 px-4 py-3">
+    <div class="max-w-[1550px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-2.5 h-8 bg-amber-500 rounded-sm shadow-[0_0_12px_rgba(245,158,11,0.7)]"></div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight">Year of Z: Iron Winter (v4.0) — Dual-Line Narrative & 5-Ending Simulator</h1>
+            <span class="mono text-[11px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">NOVORSK-17 · IRON WINTER</span>
+          </div>
+          <p class="text-xs text-slate-400">Day Anchor: Mama Katya (Apt 602 Dialysis) × Night Hook: Sister Lana (File 0420 · Armored Train "Buran" Carriage No. 3) · Live Russian 5-Stroke Tally (卌)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 text-xs">
+        <button type="button" id="btnPresetTrue" class="px-3 py-1.5 rounded bg-emerald-600/20 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-600/30 transition font-medium">
+          ✨ Preset: True Ending α (Hello Again, Lana)
+        </button>
+        <button type="button" id="btnPresetOutland" class="px-3 py-1.5 rounded bg-orange-600/20 border border-orange-500/50 text-orange-300 hover:bg-orange-600/30 transition font-medium">
+          🔥 Preset: Outland True Ending β (Fires of the Outland)
+        </button>
+        <button type="button" id="btnPresetTragic" class="px-3 py-1.5 rounded bg-rose-600/20 border border-rose-500/50 text-rose-300 hover:bg-rose-600/30 transition font-medium">
+          💔 Preset: Ending B (Gates Open, Sister Lost)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-[1550px] w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+    <!-- Left Column: Interactive Decision Simulator (5 cols) -->
+    <div class="lg:col-span-5 flex flex-col gap-4">
+
+      <!-- Choice A -->
+      <div class="paper-card border border-slate-800 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-2">
+          <span class="mono text-xs font-bold text-blue-400">CHOICE_A · RECURRING NIGHT STEALTH</span>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Broad-Gauge Culvert</span>
+        </div>
+        <h2 class="text-sm font-bold text-white mb-1">Choice A: The Regressing "Half-Human" in the Culvert</h2>
+        <p class="text-xs text-slate-400 mb-3">During curfew stealth, you encounter a trembling youth whose grey scales are flaking off as he whispers for water in Russian while an O.S.K. searchlight approaches:</p>
+        <div class="grid grid-cols-1 gap-2 text-xs" id="groupA">
+          <button type="button" data-val="A1" class="choice-a-btn text-left p-2.5 rounded border border-emerald-500 bg-emerald-500/15 text-white transition flex items-center justify-between">
+            <span><strong>A1 · Feed Aspirin Water</strong> (Help fever break; gain Old Ivan's water-tower cipher)</span>
+            <span class="mono text-emerald-300 font-bold">Conscience▲ · +0 Strokes</span>
+          </button>
+          <button type="button" data-val="A2" class="choice-a-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>A2 · Bypass in Steam-Pipe Shadow</strong> (Save medicine; O.S.K. executes him)</span>
+            <span class="mono text-slate-400">Neutral · +0 Strokes</span>
+          </button>
+          <button type="button" data-val="A3" class="choice-a-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>A3 · Execute with Crowbar & Loot</strong> (Silence him & take his buckwheat tin)</span>
+            <span class="mono text-rose-400 font-bold">Conscience▼ · +2 Strokes</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Choice B -->
+      <div class="paper-card border border-slate-800 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-2">
+          <span class="mono text-xs font-bold text-purple-400">CHOICE_B · ACT II PIVOT</span>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Determines [Truth_Alive]</span>
+        </div>
+        <h2 class="text-sm font-bold text-white mb-1">Choice B: Dr. Guliya & Leonov's 3-Page "Regression Manuscript"</h2>
+        <p class="text-xs text-slate-400 mb-3">Dr. Guliya hands you clinical proof that patients naturally recover after 4 days of fever, along with Sister Lana's (`0420`) transfer slip, as MVD inspectors batter the door:</p>
+        <div class="grid grid-cols-1 gap-2 text-xs" id="groupB">
+          <button type="button" data-val="B2" class="choice-b-btn text-left p-2.5 rounded border border-emerald-500 bg-emerald-500/15 text-white transition flex items-center justify-between">
+            <span><strong>B2 · Wedge Door with Crowbar & Conceal Manuscript</strong> (Take rifle-butt blow, save original)</span>
+            <span class="mono text-emerald-300 font-bold">Truth Alive · +0 Strokes</span>
+          </button>
+          <button type="button" data-val="B3" class="choice-b-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>B3 · Smuggle via Conductor "Old Rail" Ivan</strong> (Spread via locomotive coal tenders)</span>
+            <span class="mono text-emerald-300 font-bold">Truth Alive · +0 Strokes</span>
+          </button>
+          <button type="button" data-val="B1" class="choice-b-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>B1 · Surrender Manuscript to Inspector for Dialysis Fluid</strong> (Guliya arrested, notes burned)</span>
+            <span class="mono text-rose-400 font-bold">Truth Buried · +2 Strokes</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mid-Game Split (Mother's Dialysis) & Choice C -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="paper-card border border-slate-800 rounded-lg p-3.5 shadow-lg">
+          <div class="mono text-[11px] font-bold text-amber-400 mb-1">CHAPTER_08 · MID-GAME WATERSHED</div>
+          <h3 class="text-xs font-bold text-white mb-2">Mama Katya's Dialysis Status (Apt 602)</h3>
+          <div class="flex flex-col gap-2 text-xs" id="groupMother">
+            <button type="button" data-val="alive" class="mother-btn text-left p-2 rounded border border-emerald-500 bg-emerald-500/15 text-white transition">
+              🏠 <strong>Mother Saved (Home Route)</strong><br><span class="text-[11px] text-slate-300">Dialysis maintained; Katya survives</span>
+            </button>
+            <button type="button" data-val="dead" class="mother-btn text-left p-2 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition">
+              🔥 <strong>Dialysis Severed (Outland Route)</strong><br><span class="text-[11px] text-slate-400">Carry 72-lb mother out through pried gate</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="paper-card border border-slate-800 rounded-lg p-3.5 shadow-lg">
+          <div class="mono text-[11px] font-bold text-cyan-400 mb-1">CHOICE_C · ACT III BLACK MARKET</div>
+          <h3 class="text-xs font-bold text-white mb-2">Wounded Survivor Old Semyon</h3>
+          <div class="flex flex-col gap-2 text-xs" id="groupC">
+            <button type="button" data-val="C1" class="choice-c-btn text-left p-2 rounded border border-emerald-500 bg-emerald-500/15 text-white transition">
+              🤝 <strong>C1/C3 · Cooperate or Share Meds</strong><br><span class="text-[11px] text-emerald-300">Conscience Kept · +0 Strokes</span>
+            </button>
+            <button type="button" data-val="C2" class="choice-c-btn text-left p-2 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition">
+              🗡️ <strong>C2 · Lock Door & Steal Penicillin</strong><br><span class="text-[11px] text-rose-400">Betray Kin · +1 Stroke</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Endgame Gate D -->
+      <div class="paper-card border border-amber-500/40 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-2">
+          <span class="mono text-xs font-bold text-amber-400">ENDGAME_GATE_D · ACT IV EAGLE'S CRAG DERAILED BOXCAR</span>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Final Branching Gate</span>
+        </div>
+        <h2 class="text-sm font-bold text-white mb-1">Gate D: Sister Lana Inside Carriage No. 3 vs. O.S.K. Thermite Order</h2>
+        <p class="text-xs text-slate-400 mb-3">Inside the overturned boxcar are 176 waking survivors; Sister Lana cries "Alyosha, take me home!" while O.S.K. squads prepare thermite grenades to balance the master ledger:</p>
+        <div class="grid grid-cols-1 gap-2 text-xs" id="groupD">
+          <button type="button" data-val="D1" class="choice-d-btn text-left p-2.5 rounded border border-amber-400 bg-amber-500/20 text-white transition flex items-center justify-between">
+            <span><strong>D1 · Smash Windows, Rescue Lana & Broadcast from Hill 302</strong> (Pavel's sacrifice, Conscience Check)</span>
+            <span class="mono text-amber-300 font-bold">To Conscience Check</span>
+          </button>
+          <button type="button" data-val="D2" class="choice-d-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>D2 · Comply with O.S.K. & Lock Carriage No. 3</strong> (Preserve ledger numbers for hazmat tenure)</span>
+            <span class="mono text-rose-400 font-bold">Direct to Ending A</span>
+          </button>
+          <button type="button" data-val="D3" class="choice-d-btn text-left p-2.5 rounded border border-slate-800 bg-slate-900/70 text-slate-300 hover:bg-slate-800 transition flex items-center justify-between">
+            <span><strong>D3 · Flee Silently Through the Blizzard Culvert</strong> (Abandon Carriage No. 3 to survive alone)</span>
+            <span class="mono text-slate-400 font-bold">Direct to Ending C</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Diegetic Logbook Tally & Visual Ending Flowchart (7 cols) -->
+    <div class="lg:col-span-7 flex flex-col gap-4">
+
+      <!-- Top Panel: Diegetic Dual Ledger Back Page Simulation -->
+      <div class="bg-[#181512] border-2 border-[#3d352e] rounded-lg p-4 shadow-xl relative overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between border-b border-[#332c26] pb-2.5 mb-3 gap-2">
+          <div>
+            <span class="mono text-[11px] text-amber-400/90">DIEGETIC_UI · DUAL-SIDED WORK LOGBOOK (`РАБОЧИЙ ЖУРНАЛ`) BACK PAGE</span>
+            <h3 class="text-sm font-bold text-amber-100">Aleksei's Work Logbook (Left: Verified Real Names · Right: Russian 5-Stroke Tally `卌`)</h3>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="px-2.5 py-1 rounded bg-black/40 border border-slate-700 mono" id="truthStatusBadge">
+              📄 Manuscript: Alive (B2)
+            </span>
+            <span class="px-2.5 py-1 rounded bg-black/40 border border-slate-700 mono" id="conscienceBadge">
+              ⚖️ Conscience: Passed (0 Strokes)
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Left Page: Verified Real Names -->
+          <div class="bg-[#211d19] border border-[#3a322b] rounded p-3 text-xs">
+            <div class="text-amber-300/90 font-semibold mb-2 flex items-center justify-between border-b border-[#332c26] pb-1">
+              <span>[Back Left Page: Fountain-Pen Real Names]</span>
+              <span class="mono text-[10px]">FOR 302 BROADCAST</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-300 mono text-[11px]">
+              <li class="flex items-center justify-between"><span>✓ Sergey & Maria (Cold Storage Pillar 3)</span><span class="text-emerald-400">Verified</span></li>
+              <li class="flex items-center justify-between"><span>✓ Liliya & Baby Misha (Birch Grove 402)</span><span class="text-emerald-400">Recorded</span></li>
+              <li class="flex items-center justify-between"><span>✓ Vasily (East Canteen · whispered "Пить")</span><span class="text-amber-400">Blood-Stained</span></li>
+              <li class="flex items-center justify-between"><span>✓ Anna (File 0419 · Self-Bound Witness)</span><span class="text-emerald-400">Living Proof</span></li>
+              <li class="flex items-center justify-between font-bold text-white"><span>★ Lana Morozova (File 0420 · Carriage No. 3)</span><span class="text-amber-300" id="sisterLedgerTag">Awaiting Rescue</span></li>
+            </ul>
+          </div>
+
+          <!-- Right Page: Visual Russian 5-Stroke Tally Marks (卌) -->
+          <div class="bg-[#211d19] border border-[#3a322b] rounded p-3 text-xs flex flex-col justify-between">
+            <div class="text-rose-300/90 font-semibold mb-2 flex items-center justify-between border-b border-[#332c26] pb-1">
+              <span>[Back Right Page: Russian "卌" Guilt Tally]</span>
+              <span class="mono text-[10px]" id="tallyCountText">Strokes: 0 / 5</span>
+            </div>
+
+            <div class="flex items-center gap-4 my-1">
+              <!-- SVG Russian 5-Line Tally (4 verticals + 1 diagonal slash) -->
+              <div class="w-20 h-20 bg-[#14110f] border border-[#3a322b] rounded flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 100 100" class="w-14 h-14">
+                  <line id="st1" x1="22" y1="20" x2="20" y2="80" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="tally-stroke opacity-10" />
+                  <line id="st2" x1="40" y1="18" x2="39" y2="80" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="tally-stroke opacity-10" />
+                  <line id="st3" x1="58" y1="20" x2="57" y2="81" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="tally-stroke opacity-10" />
+                  <line id="st4" x1="76" y1="19" x2="75" y2="80" stroke="#ef4444" stroke-width="6" stroke-linecap="round" class="tally-stroke opacity-10" />
+                  <line id="st5" x1="12" y1="68" x2="88" y2="30" stroke="#ef4444" stroke-width="7" stroke-linecap="round" class="tally-stroke opacity-10" />
+                </svg>
+              </div>
+              <p class="text-[11px] text-slate-300 leading-relaxed" id="tallyReasonText">
+                Aleksei held his moral line: he spared the regressing half-humans, protected Dr. Guliya's manuscript, and never betrayed Semyon. The page remains unstained.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Panel: Interactive Visual Branching Flowchart -->
+      <div class="paper-card border border-slate-800 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold text-white">🔀 Dual-Line Convergence & 5-Ending Flowchart (Highlighted Card = Active Ending)</h3>
+          <span class="mono text-[11px] text-slate-400">LIVE_FLOW_GRAPH</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-2.5 text-xs">
+          <div id="endCardA" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-rose-400 font-bold mb-1">ENDING A (D2)</div>
+            <div class="font-bold text-white mb-1">[Mercy of the Firing Squad]</div>
+            <p class="text-[11px] text-slate-400 leading-snug">Lock Carriage No. 3 for the Purge Squad; receive a commendation listing Sister <strong>Lana (0420)</strong> as "Physically Zeroed."</p>
+          </div>
+
+          <div id="endCardC" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-slate-400 font-bold mb-1">ENDING C (D3)</div>
+            <div class="font-bold text-white mb-1">[Absurd Numbness]</div>
+            <p class="text-[11px] text-slate-400 leading-snug">Flee the ravine in silence; survive in a welded room as the street horn loops endlessly.</p>
+          </div>
+
+          <div id="endCardB" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-amber-400 font-bold mb-1">ENDING B (D1 + Strokes)</div>
+            <div class="font-bold text-white mb-1">[Absurd Liberation]</div>
+            <p class="text-[11px] text-slate-400 leading-snug">Broadcast opens the city gates, but karmic fallout from past killings claims Sister Lana before dawn.</p>
+          </div>
+
+          <div id="endCardTrueHome" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-emerald-400 font-bold mb-1">TRUE α (D1 + 0 Strokes + Mom)</div>
+            <div class="font-bold text-white mb-1">[Hello Again, Lana]</div>
+            <p class="text-[11px] text-slate-400 leading-snug">Aleksei, Lana, Mama Katya, and thousands of workers snap the main checkpoint barrier into the polar dawn.</p>
+          </div>
+
+          <div id="endCardTrueOutland" class="ending-card p-3 rounded border border-slate-800 bg-slate-900/60 transition-all">
+            <div class="mono text-[10px] text-orange-400 font-bold mb-1">TRUE β (D1 + 0 Strokes + Outland)</div>
+            <div class="font-bold text-white mb-1">[Fires of the Outland]</div>
+            <p class="text-[11px] text-slate-400 leading-snug">Burn the amnesty order at Mama Katya's grave, wrap Lana in her wool scarf, and drive north to free the mining camps.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Panel: Active Ending Full Cutscene Preview -->
+      <div class="paper-card border-2 border-emerald-500/60 rounded-lg p-5 shadow-xl" id="activeEndingBox">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-3">
+          <div>
+            <span class="mono text-xs font-bold text-emerald-400" id="outEndingCode">HIDDEN TRUE ENDING α · HOME ROUTE PERFECTION</span>
+            <h2 class="text-lg font-bold text-white mt-0.5" id="outEndingTitle">[Polar Dawn · Hello Again, Lana]</h2>
+          </div>
+          <span class="text-xs px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold" id="outEndingCondition">
+            Trigger: Gate D1 + Zero Tally Strokes (0/5) + Mama Katya Alive
+          </span>
+        </div>
+
+        <div class="space-y-3 text-xs sm:text-sm text-slate-200 leading-relaxed" id="outEndingCutscene"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const simState = {
+      choiceA: "A1",
+      choiceB: "B2",
+      choiceC: "C1",
+      mother: "alive",
+      choiceD: "D1"
+    };
+
+    const ENDING_DETAILS = {
+      A: {
+        code: "ENDING A · SYSTEM COMPLIANCE ENDING",
+        title: "[Mercy of the Firing Squad · Sister on the Honors Roll]",
+        cond: "Trigger: Choose D2 at Eagle's Crag (Lock Carriage No. 3 for the O.S.K. Purge Squad)",
+        borderClass: "paper-card border-2 border-rose-500/70 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-semibold",
+        codeClass: "mono text-xs font-bold text-rose-400",
+        desc: `
+          <p>Facing the Purge Commander's megaphone and rows of suppressed AKM rifles, Aleksei loosens his grip on the railway crowbar. He steps out of the overturned third boxcar and fastens the exterior iron latch himself, listening to the roar of thermite grenades and his sister Lana's cries being swallowed by flame.</p>
+          <p>Next morning, the blizzard-swept streets are empty. His faithful wolfdog "Ash" barks once at Aleksei's brand-new lead-grey hazmat coat and vanishes into the birch woods. At the District Committee, Aleksei receives two crates of tinned beef and a stamped <em>Zero-Clearance Commendation Ledger</em>—Row 14 reads: <strong>[FILE 0420 · MOROZOVA, LANA · RELATION: SISTER · STATUS: PHYSICALLY ZEROED]</strong>.</p>
+        `
+      },
+      C: {
+        code: "ENDING C · ESCAPIST COMPROMISE ENDING",
+        title: "[Absurd Numbness · The Eternal Broadcast]",
+        cond: "Trigger: Choose D3 at Eagle's Crag (Flee silently through the drainage culvert)",
+        borderClass: "paper-card border-2 border-slate-500/70 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-slate-700 text-slate-200 border border-slate-500 font-semibold",
+        codeClass: "mono text-xs font-bold text-slate-400",
+        desc: `
+          <p>Aleksei neither locks the door for the Purge Squad nor dares to charge into the crossfire. Instead, he slips away through the frozen drainage culvert back to his Khrushchyovka apartment, trading his scavenged supplies for a quiet ration quota behind a welded door.</p>
+          <p>The broadcast from Hill 302 never sounds, and the city gates never open. Novorsk-17 limps on half-dead as street loudspeakers endlessly loop the <em>Open Letter to All Citizens of Sector 17</em> and another armored train whistle blows at midnight. Every time Aleksei raises a cup of water to his lips, he hears Vasily's faint whisper—<em>"…Пить (Thirsty)…"</em>—and his sister's unanswered call.</p>
+        `
+      },
+      B: {
+        code: "ENDING B · FLAWED LIBERATION ENDING (CONSCIENCE FAILED)",
+        title: "[Absurd Liberation · Open Gates, Torn Tally]",
+        cond: "Trigger: Choose D1 (Rescue & Broadcast) + Conscience Failed (>0 Tally Strokes on Logbook)",
+        borderClass: "paper-card border-2 border-amber-500/70 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold",
+        codeClass: "mono text-xs font-bold text-amber-400",
+        desc: `
+          <p>Old Pavel braces the 10,000-volt switch with his own body, and Aleksei broadcasts the truth from Hill 302. At dawn, thousands of starving railway workers march on the checkpoints with 12-pound sledges, forcing the O.S.K. to stand down and toppling the welded iron gates.</p>
+          <p>Yet there are no winners—because Aleksei had previously raised his crowbar against regressing half-humans in the dark (or surrendered Guliya's manuscript, or betrayed Semyon), the breakout perimeter collapses in chaos and his sister <strong>Lana</strong> is struck by a stray bullet before sunrise, dying in his arms. Kneeling before the open city gate, Aleksei opens the back of his Work Logbook and counts the blood-red strokes (卌): <strong>what truly killed his sister was every blow he struck against his own kind to survive the night</strong>.</p>
+        `
+      },
+      TRUE_HOME: {
+        code: "HIDDEN TRUE ENDING α · HOME ROUTE PERFECTION",
+        title: "[Polar Dawn · Hello Again, Lana]",
+        cond: "Trigger: Choose D1 + Conscience Passed (Zero Strokes: Not A3 + B2/B3 + Not C2) + Mama Katya Alive",
+        borderClass: "paper-card border-2 border-emerald-500/80 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold",
+        codeClass: "mono text-xs font-bold text-emerald-400",
+        desc: `
+          <p>Polar dawn breaks over the Sector 1 main checkpoint. Thousands of railway workers stand before the riot shields holding empty enamel bowls, medical charts, and copies of Guliya's <em>Regression Manuscript</em>. Young sentry Kolya lowers his rifle. With his left shoulder bandaged, Aleksei steps forward and jams his bent railway crowbar into the locked barrier gear housing!</p>
+          <p>His sister <strong>Lana</strong>—the last grey scale gone from her wrist, fully recovered—places her warm hands over Aleksei's frostbitten knuckles. Mama Katya braces his lower back from her wheelchair as Dr. Leonov, Guliya, Anna, Sergeant Chernov, and Sergey's family all lay their hands on the bar—<em>CRACK!!</em> The rusted gear snaps, flinging the barrier into the morning sky as brother, sister, and mother walk into the real daylight.</p>
+        `
+      },
+      TRUE_OUTLAND: {
+        code: "HIDDEN TRUE ENDING β · MOTHERLESS OUTLAND TRUE ENDING",
+        title: "[Fires of the Outland · Northbound Siblings]",
+        cond: "Trigger: Choose D1 + Conscience Passed (Zero Strokes) + Mama Katya Died in Chapter 8",
+        borderClass: "paper-card border-2 border-orange-500/80 rounded-lg p-5 shadow-xl",
+        badgeClass: "text-xs px-2.5 py-1 rounded bg-orange-500/20 text-orange-300 border border-orange-500/40 font-semibold",
+        codeClass: "mono text-xs font-bold text-orange-400",
+        desc: `
+          <p>As the distant industrial city finally smashes open its welded gates to the roar of the Hill 302 broadcast, Aleksei and his rescued sister <strong>Lana</strong> kneel before Mama Katya's grave on the birch permafrost ridge. Dr. Leonov hands him a stamped <em>Notice of Restored Room 602 Residency & Class-I Rations</em>; Aleksei silently lights it with his lighter, letting the ashes drift over their mother's mound.</p>
+          <p>He wraps the scarf cut from their mother's old blue checkered wool bedsheet tightly around Lana's neck, pats the scarred wolfdog "Ash" on the head, and climbs with his sister into Old Pavel's armor-plated Ural truck. <strong>"Mama doesn't have to guard that grid anymore. Lana, we're heading north—to pry open every mining camp gate that hasn't heard the broadcast."</strong></p>
+        `
+      }
+    };
+
+    function updateSimulation() {
+      let tallyStrokes = 0;
+      const reasons = [];
+
+      if (simState.choiceA === "A3") {
+        tallyStrokes += 2;
+        reasons.push("Executed regressing half-human with crowbar (+2 Strokes)");
+      }
+      if (simState.choiceB === "B1") {
+        tallyStrokes += 2;
+        reasons.push("Surrendered Guliya's Regression Manuscript to inspectors (+2 Strokes)");
+      }
+      if (simState.choiceC === "C2") {
+        tallyStrokes += 1;
+        reasons.push("Locked door & betrayed survivor Old Semyon (+1 Stroke)");
+      }
+
+      const truthAlive = simState.choiceB === "B2" || simState.choiceB === "B3";
+      const consciencePass = truthAlive && simState.choiceA !== "A3" && simState.choiceC !== "C2";
+
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById("st" + i);
+        if (i <= tallyStrokes) {
+          el.classList.remove("opacity-10");
+          el.classList.add("opacity-100");
+        } else {
+          el.classList.remove("opacity-100");
+          el.classList.add("opacity-10");
+        }
+      }
+
+      document.getElementById("tallyCountText").textContent = `Strokes: ${tallyStrokes} / 5`;
+      document.getElementById("tallyReasonText").textContent =
+        reasons.length === 0
+          ? "Aleksei held his moral line: he spared the regressing half-humans, protected Dr. Guliya's manuscript, and never betrayed Semyon. The page remains unstained."
+          : "Guilt Record: " + reasons.join("; ") + ". Every blood stroke will rebound at Eagle's Crag.";
+
+      const truthBadge = document.getElementById("truthStatusBadge");
+      truthBadge.textContent = truthAlive ? `📄 Manuscript: Alive (${simState.choiceB})` : "📄 Manuscript: Burned (B1)";
+      truthBadge.className = truthAlive
+        ? "px-2.5 py-1 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 mono"
+        : "px-2.5 py-1 rounded bg-rose-950/60 border border-rose-500/40 text-rose-300 mono";
+
+      const consBadge = document.getElementById("conscienceBadge");
+      consBadge.textContent = consciencePass
+        ? "⚖️ Conscience: Passed (0 Strokes)"
+        : `⚖️ Conscience: Failed (${tallyStrokes} Strokes)`;
+      consBadge.className = consciencePass
+        ? "px-2.5 py-1 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 mono"
+        : "px-2.5 py-1 rounded bg-rose-950/60 border border-rose-500/40 text-rose-300 mono";
+
+      let endingKey = "TRUE_HOME";
+      if (simState.choiceD === "D2") {
+        endingKey = "A";
+      } else if (simState.choiceD === "D3") {
+        endingKey = "C";
+      } else {
+        if (!consciencePass) {
+          endingKey = "B";
+        } else {
+          endingKey = simState.mother === "alive" ? "TRUE_HOME" : "TRUE_OUTLAND";
+        }
+      }
+
+      const sisterTag = document.getElementById("sisterLedgerTag");
+      if (endingKey === "A") {
+        sisterTag.textContent = "Physically Zeroed (Dead)";
+        sisterTag.className = "text-rose-400";
+      } else if (endingKey === "B" || endingKey === "C") {
+        sisterTag.textContent = "Lost Before Dawn";
+        sisterTag.className = "text-amber-400";
+      } else {
+        sisterTag.textContent = "Rescued & Recovered";
+        sisterTag.className = "text-emerald-400";
+      }
+
+      const cardMap = {
+        A: "endCardA",
+        C: "endCardC",
+        B: "endCardB",
+        TRUE_HOME: "endCardTrueHome",
+        TRUE_OUTLAND: "endCardTrueOutland"
+      };
+      Object.entries(cardMap).forEach(([k, cardId]) => {
+        const card = document.getElementById(cardId);
+        if (k === endingKey) {
+          card.className = "ending-card p-3 rounded border-2 border-amber-400 bg-amber-500/15 shadow-md transition-all scale-[1.02]";
+        } else {
+          card.className = "ending-card p-3 rounded border border-slate-800 bg-slate-900/50 opacity-55 transition-all";
+        }
+      });
+
+      const detail = ENDING_DETAILS[endingKey];
+      const box = document.getElementById("activeEndingBox");
+      box.className = detail.borderClass;
+      document.getElementById("outEndingCode").className = detail.codeClass;
+      document.getElementById("outEndingCode").textContent = detail.code;
+      document.getElementById("outEndingTitle").textContent = detail.title;
+      document.getElementById("outEndingCondition").className = detail.badgeClass;
+      document.getElementById("outEndingCondition").textContent = detail.cond;
+      document.getElementById("outEndingCutscene").innerHTML = detail.desc;
+    }
+
+    function bindButtonGroup(selector, stateKey) {
+      document.querySelectorAll(selector).forEach(btn => {
+        btn.addEventListener("click", () => {
+          simState[stateKey] = btn.dataset.val;
+          refreshButtonsUI();
+          updateSimulation();
+        });
+      });
+    }
+
+    function refreshButtonsUI() {
+      const highlight = (selector, currentVal, activeBorder) => {
+        document.querySelectorAll(selector).forEach(btn => {
+          const isAct = btn.dataset.val === currentVal;
+          btn.className = btn.className
+            .replace(/border-(emerald|amber|slate)-[0-9]+/g, "")
+            .replace(/bg-(emerald|amber|slate)-[0-9]+\/[0-9]+/g, "")
+            .trim();
+          if (isAct) {
+            btn.classList.add(activeBorder, "bg-emerald-500/15", "text-white");
+          } else {
+            btn.classList.add("border-slate-800", "bg-slate-900/70", "text-slate-300");
+          }
+        });
+      };
+
+      highlight(".choice-a-btn", simState.choiceA, "border-emerald-500");
+      highlight(".choice-b-btn", simState.choiceB, "border-emerald-500");
+      highlight(".choice-c-btn", simState.choiceC, "border-emerald-500");
+      highlight(".mother-btn", simState.mother, "border-emerald-500");
+      highlight(".choice-d-btn", simState.choiceD, "border-amber-400");
+    }
+
+    bindButtonGroup(".choice-a-btn", "choiceA");
+    bindButtonGroup(".choice-b-btn", "choiceB");
+    bindButtonGroup(".choice-c-btn", "choiceC");
+    bindButtonGroup(".mother-btn", "mother");
+    bindButtonGroup(".choice-d-btn", "choiceD");
+
+    document.getElementById("btnPresetTrue").addEventListener("click", () => {
+      simState.choiceA = "A1";
+      simState.choiceB = "B2";
+      simState.choiceC = "C1";
+      simState.mother = "alive";
+      simState.choiceD = "D1";
+      refreshButtonsUI();
+      updateSimulation();
+    });
+
+    document.getElementById("btnPresetOutland").addEventListener("click", () => {
+      simState.choiceA = "A1";
+      simState.choiceB = "B3";
+      simState.choiceC = "C1";
+      simState.mother = "dead";
+      simState.choiceD = "D1";
+      refreshButtonsUI();
+      updateSimulation();
+    });
+
+    document.getElementById("btnPresetTragic").addEventListener("click", () => {
+      simState.choiceA = "A3";
+      simState.choiceB = "B2";
+      simState.choiceC = "C2";
+      simState.mother = "alive";
+      simState.choiceD = "D1";
+      refreshButtonsUI();
+      updateSimulation();
+    });
+
+    window.addEventListener("load", () => {
+      refreshButtonsUI();
+      updateSimulation();
+    });
+  </script>
+</body>
+</html>

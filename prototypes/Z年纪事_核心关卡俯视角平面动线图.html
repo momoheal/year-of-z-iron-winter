@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>《Z年纪事》核心关卡俯视角平面动线与战术蓝图系统</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b0d10;
+      --panel-dark: #12161b;
+      --border-dark: #242c37;
+      --stamp-blue: #3b82f6;
+      --system-green: #10b981;
+      --threat-red: #ef4444;
+      --warn-amber: #f59e0b;
+      --magic-purple: #a855f7;
+    }
+    body {
+      font-family: 'Inter', 'Noto Sans SC', sans-serif;
+      background-color: var(--bg-dark);
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f1318;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2d3748;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4a5568;
+    }
+    .blueprint-grid {
+      background-image: 
+        linear-gradient(to right, rgba(59, 130, 246, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(59, 130, 246, 0.07) 1px, transparent 1px),
+        linear-gradient(to right, rgba(59, 130, 246, 0.16) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(59, 130, 246, 0.16) 1px, transparent 1px);
+      background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+    }
+    .truth-grid {
+      background-image: 
+        linear-gradient(to right, rgba(226, 232, 240, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.06) 1px, transparent 1px),
+        linear-gradient(to right, rgba(226, 232, 240, 0.14) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.14) 1px, transparent 1px);
+      background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+    }
+    .glasses- cracked {
+      filter: blur(0.6px) contrast(1.08);
+    }
+    @keyframes dashFlow {
+      to {
+        stroke-dashoffset: -40;
+      }
+    }
+    .flow-line-animated {
+      animation: dashFlow 1.6s linear infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#0b0d10] text-slate-200 select-none">
+
+  <!-- Top Header & Level Navigation -->
+  <header class="border-b border-slate-800 bg-[#11151c]/95 backdrop-blur sticky top-0 z-30 px-4 py-2.5">
+    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-3 h-8 bg-blue-500 rounded-sm shadow-[0_0_12px_rgba(59,130,246,0.8)]" id="brandIndicator"></div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">《Z年纪事》俯视角关卡平面动线蓝图</h1>
+            <span class="mono text-[11px] px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30" id="modeBadge">Z-YEAR MAGICAL REALISM</span>
+          </div>
+          <p class="text-xs text-slate-400 hidden sm:block">2.5D Top-Down Tactical Level Design & Player Flow Sandbox · 支持移动许晨位置、旋转90°视野、切换一/二周目图层</p>
+        </div>
+      </div>
+
+      <!-- Level Selector Tabs -->
+      <nav class="flex items-center gap-1.5 overflow-x-auto py-1" id="levelTabs" aria-label="关卡选择">
+        <button type="button" data-level="L02" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-blue-600 text-white shadow-sm">
+          L02 · 旧四号冷库与雨棚
+        </button>
+        <button type="button" data-level="L03" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700">
+          L03 · 锦绣苑四点整死窗
+        </button>
+        <button type="button" data-level="L05" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700">
+          L05 · 东街血砧板后厨
+        </button>
+        <button type="button" data-level="L07" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700">
+          L07 · 北苑特供仓与烤肉雪
+        </button>
+        <button type="button" data-level="L10" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700">
+          L10 · 302高地死线广播塔
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Secondary Control Bar: Layer Toggles & Mode Switch -->
+  <section class="border-b border-slate-800/80 bg-[#141922] px-4 py-2">
+    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
+      <!-- Layer Toggles -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-slate-400 font-medium mr-1">战术图层:</span>
+        <button type="button" id="togglePrimaryPath" class="px-2.5 py-1 rounded border border-emerald-500/50 bg-emerald-500/15 text-emerald-300 flex items-center gap-1.5 transition">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>主推进动线
+        </button>
+        <button type="button" id="toggleAltPath" class="px-2.5 py-1 rounded border border-amber-500/50 bg-amber-500/15 text-amber-300 flex items-center gap-1.5 transition">
+          <span class="w-2 h-2 rounded-full bg-amber-400"></span>潜行/推车分支动线
+        </button>
+        <button type="button" id="toggleThreats" class="px-2.5 py-1 rounded border border-rose-500/50 bg-rose-500/15 text-rose-300 flex items-center gap-1.5 transition">
+          <span class="w-2 h-2 rounded-full bg-rose-500"></span>威胁射界与封锁区
+        </button>
+        <button type="button" id="toggleAudio" class="px-2.5 py-1 rounded border border-cyan-500/50 bg-cyan-500/15 text-cyan-300 flex items-center gap-1.5 transition">
+          <span class="w-2 h-2 rounded-full bg-cyan-400"></span>听觉迷雾波纹
+        </button>
+        <button type="button" id="toggleMagic" class="px-2.5 py-1 rounded border border-purple-500/50 bg-purple-500/15 text-purple-300 flex items-center gap-1.5 transition">
+          <span class="w-2 h-2 rounded-full bg-purple-400"></span>魔幻现实奇观层
+        </button>
+        <button type="button" id="toggleVision" class="px-2.5 py-1 rounded border border-blue-500/50 bg-blue-500/15 text-blue-300 flex items-center gap-1.5 transition">
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span>90°扇形视野模拟
+        </button>
+      </div>
+
+      <!-- Right Controls: Glasses State, Route Variant & Truth Mode -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button type="button" id="btnGlassesState" class="px-2.5 py-1 rounded border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition mono">
+          👓 眼镜状态: 完好 (100%视距)
+        </button>
+        <button type="button" id="btnRouteVariant" class="px-2.5 py-1 rounded border border-orange-500/40 bg-orange-500/10 text-orange-300 hover:bg-orange-500/20 transition">
+          🏠 当前路线: 家园线 (保母潜行)
+        </button>
+        <button type="button" id="btnTruthMode" class="px-3 py-1 rounded font-semibold border border-amber-400/60 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 transition shadow-sm">
+          👁️ 切换【二周目：零号真实模式】
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Workspace: Left Map Canvas + Right Tactical Inspector -->
+  <main class="flex-1 max-w-[1600px] w-full mx-auto p-3 sm:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+    
+    <!-- Left Column: Interactive Top-Down Map Canvas (8 cols on lg) -->
+    <div class="lg:col-span-8 flex flex-col bg-[#0e1217] border border-slate-800 rounded-lg overflow-hidden shadow-xl">
+      <!-- Map Header Bar -->
+      <div class="px-4 py-2.5 bg-[#141a23] border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="mono text-xs font-bold text-blue-400" id="mapCodeLabel">MAP_L02_COLD_STORAGE</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300" id="mapScaleLabel">比例尺 1:150 · 建议时长 18-25 min</span>
+          </div>
+          <h2 class="text-sm sm:text-base font-bold text-white mt-0.5" id="mapTitleLabel">L02 · 城北旧四号冷库与雨棚（空货位与无影人）</h2>
+        </div>
+        <div class="flex items-center gap-2 text-xs">
+          <button type="button" id="btnSimStep" class="px-2.5 py-1 rounded bg-emerald-600/25 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/40 transition">
+            ▶ 沿主线推进许晨位置
+          </button>
+          <button type="button" id="btnResetPos" class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">
+            ↺ 重置起点
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Container -->
+      <div class="relative w-full aspect-[16/10] blueprint-grid overflow-hidden cursor-crosshair" id="canvasContainer">
+        <canvas id="blueprintCanvas" class="w-full h-full block"></canvas>
+
+        <!-- Floating HUD Overlay inside Map -->
+        <div class="absolute top-3 left-3 pointer-events-none flex flex-col gap-1.5 bg-slate-950/85 border border-slate-800/90 rounded p-2.5 text-[11px] backdrop-blur-sm max-w-[260px]">
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-slate-400">许晨心率 (BPM):</span>
+            <span class="mono font-bold text-emerald-400" id="hudHeartRate">78 BPM (平稳)</span>
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-slate-400">手背蓝印章侵蚀:</span>
+            <span class="mono font-bold text-blue-400" id="hudBlueStamp">15% (手背毛细血管)</span>
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-slate-400">手持核心工具:</span>
+            <span class="mono text-amber-300" id="hudTool">铸铁撬棍 (可卡门×2)</span>
+          </div>
+          <div class="text-[10px] text-slate-400 border-t border-slate-800 pt-1 mt-0.5">
+            💡 <span class="text-slate-200">操作提示</span>：点击地图节点查看详情；拖拽<span class="text-emerald-400 font-semibold">许晨(P)</span>改变位置；移动鼠标旋转 90° 扇形视野。
+          </div>
+        </div>
+
+        <!-- Bottom Legend Overlay -->
+        <div class="absolute bottom-2.5 left-3 right-3 pointer-events-none flex flex-wrap items-center justify-between gap-2 bg-slate-950/90 border border-slate-800/90 rounded px-3 py-1.5 text-[11px]">
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="flex items-center gap-1"><span class="w-3 h-1 bg-emerald-400 inline-block"></span>主行动线</span>
+            <span class="flex items-center gap-1"><span class="w-3 h-1 bg-amber-400 border-b border-dashed inline-block"></span>潜行/绕行线</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>狂暴/清剿威胁</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-purple-400 inline-block"></span>魔幻现实奇观</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500 inline-block"></span>撬棍卡门点(Choke)</span>
+          </div>
+          <span class="mono text-slate-400" id="cursorCoords">X: 120m, Y: 85m</span>
+        </div>
+      </div>
+
+      <!-- Flow Timeline Stepper Bar -->
+      <div class="px-4 py-3 bg-[#121720] border-t border-slate-800">
+        <div class="text-xs font-semibold text-slate-400 mb-2 flex items-center justify-between">
+          <span>关卡节拍与动线阶段（点击阶段可快速定位许晨与拆解节点）：</span>
+          <span class="mono text-[11px] text-blue-400" id="activePhaseBadge">阶段 1 / 5</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="phaseStepsContainer">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Tactical Inspector & Dual Ledger Details (4 cols on lg) -->
+    <div class="lg:col-span-4 flex flex-col gap-4">
+      
+      <!-- Card 1: Selected Node Inspector -->
+      <div class="bg-[#12161b] border border-slate-800 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-xs font-bold mono bg-blue-500/20 text-blue-400 border border-blue-500/30" id="nodeIdBadge">N-01</span>
+            <h3 class="text-sm font-bold text-white" id="nodeTitle">废弃收发亭 · 灰毛狗（灰灰）</h3>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300" id="nodeTypeTag">伙伴招募 / 潜行起点</span>
+        </div>
+
+        <div class="space-y-3 text-xs leading-relaxed">
+          <div>
+            <div class="text-slate-400 font-medium mb-1">📐 空间结构与掩体拓扑：</div>
+            <p class="text-slate-200 bg-slate-900/70 p-2.5 rounded border border-slate-800/80" id="nodeSpatialDesc">
+              位于园区大门外西侧 15 米半开放砖混亭，窗户已拆（提供 180° 观察射界），内有破花盆可作低矮掩体。是进入南库前的唯一安全整备点。
+            </p>
+          </div>
+
+          <div>
+            <div class="text-slate-400 font-medium mb-1">🎮 动线交互与玩法机制（Gameplay Hook）：</div>
+            <p class="text-slate-200 bg-slate-900/70 p-2.5 rounded border border-slate-800/80" id="nodeGameplayDesc">
+              玩家下车活动时触发花盆异响。选择将早上剩下的半块冷面饼掰碎放在 3 米外并后退（不强行抚摸），灰灰将闻一闻许晨手背上的蓝印章并保持 5 米距离跟随，解锁【嗅觉辨识波纹】被动能力。
+            </p>
+          </div>
+
+          <div class="p-2.5 rounded border border-purple-500/30 bg-purple-950/20" id="nodeMagicBox">
+            <div class="text-purple-300 font-semibold mb-1 flex items-center justify-between">
+              <span id="nodeMagicHeader">✨ 魔幻现实奇观 / 二周目反转：</span>
+              <span class="mono text-[10px] uppercase text-purple-400">Magical Realism</span>
+            </div>
+            <p class="text-purple-100/90" id="nodeMagicDesc">
+              灰灰不看食物，先对着许晨手背上正在往血管里钻的“留观初筛”蓝印章发出悲悯呜咽。它能看见南库里没有影子的活人。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Dual Ledger & Route Impact -->
+      <div class="bg-[#12161b] border border-slate-800 rounded-lg p-4 shadow-lg">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span>📓 《双面笔记本》该关核心检定</span>
+          </h3>
+          <span class="mono text-[11px] text-amber-400">TAB_LEDGER_CHECK</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2.5 text-xs">
+          <div class="p-2.5 rounded bg-slate-900/90 border-l-2 border-emerald-500">
+            <div class="font-semibold text-emerald-400 mb-1">【正面：填报给体制的官样数字】</div>
+            <p class="text-slate-300" id="ledgerFrontText">
+              下拉菜单仅限填报【现场无人】或【已移交】。若直接勾选“无人”快速结单，南库 3 号柱的孙建国母子将在次日彻底失去物理碰撞体积并消失，蓝印章侵蚀 +15%。
+            </p>
+          </div>
+
+          <div class="p-2.5 rounded bg-slate-900/90 border-l-2 border-amber-400">
+            <div class="font-semibold text-amber-300 mb-1">【背面：用钢笔刻下的活人真名】</div>
+            <p class="text-slate-300" id="ledgerBackText">
+              撕下纸页亲手写下“孙建国、李秀芝，10月18日仍在南库3号柱”，并把水壶递过去。写完瞬间两人脚下重新长出黑影，终章 302 高地广播声浪强度 +1。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Level Design Metrics & Choke Point Analysis -->
+      <div class="bg-[#12161b] border border-slate-800 rounded-lg p-4 shadow-lg">
+        <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2 mb-3">⚙️ 关卡设计参数与路线差异</h3>
+        <div class="space-y-2 text-xs" id="levelMetricsList">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Complete Level Blueprint Database (5 Representative Core Levels)
+    const LEVEL_DATA = {
+      L02: {
+        code: "MAP_L02_COLD_STORAGE",
+        title: "L02 · 城北旧四号冷库与雨棚（空货位与无影人）",
+        scale: "比例尺 1:150 · 空间尺寸 120m × 75m",
+        defaultTool: "铸铁撬棍 (耐久 100%)",
+        heartRate: "82 BPM (警惕)",
+        blueStamp: "15% (手背初筛章)",
+        ledgerFront: "下拉菜单仅限填报【现场无人】或【已移交】。若直接勾选“无人”快速结单，南库 3 号柱的孙建国母子将在次日彻底失去物理碰撞体积并消失，蓝印章侵蚀 +15%。",
+        ledgerBack: "撕下纸页亲手写下“孙建国、李秀芝，10月18日仍在南库3号柱”，并把水壶递过去。写完瞬间两人脚下重新长出黑影，终章 302 高地广播声浪强度 +1。",
+        metrics: [
+          { label: "核心机制教学", val: "90°扇形视野盲区探查 + 灰灰嗅觉波纹 + 首次写名锚定无影人" },
+          { label: "关键卡门点 (Choke)", val: "南库变形侧门（撬棍开门噪声引怪假警报）、北雨棚末端铁丝网门" },
+          { label: "家园线 vs 流浪线", val: "第一卷基础关卡；决定是否及时带回首批封口膜与母亲透析消息" }
+        ],
+        rooms: [
+          { x: 40, y: 200, w: 95, h: 110, label: "废弃收发亭", sub: "Entrance Booth", fill: "#161f2c", stroke: "#3b82f6" },
+          { x: 190, y: 70, w: 310, h: 210, label: "南库 · 原退货周转仓 (South Warehouse)", sub: "6个空货位 / 黄色方框棺材印", fill: "#131822", stroke: "#475569" },
+          { x: 370, y: 90, w: 110, h: 95, label: "床单隔断区", sub: "无影母子滞留点", fill: "#1e1b2e", stroke: "#a855f7", dashed: true },
+          { x: 230, y: 280, w: 230, h: 65, label: "露天积水装卸道 (Puddle Alley)", sub: "涉水移动减速35% · 足音扩散翻倍", fill: "#0f2438", stroke: "#0284c7" },
+          { x: 540, y: 80, w: 260, h: 260, label: "北侧雨棚 · 封口膜与耗材区 (North Canopy)", sub: "托盘车拖拽区 / 潮湿纸箱", fill: "#141d26", stroke: "#475569" },
+          { x: 540, y: 340, w: 260, h: 115, label: "雨棚深处 · 焊死铁网隔离间", sub: "High-Risk Quarantine Cage", fill: "#28151b", stroke: "#ef4444" }
+        ],
+        obstacles: [
+          { x: 220, y: 110, w: 55, h: 35, label: "空货架A" },
+          { x: 295, y: 110, w: 55, h: 35, label: "空货架B" },
+          { x: 220, y: 175, w: 55, h: 35, label: "空货架C" },
+          { x: 295, y: 175, w: 55, h: 35, label: "3号立柱(转位单)" },
+          { x: 580, y: 120, w: 70, h: 40, label: "受潮空罐托盘" },
+          { x: 690, y: 120, w: 80, h: 45, label: "完好封口膜(目标)" },
+          { x: 60, y: 360, w: 120, h: 55, label: "杜平短驳货车(撤离点)" }
+        ],
+        primaryPath: [
+          { x: 85, y: 255 },
+          { x: 155, y: 255 },
+          { x: 190, y: 195 },
+          { x: 320, y: 195 },
+          { x: 410, y: 145 },
+          { x: 320, y: 260 },
+          { x: 340, y: 310 },
+          { x: 670, y: 310 },
+          { x: 720, y: 165 }
+        ],
+        altPath: [
+          { x: 720, y: 165 },
+          { x: 670, y: 335 },
+          { x: 450, y: 390 },
+          { x: 120, y: 390 }
+        ],
+        threats: [
+          { x: 670, y: 385, r: 62, angle: -90, spread: 80, label: "铁网门狂暴装卸工", truthLabel: "饿了五天低血糖发抖的装卸工" }
+        ],
+        audioRipples: [
+          { x: 425, y: 135, r: 45, color: "#e2e8f0", text: "“……外头有人吗……” (多重无影回音)" },
+          { x: 670, y: 350, r: 55, color: "#ef4444", text: "哐当！铁网撞击与铝饭盒滚动声" }
+        ],
+        nodes: [
+          {
+            id: "N-01", x: 85, y: 255, phase: 1, title: "废弃收发亭 · 投喂灰灰", type: "伙伴招募 / 起点",
+            spatial: "位于园区大门外西侧 15 米半开放砖混亭，窗户已拆，内有破花盆可作掩体。",
+            gameplay: "掰碎半块饼放在地并后退，灰灰入队。解锁被动：靠近异常人类时通过吠叫/呜咽提前预警其真实状态。",
+            magic: "灰灰先闻许晨手背上正在往血管里钻的蓝印章，发出悲悯呜咽。",
+            truth: "【真实模式】一只脖子有项圈勒痕的走失家养犬，安静跟随许晨。"
+          },
+          {
+            id: "N-02", x: 190, y: 195, phase: 2, title: "南库变形侧门 · 撬棍脱手假警报", type: "物理破障 / 心理压迫",
+            spatial: "下沿卡死在水泥框里的铁皮人员门，门内为 30 米跨度回音空仓。",
+            gameplay: "许晨首次使用撬棍压门滑脱，铁头砸地发出巨响（触发全屏心率飙升至 135 BPM 的惊吓教学，实则无怪物冲出）。",
+            magic: "门缝吹出的风带着四天前转运单的蓝复写纸味，地面六个黄色方框像敞开的墓穴。",
+            truth: "【真实模式】普通的生锈仓库侧门，需要垫木块撬开。"
+          },
+          {
+            id: "N-03", x: 410, y: 145, phase: 3, title: "3号立柱与床单隔断 · 无影母子", type: "魔幻奇观 / 笔记本检定",
+            spatial: "南库东北角，用四条蓝白格旧床单拴在货架立柱上围成的 4m×4m 死角。",
+            gameplay: "老程用红外测温枪扫描显示『4.2℃ 未检测到生命体征』。玩家必须打开《笔记本背面》写下孙建国、李秀芝真名并递水。",
+            magic: "被系统误填为『已转出』的母子在阳光下没有影子，身体呈半透明旧报纸状；写下真名瞬间，黑影从脚底重新生长出来。",
+            truth: "【真实模式】被转运车遗落在断电冷库里冻得失温、差点死于急性哮喘的母子。"
+          },
+          {
+            id: "N-04", x: 720, y: 165, phase: 4, title: "北雨棚干区 · 封口膜与托盘车", type: "物资搬运 / 负重动线",
+            spatial: "北侧半露天雨棚靠墙干燥区，地面缠满废弃塑料打包带。",
+            gameplay: "核对批号拍照后，需操作手动液压托盘车沿积水通道往回拉。轮轴会被积水里的旧包装带卡死，需蹲下手动清理（耗时 8 秒）。",
+            magic: "银白色的空罐头在阴天里泛着奇异的油脂香，让许晨产生强烈的胃痉挛。",
+            truth: "【真实模式】常规的食品厂急需包材盘点与手动托盘车清障。"
+          },
+          {
+            id: "N-05", x: 670, y: 340, phase: 5, title: "雨棚铁网门 · 断骨血手与铝饭盒", type: "三态辨识 / 道德抉择",
+            spatial: "雨棚南端尽头的镀锌铁丝网门，门底留有 10cm 排水窄缝，门外水坑里倒扣着一只铝饭盒。",
+            gameplay: "第二趟拉车经过时触发扑门惊吓！对方从门底窄缝硬挤出一条折断的血手够向饭盒。抉择：①用撬棍砸烂手（蓝印章+15%）；②用撬棍弯头把饭盒推过去（解锁背面记录）。",
+            magic: "饭盒里散落的几粒干饭在水坑里像活蛆一样微微蠕动，门内人的眼翳在触碰到饭盒时短暂褪去。",
+            truth: "【真实模式】被外包老板反锁在工具间五天没吃饭、低血糖休克倒地伸手够饭盒的年轻临时工。"
+          }
+        ]
+      },
+
+      L03: {
+        code: "MAP_L03_WEEPING_HATCH",
+        title: "L03 · 锦绣苑东侧交接窗（四点整渗奶的死窗）",
+        scale: "比例尺 1:200 · 8分钟生死时速跑酷地图",
+        defaultTool: "铸铁短撬棍 + 滚烫的抗敏奶粉罐",
+        heartRate: "148 BPM (极限奔跑)",
+        blueStamp: "15% (手背初筛章)",
+        ledgerFront: "系统词条库报错 404：仅存在『普通奶粉』，深度水解抗敏配方属于非标违禁品，按规定注水消杀。",
+        ledgerBack: "写下『林悦、小满，15:59分送达东侧窗口，非特供』。林悦坠楼后，这行字在笔记本背面永远带着乳白色的水渍。",
+        metrics: [
+          { label: "核心机制", val: "8分钟硬性倒计时（15:52-16:00）+ 护罐防抢夺 + 撬棍硬卡千斤电动闸门" },
+          { label: "路线博弈", val: "北侧废车便道（近但有饥民劫掠） vs 南侧大路检疫站（远且有盖章官僚拖延）" },
+          { label: "魔幻奇观", val: "16:00 焊死的三层钢板窗口，每到 15:52 准时穿透钢铁渗出温热母乳，焊枪靠近即熄火" }
+        ],
+        rooms: [
+          { x: 35, y: 180, w: 110, h: 120, label: "起点 · 社区外勤站", sub: "方阿姨托付奶粉处", fill: "#151d28", stroke: "#3b82f6" },
+          { x: 200, y: 60, w: 280, h: 115, label: "北线 · 废弃施工围挡便道 (Shortcut)", sub: "省时3分钟 / 剥落铁皮噪音区 / 饥民拦路", fill: "#1f1924", stroke: "#f59e0b", dashed: true },
+          { x: 200, y: 285, w: 280, h: 125, label: "南线 · 大路临时检疫交接亭 (Main Road)", sub: "编码404卡单拖延 / 巡查队故障车堵路", fill: "#131c27", stroke: "#475569" },
+          { x: 540, y: 95, w: 145, h: 300, label: "锦绣苑外围封锁缓冲街", sub: "原西窗已封死 → 需绕行东侧新窗", fill: "#161922", stroke: "#64748b" },
+          { x: 705, y: 120, w: 140, h: 250, label: "锦绣苑四号楼 & 东侧死窗", sub: "16:00 焊死 / 几十部手机闪光灯审视区", fill: "#29151e", stroke: "#ef4444" }
+        ],
+        obstacles: [
+          { x: 260, y: 95, w: 65, h: 35, label: "报废面包车(伏击点)" },
+          { x: 380, y: 105, w: 60, h: 35, label: "剥落铁皮围挡" },
+          { x: 310, y: 330, w: 85, h: 40, label: "抛锚巡查车(路障)" },
+          { x: 575, y: 140, w: 75, h: 35, label: "旧窗口(已铁皮封死)" },
+          { x: 685, y: 220, w: 24, h: 55, label: "东侧交接铁闸窗(决战点)" }
+        ],
+        primaryPath: [
+          { x: 90, y: 240 },
+          { x: 230, y: 120 },
+          { x: 440, y: 120 },
+          { x: 590, y: 190 },
+          { x: 610, y: 250 },
+          { x: 685, y: 250 }
+        ],
+        altPath: [
+          { x: 90, y: 240 },
+          { x: 240, y: 345 },
+          { x: 450, y: 345 },
+          { x: 610, y: 280 },
+          { x: 685, y: 250 }
+        ],
+        threats: [
+          { x: 300, y: 115, r: 50, angle: 15, spread: 90, label: "断粮护食流民(抢夺奶粉)", truthLabel: "家里断奶急疯了的年轻邻居" },
+          { x: 740, y: 250, r: 85, angle: 180, spread: 110, label: "四号楼阳台手机闪光灯网暴射界", truthLabel: "几十部拍摄『特权投毒女』的业主手机镜头" }
+        ],
+        audioRipples: [
+          { x: 715, y: 250, r: 50, color: "#a855f7", text: "小满窒息喘鸣声 + 15:59铁闸轰鸣声" },
+          { x: 760, y: 190, r: 65, color: "#ef4444", text: "乌鸦般的阳台合唱：『拍下来！402私通外围黄牛！』" }
+        ],
+        nodes: [
+          {
+            id: "N-01", x: 90, y: 240, phase: 1, title: "外勤站出发 · 像心脏一样跳动的奶粉罐", type: "任务起点",
+            spatial: "社区门口交接桌，方阿姨跪在地上按住失去粘性的处方胶布。",
+            gameplay: "接过抗敏奶粉罐。游戏开启右上角鲜红的电子跳字倒计时：距离 16:00 落锁仅剩 8 分钟。",
+            magic: "奶粉罐在许晨怀里保持着 38.5℃ 的婴儿体温，随着倒计时逼近，罐体发出一跳一跳的脉搏震动。",
+            truth: "【真实模式】一罐贴着儿科过敏处方笺的深度水解配方奶粉。"
+          },
+          {
+            id: "N-02", x: 290, y: 120, phase: 2, title: "北线施工围挡 · 抱罐突围与手伤崩裂", type: "潜行/跑酷抉择",
+            spatial: "狭窄的铁皮围挡夹道，风吹铁皮哗哗作响掩盖脚步声，但废车后藏着饥民。",
+            gameplay: "走北线可省下 3 分钟，但遭遇饥民伸手抢罐。玩家需按住护胸键用后背硬抗冲撞突围，手掌旧伤崩裂需在电线杆下花 5 秒重缠纱布。",
+            magic: "围挡上剥落的红油漆在狂风里卷成一条条舌头，舔舐着路过者的背包。",
+            truth: "【真实模式】封控街区之间缺乏照明的市政施工便道。"
+          },
+          {
+            id: "N-03", x: 350, y: 345, phase: 3, title: "南线大路检疫亭 · 编码404与无章空转", type: "官僚路障",
+            spatial: "大路中央的蓝棚检疫台，前方被抛锚巡查车堵死。",
+            gameplay: "若走南线，检疫员因系统下拉菜单只有『普通奶粉』拒绝入账，卫生联络员磨蹭至最后一刻仍不盖章，浪费宝贵的 4 分钟。",
+            magic: "抽屉里的公章自己在盒子里咚咚乱跳，但检疫员的右手像生锈的机械臂一样永远停在半空。",
+            truth: "【真实模式】因分类目录僵化而不敢担责签字的基层临时岗亭。"
+          },
+          {
+            id: "N-04", x: 685, y: 250, phase: 4, title: "东侧交接死窗 · 撬棍硬卡千斤铁闸", type: "关底高潮 QTE",
+            spatial: "宽仅 30cm 的铁皮投递槽，外侧为两名持钢叉保安，内侧为臭水沟与铁丝网。",
+            gameplay: "15:59 检疫员拧开消毒水要往奶粉罐里灌！许晨将胳膊塞进投递槽死死夺回罐子，在电动闸门落下的瞬间拔出撬棍竖卡进导轨，将奶粉从门底臭水沟推进去！",
+            magic: "四号楼阳台上几十部手机的闪光灯连成一片惨白的电网，每一道闪光都在林悦身上留下一道焦黑的烙印。",
+            truth: "【真实模式】按时送到了救命奶粉，但交接视频被断章取义发进业主群，引发致命网暴。"
+          },
+          {
+            id: "N-05", x: 715, y: 250, phase: 5, title: "三日后重返 · 四点整渗出母乳的焊缝", type: "魔幻尾声奇观",
+            spatial: "已被三层厚钢板彻底焊死的东侧窗口，墙根停着殡仪馆灰面包车。",
+            gameplay: "林悦坠楼身亡后，许晨于 15:52 再次经过此处触发剧情检定，拾取方阿姨留下的半截包布绳。",
+            magic: "每到下午 15:52，三层焊死的钢板焊缝就会滋滋作响，穿透钢铁渗出带着奶香与体温的乳白色水雾，保安的焊枪一靠近就会自动熄火。",
+            truth: "【真实模式】焊死的铁窗下摆着一束被雨水打湿的白色菊花，方阿姨独自抱着外孙的病历站在冷风里。"
+          }
+        ]
+      },
+
+      L05: {
+        code: "MAP_L05_THE_CLEAVER",
+        title: "L05 · 东街旧职工宿舍后厨（骨缝里的菜刀与“渴”）",
+        scale: "比例尺 1:80 · 室内CQB幽闭困兽死斗图",
+        defaultTool: "空背包 → 厨房宽背生锈菜刀",
+        heartRate: "175 BPM (濒死惊恐)",
+        blueStamp: "35% (染血后长出紫色血管分支)",
+        ledgerFront: "配给总表登记为【一栋：已全员转移】。事后机动队结案文书：【正当防卫免责，奖励猪肉罐头两听】。",
+        ledgerBack: "翻到笔记本背面，颤抖着写下第一行血字：『冯志远。昨天，我拿了厨房的刀。他说渴。』",
+        metrics: [
+          { label: "空间特征", val: "极度狭窄的 8m×6m 备餐后厨，餐桌与灶台构成环形死胡同（无处可逃）" },
+          { label: "核心机制", val: "近战『卡骨阻滞』机制首次触发 + 永久负面状态【永恒干渴诅咒】解锁" },
+          { label: "叙事暴击", val: "全书第一次亲手致死事件；死者咽气前恢复清澈的瞳孔与半个『渴』字" }
+        ],
+        rooms: [
+          { x: 40, y: 120, w: 155, h: 250, label: "东街铁丝网缺口 & 院落", sub: "冯志远电动车停放处(忌口纸牌)", fill: "#141b24", stroke: "#475569" },
+          { x: 195, y: 90, w: 270, h: 310, label: "原职工活动室 · 十九只碗的礼堂", sub: "系统登记『已清空』 / 19名无影老人领餐处", fill: "#161d29", stroke: "#3b82f6" },
+          { x: 465, y: 90, w: 220, h: 310, label: "临时厨房 · 血砧板死斗区 (Kitchen Arena)", sub: "煮着旧日历的大锅 / 备餐砧板台", fill: "#23171c", stroke: "#f59e0b" },
+          { x: 685, y: 135, w: 155, h: 220, label: "旧值班杂物间 (The Locked Room)", sub: "报纸糊窗 / 冯志远关押点", fill: "#2d1219", stroke: "#ef4444" }
+        ],
+        obstacles: [
+          { x: 95, y: 280, w: 65, h: 40, label: "志远的送菜电动车" },
+          { x: 250, y: 160, w: 160, h: 55, label: "长条分餐桌(17只破碗)" },
+          { x: 505, y: 125, w: 75, h: 55, label: "土灶大铁锅(煮旧日历)" },
+          { x: 520, y: 230, w: 85, h: 50, label: "油腻木餐桌(翻倒掩体)" },
+          { x: 485, y: 330, w: 145, h: 45, label: "备餐砧板台(生锈菜刀/烂萝卜)" }
+        ],
+        primaryPath: [
+          { x: 115, y: 210 },
+          { x: 330, y: 250 },
+          { x: 550, y: 200 },
+          { x: 660, y: 245 },
+          { x: 560, y: 315 }
+        ],
+        altPath: [
+          { x: 685, y: 245 },
+          { x: 615, y: 245 },
+          { x: 560, y: 315 },
+          { x: 430, y: 350 },
+          { x: 140, y: 330 }
+        ],
+        threats: [
+          { x: 685, y: 245, r: 95, angle: 180, spread: 75, label: "冯志远破门扑击轨迹", truthLabel: "40度高烧脱水、摔倒撞门找水喝的冯志远" }
+        ],
+        audioRipples: [
+          { x: 730, y: 245, r: 55, color: "#ef4444", text: "刺啦——指甲刮门声与水杯摔碎声" },
+          { x: 560, y: 325, r: 45, color: "#a855f7", text: "噗嗤！菜刀卡入锁骨缝 + 濒死气音：『……渴……』" }
+        ],
+        nodes: [
+          {
+            id: "N-01", x: 115, y: 280, phase: 1, title: "院口送菜电动车 · 房号与忌口硬纸牌", type: "叙事伏笔",
+            spatial: "铁丝网门内侧墙根，停着一辆后架绑着两只大塑料筐的旧电动车。",
+            gameplay: "入场与离场两次检视点：车把挂着洗发白的布手套，筐里硬纸牌用大字写着楼上孤寡老人的房号与忌口。事前看是普通道具，杀完冯志远出来再看直接触发许晨跪地干呕。",
+            magic: "纸牌上的字迹在暮色里像血管一样微微搏动，替整栋被系统注销的危楼维持着最后一口气。",
+            truth: "【真实模式】冯师傅儿子每天自费骑车给十七位老人跑腿送菜的电动车。"
+          },
+          {
+            id: "N-02", x: 330, y: 240, phase: 2, title: "礼堂分餐桌 · 十七只破碗与十九个活人", type: "账实核验",
+            spatial: "原职工活动室，墙上挂着褪色歌咏比赛照，一排拔掉插头的电饭锅。",
+            gameplay: "按电话报备带了17份餐，现场却走出19位老人。冯师傅推让自己的口粮，许晨需掏出背包里的个人干粮补齐缺口，并将表格上的『总人数』手改为『本次到场』。",
+            magic: "因为东街在表里属于『已清空拆迁区』，十九位老人坐在阴影里像半透明的泥塑，直到接过热饭盒才恢复活人血色。",
+            truth: "【真实模式】不会用智能手机登记、被网格表遗漏在危楼里的十九名留守老人。"
+          },
+          {
+            id: "N-03", x: 540, y: 155, phase: 3, title: "后厨土灶 · 煮着旧日历的大铁锅", type: "魔幻环境交互",
+            spatial: "临时厨房北侧灶台，蒸汽蒙住窗户。",
+            gameplay: "等待沈医生上楼巡诊期间，许晨在后厨核对名单，发现冯师傅眼神不断瞟向身后的旧值班室木门。",
+            magic: "断粮三天的铁锅里沸水翻滚，煮着一页页撕下来的『10月17日』旧日历和榆树皮，熬出一锅散发着公文油墨味的灰浆糊。",
+            truth: "【真实模式】只剩最后一点白菜帮子和面疙瘩的清水锅。"
+          },
+          {
+            id: "N-04", x: 665, y: 245, phase: 4, title: "值班室木门 · 父子相扑与破门瞬间", type: "危机爆发点",
+            spatial: "糊着旧报纸的木板门，门闩已松动。",
+            gameplay: "屋内传来摔倒声，冯师傅不顾许晨劝阻拉开一条门缝——整扇门瞬间爆裂，高烧异变的冯志远将父亲扑倒并咬伤左臂，随后转身将许晨逼向死角！",
+            magic: "门板炸裂瞬间，糊在玻璃上的旧报纸化作无数黑色的飞蛾扑面而来，遮蔽了许晨的视线。",
+            truth: "【真实模式】高烧40度引发惊厥谵妄的冯志远撞倒门板，与试图抱住他的老父亲摔作一团。"
+          },
+          {
+            id: "N-05", x: 560, y: 325, phase: 5, title: "备餐砧板台 · 锁骨卡刀与永恒之渴", type: "生死肉搏 QTE / 核心转折",
+            spatial: "厨房南侧死角备餐台，台面有一把宽背锈菜刀与半截干缩白萝卜。",
+            gameplay: "椅子抵挡失败，许晨后腰撞上台沿，闭眼抓起菜刀劈下！触发【卡骨阻滞】：刀刃死死卡在冯志远锁骨缝里拔不出来。冯志远瞳孔恢复清澈，吐出『……渴……』后滑落死亡。",
+            magic: "滚烫黑血浇在许晨右手上，蓝印章长出紫色血管；从此许晨染上【永恒干渴诅咒】，无论喝多少水喉咙都像吞着烧红的木炭。",
+            truth: "【真实模式】砧板上没有菜刀，只有一瓢凉水。许晨协助冯师傅用湿毛巾按住高烧的冯志远，喂他喝下凉水退烧。"
+          }
+        ]
+      },
+
+      L07: {
+        code: "MAP_L07_BEHIND_THE_WALL",
+        title: "L07 · 北苑二号特供仓（烤肉雪与白面犹大）",
+        scale: "比例尺 1:180 · 特权区双路线潜入/劫掠图",
+        defaultTool: "周小姐磁卡 + 相机 (流浪线：改装霰弹枪+铝热剂)",
+        heartRate: "128 BPM (高压潜行)",
+        blueStamp: "40% (延伸至小臂)",
+        ledgerFront: "北苑账面显示：【公共机动医疗与越冬储备，库容合规】。实则将临期进口牛排与瑞士透析滤器成吨推入焚化炉销毁。",
+        ledgerBack: "记录『北苑二库焚毁409批次腹透交换液、谷饲牛排300箱；周处长签字』。以及诊室里赵网格换来的『二十袋白面』。",
+        metrics: [
+          { label: "双路线裂变", val: "【家园线】穿协勤服刷卡潜入拍账本 vs 【流浪线】炸开侧墙强攻劫走透析机与抗生素" },
+          { label: "环境压迫", val: "二楼走廊周处长与重机枪哨戒视野 + 2000℃工业焚化炉热浪区" },
+          { label: "魔幻奇观", val: "烟囱喷出的烤牛肉香灰白大雪落满全城，饥民伸舌去接却变成满嘴苦涩的公文纸灰" }
+        ],
+        rooms: [
+          { x: 40, y: 150, w: 130, h: 210, label: "北苑四米电网外墙 & 侧门", sub: "周小姐断跟皮鞋接应点", fill: "#141a24", stroke: "#3b82f6" },
+          { x: 170, y: 80, w: 340, h: 290, label: "北苑二号恒温特供立体库 (10m高货架)", sub: "暖气26℃ / 澳洲牛排、丹麦奶粉、瑞士腹透液", fill: "#1b1926", stroke: "#f59e0b" },
+          { x: 210, y: 370, w: 280, h: 85, label: "二楼行政监控钢廊 (Overwatch Balcony)", sub: "周处长拔枪对峙点 / 俯视射界", fill: "#1f1622", stroke: "#ef4444" },
+          { x: 510, y: 80, w: 325, h: 375, label: "巨型工业焚化炉车间 (The Incinerator)", sub: "2000℃炉膛 / 叉车铲入临期特供 / 烤肉雪烟囱", fill: "#2b1414", stroke: "#ef4444" }
+        ],
+        obstacles: [
+          { x: 220, y: 125, w: 95, h: 45, label: "瑞士腹透液货架(409批)" },
+          { x: 355, y: 125, w: 110, h: 45, label: "进口谷饲牛排冷柜" },
+          { x: 220, y: 220, w: 95, h: 45, label: "工坊被调走的无缝钢管" },
+          { x: 355, y: 220, w: 110, h: 45, label: "私人储藏间(内部上锁)" },
+          { x: 560, y: 195, w: 90, h: 55, label: "铲粮叉车(移动掩体)" },
+          { x: 690, y: 150, w: 115, h: 180, label: "2000℃主焚化炉膛" }
+        ],
+        primaryPath: [
+          { x: 105, y: 255 },
+          { x: 205, y: 290 },
+          { x: 270, y: 185 },
+          { x: 410, y: 185 },
+          { x: 545, y: 270 },
+          { x: 655, y: 245 }
+        ],
+        altPath: [
+          { x: 105, y: 180 },
+          { x: 265, y: 110 },
+          { x: 530, y: 120 },
+          { x: 655, y: 245 },
+          { x: 105, y: 330 }
+        ],
+        threats: [
+          { x: 350, y: 400, r: 150, angle: -75, spread: 65, label: "二楼监控廊探照灯与哨兵射界", truthLabel: "内部纪检与保卫处巡逻视线" },
+          { x: 690, y: 240, r: 75, angle: 180, spread: 120, label: "焚化炉高温热浪与叉车作业区", truthLabel: "正在销毁临期账目物资的后勤叉车" }
+        ],
+        audioRipples: [
+          { x: 740, y: 240, r: 70, color: "#f59e0b", text: "轰隆！牛排与腹透管推进炉膛的油脂爆裂声" },
+          { x: 350, y: 410, r: 55, color: "#3b82f6", text: "周处长拉枪栓声：『把储存卡扔进炉子里！』" }
+        ],
+        nodes: [
+          {
+            id: "N-01", x: 105, y: 255, phase: 1, title: "北苑侧门 · 断跟皮鞋与两个世界", type: "潜入起点",
+            spatial: "四米高通电围墙下的隐蔽刷卡门，墙外是冻土，墙内是26℃暖气管道。",
+            gameplay: "周小姐踩着一高一低的断跟皮鞋用磁卡开门。推门瞬间热浪与烤肉油脂香扑面而来，触发许晨与陈工3秒『饥饿眩晕』检定。",
+            magic: "门里门外温差高达35度，门槛上结着一层半边是红酒渍、半边是黑冻泥的诡异冰棱。",
+            truth: "【真实模式】机关家属大院后勤保障库的内部刷卡通道。"
+          },
+          {
+            id: "N-02", x: 270, y: 185, phase: 2, title: "立体货架区 · 母亲没等到的409批腹透液", type: "核心取证点",
+            spatial: "十米高重型货架走廊，堆满未拆封的进口医疗耗材与无缝钢管。",
+            gameplay: "陈工认出工坊被『统筹』调走的无缝钢管；许晨在货架底层发现与母亲医院同批次的腹透交换液（若在失母流浪线，许晨会直接掏出撬棍砸开箱子，触发狂怒加成）。",
+            magic: "那些腹透液袋子在货架上发出像母亲肺部呼吸一样的湿啰音。",
+            truth: "【真实模式】因调拨手续繁琐而积压在特供库房里的医疗配件与无缝管材。"
+          },
+          {
+            id: "N-03", x: 655, y: 245, phase: 3, title: "2000℃焚化炉 · 铲入火海的牛排与烤肉雪", type: "魔幻高潮奇观",
+            spatial: "仓库东侧巨型工业焚化车间，叉车正将临期15天的特供物资整铲推入火海。",
+            gameplay: "许晨需借叉车掩护抵近炉口，拍下焚毁批次单与原始硬盘；死死抱住想要冲上去拼命的陈工，避免触发重机枪警报。",
+            magic: "烟囱排出的浓烟在寒夜凝结成满城飘落的『烤肉味白雪』；全城饥民伸舌头去接，雪花一碰舌尖就变成苦涩刺鼻的公文纸灰。",
+            truth: "【真实模式】为腾出新年度库容、掩盖超标领用账目而连夜销毁临期食品的后勤焚烧炉。"
+          },
+          {
+            id: "N-04", x: 350, y: 375, phase: 4, title: "二楼钢廊对峙 · 父女拔枪与炉口硬盘", type: "戏剧冲突顶点",
+            spatial: "横跨仓库南侧的二楼监控钢廊，周处长居高临下持枪瞄准炉口。",
+            gameplay: "周处长逼女儿交出硬盘跟自己回家。周小姐将原始硬盘悬在2000度炉口上方，抓起一盒腹透管砸在父亲脚下，掩护许晨与陈工撤离。",
+            magic: "周处长身后的墙上挂着巨大的『公平均衡配给图』，图上的红线像血管一样正往他脚下的私人储藏间里输血。",
+            truth: "【真实模式】体制内高级干部与决意公开违规台账的女儿之间的彻底决裂。"
+          },
+          {
+            id: "N-05", x: 105, y: 330, phase: 5, title: "返程旧诊室 · 鼻血与白面糊脸的犹大", type: "道德审判抉择",
+            spatial: "返回旧疗养院接诊室后的废墟现场，满地碎玻璃与刺破的面粉袋。",
+            gameplay: "诊室被抄，陈工一拳砸断叛徒赵网格的鼻梁。满脸鼻血混着白面粉的赵网格哭喊儿子饿得嚼绘本，只为换二十袋真白面。抉择：扬了脏面粉，或把面粉踢给他并永久逐出队伍。",
+            magic: "赵网格吐出的每一口血沫都变成白色的面疙瘩，掉在地上却长出了红色的封条。",
+            truth: "【真实模式】因本网格断粮、儿子高烧而被迫用梁医生诊室地址交换配额的基层网格员。"
+          }
+        ]
+      },
+
+      L10: {
+        code: "MAP_L10_FINAL_BROADCAST",
+        title: "L10 · 302高地死线广播塔（人形铜丝与铁锈花）",
+        scale: "比例尺 1:120 · 180秒终极死守沙盘 (Last Stand)",
+        defaultTool: "压弯的铸铁撬棍 + 染血笔记本 + 高压发射机",
+        heartRate: "190 BPM (生死极限)",
+        blueStamp: "视玩家路线而定 (真结局将随广播崩裂褪去)",
+        ledgerFront: "机动队清剿令：【302高地发现非法劫持公频信号源，出动三辆破障装甲车，执行物理静默】。",
+        ledgerBack: "对着滚烫的麦克风，一字一顿念出笔记本背面所有的真名：冯志远、林悦、张桂芳、鹰嘴崖第三节车厢 176 人！",
+        metrics: [
+          { label: "核心玩法", val: "180秒三波次不对称据点死守 + 陈工肉身接电 + 许晨撬棍肉搏护麦" },
+          { label: "立体防线", val: "外围工棚铁门（第一防线）→ 催泪瓦斯走廊（第二防线）→ 高压发射机房（核心死守点）" },
+          { label: "终极奇观", val: "陈工化作发光钨丝人形灯泡；广播传出瞬间，全城所有焊死铁门的焊缝同时崩裂开满红铁锈花" }
+        ],
+        rooms: [
+          { x: 40, y: 80, w: 190, h: 360, label: "302高地外围泥坡 & 攻城槌冲击区", sub: "3辆机动队装甲破障车推进线", fill: "#1b1418", stroke: "#ef4444" },
+          { x: 230, y: 110, w: 220, h: 300, label: "前厅缓冲工棚 (催泪瓦斯灌入区)", sub: "撬棍卡门点 / 老程沙袋掩体位", fill: "#161d26", stroke: "#f59e0b" },
+          { x: 450, y: 110, w: 240, h: 300, label: "核心机房 · 电子管广播发射室", sub: "阿宁与许晨直播麦位 / 决战中心", fill: "#142030", stroke: "#3b82f6" },
+          { x: 690, y: 130, w: 150, h: 260, label: "高压配电室 & 信号铁塔基座", sub: "陈工肉身接通万伏铜母线位置", fill: "#241934", stroke: "#a855f7" }
+        ],
+        obstacles: [
+          { x: 80, y: 140, w: 95, h: 55, label: "1号装甲破障车(攻城槌)" },
+          { x: 80, y: 310, w: 95, h: 55, label: "2号突击运兵车" },
+          { x: 225, y: 225, w: 22, h: 70, label: "工棚主铁门(焊死防线)" },
+          { x: 310, y: 165, w: 75, h: 45, label: "老程射击沙袋掩体" },
+          { x: 525, y: 215, w: 95, h: 85, label: "大功率模拟发射机(麦克风)" },
+          { x: 720, y: 215, w: 90, h: 90, label: "被打穿的万伏高压配电箱" }
+        ],
+        primaryPath: [
+          { x: 340, y: 260 },
+          { x: 245, y: 260 },
+          { x: 480, y: 260 },
+          { x: 735, y: 260 },
+          { x: 570, y: 260 }
+        ],
+        altPath: [
+          { x: 175, y: 170 },
+          { x: 240, y: 260 },
+          { x: 350, y: 320 },
+          { x: 525, y: 260 }
+        ],
+        threats: [
+          { x: 185, y: 260, r: 120, angle: 0, spread: 70, label: "攻城槌破门与突击手红外锁定线", truthLabel: "全副武装的治安防暴队强行断电清场" }
+        ],
+        audioRipples: [
+          { x: 755, y: 260, r: 75, color: "#a855f7", text: "滋啦啦——万伏电弧击穿陈工肉身的雷鸣声" },
+          { x: 570, y: 260, r: 130, color: "#10b981", text: "全城3000个高音喇叭共振：『想活命的，自己把门砸开！！』" }
+        ],
+        nodes: [
+          {
+            id: "N-01", x: 235, y: 260, phase: 1, title: "工棚主铁门 · 攻城槌撞击与最后一次卡门", type: "第一防线 (0-60s)",
+            spatial: "加固过的双扇铁皮工棚门，外侧正遭受液压攻城槌猛烈撞击。",
+            gameplay: "倒计时前60秒，玩家需配合灰灰与老程，在铁门被撞变形的瞬间将铸铁撬棍死死塞进门轴，延缓突击队破门时间。",
+            magic: "每一次攻城槌撞击，机房地面上的铁锈都会跳起来，在空中拼成『禁止喧哗』四个字又被震碎。",
+            truth: "【真实模式】外围工棚看守人与同伴用身体和木方顶住被强拆的广播室大门。"
+          },
+          {
+            id: "N-02", x: 345, y: 190, phase: 2, title: "前厅沙袋位 · 老程与灰灰的侧翼火线", type: "第二防线 (60-120s)",
+            spatial: "催泪瓦斯弥漫的狭窄前厅，视野能见度降至 40%。",
+            gameplay: "铁门破开后，老程架起步枪压制第一波突击手；灰灰扑咬投掷震撼弹的敌兵手腕。玩家需在浓烟中靠听觉波纹掩护机房内正在播音的阿宁。",
+            magic: "老程扯掉官方袖标的手臂在催泪瓦斯里泛着微光，打出的每一颗子弹都带着鹰嘴崖幸存者的呼喊回音。",
+            truth: "【真实模式】老程与工友拉起人墙阻拦冲入机房拔线的执法人员。"
+          },
+          {
+            id: "N-03", x: 755, y: 260, phase: 3, title: "高压配电室 · 陈工的人形钨丝灯", type: "魔幻献祭高潮 (120s)",
+            spatial: "机房东侧高压配电间，主铜母线被反器材步枪打断，相距10cm冒着万伏电弧。",
+            gameplay: "广播中断！千钧一发之际，陈工不戴护具扑上去，用双手死死攥住两截断裂的万伏高压铜缆，用肉身强行导通电路！",
+            magic: "在万伏强光下，陈工的皮肤变得半透明，全身骨骼与血管化作烧红的发光钨丝，像一盏巨大的人形白炽灯泡照亮整个黑夜，双手烧成焦炭仍死死锁住电缆！",
+            truth: "【真实模式】陈工在漏电起火的配电箱前严重触电灼伤，仍死死用绝缘钳顶住跳闸总开关直到播音结束。"
+          },
+          {
+            id: "N-04", x: 570, y: 260, phase: 4, title: "直播麦克风 · 阿宁与许晨的死线点名", type: "终极叙事爆发 (120-180s)",
+            spatial: "烧得通红的电子管发射机台前，三道红外激光点已锁定阿宁后心。",
+            gameplay: "许晨跃出掩体，用压弯的撬棍砸偏突击手枪口，左肩中弹倒在发射台前，抓起麦克风吼出《笔记本背面》收集的所有死难者与幸存者真名！",
+            magic: "『想活命的，自己把门砸开——！！』声浪化作实质的金色冲击波冲出机房。",
+            truth: "【真实模式】一段只有三分钟、却通过有线广播与市民手机录屏传遍全城的实名证言。"
+          },
+          {
+            id: "N-05", x: 110, y: 260, phase: 5, title: "全城共振 · 焊缝里疯长的红铁锈花", type: "终章破闸引子",
+            spatial: "由302高地辐射至全城二十四个安全区、东街、三号楼与第一关卡。",
+            gameplay: "广播完成的瞬间进入终章【破闸】：玩家操控带伤的许晨走向第一安全区主升降杆，与活人及亡魂虚影共同掰断锁死的齿轮。",
+            magic: "全城所有被电焊焊死的铁门、铁窗、工字钢横梁的焊缝同时裂开，从钢铁缝隙里疯长出一朵朵鲜红如血的铁锈花，成千上万处焊点齐声崩断！",
+            truth: "【真实模式】次日清晨，成千上万拿着空餐盒与病历的市民走上街头，修理工与年轻门卫一起抬起了卡死的升降栏杆。"
+          }
+        ]
+      }
+    };
+
+    // Application State
+    const state = {
+      currentLevel: "L02",
+      activeNodeId: "N-01",
+      activePhase: 1,
+      layers: {
+        primaryPath: true,
+        altPath: true,
+        threats: true,
+        audio: true,
+        magic: true,
+        vision: true
+      },
+      glassesBroken: false,
+      outlandRoute: false, // false = 家园线, true = 流浪线
+      truthMode: false,    // false = 一周目魔幻现实, true = 二周目真实模式
+      playerPos: { x: 85, y: 255 },
+      aimAngle: 0,         // in radians
+      isDraggingPlayer: false,
+      animTick: 0
+    };
+
+    const canvas = document.getElementById("blueprintCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Initialize Canvas Resolution (Logical 900 x 520 coordinate space)
+    const LOGICAL_W = 900;
+    const LOGICAL_H = 520;
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      drawBlueprint();
+    }
+
+    // Load Level Data into State & UI
+    function loadLevel(levelKey) {
+      state.currentLevel = levelKey;
+      const lvl = LEVEL_DATA[levelKey];
+      const firstNode = lvl.nodes[0];
+      state.activeNodeId = firstNode.id;
+      state.activePhase = 1;
+      state.playerPos = { x: firstNode.x, y: firstNode.y };
+      state.aimAngle = 0;
+
+      // Update Top Tabs UI
+      document.querySelectorAll(".level-tab").forEach(btn => {
+        if (btn.dataset.level === levelKey) {
+          btn.className = "level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-blue-600 text-white shadow-sm";
+        } else {
+          btn.className = "level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700";
+        }
+      });
+
+      // Update Map Header & HUD
+      document.getElementById("mapCodeLabel").textContent = lvl.code;
+      document.getElementById("mapScaleLabel").textContent = lvl.scale;
+      document.getElementById("mapTitleLabel").textContent = lvl.title;
+      document.getElementById("hudHeartRate").textContent = state.truthMode ? "72 BPM (平稳)" : lvl.heartRate;
+      document.getElementById("hudBlueStamp").textContent = state.truthMode ? "0% (普通印章)" : lvl.blueStamp;
+      document.getElementById("hudTool").textContent = state.truthMode ? "手推车 / 笔记本 / 凉水瓢" : (state.outlandRoute ? "改装防暴霰弹枪 + 撬棍" : lvl.defaultTool);
+
+      // Update Dual Ledger
+      document.getElementById("ledgerFrontText").textContent = lvl.ledgerFront;
+      document.getElementById("ledgerBackText").textContent = lvl.ledgerBack;
+
+      // Update Metrics List
+      const metricsEl = document.getElementById("levelMetricsList");
+      metricsEl.innerHTML = lvl.metrics.map(m => `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-2 rounded bg-slate-900/70 border border-slate-800/70 gap-1">
+          <span class="text-slate-400 font-medium">${m.label}</span>
+          <span class="text-slate-200 sm:text-right">${m.val}</span>
+        </div>
+      `).join("");
+
+      renderPhaseStepper();
+      selectNode(firstNode.id);
+      drawBlueprint();
+    }
+
+    function renderPhaseStepper() {
+      const lvl = LEVEL_DATA[state.currentLevel];
+      const container = document.getElementById("phaseStepsContainer");
+      document.getElementById("activePhaseBadge").textContent = `阶段 ${state.activePhase} / ${lvl.nodes.length}`;
+
+      container.innerHTML = lvl.nodes.map((n, idx) => {
+        const isActive = n.id === state.activeNodeId;
+        return `
+          <button type="button" data-node="${n.id}" class="phase-step-btn text-left p-2 rounded border transition-all ${
+            isActive 
+              ? "bg-blue-600/20 border-blue-500 text-white shadow-sm" 
+              : "bg-slate-900/80 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+          }">
+            <div class="flex items-center justify-between text-[10px] mono mb-0.5">
+              <span class="${isActive ? "text-blue-400 font-bold" : "text-slate-500"}">STEP 0${idx + 1} · ${n.id}</span>
+              <span>${n.type.split("/")[0]}</span>
+            </div>
+            <div class="text-xs font-semibold truncate">${n.title.split("·")[1] || n.title}</div>
+          </button>
+        `;
+      }).join("");
+
+      container.querySelectorAll(".phase-step-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const nodeId = btn.dataset.node;
+          const target = lvl.nodes.find(item => item.id === nodeId);
+          if (target) {
+            state.playerPos = { x: target.x, y: target.y };
+            selectNode(nodeId);
+          }
+        });
+      });
+    }
+
+    function selectNode(nodeId) {
+      const lvl = LEVEL_DATA[state.currentLevel];
+      const node = lvl.nodes.find(n => n.id === nodeId) || lvl.nodes[0];
+      state.activeNodeId = node.id;
+      state.activePhase = node.phase;
+
+      document.getElementById("nodeIdBadge").textContent = node.id;
+      document.getElementById("nodeTitle").textContent = node.title;
+      document.getElementById("nodeTypeTag").textContent = node.type;
+      document.getElementById("nodeSpatialDesc").textContent = node.spatial;
+      document.getElementById("nodeGameplayDesc").textContent = node.gameplay;
+
+      const magicBox = document.getElementById("nodeMagicBox");
+      const magicHeader = document.getElementById("nodeMagicHeader");
+      const magicDesc = document.getElementById("nodeMagicDesc");
+
+      if (state.truthMode) {
+        magicBox.className = "p-2.5 rounded border border-amber-500/40 bg-amber-950/20";
+        magicHeader.textContent = "👁️ 【二周目：零号真实模式】还原真相：";
+        magicDesc.className = "text-amber-100/90";
+        magicDesc.textContent = node.truth;
+      } else {
+        magicBox.className = "p-2.5 rounded border border-purple-500/30 bg-purple-950/20";
+        magicHeader.textContent = "✨ 魔幻现实奇观机制：";
+        magicDesc.className = "text-purple-100/90";
+        magicDesc.textContent = node.magic;
+      }
+
+      renderPhaseStepper();
+      drawBlueprint();
+    }
+
+    // Core Canvas Drawing Engine
+    function drawBlueprint() {
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width;
+      const h = canvas.height;
+      const scaleX = w / LOGICAL_W;
+      const scaleY = h / LOGICAL_H;
+
+      ctx.save();
+      ctx.clearRect(0, 0, w, h);
+      ctx.scale(scaleX, scaleY);
+
+      const lvl = LEVEL_DATA[state.currentLevel];
+
+      // 1. Draw Rooms & Architectural Zones
+      lvl.rooms.forEach(r => {
+        ctx.save();
+        ctx.fillStyle = state.truthMode ? "#161b22" : r.fill;
+        ctx.strokeStyle = state.truthMode ? "#64748b" : r.stroke;
+        ctx.lineWidth = 2;
+        if (r.dashed) ctx.setLineDash([6, 4]);
+        ctx.fillRect(r.x, r.y, r.w, r.h);
+        ctx.strokeRect(r.x, r.y, r.w, r.h);
+
+        // Room Corner Ticks
+        ctx.setLineDash([]);
+        ctx.fillStyle = state.truthMode ? "#cbd5e1" : "#f8fafc";
+        ctx.font = "bold 12px 'Noto Sans SC', sans-serif";
+        ctx.fillText(r.label, r.x + 10, r.y + 20);
+
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "10px 'JetBrains Mono', 'Noto Sans SC', sans-serif";
+        ctx.fillText(r.sub, r.x + 10, r.y + 35);
+        ctx.restore();
+      });
+
+      // 2. Draw Obstacles, Cover & Choke Points
+      lvl.obstacles.forEach(obs => {
+        ctx.save();
+        const isChoke = obs.label.includes("门") || obs.label.includes("窗") || obs.label.includes("车");
+        ctx.fillStyle = isChoke ? "rgba(245, 158, 11, 0.18)" : "rgba(30, 41, 59, 0.85)";
+        ctx.strokeStyle = isChoke ? "#f59e0b" : "#475569";
+        ctx.lineWidth = 1.5;
+        ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+        ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
+
+        ctx.fillStyle = isChoke ? "#fcd34d" : "#cbd5e1";
+        ctx.font = "10px 'Noto Sans SC', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(obs.label, obs.x + obs.w / 2, obs.y + obs.h / 2 + 4);
+        ctx.restore();
+      });
+
+      // 3. Draw Threat Zones & Sightcones
+      if (state.layers.threats) {
+        lvl.threats.forEach(th => {
+          ctx.save();
+          const rad = (th.angle * Math.PI) / 180;
+          const halfSpread = ((th.spread / 2) * Math.PI) / 180;
+
+          ctx.beginPath();
+          ctx.moveTo(th.x, th.y);
+          ctx.arc(th.x, th.y, th.r, rad - halfSpread, rad + halfSpread);
+          ctx.closePath();
+
+          if (state.truthMode) {
+            ctx.fillStyle = "rgba(251, 191, 36, 0.12)";
+            ctx.strokeStyle = "rgba(251, 191, 36, 0.5)";
+          } else {
+            ctx.fillStyle = "rgba(239, 68, 68, 0.18)";
+            ctx.strokeStyle = "rgba(239, 68, 68, 0.65)";
+          }
+          ctx.lineWidth = 1.5;
+          ctx.fill();
+          ctx.stroke();
+
+          // Threat Origin Dot
+          ctx.beginPath();
+          ctx.arc(th.x, th.y, 6, 0, Math.PI * 2);
+          ctx.fillStyle = state.truthMode ? "#f59e0b" : "#ef4444";
+          ctx.fill();
+
+          ctx.fillStyle = state.truthMode ? "#fde68a" : "#fca5a5";
+          ctx.font = "bold 10px 'Noto Sans SC', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(state.truthMode ? th.truthLabel : th.label, th.x, th.y - 10);
+          ctx.restore();
+        });
+      }
+
+      // 4. Draw Magical Realism Visual Layer
+      if (state.layers.magic && !state.truthMode) {
+        lvl.nodes.forEach(n => {
+          ctx.save();
+          const pulse = (Math.sin(state.animTick * 0.06) + 1) * 0.5;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, 18 + pulse * 12, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(168, 85, 247, 0.10)";
+          ctx.strokeStyle = "rgba(168, 85, 247, 0.45)";
+          ctx.setLineDash([3, 3]);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+
+      // 5. Draw Audio Ripples Layer
+      if (state.layers.audio) {
+        lvl.audioRipples.forEach((ar, idx) => {
+          ctx.save();
+          const waveOffset = (state.animTick * 0.8 + idx * 25) % ar.r;
+          ctx.beginPath();
+          ctx.arc(ar.x, ar.y, waveOffset, 0, Math.PI * 2);
+          ctx.strokeStyle = ar.color;
+          ctx.globalAlpha = 1 - waveOffset / ar.r;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          ctx.globalAlpha = 0.9;
+          ctx.fillStyle = ar.color;
+          ctx.font = "italic 10px 'Noto Sans SC', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("))) " + ar.text, ar.x, ar.y + ar.r * 0.55);
+          ctx.restore();
+        });
+      }
+
+      // 6. Draw Alt / Stealth / Outland Flow Path
+      if (state.layers.altPath && lvl.altPath.length > 1) {
+        ctx.save();
+        ctx.beginPath();
+        lvl.altPath.forEach((pt, idx) => {
+          if (idx === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        });
+        ctx.strokeStyle = state.outlandRoute ? "#f97316" : "#fbbf24";
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([8, 6]);
+        ctx.lineDashOffset = -state.animTick * 0.5;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 7. Draw Primary Flow Path with Direction Arrows
+      if (state.layers.primaryPath && lvl.primaryPath.length > 1) {
+        ctx.save();
+        ctx.beginPath();
+        lvl.primaryPath.forEach((pt, idx) => {
+          if (idx === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        });
+        ctx.strokeStyle = "#10b981";
+        ctx.lineWidth = 3;
+        ctx.setLineDash([12, 6]);
+        ctx.lineDashOffset = -state.animTick * 0.7;
+        ctx.stroke();
+
+        // Draw directional arrowheads along segments
+        ctx.setLineDash([]);
+        for (let i = 0; i < lvl.primaryPath.length - 1; i++) {
+          const p1 = lvl.primaryPath[i];
+          const p2 = lvl.primaryPath[i + 1];
+          const midX = (p1.x + p2.x) / 2;
+          const midY = (p1.y + p2.y) / 2;
+          const ang = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+
+          ctx.save();
+          ctx.translate(midX, midY);
+          ctx.rotate(ang);
+          ctx.beginPath();
+          ctx.moveTo(7, 0);
+          ctx.lineTo(-5, -5);
+          ctx.lineTo(-5, 5);
+          ctx.closePath();
+          ctx.fillStyle = "#10b981";
+          ctx.fill();
+          ctx.restore();
+        }
+        ctx.restore();
+      }
+
+      // 8. Draw Interactive 90-Degree Vision Cone from Player Token
+      if (state.layers.vision) {
+        ctx.save();
+        const coneRadius = state.glassesBroken ? 115 : 195;
+        const coneSpread = (90 * Math.PI) / 180;
+
+        const grad = ctx.createRadialGradient(
+          state.playerPos.x, state.playerPos.y, 10,
+          state.playerPos.x, state.playerPos.y, coneRadius
+        );
+        grad.addColorStop(0, "rgba(59, 130, 246, 0.32)");
+        grad.addColorStop(0.7, "rgba(59, 130, 246, 0.12)");
+        grad.addColorStop(1, "rgba(59, 130, 246, 0.0)");
+
+        ctx.beginPath();
+        ctx.moveTo(state.playerPos.x, state.playerPos.y);
+        ctx.arc(
+          state.playerPos.x,
+          state.playerPos.y,
+          coneRadius,
+          state.aimAngle - coneSpread / 2,
+          state.aimAngle + coneSpread / 2
+        );
+        ctx.closePath();
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.strokeStyle = state.glassesBroken ? "rgba(245, 158, 11, 0.55)" : "rgba(96, 165, 250, 0.55)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 9. Draw Interactive Nodes (N-01 to N-05)
+      lvl.nodes.forEach(n => {
+        const isSelected = n.id === state.activeNodeId;
+        ctx.save();
+
+        if (isSelected) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, 18, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(59, 130, 246, 0.28)";
+          ctx.fill();
+          ctx.strokeStyle = "#60a5fa";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 11, 0, Math.PI * 2);
+        ctx.fillStyle = isSelected ? "#2563eb" : "#1e293b";
+        ctx.fill();
+        ctx.strokeStyle = isSelected ? "#ffffff" : "#94a3b8";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 9px 'JetBrains Mono', monospace";
+        ctx.textAlign = "center";
+        ctx.fillText(n.id.replace("N-0", ""), n.x, n.y + 3);
+
+        // Node Title Tag
+        ctx.fillStyle = isSelected ? "#93c5fd" : "#cbd5e1";
+        ctx.font = "bold 11px 'Noto Sans SC', sans-serif";
+        ctx.fillText(n.title.split("·")[1] || n.title, n.x, n.y - 16);
+        ctx.restore();
+      });
+
+      // 10. Draw Player Token (Xu Chen + Huihui Companion Dot)
+      ctx.save();
+      // Player Shadow (missing if corrupted, visible otherwise)
+      ctx.beginPath();
+      ctx.ellipse(state.playerPos.x + 3, state.playerPos.y + 6, 10, 5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.fill();
+
+      // Player Circle
+      ctx.beginPath();
+      ctx.arc(state.playerPos.x, state.playerPos.y, 9, 0, Math.PI * 2);
+      ctx.fillStyle = state.outlandRoute ? "#f97316" : "#10b981";
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.fillStyle = "#06281e";
+      ctx.font = "bold 10px 'JetBrains Mono', monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("P", state.playerPos.x, state.playerPos.y + 3.5);
+
+      // Huihui Companion Token (Grey Dog trailing slightly behind)
+      const dogX = state.playerPos.x - Math.cos(state.aimAngle) * 18;
+      const dogY = state.playerPos.y - Math.sin(state.aimAngle) * 18;
+      ctx.beginPath();
+      ctx.arc(dogX, dogY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = "#94a3b8";
+      ctx.fill();
+      ctx.strokeStyle = "#e2e8f0";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.restore();
+    }
+
+    // Animation Loop for Flowing Arrows & Audio Ripples
+    let animFrameId = null;
+    function startAnimationLoop() {
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      function step() {
+        state.animTick += 1;
+        drawBlueprint();
+        animFrameId = requestAnimationFrame(step);
+      }
+      animFrameId = requestAnimationFrame(step);
+    }
+
+    // Helper: Convert Mouse/Touch Event to Logical Canvas Coordinates
+    function getLogicalCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const x = ((clientX - rect.left) / rect.width) * LOGICAL_W;
+      const y = ((clientY - rect.top) / rect.height) * LOGICAL_H;
+      return { x, y };
+    }
+
+    // Event Listeners for Canvas Interaction
+    canvas.addEventListener("mousedown", e => {
+      const pt = getLogicalCoords(e);
+      const lvl = LEVEL_DATA[state.currentLevel];
+
+      // Check if clicking near Player Token to drag
+      const distPlayer = Math.hypot(pt.x - state.playerPos.x, pt.y - state.playerPos.y);
+      if (distPlayer <= 16) {
+        state.isDraggingPlayer = true;
+        return;
+      }
+
+      // Check if clicking a Node
+      for (const n of lvl.nodes) {
+        if (Math.hypot(pt.x - n.x, pt.y - n.y) <= 18) {
+          state.playerPos = { x: n.x, y: n.y };
+          selectNode(n.id);
+          return;
+        }
+      }
+
+      // Otherwise teleport player to clicked spot & orient vision
+      state.playerPos = { x: pt.x, y: pt.y };
+    });
+
+    canvas.addEventListener("mousemove", e => {
+      const pt = getLogicalCoords(e);
+      document.getElementById("cursorCoords").textContent = `X: ${Math.round(pt.x / 5)}m, Y: ${Math.round(pt.y / 5)}m`;
+
+      if (state.isDraggingPlayer) {
+        state.playerPos = {
+          x: Math.max(20, Math.min(LOGICAL_W - 20, pt.x)),
+          y: Math.max(20, Math.min(LOGICAL_H - 20, pt.y))
+        };
+      } else {
+        state.aimAngle = Math.atan2(pt.y - state.playerPos.y, pt.x - state.playerPos.x);
+      }
+    });
+
+    window.addEventListener("mouseup", () => {
+      state.isDraggingPlayer = false;
+    });
+
+    // Touch support
+    canvas.addEventListener("touchstart", e => {
+      const pt = getLogicalCoords(e);
+      const lvl = LEVEL_DATA[state.currentLevel];
+      for (const n of lvl.nodes) {
+        if (Math.hypot(pt.x - n.x, pt.y - n.y) <= 24) {
+          state.playerPos = { x: n.x, y: n.y };
+          selectNode(n.id);
+          return;
+        }
+      }
+      state.playerPos = { x: pt.x, y: pt.y };
+    }, { passive: true });
+
+    // Level Tabs Binding
+    document.querySelectorAll(".level-tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        loadLevel(btn.dataset.level);
+      });
+    });
+
+    // Layer Toggle Buttons Binding
+    function setupLayerButton(btnId, layerKey, activeClass) {
+      const btn = document.getElementById(btnId);
+      btn.addEventListener("click", () => {
+        state.layers[layerKey] = !state.layers[layerKey];
+        btn.style.opacity = state.layers[layerKey] ? "1" : "0.4";
+        drawBlueprint();
+      });
+    }
+    setupLayerButton("togglePrimaryPath", "primaryPath");
+    setupLayerButton("toggleAltPath", "altPath");
+    setupLayerButton("toggleThreats", "threats");
+    setupLayerButton("toggleAudio", "audio");
+    setupLayerButton("toggleMagic", "magic");
+    setupLayerButton("toggleVision", "vision");
+
+    // Step Along Primary Flow Button
+    document.getElementById("btnSimStep").addEventListener("click", () => {
+      const lvl = LEVEL_DATA[state.currentLevel];
+      const currentIndex = lvl.nodes.findIndex(n => n.id === state.activeNodeId);
+      const nextIndex = (currentIndex + 1) % lvl.nodes.length;
+      const nextNode = lvl.nodes[nextIndex];
+      state.playerPos = { x: nextNode.x, y: nextNode.y };
+      if (lvl.nodes[currentIndex]) {
+        state.aimAngle = Math.atan2(
+          nextNode.y - lvl.nodes[currentIndex].y,
+          nextNode.x - lvl.nodes[currentIndex].x
+        );
+      }
+      selectNode(nextNode.id);
+    });
+
+    // Reset Position Button
+    document.getElementById("btnResetPos").addEventListener("click", () => {
+      const lvl = LEVEL_DATA[state.currentLevel];
+      const first = lvl.nodes[0];
+      state.playerPos = { x: first.x, y: first.y };
+      state.aimAngle = 0;
+      selectNode(first.id);
+    });
+
+    // Glasses State Toggle
+    document.getElementById("btnGlassesState").addEventListener("click", e => {
+      state.glassesBroken = !state.glassesBroken;
+      const container = document.getElementById("canvasContainer");
+      if (state.glassesBroken) {
+        e.currentTarget.textContent = "👓 眼镜状态: 镜片碎裂 (视距-40%/重影)";
+        e.currentTarget.className = "px-2.5 py-1 rounded border border-rose-500/60 bg-rose-500/20 text-rose-300 transition mono";
+        container.classList.add("glasses-cracked");
+      } else {
+        e.currentTarget.textContent = "👓 眼镜状态: 完好 (100%视距)";
+        e.currentTarget.className = "px-2.5 py-1 rounded border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition mono";
+        container.classList.remove("glasses-cracked");
+      }
+      drawBlueprint();
+    });
+
+    // Route Variant Toggle (Home Tethered vs Outland Nomad)
+    document.getElementById("btnRouteVariant").addEventListener("click", e => {
+      state.outlandRoute = !state.outlandRoute;
+      if (state.outlandRoute) {
+        e.currentTarget.textContent = "🔥 当前路线: 失母·域外流浪线 (武装劫掠)";
+        e.currentTarget.className = "px-2.5 py-1 rounded border border-orange-500 bg-orange-600/30 text-orange-200 font-semibold transition";
+      } else {
+        e.currentTarget.textContent = "🏠 当前路线: 家园线 (保母潜行)";
+        e.currentTarget.className = "px-2.5 py-1 rounded border border-orange-500/40 bg-orange-500/10 text-orange-300 hover:bg-orange-500/20 transition";
+      }
+      loadLevel(state.currentLevel);
+    });
+
+    // Truth Mode (Second Playthrough Zero-Zombie Mode) Toggle
+    document.getElementById("btnTruthMode").addEventListener("click", e => {
+      state.truthMode = !state.truthMode;
+      const container = document.getElementById("canvasContainer");
+      const badge = document.getElementById("modeBadge");
+      const indicator = document.getElementById("brandIndicator");
+
+      if (state.truthMode) {
+        e.currentTarget.textContent = "🌀 返回【一周目：Z年魔幻现实模式】";
+        e.currentTarget.className = "px-3 py-1 rounded font-semibold border border-blue-400/60 bg-blue-500/20 text-blue-200 transition shadow-sm";
+        container.classList.remove("blueprint-grid");
+        container.classList.add("truth-grid");
+        badge.textContent = "TRUTH MODE · ZERO ZOMBIES";
+        badge.className = "mono text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40";
+        indicator.className = "w-3 h-8 bg-amber-400 rounded-sm shadow-[0_0_12px_rgba(251,191,36,0.8)]";
+      } else {
+        e.currentTarget.textContent = "👁️ 切换【二周目：零号真实模式】";
+        e.currentTarget.className = "px-3 py-1 rounded font-semibold border border-amber-400/60 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 transition shadow-sm";
+        container.classList.remove("truth-grid");
+        container.classList.add("blueprint-grid");
+        badge.textContent = "Z-YEAR MAGICAL REALISM";
+        badge.className = "mono text-[11px] px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30";
+        indicator.className = "w-3 h-8 bg-blue-500 rounded-sm shadow-[0_0_12px_rgba(59,130,246,0.8)]";
+      }
+      loadLevel(state.currentLevel);
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("load", () => {
+      resizeCanvas();
+      loadLevel("L02");
+      startAnimationLoop();
+    });
+  </script>
+</body>
+</html>
