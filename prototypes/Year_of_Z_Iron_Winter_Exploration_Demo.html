@@ -991,7 +991,8 @@ function drawEnt(e){
     ctx.fillStyle='#450a0a'; ctx.beginPath(); ctx.arc(s.x,s.y-17+bob,5.5,0,6.2832); ctx.fill();
     if(e.state==='chase'){ ctx.fillStyle='#ef4444'; ctx.font='11px serif'; ctx.fillText('!',s.x-2,s.y-26+bob); }
     if(e.bite>0.12){ ctx.strokeStyle='#ef4444'; ctx.lineWidth=2.5;
-      ctx.beginPath(); ctx.arc(s.x,s.y-9,10+ (1-e.bite/0.45)*10,0,6.2832); ctx.stroke(); }
+      const bk=clamp(e.bite/0.45,0,1);                    // 钳到 [0,1]：蓄力圈 20→10 后停住，不会再缩成负数
+      ctx.beginPath(); ctx.arc(s.x,s.y-9,10+(1-bk)*10,0,6.2832); ctx.stroke(); }
   } else if(e.kind==='half'){
     ctx.fillStyle='#8a9098'; ctx.beginPath(); ctx.ellipse(s.x,s.y-8+bob,8,10,0,0,6.2832); ctx.fill();
     ctx.fillStyle='#cbd5e1'; ctx.beginPath(); ctx.arc(s.x,s.y-16+bob,5,0,6.2832); ctx.fill();
@@ -1414,7 +1415,7 @@ function update(dt){
         const sp2=3.3, a=Math.atan2(p.y-e.y,p.x-e.x);
         moveEnt(e,e.x+Math.cos(a)*sp2*dt,e.y+Math.sin(a)*sp2*dt,0.32);
         if(d<1.15){
-          e.bite=(e.bite||0)+dt;
+          e.bite=Math.min((e.bite||0)+dt, 0.45);   // 封顶：冷却/无敌帧期间不再累加，否则绘制半径会穿零变负
           if(e.bite>=0.45&&e.cd<=0&&!(p.iframe>0)){ e.cd=1.7; e.bite=0; p.hp-=8; p.iframe=0.75; p.hurt=0.35; p.bpm+=18;
           sfx('hit'); emitNoise(p.x,p.y,6,'#ef4444','hit');
             if(rnd()<0.30&&!G.flags.glasses) { G.flags.glasses=true; toast(LANG==='zh'?'<b>镜片裂了：视距 12m → 7.2m，边缘重影。</b>':'<b>Lens cracked: sight 12m → 7.2m, ghosting at the edges.</b>',3000); CFG.SIGHT=7.2; }
@@ -1438,7 +1439,7 @@ function update(dt){
         const d2=dist(e.x,e.y,o.x,o.y), a2=Math.atan2(o.y-e.y,o.x-e.x);
         if(d2<14&&Math.abs(angDiff(e.face,a2))<22.5*Math.PI/180&&losClear(e.x,e.y,o.x,o.y,{blockCover:false})){
           e.lock=Math.max(e.lock||0,0)+dt; if(e.lock>0.5&&e.cd<=0&&!o.dead){
-            e.cd=0.9; o.hp=0; o.dead=true;
+            e.cd=0.9; e.lock=0; o.hp=0; o.dead=true;
             emitNoise(e.x,e.y,9,'#7dd3fc','osk');
             if(o.kind==='rabid'){ S.killed++; S.events.push({t:'knife',zh:'借刀杀人：清杀队替你清掉 1 只狂暴者',en:'Borrowed knife: O.S.K. dropped 1 rabid for you'}); }
             else { S.events.push({t:'witness',zh:'你看着清杀队射杀了那个正在退烧的人。',en:'You watched the purge squad gun down a recovering person.'}); G.conscience-=3; }
@@ -1447,7 +1448,7 @@ function update(dt){
       });
       if(e.suspect>=1&&d<14&&clear&&!hidden){ e.lock=(e.lock||0)+dt; } else if(d>=14||!inCone) e.lock=Math.max(0,(e.lock||0)-dt);
       if(e.lock>=1.0&&e.cd<=0){
-        e.cd=0.95; const acc=clamp(1-d/14,0.25,1)*0.75;
+        e.cd=0.95; e.lock=0; const acc=clamp(1-d/14,0.25,1)*0.75;
         if(rnd()<acc&&!(p.iframe>0)){ p.hp-=18; p.iframe=0.6; p.hurt=0.4; }
         sfx('lock'); emitNoise(e.x,e.y,10,'#7dd3fc','osk');
         toast(LANG==='zh'?'<b style="color:#fca5a5">红外锁定——AKM 微声点射！</b>':'<b style="color:#fca5a5">IR lock — suppressed AKM burst!</b>',1600);
