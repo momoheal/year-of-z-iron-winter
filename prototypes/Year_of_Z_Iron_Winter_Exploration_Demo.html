@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Year of Z: Iron Winter — Exploration Loop Demo |《Z年纪事：凛冬铁轨》探索循环 DEMO</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080a0d; --panel:#0f1319; --panel2:#141a22; --line:#232c38;
+    --ink:#dbe3ee; --dim:#8b98a9; --amber:#f59e0b; --term:#4ade80;
+    --red:#ef4444; --ice:#7dd3fc; --blood:#b91c1c; --ash:#cbd5e1;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter','Noto Sans SC',system-ui,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+  .screen{display:none;min-height:100vh}
+  .screen.active{display:block}
+  /* ---------- generic ---------- */
+  .wrap{max-width:1400px;margin:0 auto;padding:0 18px}
+  .panel{background:linear-gradient(180deg,#111721 0%,#0d1218 100%);border:1px solid var(--line);border-radius:10px}
+  .panel-pad{padding:14px 16px}
+  .h-lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6b7a8d;font-weight:700}
+  .ttl{font-size:13px;font-weight:700;letter-spacing:.04em}
+  .sub{font-size:11.5px;color:var(--dim);line-height:1.55}
+  .btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#151c26;color:var(--ink);
+       padding:8px 13px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.14s;white-space:nowrap}
+  .btn:hover{background:#1c2531;border-color:#33415580;transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn.primary{background:linear-gradient(180deg,#b45309,#92400e);border-color:#f59e0b55;color:#fff7ed}
+  .btn.primary:hover{background:linear-gradient(180deg,#d97706,#b45309)}
+  .btn.ghost{background:transparent}
+  .btn.danger{border-color:#7f1d1d;color:#fca5a5;background:#2a1113}
+  .btn.sm{padding:5px 9px;font-size:11.5px}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+  .chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#0e141c;color:#a9b6c6;
+        padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .chip.on{background:#132a1e;border-color:#22c55e55;color:#86efac}
+  .chip.warn{border-color:#7f1d1d;color:#fca5a5}
+  .bar{height:6px;border-radius:4px;background:#0b1017;overflow:hidden;border:1px solid #1c2532}
+  .bar>i{display:block;height:100%;border-radius:4px;transition:width .25s}
+  .grid{display:grid;gap:14px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .sep{height:1px;background:var(--line);margin:12px 0}
+  .kbd{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#1a222c;border:1px solid #2b3644;border-bottom-width:2px;
+       border-radius:4px;padding:1px 5px;color:#cbd5e1}
+  /* ---------- header ---------- */
+  header.top{position:sticky;top:0;z-index:40;background:#080a0dee;border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+  .top-in{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 0;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .mk{width:26px;height:26px;border-radius:5px;background:linear-gradient(135deg,#334155,#0f172a);
+             border:1px solid #475569;display:grid;place-items:center;font-size:13px}
+  /* ---------- title ---------- */
+  #s-title{display:none;place-items:center}
+  #s-title.active{display:grid}
+  .hero{max-width:820px;margin:0 auto;text-align:center;padding:56px 20px}
+  /* ---------- base ---------- */
+  .base-grid{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:14px;padding-top:16px;padding-bottom:40px}
+  @media(max-width:1080px){.base-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:760px){.base-grid{grid-template-columns:1fr}}
+  .card-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .stat{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;padding:4px 0}
+  .stat b{font-family:'JetBrains Mono',monospace;font-size:13px}
+  .mate{display:flex;gap:10px;align-items:flex-start;padding:9px;border:1px solid #1e2733;border-radius:8px;background:#0d131b;cursor:pointer;transition:.14s}
+  .mate:hover{border-color:#33415588;background:#111925}
+  .mate.sel{border-color:#f59e0b77;background:#1a1408;box-shadow:inset 0 0 0 1px #f59e0b22}
+  .mate.lock{opacity:.45;cursor:not-allowed}
+  .mate .av{width:34px;height:34px;border-radius:7px;background:#151d28;border:1px solid #26313f;display:grid;place-items:center;font-size:15px;flex:0 0 auto}
+  .wpn{display:flex;gap:10px;align-items:center;padding:9px;border:1px solid #1e2733;border-radius:8px;background:#0d131b}
+  .wpn.owned{border-color:#33415599}
+  .wpn .ic{width:34px;height:34px;border-radius:7px;background:#151d28;border:1px solid #26313f;display:grid;place-items:center;font-size:16px}
+  .pips{display:flex;gap:3px}
+  .pip{width:9px;height:9px;border:1px solid #3b4756;border-radius:2px;background:#0b1118}
+  .pip.f{background:var(--amber);border-color:#f59e0b}
+  .inv-item{display:flex;justify-content:space-between;font-size:11.5px;padding:3px 0;color:#b6c2d1}
+  .inv-item b{font-family:'JetBrains Mono',monospace;color:#e2e8f0}
+  /* ---------- map ---------- */
+  .map-grid{display:grid;grid-template-columns:1.35fr .95fr;gap:14px;padding-top:16px;padding-bottom:40px}
+  @media(max-width:1080px){.map-grid{grid-template-columns:1fr}}
+  #mapCanvas{width:100%;height:520px;display:block;border-radius:9px;background:#070a0e;cursor:pointer}
+  .node-card{font-size:12.5px;line-height:1.6}
+  .tagline{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .risk-dot{width:9px;height:9px;border-radius:2px;background:#22303f;border:1px solid #33445a;display:inline-block}
+  .risk-dot.on{background:var(--red);border-color:#ef444488;box-shadow:0 0 6px #ef444466}
+  .load-slot{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 8px;border:1px solid #1e2733;border-radius:6px;background:#0d131b;font-size:12px}
+  /* ---------- scene ---------- */
+  #s-scene{background:#05070a}
+  #cv{display:block;width:100%;height:calc(100vh - 47px);background:#05070a;cursor:crosshair}
+  .hud{position:fixed;z-index:30;pointer-events:none;font-size:12px}
+  #hudTL{left:14px;top:60px}
+  #hudTR{right:14px;top:60px;text-align:right}
+  #hudBL{left:14px;bottom:14px}
+  #hudBC{left:50%;transform:translateX(-50%);bottom:20px;text-align:center}
+  #hudBR{right:14px;bottom:14px;text-align:right}
+  .hudbox{background:#080b0fd9;border:1px solid #1d2732;border-radius:8px;padding:8px 11px;backdrop-filter:blur(6px)}
+  .hudbox .lab{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#5f6f83;font-weight:700}
+  .meter{width:130px;height:7px;background:#0b1017;border:1px solid #1c2532;border-radius:4px;overflow:hidden;margin-top:3px}
+  .meter>i{display:block;height:100%}
+  .slots{display:grid;grid-template-columns:repeat(6,26px);gap:4px;margin-top:6px}
+  .slot{width:26px;height:26px;border:1px solid #1e2733;border-radius:5px;background:#0b1017;display:grid;place-items:center;font-size:12px;color:#8794a5}
+  .slot.full{border-color:#3d4c5e;background:#141c26;color:#e2e8f0}
+  #miniCv{display:block;border:1px solid #1d2732;border-radius:6px;background:#05070a;margin-top:8px;margin-left:auto}
+  .prompt-key{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:4px;background:#f59e0b;color:#1a1206;font-weight:800;font-size:11px}
+  /* ---------- modal ---------- */
+  #modalRoot{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:#03050799;backdrop-filter:blur(3px);padding:20px}
+  #modalRoot.on{display:flex}
+  .modal{width:min(720px,94vw);max-height:86vh;overflow:auto;background:linear-gradient(180deg,#121822,#0c1118);
+         border:1px solid #2a3646;border-radius:12px;padding:20px 22px;box-shadow:0 30px 80px #000a}
+  .modal h3{margin:0 0 4px;font-size:16px}
+  .who{font-size:12px;color:var(--amber);font-weight:700;letter-spacing:.05em;margin-bottom:8px}
+  .line{font-size:13.5px;line-height:1.85;color:#cfd9e6;margin:0 0 10px}
+  .line.ru{color:#93a3b6;font-style:italic}
+  .choice{display:block;width:100%;text-align:left;padding:11px 13px;margin-top:8px;border:1px solid #26313f;border-radius:8px;
+          background:#0e141c;color:#cfd9e6;cursor:pointer;font-size:13px;line-height:1.6;transition:.14s}
+  .choice:hover{background:#16202c;border-color:#3f4d5f}
+  .choice .ct{font-weight:700;color:#f8fafc;display:block;margin-bottom:2px}
+  .choice .cd{font-size:11.5px;color:#8b98a9}
+  .choice.bad .ct{color:#fca5a5}
+  .choice.good .ct{color:#86efac}
+  /* ---------- misc ---------- */
+  .toast-wrap{position:fixed;left:50%;transform:translateX(-50%);top:56px;z-index:80;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
+  .toast{background:#0d141de6;border:1px solid #2a3646;border-left:3px solid var(--amber);border-radius:6px;padding:7px 14px;font-size:12.5px;color:#dbe3ee;animation:tin .25s ease-out}
+  @keyframes tin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  .typew{border-right:2px solid #f59e0b;animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{border-color:transparent}}
+  .logline{font-size:12px;color:#9fb0c2;border-left:2px solid #243040;padding:4px 0 4px 9px;margin-bottom:6px}
+  .logline b{color:#e2e8f0}
+  .tally{font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.12em;color:#ef4444}
+  .center-note{text-align:center;color:#5f6f83;font-size:11.5px;padding:6px}
+  .scroll{overflow:auto}
+  .scroll::-webkit-scrollbar{width:8px}
+  .scroll::-webkit-scrollbar-thumb{background:#1d2732;border-radius:4px}
+  .flash-red{animation:fr .5s}
+  @keyframes fr{0%,100%{box-shadow:none}30%{box-shadow:inset 0 0 120px #ef444455}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <div class="mk">❄</div>
+      <div>
+        <div style="font-size:13.5px;font-weight:800;letter-spacing:.02em">YEAR OF Z: IRON WINTER <span style="color:#f59e0b">/ 凛冬铁轨</span></div>
+        <div style="font-size:10.5px;color:#5f6f83;letter-spacing:.1em" class="mono" id="hdrSub">EXPLORATION LOOP DEMO · GREYBOX v0.1</div>
+      </div>
+    </div>
+    <div class="row" style="gap:8px">
+      <span class="chip" id="hdrDay">ДЕНЬ 1 · 第 1 天</span>
+      <span class="chip" id="hdrTally">卌 0</span>
+      <button class="btn sm ghost" id="btnLog">📓 <span data-i18n="logbook">工作日志</span></button>
+      <button class="btn sm ghost" id="btnHelp">? <span data-i18n="help">操作</span></button>
+      <button class="btn sm ghost" id="btnLang">中 / EN</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= TITLE ================= -->
+<section id="s-title" class="screen">
+  <div class="hero">
+    <div class="mono" style="font-size:11px;letter-spacing:.35em;color:#f59e0b">НОВОРСК-17 · Z年 11月 · −28℃</div>
+    <h1 style="font-size:38px;margin:14px 0 6px;letter-spacing:.02em;font-weight:900">《Z年纪事：凛冬铁轨》</h1>
+    <div style="font-size:14px;color:#8b98a9;margin-bottom:6px">Year of Z: Iron Winter — <b style="color:#cbd5e1">Exploration Loop Demo</b>（探索循环灰盒 DEMO）</div>
+    <div class="sep" style="margin:22px auto;width:120px"></div>
+    <p style="font-size:13px;line-height:2;color:#a9b6c6;text-align:left;max-width:660px;margin:0 auto">
+      <span data-i18n="t1">白昼，你是为母亲的透析液向区管委低头的征召工；黑夜，你是翻出铁丝网、沿广轨追查“铁壳号”的夜潜者。</span><br>
+      <span data-i18n="t2">本 DEMO 完整跑通 <b>据点 → 地图选点 → 夜潜探索 → 搜刮 → 撤离 → 结算推进剧情</b> 的一日闭环。全部为灰盒几何体，<b>无任何美术资源</b>，美术生产规格见《美术资源生成 Prompt 规格书》。</span>
+    </p>
+    <div class="row" style="justify-content:center;margin-top:26px">
+      <button class="btn primary" id="btnStart">▶ <span data-i18n="start">进入 602 室（开始）</span></button>
+      <button class="btn" id="btnTitleHelp">? <span data-i18n="help">操作说明</span></button>
+    </div>
+    <div class="center-note" style="margin-top:18px">WASD 移动 · Ctrl 潜行 · Shift 冲刺 · E 交互/卡门 · G 投掷 · 鼠标左键 攻击 · Q 喝热水 · Tab 日志</div>
+  </div>
+</section>
+
+<!-- ================= BASE ================= -->
+<section id="s-base" class="screen">
+  <div class="wrap">
+    <div class="card-h" style="padding-top:16px">
+      <div>
+        <div class="ttl" data-i18n="base_title">据点 · 第3居住区 赫鲁晓夫楼 602 室</div>
+        <div class="sub" data-i18n="base_sub">白昼的锚。母亲的透析机还在响，夜里你要翻出锅炉房气窗。</div>
+      </div>
+      <div class="row">
+        <button class="btn" id="btnSleep">☾ <span data-i18n="sleep">白昼：照顾母亲 / 休息到下一夜</span></button>
+        <button class="btn primary" id="btnToMap">🗺 <span data-i18n="toMap">前往夜潜地图</span></button>
+      </div>
+    </div>
+    <div class="base-grid">
+      <div id="colStatus"></div>
+      <div id="colParty"></div>
+      <div id="colStory"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAP ================= -->
+<section id="s-map" class="screen">
+  <div class="wrap">
+    <div class="card-h" style="padding-top:16px">
+      <div>
+        <div class="ttl" data-i18n="map_title">诺沃斯克-17 · 夜潜目标选择</div>
+        <div class="sub" data-i18n="map_sub">每夜只能去一处。情报越少，风险越高——先想清楚带谁、带什么、还剩多少时间到天亮。</div>
+      </div>
+      <button class="btn" id="btnMapBack">← <span data-i18n="backBase">返回 602 室</span></button>
+    </div>
+    <div class="map-grid">
+      <div class="panel panel-pad">
+        <canvas id="mapCanvas" width="900" height="520"></canvas>
+        <div class="row" style="margin-top:8px">
+          <span class="chip">■ <span data-i18n="lg_unlocked">已解锁</span></span>
+          <span class="chip" style="opacity:.55">■ <span data-i18n="lg_unknown">未知/未解锁</span></span>
+          <span class="chip warn">▲ <span data-i18n="lg_story">主线线索</span></span>
+          <span class="center-note" style="margin-left:auto" data-i18n="map_hint">点击地图节点 / 右侧列表选择目标</span>
+        </div>
+      </div>
+      <div class="panel panel-pad" id="mapPanel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SCENE ================= -->
+<section id="s-scene" class="screen">
+  <canvas id="cv"></canvas>
+  <div class="hud" id="hudTL"></div>
+  <div class="hud" id="hudTR"></div>
+  <div class="hud" id="hudBL"></div>
+  <div class="hud" id="hudBC"></div>
+  <div class="hud" id="hudBR"></div>
+</section>
+
+<!-- ================= REPORT ================= -->
+<section id="s-report" class="screen">
+  <div class="wrap">
+    <div class="card-h" style="padding-top:16px">
+      <div class="ttl" id="repTitle">— 撤离结算 —</div>
+      <button class="btn primary" id="btnRepNext">▶ <span data-i18n="nextDay">回到 602 室（进入第二天）</span></button>
+    </div>
+    <div class="panel panel-pad" id="reportBody" style="margin-bottom:40px"></div>
+  </div>
+</section>
+
+<div id="modalRoot"></div>
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+/* =========================================================================
+ *  0. 工具函数 / CONFIG
+ * =======================================================================*/
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const dist=(x1,y1,x2,y2)=>Math.hypot(x2-x1,y2-y1);
+const angDiff=(a,b)=>{let d=(a-b)%(Math.PI*2); if(d>Math.PI)d-=Math.PI*2; if(d<-Math.PI)d+=Math.PI*2; return d;};
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+const CFG={
+  PPM:44,               // 每逻辑米像素（1080p 下 64px/m 为最终规格，DEMO 用 44 以看到更大范围）
+  SQUASH:0.62,          // y 轴压缩：75° 斜俯视近似
+  TILE:1.0,             // 1 格 = 1 逻辑米
+  WALL_H:0.62,          // 墙体挤出高度（屏幕比例）
+  FOV_DEG:90,           // 主视野扇形
+  SIGHT:12.0,           // 视距（米）
+  NEAR_SENSE:1.8,       // 近身感知圈
+  NIGHT_SEC:250,        // 一夜真实秒数
+  NIGHT_FROM:22*60, NIGHT_TO:4*60+60*24, // 22:00 -> 05:00
+  BAG:12,
+  SPEED:{walk:3.2,sneak:1.6,sprint:5.0},
+  NOISE:{walk:2.5,sneak:0.8,sprint:7.5,slash:1.6,search:3.2,can:9.0,gun:25.0},
+};
+
+/* =========================================================================
+ *  1. 语言包（DEMO 双语）
+ * =======================================================================*/
+const STR={
+ zh:{start:"进入 602 室（开始）",help:"操作",logbook:"工作日志",sleep:"白昼：照顾母亲 / 休息到下一夜",toMap:"前往夜潜地图",
+   backBase:"返回 602 室",nextDay:"回到 602 室（进入第二天）",base_title:"据点 · 第3居住区 赫鲁晓夫楼 602 室",
+   base_sub:"白昼的锚。母亲的透析机还在响，夜里你要翻出锅炉房气窗。",map_title:"诺沃斯克-17 · 夜潜目标选择",
+   map_sub:"每夜只能去一处。情报越少，风险越高——先想清楚带谁、带什么、还剩多少时间到天亮。",
+   map_hint:"点击地图节点 / 下方列表选择目标",lg_unlocked:"已解锁",lg_unknown:"未知/未解锁",lg_story:"主线线索",
+   t1:"白昼，你是为母亲的透析液向区管委低头的征召工；黑夜，你是翻出铁丝网、沿广轨追查“铁壳号”的夜潜者。",
+   t2:"本 DEMO 完整跑通 据点 → 地图选点 → 夜潜探索 → 搜刮 → 撤离 → 结算推进剧情 的一日闭环。纯灰盒几何体，无任何美术资源。",
+   status:"状态",party:"出战伙伴（每夜 1 名）",story:"主线索记事板",stash:"库存 / 储物",weapons:"武器架 · 收集度决定火力",
+   mother:"卡佳妈妈 · 腹透液",temp:"核心体温",conscience:"良知",tally:"卌 划痕",truth:"真相存活",day:"第 %d 天",
+   sortie:"携带",depart:"出发（夜潜）",danger:"危险度",loot:"物资提示",need:"需求",time:"耗时",state:"状态",
+   unexplored:"未踏足",scouted:"已踏足",cleared:"已搜净",story_tag:"主线",side_tag:"支线",depleted:"物资枯竭",
+   extracted:"撤离成功",downed:"重伤倒地",dawn:"天亮了",hp:"健康",stam:"体力",bpm:"心率",warmth:"体温",
+   search:"搜刮中…",open_door:"卡住这扇门",extract_hint:"撤离点",looted:"已搜刮 %d / %d",
+   choiceA:"抉择 A · 风雪里伸出的那只手",rip:"波纹",bag:"背包",wpn:"武器",mini:"小地图",
+ },
+ en:{start:"Enter Room 602 (Start)",help:"Controls",logbook:"Logbook",sleep:"Daytime: tend mother / rest until next night",toMap:"Go to night map",
+   backBase:"Back to Room 602",nextDay:"Return to Room 602 (next day)",base_title:"Base · Khrushchyovka Block 3, Apt 602",
+   base_sub:"The daytime anchor. Mother's dialysis machine is still beeping; at night you pry open the boiler-room vent.",
+   map_title:"Novorsk-17 · Night Raid Target",map_sub:"One location per night. Less intel = more risk. Decide who and what you bring.",
+   map_hint:"Click a node on the map / in the list below",lg_unlocked:"Unlocked",lg_unknown:"Unknown",lg_story:"Story lead",
+   t1:"By day you are a conscript stamping forms for your mother's dialysis fluid; by night you are a stalker on the broad-gauge tracks, hunting the Iron Shell.",
+   t2:"This demo runs the full loop: Base → Map target → Night infiltration → Scavenge → Extract → Report & story advance. Greybox only, zero art assets.",
+   status:"Status",party:"Companion (1 per night)",story:"Case Board",stash:"Stash",weapons:"Weapon Rack · firepower = what you found",
+   mother:"Mama Katya · Dialysis",temp:"Core Temp",conscience:"Conscience",tally:"卌 Strokes",truth:"Truth Alive",day:"Day %d",
+   sortie:"Loadout",depart:"Depart (Night Raid)",danger:"Danger",loot:"Spoils",need:"Requires",time:"Travel",state:"State",
+   unexplored:"Unvisited",scouted:"Scouted",cleared:"Stripped",story_tag:"Story",side_tag:"Side",depleted:"Depleted",
+   extracted:"Extracted",downed:"Downed",dawn:"Dawn",hp:"Health",stam:"Stamina",bpm:"BPM",warmth:"Warmth",
+   search:"Searching…",open_door:"Wedge this door",extract_hint:"Extraction",looted:"Looted %d / %d",
+   choiceA:"Choice A · The hand reaching out of the blizzard",rip:"Ripple",bag:"Pack",wpn:"Weapon",mini:"Map",
+ }};
+let LANG='zh';
+const t=(k,...a)=>{let s=(STR[LANG]&&STR[LANG][k])||k; a.forEach(v=>s=s.replace('%d',v)); return s;};
+
+/* =========================================================================
+ *  2. 道具 / 武器 / 伙伴 / 地点 数据
+ * =======================================================================*/
+const ITEMS={
+ rye:{ic:'🌾',cat:'food',zh:'黑麦碎粒',en:'Buckwheat Grits'},
+ can:{ic:'🥫',cat:'food',zh:'铁皮罐头',en:'Tin Can'},
+ water:{ic:'🫖',cat:'food',zh:'热水壶',en:'Hot Water Flask'},
+ asp:{ic:'💊',cat:'med',zh:'阿司匹林',en:'Aspirin'},
+ band:{ic:'🩹',cat:'med',zh:'绷带',en:'Bandage'},
+ abx:{ic:'💉',cat:'med',zh:'抗生素',en:'Antibiotics'},
+ dial:{ic:'🧪',cat:'med',zh:'腹膜透析液',en:'Dialysis Fluid'},
+ scrap:{ic:'🔩',cat:'scrap',zh:'废钢件',en:'Scrap Steel'},
+ wire:{ic:'🧷',cat:'scrap',zh:'铁丝',en:'Steel Wire'},
+ elec:{ic:'🔌',cat:'scrap',zh:'电子元件',en:'Electronics'},
+ wood:{ic:'🪵',cat:'scrap',zh:'木柴',en:'Firewood'},
+ kero:{ic:'🛢️',cat:'scrap',zh:'煤油',en:'Kerosene'},
+ intel:{ic:'📄',cat:'intel',zh:'调度单/底单',en:'Dispatch Slip'},
+ photo:{ic:'📷',cat:'intel',zh:'焚化炉照片',en:'Furnace Photos'},
+ barrel:{ic:'🔫',cat:'part',zh:'枪管',en:'Shotgun Barrel'},
+ stock:{ic:'🪵',cat:'part',zh:'枪托',en:'Gun Stock'},
+ pin:{ic:'📌',cat:'part',zh:'击针',en:'Firing Pin'},
+ bolt:{ic:'⚙️',cat:'part',zh:'莫辛枪机',en:'Mosin Bolt'},
+ ammo:{ic:'🎯',cat:'part',zh:'步枪弹',en:'Rifle Ammo'},
+ blade:{ic:'🔪',cat:'part',zh:'宽背砍骨刀',en:'Butcher Cleaver'},
+ vodka:{ic:'🍾',cat:'val',zh:'伏特加',en:'Vodka'},
+ watch:{ic:'⌚',cat:'val',zh:'旧手表',en:'Old Watch'},
+ tape:{ic:'🎗️',cat:'val',zh:'黑绝缘胶布',en:'Electrical Tape'},
+ glass:{ic:'🍶',cat:'val',zh:'空玻璃瓶',en:'Empty Bottle'},
+};
+const WEAPONS=[
+ {id:'fist',ic:'✊',zh:'赤手',en:'Bare Fists',dmg:8,range:0.9,arc:70,up:0.2,act:0.1,rec:0.3,need:0,own:true,
+  note_zh:'空手上路。打不退狂暴者，只能推开挡路的人。',note_en:'Empty hands. You cannot stop a rabid with these.'},
+ {id:'crowbar',ic:'🛠️',zh:'铸铁道钉撬棍',en:'Railway Crowbar',dmg:34,range:1.3,arc:60,up:0.35,act:0.15,rec:0.45,need:0,own:true,
+  note_zh:'可卡门（长按 E 锁门 15s）；弯头可把饭盒推进 12cm 门缝。',note_en:'Wedge doors (hold E, 15s); claw can push tins through 12cm gaps.'},
+ {id:'cleaver',ic:'🔪',zh:'东街生锈砍骨刀',en:'Rusty Butcher Cleaver',dmg:46,range:1.0,arc:45,up:0.25,act:0.1,rec:0.35,need:1,parts:['blade'],
+  note_zh:'正面重劈狂暴者 100% 卡入锁骨缝，1.5s 内连按 6 次拔刀。',note_en:'Frontal heavy strikes jam in the collarbone: 6 presses in 1.5s.'},
+ {id:'shotgun',ic:'🔫',zh:'改装双管猎枪',en:'Sawed-off Shotgun',dmg:95,range:9,arc:0,up:0.4,act:0.02,rec:0.9,need:3,parts:['barrel','stock','pin'],ammo:2,
+  note_zh:'散射角随心率扩张；一声枪响惊动全图清杀队。',note_en:'Spread widens with BPM; the blast wakes every patrol on the map.'},
+ {id:'mosin',ic:'🎯',zh:'莫辛纳甘步枪',en:'Mosin–Nagant',dmg:150,range:18,arc:0,up:0.55,act:0.02,rec:1.35,need:2,parts:['bolt','ammo'],ammo:3,
+  note_zh:'一枪一台阶，但拉栓慢、声音传得比风雪还远。',note_en:'One shot, one body. Slow bolt, and the sound carries farther than the blizzard.'},
+];
+const MATES=[
+ {id:'ash',ic:'🐺',zh:'灰烬（灰狼犬）',en:'Ash (Wolfdog)',zh_p:'嗅觉预警：6m 内标出容器/生物；三态叫声分辨狂暴者、半人、求救者。',
+  en_p:'Olfactory warning: marks containers & creatures within 6m; tri-state bark tells rabid / half-human / pleading kin apart.',lock:null},
+ {id:'anna',ic:'👩',zh:'安娜（0419）',en:'Anna (0419)',zh_p:'辨认半人：直接标注对方状态，避免误杀；背包 +4 格。',
+  en_p:'Tri-state readout: labels every figure, prevents misjudgement; +4 pack slots.',lock:'anna'},
+ {id:'gulya',ic:'🩺',zh:'古丽娅（医师）',en:'Gulya (Medic)',zh_p:'每夜可救一次重伤；医疗类容器产出 +50%。',
+  en_p:'Can revive you once per night; +50% medical haul.',lock:'gulya'},
+ {id:'pavel',ic:'🧰',zh:'帕维尔老爹（钳工）',en:'Old Pavel (Fitter)',zh_p:'可撬开焊死门与保险柜；武器耐久不损耗。',
+  en_p:'Opens welded doors & safes; weapons never degrade.',lock:'pavel'},
+ {id:'ivan',ic:'🚂',zh:'老轨伊万（列车长）',en:'Old Ivan (Conductor)',zh_p:'显示隐藏容器、撤离点常亮、路上耗时 -20%。',
+  en_p:'Reveals hidden stashes, keeps extraction marked, -20% travel time.',lock:'ivan'},
+];
+/* 地点：TWoM 式地图节点。x,y 为 900x520 地图画布坐标 */
+const LOCS=[
+ {id:'boiler',x:150,y:330,dg:1,seed:1101,zh:'第3居住区 · 锅炉房后巷',en:'Block 3 · Boiler Room Back Alley',
+  loot:['food','scrap'],hint_zh:'楼下就能摸到，煤堆旁常有人堆杂物。',hint_en:'Right downstairs; people stash junk by the coal pile.',
+  hint2_zh:'两只旧木箱、一台报废蒸汽泵。清杀队偶尔从东侧栅栏路过。',hint2_en:'Two old crates, one dead steam pump. A patrol sometimes passes the east fence.',
+  time:60,cold:0.4,story:null},
+ {id:'coldstore',x:150,y:120,dg:2,seed:2202,zh:'城北四号铁路冷库',en:'Rail Cold Storage No.4',
+  loot:['med','food'],hint_zh:'据说封着一批医疗耗材，也冻死过人。',hint_en:'Sealed medical stock, and people who froze beside it.',
+  hint2_zh:'南库 3 号柱后有活人。冷库铁门可以撬棍卡死。',hint2_en:'There are living people behind column 3. Cold-store doors can be wedged.',
+  time:80,cold:0.9,story:'coldstore'},
+ {id:'yard',x:340,y:215,dg:3,seed:3303,zh:'夜间广轨货场',en:'Broad-Gauge Freight Yard',
+  loot:['scrap','intel'],hint_zh:'编组表和废件堆都在那，灯也最亮。',hint_en:'Marshalling slips and scrap piles. Also the brightest lights.',
+  hint2_zh:'两座煤水塔可躲探照灯；清杀队 2 人一组巡逻。',hint2_en:'Two water towers break the searchlights; purge squads patrol in pairs.',
+  time:90,cold:1.0,story:'yard'},
+ {id:'underpass',x:330,y:410,dg:2,seed:4404,zh:'铁道下穿积冰道',en:'Icy Rail Underpass',
+  loot:['scrap','warm'],hint_zh:'黑冰很滑，声音会传得很远。有人在这儿烧火。',hint_en:'Black ice is loud. Someone keeps a fire burning here.',
+  hint2_zh:'涉雪泥移动 ×0.65，噪声 ×2.0；火堆可回温。',hint2_en:'Slush: speed ×0.65, noise ×2.0. The brazier restores warmth.',
+  time:70,cold:1.3,story:null},
+ {id:'canteen',x:510,y:330,dg:3,seed:5505,zh:'东街工人食堂 · 后厨',en:'East Street Canteen · Kitchen',
+  loot:['weapon','food'],hint_zh:'账面已清空的老楼，可里面还有十九只碗。',hint_en:'Written off as empty. Nineteen bowls still inside.',
+  hint2_zh:'备餐台砧板上插着砍骨刀；窄门会被冲开。',hint2_en:'A cleaver stands in the prep-table block; the narrow door can be breached.',
+  time:90,cold:0.5,story:'canteen'},
+ {id:'sanitarium',x:650,y:130,dg:4,seed:6606,zh:'旧传染病疗养院 · 地下室',en:'Old Sanatorium · Basement',
+  loot:['med'],hint_zh:'有人被皮带捆在铁架床上熬过了第四天。',hint_en:'Someone was belted to a bed frame and survived the fourth day.',
+  hint2_zh:'地底铁笼区。需要至少 1 份医疗物资与 2 份情报线索。',hint2_en:'Cage level. Needs 1 medical item and 2 intel leads.',
+  time:110,cold:0.8,story:'sanitarium',req:{intel:2,med:1},reqFlag:null},
+ {id:'market',x:670,y:275,dg:2,seed:7707,zh:'铁路黑市（废弃工人镇）',en:'Rail Black Market',
+  loot:['intel','val'],hint_zh:'拿东西换东西。别相信任何人递过来的手。',hint_en:'Goods for goods. Never trust the hand that offers.',
+  hint2_zh:'人会开枪，但比清杀队讲道理。可交易情报。',hint2_en:'People shoot, but they argue first. Intel can be traded.',
+  time:80,cold:0.9,story:'market'},
+ {id:'manor',x:835,y:95,dg:5,seed:8808,zh:'松林庄园 · 二号恒温库',en:'Pine Manor · Depot No.2',
+  loot:['med','val'],hint_zh:'墙外 −35℃，墙里 26℃。409 批腹透液就在那儿。',hint_en:'-35°C outside, 26°C inside. The Batch-409 fluid is in there.',
+  hint2_zh:'电网高墙 + 特勤值守。被发现基本等于死。',hint2_en:'Electric fence, private guards. Seen means dead.',
+  time:120,cold:0.3,story:'manor',reqFlag:'manor_tip'},
+ {id:'marshalling',x:800,y:390,dg:4,seed:9909,zh:'西站调车场',en:'West Station Marshalling Yard',
+  loot:['part','intel'],hint_zh:'报废守车里有零件，调度室外贴着今晚的发车令。',hint_en:'Parts in the dead brake vans; tonight\'s dispatch order pinned outside.',
+  hint2_zh:'机车水箱里可能塞着手稿复写件。',hint2_en:'Manuscript carbons might be stuffed in a tender toolbox.',
+  time:100,cold:1.1,story:'marshalling',reqFlag:'lana_car3'},
+ {id:'birch',x:620,y:470,dg:1,seed:1212,zh:'白桦林废弃板房',en:'Birch Grove Shacks',
+  loot:['warm','scrap'],hint_zh:'风小，能捡到柴。偶尔有逃出来的人躲在这儿。',hint_en:'Sheltered. Firewood, and sometimes people who ran.',
+  hint2_zh:'低风险补给点，适合缺体温的夜里。',hint2_en:'Low-risk resupply. Good when you are freezing.',
+  time:60,cold:1.5,story:null},
+];
+
+/* 主线剧情节拍（进入地点时触发） */
+const STORY={
+ coldstore:{title_zh:'账面死人',title_en:'The Paper Dead',
+  lines:[{w:'',zh:'南库 3 号柱后，一个男人正把儿子裹进自己的棉袄里。他们的通行证在终端上跳出刺眼的红字：',en:'Behind column 3 in the south hall, a man is wrapping his son inside his own padded coat. The terminal spits red:'},
+   {w:'切尔诺夫中士',zh:'档案 0892：已于昨日 22:00 移交乌拉尔山线站。当前坐标在册人数：0。',en:'File 0892: transferred to the Ural line yesterday at 22:00. Persons at this coordinate: 0.'},
+   {w:'',zh:'配给箱的电子锁“咔”地锁死了。男人没有抬头，只是在结冰的地上摸索掉落的两粒黑麦。',en:'The ration crate\'s electronic lock snaps shut. The man does not look up; he only feels in the ice for two spilled grains of buckwheat.'},
+   {w:'',zh:'收发亭旁，一只脖颈勒着断铁丝的灰狼犬盯着你手里的半块冷黑麦饼。',en:'By the dispatch hut, a wolfdog with a snapped wire collar stares at the half loaf of cold rye in your hand.'}],
+  choices:[
+   {zh:'在《工作日志》背面写下：谢尔盖、玛丽亚，活人',en:'Write in the logbook: Sergey & Maria, alive',d:'良知 ▲ · 记录一条真实姓名',cls:'good',
+    fx:g=>{g.names.push('Сергей, Мария · 谢尔盖与玛丽亚'); g.conscience+=8; addItem('scrap',1); toast(LANG==='zh'?'钢笔划过纸面：又一条真名留下了。':'The pen scratches: another real name survives.')}},
+   {zh:'什么也不写，低头搬你的箱子',en:'Write nothing. Keep hauling crates.',d:'中立 · 省下麻烦',cls:'',
+    fx:g=>{addItem('scrap',2); toast(LANG==='zh'?'你数完了箱子。你没数他们。':'You counted the crates. You did not count them.')}}],
+  after:g=>{ if(!g.mates.ash){g.mates.ash=true; toast(LANG==='zh'?'“灰烬”入队：它把前爪按在你靴子上。':'Ash has joined: she plants a paw on your boot.');} }},
+
+ yard:{title_zh:'铁壳号的编组单',title_en:'The Buran Consist',
+  lines:[{w:'',zh:'煤水塔的阴影里，一张被雪水泡烂的编组单贴在调度箱背面：',en:'In the water tower\'s shadow, a consist sheet rots against the back of a switch box:'},
+   {w:'',zh:'【布拉风号 · 第 7 次特别运输 · 闷罐车厢 03 · 编号 0401—0576 · 终点：乌拉尔鹰嘴崖】',en:'[BURAN · Special Run 7 · Boxcar 03 · Files 0401-0576 · Terminus: Eagle\'s Crag, Urals]'},
+   {w:'',zh:'你把单子折好塞进内袋。妹妹的档案号是 0420——就在这个区间里。',en:'You fold it into your inner pocket. Lana is 0420. She is inside that range.'}],
+  choices:[{zh:'收好编组单（+1 情报）',en:'Pocket the consist (+1 Intel)',d:'主线推进',cls:'good',fx:g=>{addItem('intel',1)}}]},
+
+ canteen:{title_zh:'锁骨里的砍骨刀',title_en:'The Cleaver in the Collarbone',
+  lines:[{w:'',zh:'后厨杂物间的木门炸裂。炊事员的儿子瓦西里在 40℃ 谵妄里冲了出来，眼白是紫黑的。',en:'The pantry door explodes. Vasily, the cook\'s son, comes out in a 40°C delirium, sclera black-purple.'},
+   {w:'',zh:'你被逼到备餐台死角，手摸到砧板上那把宽背砍骨刀。',en:'Cornered against the prep table, your hand finds the heavy-backed cleaver in the block.'},
+   {w:'费奥多尔老爹',zh:'……阿廖沙！他昨天还给四楼送饼——！',en:'…Alyosha! He was delivering bread to the fourth floor yesterday!'}],
+  choices:[{zh:'一刀劈进左锁骨窝',en:'Swing into the left collarbone',d:'自卫击杀，不记划痕',cls:'',
+   fx:g=>{g.flags.ptsd=true; g.flags.vasily=true; addItem('blade',1); g.conscience-=4;
+     toast(LANG==='zh'?'刀卡在骨缝里。他的瞳孔回色了，吐出半个词：“……Пить（渴）……”':'The blade jams. His pupils clear and he breathes half a word: "…Пить (Thirsty)…"');}}],
+  after:g=>{ if(!g.mates.pavel){g.mates.pavel=true; toast(LANG==='zh'?'帕维尔老爹入队：他替你修好了撬棍与手推车。':'Old Pavel joins: he straightens your crowbar and your handcart.');} }},
+
+ market:{title_zh:'老轨伊万',title_en:'Old Ivan, the Railman',
+  lines:[{w:'',zh:'黑市的铁皮棚下，跑了二十年西伯利亚专列的老列车长吐掉烟头，把一张油纸拍在你胸口。',en:'Under the market\'s tin awning, the conductor who ran Siberian trains for twenty years spits out his cigarette and slaps an oil-paper note on your chest.'},
+   {w:'老轨伊万',zh:'今晚十一点，不挂车次牌的铁壳号走鹰嘴崖线。第三节车厢里一百七十六个已经退烧的活人，拉进 3 号矿坑填埋。你要不要爬车？',en:'Eleven tonight: an unnumbered Buran takes the Eagle\'s Crag line. One hundred seventy-six recovered people in Boxcar 3, dumped in Pit No.3. You climbing or not?'}],
+  choices:[
+   {zh:'C1 公平交易：付 2 废钢买路线（中立）',en:'C1 Fair trade: pay 2 Scrap for the route',d:'情报 +1 · 解锁松林庄园线索',cls:'good',
+    fx:g=>{takeItem('scrap',2); addItem('intel',1); g.flags.manor_tip=true;}},
+   {zh:'C3 倾囊相助：把抗生素分给这里冻伤的人（良知▲）',en:'C3 Give everything: hand out your antibiotics',d:'良知 ▲▲ · 伊万入队 · 解锁松林庄园',cls:'good',
+    fx:g=>{takeItem('abx',1); g.conscience+=10; g.flags.manor_tip=true; if(!g.mates.ivan){g.mates.ivan=true; toast(LANG==='zh'?'“老轨”伊万入队。':'Old Ivan joins your crew.');}}},
+   {zh:'C2 背叛：趁他引开哨兵，锁死铁门拿走磁卡（良知▼·卌+1）',en:'C2 Betray: lock the door and take the keycard',d:'物资暴涨 · 卌 +1',cls:'bad',
+    fx:g=>{addItem('med_supply',0); addItem('abx',2); addItem('scrap',3); addItem('dial',1); g.tally+=1; g.conscience-=14; g.flags.manor_tip=true; g.flags.betrayed=true;
+      toast(LANG==='zh'?'铁门在你身后合上。枪声很短。':'The door shuts behind you. The shots are very short.');}}]},
+
+ sanitarium:{title_zh:'0419 号在呼吸',title_en:'0419 Is Breathing',
+  lines:[{w:'',zh:'最深处的钢筋铁笼前，一个年轻姑娘用两根旧皮带把自己死死捆在铁架床栏杆上。',en:'At the deepest cage, a young woman has belted her own wrists to the bed frame with two old straps.'},
+   {w:'',zh:'“灰烬”走上去，摇着尾巴用湿鼻尖碰了碰她的手背。她抬起头——眼白充血已退，神智完全清醒。',en:'Ash walks up, tail low, and touches the back of her hand with a wet nose. The girl looks up — the blood has receded from her eyes. She is fully awake.'},
+   {w:'安娜（0419）',zh:'是拉娜！！三天前她就关在我隔壁！她的烧退到三十六度八了，手背的灰鳞都在掉！昨天夜里，他们把她和一百多个退烧的人锁进了铁壳号——第三节闷罐车厢！！',en:'It\'s Lana!! Three days ago she was in the cage next to mine! Her fever broke at 36.8°C, the scales were falling off her hands! Last night they locked her and a hundred others into the Buran — Boxcar No.3!!'}],
+  choices:[{zh:'撬开铁笼，带她们走（消耗 1 医疗物资）',en:'Pry the cage. Bring them out. (-1 medical)',d:'安娜 + 古丽娅 入队 · 解锁西站调车场',cls:'good',
+   fx:g=>{takeItem('asp',1); takeItem('band',1); takeItem('abx',1);
+     g.mates.anna=true; g.mates.gulya=true; g.conscience+=6; g.flags.lana_car3=true; g.flags.manor_tip=true;
+     toast(LANG==='zh'?'安娜（0419）与古丽娅医师入队。':'Anna (0419) and Dr. Gulya join your crew.');}}],
+  req:{zh:'需要：情报 ×2、医疗物资 ×1',en:'Requires: 2 Intel, 1 medical item'}},
+
+ manor:{title_zh:'焦油黑雪',title_en:'Tar-Black Snow',
+  lines:[{w:'',zh:'墙外零下三十五度，墙里二十六度。叉车把仅仅“临期十五天”的牛排、黄油和 409 批腹透液整铲推进 2000℃ 的焚化炉。',en:'-35°C outside the wall, 26°C inside. A forklift shoves beef, butter and Batch-409 dialysis fluid — "fifteen days past date" — into a 2000°C furnace.'},
+   {w:'',zh:'烟囱喷出的黑烟混着大雪，飘向下风口两公里外的工人居住区。那就是“焦油黑雪”——闻着有烤肉脂香，抓进嘴里全是烧塑料的油垢。',en:'The stack vomits black smoke into the snow and drifts two kilometres downwind to the workers\' blocks. That is the tar-black snow: it smells like roast fat and tastes like burnt plastic.'},
+   {w:'',zh:'你举起相机，按下了快门。',en:'You raise the camera and press the shutter.'}],
+  choices:[{zh:'拍下焚毁台账，带走腹透液',en:'Photograph the ledger. Take the fluid.',d:'腹透液 +2 · 真相存活 · 母亲好转',cls:'good',
+   fx:g=>{addItem('dial',2); addItem('photo',1); g.flags.truth=true; g.conscience+=5;}}]},
+
+ marshalling:{title_zh:'十一点的发车令',title_en:'The 23:00 Dispatch Order',
+  lines:[{w:'',zh:'调度室外的铁皮板上钉着一张还没撕的发车令，红章新鲜得发黏。',en:'A dispatch order is still pinned to the board outside the control room, the red stamp still tacky.'},
+   {w:'',zh:'【特别运输 · 不挂车次牌 · 23:00 · 鹰嘴崖线 · 第三节车厢 176 人 · 实毁数与账面数必须闭合】',en:'[SPECIAL RUN · NO TRAIN NUMBER · 23:00 · EAGLE\'S CRAG LINE · BOXCAR 3 · 176 PERSONS · PHYSICAL COUNT MUST EQUAL LEDGER]'},
+   {w:'',zh:'你把红章的位置拍了下来。报废守车的工具箱里，躺着几块能拼成一支枪的钢件。',en:'You photograph the stamp. In a dead brake van\'s toolbox lie the steel pieces of a gun.'}],
+  choices:[{zh:'拆走零件，抄下车次时刻',en:'Strip the parts, copy the timetable',d:'猎枪零件 +1 · 情报 +1 · 终局预告',cls:'good',
+   fx:g=>{addItem(['barrel','stock','pin'][Math.floor(rnd()*3)],1); addItem('intel',1); g.flags.endgame_known=true;}}]},
+};
+
+/* =========================================================================
+ *  3. 全局状态 / 库存
+ * =======================================================================*/
+const rnd=()=>Math.random();
+let G=null;
+function newGame(){
+  return {
+    day:1, motherAlive:true, dial:2.0, conscience:50, tally:0, truth:false,
+    stash:{rye:3, can:2, water:1, band:1, scrap:2},
+    mates:{ash:false,anna:false,gulya:false,pavel:false,ivan:false},
+    flags:{}, names:[], storyDone:{}, nodes:{}, log:[],
+    mate:'none', load:{can:1, water:1, asp:0, band:0},
+    lastReport:null, ended:false
+  };
+}
+function itemName(id){return ITEMS[id]?(LANG==='zh'?ITEMS[id].zh:ITEMS[id].en):id;}
+function addItem(id,n){ if(!ITEMS[id]||!n) return; G.stash[id]=(G.stash[id]||0)+n; }
+function takeItem(id,n){ if((G.stash[id]||0)<=0) return false; G.stash[id]-=n; if(G.stash[id]<=0) delete G.stash[id]; return true;}
+function hasItem(id,n){ return (G.stash[id]||0)>=(n||1); }
+function catCount(cat){ let s=0; for(const k in G.stash) if(ITEMS[k]&&ITEMS[k].cat===cat) s+=G.stash[k]; return s; }
+function medCount(){ return (G.stash.asp||0)+(G.stash.band||0)+(G.stash.abx||0)+(G.stash.dial||0); }
+function intelCount(){ return G.stash.intel||0; }
+function nodeState(id){
+  if(!G.nodes[id]) G.nodes[id]={visits:0, left:1.0, hint:0};
+  return G.nodes[id];
+}
+function locUnlocked(L){
+  if(L.reqFlag && !G.flags[L.reqFlag]) return false;
+  if(L.req){
+    if(L.req.intel && intelCount()<L.req.intel) return false;
+    if(L.req.med && medCount()<L.req.med) return false;
+  }
+  return true;
+}
+function weaponParts(w){ return w.parts? w.parts.filter(p=>(G.stash[p]||0)>0).length : 0; }
+function weaponOwned(w){ if(w.need===0) return true; return weaponParts(w)>=w.parts.length; }
+function ownedWeapons(){ return WEAPONS.filter(weaponOwned); }
+
+/* toast */
+function toast(msg,ms){
+  const d=document.createElement('div'); d.className='toast'; d.innerHTML=msg;
+  $('#toasts').appendChild(d);
+  setTimeout(()=>{d.style.transition='.3s';d.style.opacity='0';d.style.transform='translateY(-8px)';},(ms||2200)-300);
+  setTimeout(()=>d.remove(),ms||2200);
+}
+
+/* =========================================================================
+ *  4. 关卡程序化生成（灰盒）
+ * =======================================================================*/
+const TT={FLOOR:0, WALL:1, SLUSH:2, COVER:3, FENCE:4, DOOR:5, WEDGED:6};
+function isSolid(v){ return v===TT.WALL||v===TT.COVER||v===TT.FENCE||v===TT.DOOR||v===TT.WEDGED; }
+function blocksSight(v){ return v===TT.WALL||v===TT.WEDGED||v===TT.COVER; }
+function blocksMove(v){ return v===TT.WALL||v===TT.COVER||v===TT.FENCE||v===TT.WEDGED; }
+
+function genMap(L){
+  const R=mulberry32(L.seed + G.day*7);
+  const W=54,H=42;
+  const g=new Uint8Array(W*H).fill(TT.WALL);
+  const set=(x,y,v)=>{ if(x>0&&y>0&&x<W-1&&y<H-1) g[y*W+x]=v; };
+  const at=(x,y)=> (x<0||y<0||x>=W||y>=H)?TT.WALL:g[y*W+x];
+  // --- BSP rooms ---
+  const rooms=[];
+  (function split(r){
+    const minS=9;
+    if(rooms.length>=9 && R()<0.5) { rooms.push(r); return; }
+    if((r.w<minS*2 && r.h<minS*2) || rooms.length>=11){ rooms.push(r); return; }
+    let horiz = r.w<r.h ? true : (r.h<r.w ? false : R()<0.5);
+    if(horiz){
+      if(r.h<minS*2){rooms.push(r);return;}
+      const cut=Math.floor(lerp(minS, r.h-minS, R()));
+      split({x:r.x,y:r.y,w:r.w,h:cut}); split({x:r.x,y:r.y+cut,w:r.w,h:r.h-cut});
+    } else {
+      if(r.w<minS*2){rooms.push(r);return;}
+      const cut=Math.floor(lerp(minS, r.w-minS, R()));
+      split({x:r.x,y:r.y,w:cut,h:r.h}); split({x:r.x+cut,y:r.y,w:r.w-cut,h:r.h});
+    }
+  })({x:2,y:2,w:W-4,h:H-4});
+  rooms.forEach(r=>{
+    const w=Math.max(5,Math.floor(r.w*lerp(0.6,0.86,R()))), h=Math.max(5,Math.floor(r.h*lerp(0.6,0.86,R())));
+    const x=r.x+Math.floor((r.w-w)*R()), y=r.y+Math.floor((r.h-h)*R());
+    const room={x,y,w,h,cx:Math.floor(x+w/2),cy:Math.floor(y+h/2)};
+    for(let j=y;j<y+h;j++) for(let i=x;i<x+w;i++) set(i,j,TT.FLOOR);
+    r.room=room; 
+  });
+  const rlist=rooms.filter(r=>r.room).map(r=>r.room);
+  // --- corridors ---
+  for(let k=1;k<rlist.length;k++){
+    const a=rlist[k-1], b=rlist[k];
+    let x=a.cx,y=a.cy;
+    while(x!==b.cx){ set(x,y,TT.FLOOR); set(x,y+1,TT.FLOOR); x+= Math.sign(b.cx-x); }
+    while(y!==b.cy){ set(x,y,TT.FLOOR); set(x+1,y,TT.FLOOR); y+= Math.sign(b.cy-y); }
+    set(b.cx,b.cy,TT.FLOOR);
+  }
+  // --- 环境：雪泥 / 掩体 / 铁丝网 / 门 ---
+  const slush=[], cover=[], fences=[], doors=[], fires=[], vents=[];
+  for(let k=0;k<Math.floor(18+R()*14);k++){
+    const r=rlist[Math.floor(R()*rlist.length)]; if(!r) break;
+    const cx=r.x+1+Math.floor(R()*Math.max(1,r.w-2)), cy=r.y+1+Math.floor(R()*Math.max(1,r.h-2));
+    const rad=1+Math.floor(R()*2);
+    for(let j=-rad;j<=rad;j++)for(let i=-rad;i<=rad;i++){
+      const x=cx+i,y=cy+j;
+      if(at(x,y)===TT.FLOOR && R()<0.62) set(x,y,TT.SLUSH);
+    }
+    slush.push({x:cx,y:cy});
+  }
+  for(let k=0;k<10+Math.floor(R()*10);k++){
+    const r=rlist[Math.floor(R()*rlist.length)]; if(!r) break;
+    const len=1+Math.floor(R()*3);
+    const horiz=R()<0.5;
+    const x=r.x+1+Math.floor(R()*Math.max(1,r.w-3)), y=r.y+1+Math.floor(R()*Math.max(1,r.h-3));
+    for(let i=0;i<len;i++){
+      const px=x+(horiz?i:0), py=y+(horiz?0:i);
+      if(at(px,py)===TT.FLOOR) set(px,py,TT.COVER);
+    }
+  }
+  for(let k=0;k<6+Math.floor(R()*6);k++){
+    const r=rlist[Math.floor(R()*rlist.length)]; if(!r) break;
+    const len=2+Math.floor(R()*4), horiz=R()<0.5;
+    const x=r.x+1+Math.floor(R()*Math.max(1,r.w-3)), y=r.y+1+Math.floor(R()*Math.max(1,r.h-3));
+    for(let i=0;i<len;i++){ const px=x+(horiz?i:0), py=y+(horiz?0:i); if(at(px,py)===TT.FLOOR) set(px,py,TT.FENCE); }
+  }
+  // 门：走廊窄口
+  for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
+    if(at(x,y)!==TT.FLOOR) continue;
+    const h=at(x-1,y)===TT.FLOOR&&at(x+1,y)===TT.FLOOR, v=at(x,y-1)===TT.FLOOR&&at(x,y+1)===TT.FLOOR;
+    if((h&&!v)||(!h&&v)){
+      const solidN=(at(x-1,y)===TT.WALL?1:0)+(at(x+1,y)===TT.WALL?1:0)+(at(x,y-1)===TT.WALL?1:0)+(at(x,y+1)===TT.WALL?1:0);
+      if(solidN>=2 && R()<0.30) set(x,y,TT.DOOR);
+    }
+  }
+  // --- 容器 ---
+  const contTypes=['crate','locker','medcab','fridge','briefcase','safe','hidden'];
+  const conts=[];
+  const nCont=Math.round((6+L.dg*2.4)*(0.85+R()*0.4)*nodeState(L.id).left);
+  for(let k=0;k<nCont;k++){
+    const r=rlist[Math.floor(R()*rlist.length)]; if(!r) break;
+    let placed=false;
+    for(let tries=0;tries<24&&!placed;tries++){
+      const x=r.x+Math.floor(R()*r.w), y=r.y+Math.floor(R()*r.h);
+      if(at(x,y)!==TT.FLOOR && at(x,y)!==TT.SLUSH) continue;
+      if(conts.some(c=>dist(c.x,c.y,x,y)<2)) continue;
+      let type=contTypes[Math.floor(R()*contTypes.length)];
+      if(type==='safe'&&R()<0.6) type='locker';
+      if(type==='hidden'&&R()<0.75) type='crate';
+      conts.push({x:x+0.5,y:y+0.5,type,searched:false,loot:null,prog:0});
+      placed=true;
+    }
+  }
+  // --- 火堆 / 蒸汽口（回温）---
+  const nFire = L.cold>1.0?2:1;
+  for(let k=0;k<nFire;k++){
+    const r=rlist[Math.floor(R()*rlist.length)]; if(!r)break;
+    fires.push({x:r.x+1+Math.floor(R()*Math.max(1,r.w-2))+0.5, y:r.y+1+Math.floor(R()*Math.max(1,r.h-2))+0.5});
+  }
+  // --- 出入口 ---
+  const startRoom=rlist[0]||{cx:4,cy:4};
+  const entry={x:startRoom.cx+0.5,y:startRoom.cy+0.5};
+  return {W,H,g,at,set,rooms:rlist,conts,fires,entry,slushCount:slush.length};
+}
+
+/* =========================================================================
+ *  5. 探索场景运行时
+ * =======================================================================*/
+const cv=$('#cv'), ctx=cv.getContext('2d');
+const fogCv=document.createElement('canvas'), fctx=fogCv.getContext('2d');
+let VW=800,VH=600,DPR=1;
+
+const S={
+  L:null,map:null,player:null,ents:[],ripples:[],fires:[],
+  nightLeft:CFG.NIGHT_SEC, pack:[], packMax:CFG.BAG,
+  vis:null,explored:null,poly:[],cam:{x:0,y:0},
+  keys:{},mouse:{sx:0,sy:0,wx:0,wy:0},down:false,over:false,ended:false,
+  atk:{t:0,phase:'idle'}, jam:null, search:null, wedge:null, extract:null,
+  bpm:70, noiseAcc:0, sfx:null, mate:null, mateEnt:null, killed:0, halfSaved:0,
+  looted:0, totalCont:0, dawnWarned:false, revived:false, events:[],
+};
+function resize(){
+  DPR=Math.min(2,window.devicePixelRatio||1);
+  VW=cv.clientWidth; VH=cv.clientHeight;
+  cv.width=VW*DPR; cv.height=VH*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+  fogCv.width=VW*DPR; fogCv.height=VH*DPR; fctx.setTransform(DPR,0,0,DPR,0,0);
+}
+function project(wx,wy){
+  return {x:(wx-S.cam.x)*CFG.PPM+VW/2, y:(wy-S.cam.y)*CFG.PPM*CFG.SQUASH+VH/2};
+}
+function unproject(sx,sy){
+  return {x:(sx-VW/2)/CFG.PPM+S.cam.x, y:(sy-VH/2)/(CFG.PPM*CFG.SQUASH)+S.cam.y};
+}
+function tileVisibleAt(wx,wy){
+  const p=S.player; if(!p) return false;
+  const d=dist(p.x,p.y,wx,wy);
+  if(d>CFG.SIGHT) return false;
+  if(d<=CFG.NEAR_SENSE) return true;
+  const a=Math.atan2(wy-p.y,wx-p.x);
+  if(Math.abs(angDiff(a,p.face))>CFG.FOV_DEG*Math.PI/360) return false;
+  return losClear(p.x,p.y,wx,wy,{blockCover:false});
+}
+function losClear(x0,y0,x1,y1,opt){
+  const dx=x1-x0,dy=y1-y0,d=Math.hypot(dx,dy),steps=Math.max(1,Math.ceil(d/0.28));
+  for(let i=1;i<=steps;i++){
+    const tt=i/steps, x=x0+dx*tt, y=y0+dy*tt, v=S.map.at(Math.floor(x),Math.floor(y));
+    if(v===TT.WALL||v===TT.DOOR||v===TT.WEDGED) return false;
+    if(v===TT.COVER&&opt&&opt.blockCover) return false;
+  }
+  return true;
+}
+function emitNoise(x,y,radius,color,kind){
+  S.ripples.push({x,y,r:0.3,max:radius,color,kind,life:1});
+  S.ents.forEach(e=>{
+    if(e.dead||e.kind==='half') return;
+    const d=dist(e.x,e.y,x,y);
+    if(d<=radius){
+      if(e.kind==='rabid'){ e.state='investigate'; e.tx=x; e.ty=y; e.alert=Math.min(1,e.alert+0.5); }
+      if(e.kind==='osk'){ e.state='investigate'; e.tx=x; e.ty=y; e.suspect=Math.min(1.4,e.suspect+0.7); }
+    }
+  });
+}
+
+/* ---------- 生成实体 ---------- */
+function startScene(L){
+  S.L=L; S.map=genMap(L);
+  S.vis=new Uint8Array(S.map.W*S.map.H);
+  S.explored=new Uint8Array(S.map.W*S.map.H);
+  S.ents=[]; S.ripples=[]; S.fires=S.map.fires.slice(); S.events=[];
+  S.nightLeft=CFG.NIGHT_SEC - (G.mate==='ivan'?0:0);
+  const cap = L.time * (G.mate==='ivan'?0.8:1.0);
+  S.nightLeft = Math.max(90, cap*2.4);
+  S.nightMax = S.nightLeft;
+  S.pack=[]; S.packMax=CFG.BAG + (G.mate==='anna'?4:0);
+  S.over=false; S.ended=false; S.killed=0; S.halfSaved=0; S.looted=0; S.totalCont=S.map.conts.length;
+  S.jam=null; S.search=null; S.wedge=null; S.extract=null; S.dawnWarned=false; S.revived=false;
+  S.atk={t:0,phase:'idle'};
+  const wp=[WEAPONS.find(w=>w.id==='mosin'&&weaponOwned(w))||WEAPONS.find(w=>w.id==='shotgun'&&weaponOwned(w))||WEAPONS.find(w=>w.id==='cleaver'&&weaponOwned(w))||WEAPONS[1]];
+  S.player={x:S.map.entry.x,y:S.map.entry.y,face:-Math.PI/2,hp:100,stam:100,warmth:100,
+    wpn:wp[0],ammo:wp[0].ammo||0,sneak:false,sprint:false,alive:true,hurt:0,drink:0};
+  S.cam.x=S.player.x; S.cam.y=S.player.y;
+  // 伙伴
+  S.mate = (G.mate!=='none' && G.mates[G.mate]) ? G.mate : null;
+  if(S.mate){
+    S.mateEnt={kind:'mate',id:S.mate,x:S.player.x+1.2,y:S.player.y+1.2,hp:100,state:'follow',dead:false,bark:0};
+    S.ents.push(S.mateEnt);
+  }
+  // 敌人
+  const R=mulberry32(L.seed*3+G.day);
+  const rooms=S.map.rooms.slice(1);
+  const farRoom=()=>rooms.length?rooms[Math.floor(R()*rooms.length)]:{cx:S.map.entry.x+6,cy:S.map.entry.y+6};
+  const nRab=Math.round(1+L.dg*0.95+R()*1.2);
+  for(let i=0;i<nRab;i++){
+    const r=farRoom();
+    let x=r.cx+ (R()-0.5)*Math.max(2,r.w*0.6), y=r.cy+(R()-0.5)*Math.max(2,r.h*0.6);
+    if(dist(x,y,S.map.entry.x,S.map.entry.y)<12){ x+=12; y+=12; }
+    if(S.map.at(Math.floor(x),Math.floor(y))!==TT.FLOOR){ x=r.cx+0.5; y=r.cy+0.5; }
+    S.ents.push({kind:'rabid',x,y,hp:60,state:'idle',tx:x,ty:y,alert:0,dead:false,cd:0,
+      wt:R()*3, home:{x,y}, hitFlash:0});
+  }
+  const nOsk=Math.max(0,Math.round((L.dg-1)*0.55+R()*0.55));
+  for(let i=0;i<nOsk;i++){
+    const r=farRoom();
+    S.ents.push({kind:'osk',x:r.cx+0.5,y:r.cy+0.5,face:R()*6.28,hp:120,state:'patrol',suspect:0,lock:0,
+      dead:false,cd:0,wp:[{x:r.cx+0.5,y:r.cy+0.5}],wpi:0,sweep:0,tx:r.cx,ty:r.cy});
+    // 生成巡逻路径
+    const e=S.ents[S.ents.length-1];
+    for(let k=0;k<3;k++){ const rr=farRoom(); e.wp.push({x:rr.cx+0.5,y:rr.cy+0.5}); }
+  }
+  const nHalf=(R()<0.72?1:0)+(R()<0.35?1:0);
+  for(let i=0;i<nHalf;i++){
+    const r=farRoom();
+    const x=r.cx+(R()-0.5)*3, y=r.cy+(R()-0.5)*3;
+    if(S.map.at(Math.floor(x),Math.floor(y))!==TT.FLOOR) continue;
+    S.ents.push({kind:'half',x,y,hp:40,state:'crouch',dead:false,used:false,ph:R()*6.28});
+  }
+  // 携带消耗品
+  S.load={can:0,water:0,asp:0,band:0};
+  for(const k in S.load) S.load[k]=G.load[k]||0;
+  computeVis();
+  CFG.SIGHT = G.flags.glasses? 7.2 : 12.0;
+}
+
+/* =========================================================================
+ *  6. 渲染（75° 斜俯视灰盒）
+ * =======================================================================*/
+const COL={
+  floor:'#1b222c', floor2:'#171e27', grout:'#0e1319',
+  slush:'#22323f', slush2:'#2b4657',
+  wallTop:'#2f3846', wallFront:'#12181f', wallEdge:'#3c4859',
+  cover:'#3a4655', coverRust:'#6a4a2a',
+  fence:'#4a5766', door:'#5a4028', wedged:'#8a6520',
+  fire:'#f59e0b', entry:'#4ade80',
+};
+function floorColor(v,i,j){
+  if(v===TT.SLUSH) return (i+j)%3===0?COL.slush2:COL.slush;
+  return (i*7+j*13)%5===0?COL.floor2:COL.floor;
+}
+function drawBox(sx,sy,w,h,ht,top,front,edge){
+  // sy = 顶面 y（世界 y 投影），h = 顶面高度(压缩后)，ht = 挤出高度
+  ctx.fillStyle=front; ctx.fillRect(sx,sy+h,w,ht);
+  ctx.fillStyle=top;   ctx.fillRect(sx,sy,w,h);
+  ctx.fillStyle=edge;  ctx.fillRect(sx,sy,w,1.5);
+  ctx.strokeStyle='#0a0e13'; ctx.lineWidth=1; ctx.strokeRect(sx+0.5,sy+0.5,w-1,h+ht-1);
+}
+function computeVis(){
+  const p=S.player, m=S.map;
+  S.vis.fill(0);
+  const i0=Math.max(0,Math.floor(p.x-CFG.SIGHT-1)), i1=Math.min(m.W-1,Math.ceil(p.x+CFG.SIGHT+1));
+  const j0=Math.max(0,Math.floor((p.y-CFG.SIGHT)/1)-1), j1=Math.min(m.H-1,Math.ceil(p.y+CFG.SIGHT)+1);
+  for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){
+    const wx=i+0.5, wy=j+0.5;
+    if(tileVisibleAt(wx,wy)){ S.vis[j*m.W+i]=1; S.explored[j*m.W+i]=1; }
+  }
+  // 视野多边形（平滑雾边缘）
+  const pts=[{x:p.x,y:p.y}], N=54, half=CFG.FOV_DEG*Math.PI/360, STEP=0.35;
+  for(let k=0;k<=N;k++){
+    const a=p.face-half+ (2*half)*(k/N);
+    let d=0;
+    while(d<CFG.SIGHT){ const nx=p.x+Math.cos(a)*d, ny=p.y+Math.sin(a)*d;
+      if(blocksSight(m.at(Math.floor(nx),Math.floor(ny)))&&d>0.2) break; d+=STEP; }
+    pts.push({x:p.x+Math.cos(a)*d,y:p.y+Math.sin(a)*d});
+  }
+  S.poly=pts;
+}
+function drawScene(){
+  const m=S.map, p=S.player;
+  ctx.clearRect(0,0,VW,VH);
+  ctx.fillStyle='#05070a'; ctx.fillRect(0,0,VW,VH);
+  const pw=CFG.PPM, ph=CFG.PPM*CFG.SQUASH, ht=CFG.WALL_H*CFG.PPM;
+  const i0=Math.max(0,Math.floor(S.cam.x-VW/2/pw)-1), i1=Math.min(m.W-1,Math.ceil(S.cam.x+VW/2/pw)+1);
+  const j0=Math.max(0,Math.floor(S.cam.y-VH/2/ph)-2), j1=Math.min(m.H-1,Math.ceil(S.cam.y+VH/ph)+2);
+  // ---- 地面 ----
+  for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){
+    const s=project(i,j), v=m.at(i,j);
+    if(!S.explored[j*m.W+i]) { ctx.fillStyle='#05070a'; ctx.fillRect(s.x,s.y,pw+1,ph+1); continue; }
+    ctx.fillStyle=floorColor(v,i,j); ctx.fillRect(s.x,s.y,pw+1,ph+1);
+    ctx.strokeStyle=COL.grout; ctx.lineWidth=1; ctx.strokeRect(s.x+0.5,s.y+0.5,pw,ph);
+    if(v===TT.SLUSH&&(i*3+j*5)%4===0){ ctx.fillStyle='#33566b55'; ctx.fillRect(s.x+4,s.y+3,pw-10,ph-8); }
+  }
+  // ---- 立面（墙/门/掩体/铁丝网）与物件、实体，按 y 排序逐行绘制 ----
+  const contAt={}; m.conts.forEach(c=>{contAt[Math.floor(c.x)+','+Math.floor(c.y)]=c;});
+  const entsByRow={}; S.ents.forEach(e=>{ if(e.dead)return; const r=Math.floor(e.y); (entsByRow[r]=entsByRow[r]||[]).push(e); });
+  for(let j=j0;j<=j1;j++){
+    for(let i=i0;i<=i1;i++){
+      const v=m.at(i,j), s=project(i,j);
+      if(!S.explored[j*m.W+i]) continue;
+      if(v===TT.WALL) drawBox(s.x,s.y,pw,ph,ht,COL.wallTop,COL.wallFront,COL.wallEdge);
+      else if(v===TT.DOOR){ // 可通行的门洞：只画门框与门楣
+        ctx.fillStyle='#1a212b'; ctx.fillRect(s.x,s.y,pw+1,ph+1);
+        ctx.fillStyle='#6b4a2b'; ctx.fillRect(s.x,s.y-ht*0.7,pw*0.12,ht*0.72); ctx.fillRect(s.x+pw*0.88,s.y-ht*0.7,pw*0.12,ht*0.72);
+        ctx.fillStyle='#3f2d1a'; ctx.fillRect(s.x,s.y-ht*0.72,pw,ht*0.16);
+        ctx.strokeStyle='#8a6a3a'; ctx.lineWidth=1; ctx.strokeRect(s.x+0.5,s.y-ht*0.72,pw-1,ht*0.16);
+      }
+      else if(v===TT.WEDGED){ drawBox(s.x,s.y,pw,ph,ht*0.95,'#9a7425','#2f2410','#c99b33');
+        ctx.fillStyle='#f59e0b'; ctx.font='11px JetBrains Mono'; ctx.fillText('⛭',s.x+pw/2-4,s.y+ht*0.6); }
+      else if(v===TT.COVER){ drawBox(s.x,s.y+ph*0.18,pw*0.94,ph*0.64,ht*0.38,COL.cover,'#1d242e','#556274');
+        ctx.fillStyle=COL.coverRust+'66'; for(let k=0;k<3;k++) ctx.fillRect(s.x+3+k*(pw/3),s.y+ph*0.3,pw*0.16,ph*0.4); }
+      else if(v===TT.FENCE){
+        ctx.strokeStyle=COL.fence; ctx.lineWidth=1;
+        for(let k=0;k<4;k++){ ctx.beginPath(); ctx.moveTo(s.x+k*(pw/4),s.y); ctx.lineTo(s.x+k*(pw/4),s.y-ht*0.8); ctx.stroke(); }
+        ctx.beginPath(); ctx.moveTo(s.x,s.y-ht*0.8); ctx.lineTo(s.x+pw,s.y-ht*0.8); ctx.stroke();
+      }
+    }
+    // 容器
+    (m.conts||[]).forEach(c=>{
+      if(Math.floor(c.y)!==j) return;
+      if(!S.explored[j*m.W+Math.floor(c.x)]) return;
+      const s=project(c.x-0.35,c.y-0.35);
+      const w=pw*0.7,h=ph*0.7,hh=ht*0.55;
+      const pal={crate:['#6b5232','#2e2314','#8a6a3c'],locker:['#3a4c60','#161d26','#4f6478'],
+        medcab:['#2f5a4a','#12241d','#3f7a63'],fridge:['#4c5763','#1b2128','#667585'],
+        briefcase:['#4a3d28','#1e1810','#6b5a3c'],safe:['#2b323b','#12161b','#454f5b'],hidden:['#6b5a2a','#241d0e','#8f7a35']}[c.type]||['#555','#222','#777'];
+      drawBox(s.x,s.y,w,h,hh,pal[0],pal[1],pal[2]);
+      if(c.type==='medcab'){ ctx.fillStyle='#e2e8f0'; ctx.fillRect(s.x+w/2-1.5,s.y+3,3,h-6); ctx.fillRect(s.x+3,s.y+h/2-1.5,w-6,3); }
+      if(c.searched){ ctx.fillStyle='#0b0f1499'; ctx.fillRect(s.x,s.y,w,h+hh); ctx.fillStyle='#4b5563'; ctx.font='10px JetBrains Mono'; ctx.fillText('✓',s.x+w/2-3,s.y+h+hh*0.7); }
+      else if(c.type==='safe'){ ctx.fillStyle='#f59e0b'; ctx.font='10px JetBrains Mono'; ctx.fillText('🔒',s.x+w/2-5,s.y+h+hh*0.7); }
+    });
+    // 火堆
+    S.fires.forEach(f=>{ if(Math.floor(f.y)!==j) return;
+      const s=project(f.x,f.y);
+      const g=ctx.createRadialGradient(s.x,s.y-6,2,s.x,s.y-6,42);
+      g.addColorStop(0,'#f59e0b55'); g.addColorStop(1,'#f59e0b00');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(s.x,s.y-6,42,0,6.2832); ctx.fill();
+      ctx.fillStyle='#3a2a18'; ctx.fillRect(s.x-9,s.y-3,18,6);
+      ctx.fillStyle=COL.fire; ctx.beginPath(); ctx.moveTo(s.x-5,s.y-3); ctx.lineTo(s.x,s.y-16-Math.sin(performance.now()/180)*3); ctx.lineTo(s.x+5,s.y-3); ctx.fill();
+    });
+    // 出入口
+    { const e=m.entry, s=project(e.x,e.y);
+      if(Math.floor(e.y)===j){
+        ctx.strokeStyle=COL.entry; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+        ctx.beginPath(); ctx.ellipse(s.x,s.y,pw*0.55,ph*0.55,0,0,6.2832); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle=COL.entry; ctx.font='10px JetBrains Mono'; ctx.fillText('EXIT',s.x-12,s.y-ph*0.7);
+      } }
+    // 实体
+    (entsByRow[j]||[]).forEach(e=>drawEnt(e));
+  }
+  // 玩家
+  drawPlayer();
+}
+function drawPlayer(){
+  const p=S.player, s=project(p.x,p.y);
+  ctx.fillStyle='#00000066'; ctx.beginPath(); ctx.ellipse(s.x,s.y+2,11,5,0,0,6.2832); ctx.fill();
+  // 视野扇形（淡）
+  ctx.save(); ctx.beginPath(); ctx.moveTo(s.x,s.y);
+  S.poly.forEach(pt=>{const q=project(pt.x,pt.y); ctx.lineTo(q.x,q.y);}); ctx.closePath();
+  const g=ctx.createRadialGradient(s.x,s.y,4,s.x,s.y,CFG.SIGHT*CFG.PPM);
+  g.addColorStop(0,'#cbd5e114'); g.addColorStop(1,'#cbd5e100');
+  ctx.fillStyle=g; ctx.fill(); ctx.restore();
+  // 身体
+  ctx.fillStyle=p.hurt>0?'#ef4444':'#cbd5e1';
+  ctx.beginPath(); ctx.arc(s.x,s.y-13,7,0,6.2832); ctx.fill();
+  ctx.fillStyle='#2b3646'; ctx.fillRect(s.x-6,s.y-8,12,11);
+  ctx.fillStyle='#f59e0b'; ctx.beginPath(); ctx.arc(s.x,s.y-15,2.2,0,6.2832); ctx.fill(); // 眼镜反光
+  // 朝向 + 武器
+  ctx.strokeStyle='#f59e0bcc'; ctx.lineWidth=2.5; ctx.beginPath();
+  ctx.moveTo(s.x,s.y-4); ctx.lineTo(s.x+Math.cos(p.face)*17,s.y-4+Math.sin(p.face)*17*CFG.SQUASH); ctx.stroke();
+  if(p.wpn&&p.wpn.id!=='fist'){
+    ctx.save(); ctx.translate(s.x+Math.cos(p.face)*14,s.y-4+Math.sin(p.face)*14*CFG.SQUASH); ctx.rotate(p.face);
+    ctx.fillStyle=p.wpn.id==='crowbar'?'#94a3b8':p.wpn.id==='cleaver'?'#cbd5e1':p.wpn.id==='mosin'?'#8a6a3c':'#6b7280';
+    ctx.fillRect(-2,-2,p.wpn.id==='mosin'?16:12,3); ctx.restore();
+  }
+  if(S.search){ // 搜刮进度
+    ctx.fillStyle='#0b0f14dd'; ctx.fillRect(s.x-22,s.y-40,44,7);
+    ctx.fillStyle='#f59e0b'; ctx.fillRect(s.x-21,s.y-39,42*S.search.prog,5);
+  }
+  if(S.extract){
+    ctx.fillStyle='#0b0f14dd'; ctx.fillRect(s.x-22,s.y-52,44,7);
+    ctx.fillStyle='#4ade80'; ctx.fillRect(s.x-21,s.y-51,42*S.extract.prog,5);
+  }
+  if(p.drink>0){ ctx.fillStyle='#7dd3fc'; ctx.font='10px JetBrains Mono'; ctx.fillText('♨',s.x-3,s.y-30); }
+}
+function drawEnt(e){
+  const s=project(e.x,e.y);
+  if(!S.explored[Math.floor(e.y)*S.map.W+Math.floor(e.x)]) return;
+  const vis=S.vis[Math.floor(e.y)*S.map.W+Math.floor(e.x)]||dist(e.x,e.y,S.player.x,S.player.y)<2.2;
+  ctx.fillStyle='#00000055'; ctx.beginPath(); ctx.ellipse(s.x,s.y+2,10,4.5,0,0,6.2832); ctx.fill();
+  if(!vis){
+    // 视野外：只画“声音波纹”由 drawRipples 处理，实体本体不画
+    if(S.mate==='ash'&&dist(e.x,e.y,S.player.x,S.player.y)<6){ // 灰烬嗅觉标记
+      ctx.strokeStyle=e.kind==='rabid'?'#ef444488':e.kind==='half'?'#cbd5e188':'#7dd3fc88';
+      ctx.setLineDash([3,3]); ctx.beginPath(); ctx.arc(s.x,s.y-10,13,0,6.2832); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=e.kind==='rabid'?'#ef4444':e.kind==='half'?'#cbd5e1':'#7dd3fc';
+      ctx.font='11px JetBrains Mono'; ctx.fillText(e.kind==='rabid'?'✖':e.kind==='half'?'?':'!',s.x-4,s.y-10);
+    }
+    return;
+  }
+  const bob=Math.sin(performance.now()/260+e.x)*1.2;
+  if(e.kind==='rabid'){
+    ctx.fillStyle=e.hitFlash>0?'#fca5a5':'#7f1d1d';
+    ctx.beginPath(); ctx.ellipse(s.x,s.y-9+bob,9,11,0,0,6.2832); ctx.fill();
+    ctx.fillStyle='#450a0a'; ctx.beginPath(); ctx.arc(s.x,s.y-17+bob,5.5,0,6.2832); ctx.fill();
+    if(e.state==='chase'){ ctx.fillStyle='#ef4444'; ctx.font='11px serif'; ctx.fillText('!',s.x-2,s.y-26+bob); }
+    if(e.bite>0.12){ ctx.strokeStyle='#ef4444'; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.arc(s.x,s.y-9,10+ (1-e.bite/0.45)*10,0,6.2832); ctx.stroke(); }
+  } else if(e.kind==='half'){
+    ctx.fillStyle='#8a9098'; ctx.beginPath(); ctx.ellipse(s.x,s.y-8+bob,8,10,0,0,6.2832); ctx.fill();
+    ctx.fillStyle='#cbd5e1'; ctx.beginPath(); ctx.arc(s.x,s.y-16+bob,5,0,6.2832); ctx.fill();
+    ctx.fillStyle='#94a3b8'; ctx.font='11px JetBrains Mono'; ctx.fillText('?',s.x-3,s.y-14+bob);
+  } else if(e.kind==='osk'){
+    ctx.fillStyle='#242a31'; ctx.fillRect(s.x-8,s.y-20+bob,16,20);
+    ctx.fillStyle='#37414d'; ctx.beginPath(); ctx.arc(s.x,s.y-22+bob,6,0,6.2832); ctx.fill();
+    ctx.fillStyle='#a16207'; ctx.fillRect(s.x-4,s.y-23+bob,8,4); // 猪嘴
+    ctx.fillStyle=e.lock>0?'#ef4444':'#fde68a'; ctx.fillRect(s.x-2,s.y-13+bob,4,3); // 探照灯
+    if(e.lock>0){ ctx.strokeStyle='#ef4444'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(s.x,s.y-13,9+Math.sin(performance.now()/90)*2,0,6.2832); ctx.stroke(); }
+  } else if(e.kind==='mate'){
+    if(e.id==='ash'){
+      ctx.fillStyle='#8b98a9'; ctx.beginPath(); ctx.ellipse(s.x,s.y-6+bob,11,6,0,0,6.2832); ctx.fill();
+      ctx.fillStyle='#a8b4c2'; ctx.beginPath(); ctx.arc(s.x+8,s.y-9+bob,4,0,6.2832); ctx.fill();
+      if(e.bark>0){ ctx.fillStyle='#fde68a'; ctx.font='11px serif'; ctx.fillText('🐾',s.x-6,s.y-20); }
+    } else {
+      ctx.fillStyle='#4b5563'; ctx.fillRect(s.x-6,s.y-19+bob,12,19);
+      ctx.fillStyle='#94a3b8'; ctx.beginPath(); ctx.arc(s.x,s.y-22+bob,5,0,6.2832); ctx.fill();
+      ctx.fillStyle='#f59e0b'; ctx.font='10px JetBrains Mono'; ctx.fillText(MATES.find(m=>m.id===e.id)?.ic||'?',s.x-5,s.y-30);
+    }
+  }
+  // 血条
+  if(e.hp< (e.kind==='rabid'?60:e.kind==='osk'?120:100) && e.kind!=='mate'){
+    const mx=e.kind==='rabid'?60:e.kind==='osk'?120:100;
+    ctx.fillStyle='#0b0f14'; ctx.fillRect(s.x-12,s.y-32,24,4);
+    ctx.fillStyle=e.kind==='osk'?'#f59e0b':'#ef4444'; ctx.fillRect(s.x-11,s.y-31,22*(e.hp/mx),2);
+  }
+}
+function drawFog(){
+  const m=S.map,pw=CFG.PPM,ph=CFG.PPM*CFG.SQUASH;
+  fctx.setTransform(DPR,0,0,DPR,0,0);
+  fctx.clearRect(0,0,VW,VH);
+  fctx.fillStyle='#04060a'; fctx.fillRect(0,0,VW,VH);
+  fctx.globalCompositeOperation='destination-out';
+  const i0=Math.max(0,Math.floor(S.cam.x-VW/2/pw)-1), i1=Math.min(m.W-1,Math.ceil(S.cam.x+VW/2/pw)+1);
+  const j0=Math.max(0,Math.floor(S.cam.y-VH/2/ph)-2), j1=Math.min(m.H-1,Math.ceil(S.cam.y+VH/ph)+2);
+  for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){
+    if(!S.explored[j*m.W+i]) continue;
+    const s=project(i,j);
+    fctx.fillStyle='rgba(0,0,0,'+(S.vis[j*m.W+i]?1:0.42)+')';
+    fctx.fillRect(s.x,s.y,pw+1,ph+1);
+  }
+  const pp=project(S.player.x,S.player.y);
+  fctx.beginPath(); fctx.moveTo(pp.x,pp.y);
+  S.poly.forEach(pt=>{const q=project(pt.x,pt.y); fctx.lineTo(q.x,q.y);});
+  fctx.closePath(); fctx.fillStyle='#000'; fctx.fill();
+  fctx.globalCompositeOperation='source-over';
+  ctx.drawImage(fogCv,0,0,VW,VH);
+}
+function drawRipples(){
+  S.ripples.forEach(r=>{
+    const s=project(r.x,r.y);
+    const a=clamp(r.life,0,1)*0.75;
+    ctx.strokeStyle=r.color; ctx.globalAlpha=a; ctx.lineWidth=1.6;
+    ctx.beginPath();
+    if(r.kind==='rabid'){
+      for(let k=0;k<=22;k++){ const th=k/22*6.2832; const rr=r.r*CFG.PPM*(0.86+0.14*Math.sin(k*3.1+r.r));
+        const x=s.x+Math.cos(th)*rr, y=s.y+Math.sin(th)*rr*CFG.SQUASH; k?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+      ctx.closePath();
+    } else if(r.kind==='half'){
+      for(let k=0;k<=26;k++){ const th=k/26*6.2832; const rr=r.r*CFG.PPM*(0.94+0.06*Math.sin(k*7+performance.now()/90));
+        const x=s.x+Math.cos(th)*rr, y=s.y+Math.sin(th)*rr*CFG.SQUASH; k?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+      ctx.closePath();
+    } else {
+      ctx.ellipse(s.x,s.y,r.r*CFG.PPM,r.r*CFG.PPM*CFG.SQUASH,0,0,6.2832);
+    }
+    ctx.stroke(); ctx.globalAlpha=1;
+  });
+}
+function drawCones(){
+  S.ents.forEach(e=>{
+    if(e.dead||e.kind!=='osk') return;
+    const half=22.5*Math.PI/180, range=14, N=26;
+    ctx.beginPath(); ctx.moveTo(project(e.x,e.y).x,project(e.x,e.y).y-8);
+    for(let k=0;k<=N;k++){
+      const a=e.face-half+2*half*(k/N); let d=0;
+      while(d<range){ const nx=e.x+Math.cos(a)*d, ny=e.y+Math.sin(a)*d; if(blocksSight(S.map.at(Math.floor(nx),Math.floor(ny)))&&d>0.3) break; d+=0.4; }
+      const q=project(e.x+Math.cos(a)*d,e.y+Math.sin(a)*d); ctx.lineTo(q.x,q.y-8);
+    }
+    ctx.closePath();
+    const g=ctx.createRadialGradient(project(e.x,e.y).x,project(e.x,e.y).y-8,4,project(e.x,e.y).x,project(e.x,e.y).y-8,range*CFG.PPM);
+    g.addColorStop(0,'rgba(253,230,138,'+(e.lock>0?0.30:0.17)+')'); g.addColorStop(1,'rgba(253,230,138,0)');
+    ctx.fillStyle=g; ctx.fill();
+  });
+}
+function drawCompass(){
+  const e=S.map.entry, sp=project(e.x,e.y);
+  const inside=sp.x>30&&sp.x<VW-30&&sp.y>30&&sp.y<VH-30;
+  if(inside) return;
+  const cx=VW/2, cy=VH/2, ang=Math.atan2(sp.y-cy,sp.x-cx);
+  const rx=VW/2-46, ry=VH/2-46;
+  const x=cx+Math.cos(ang)*rx, y=cy+Math.sin(ang)*ry;
+  const d=dist(S.player.x,S.player.y,e.x,e.y);
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang);
+  ctx.fillStyle='#4ade80cc'; ctx.beginPath(); ctx.moveTo(12,0); ctx.lineTo(-7,7); ctx.lineTo(-7,-7); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  ctx.fillStyle='#4ade80'; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText('EXIT '+Math.round(d)+'m',x,y+22); ctx.textAlign='left';
+}
+function drawFlakes(){
+  // 暴风雪粒子（屏幕空间）
+  const t=performance.now()/1000;
+  ctx.fillStyle='#cbd5e133';
+  for(let k=0;k<130;k++){
+    const seed=k*97.13;
+    const x=((seed*13+t*(40+ (k%7)*11))%(VW+40))-20;
+    const y=((seed*29+t*(70+(k%5)*17))%(VH+40))-20;
+    ctx.fillRect(x,y,1.6,1.6);
+  }
+}
+
+/* ---------- 程序合成音效（Web Audio，无外部资源） ---------- */
+let AC=null;
+function sfx(kind){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended') AC.resume();
+    const t=AC.currentTime, o=AC.createOscillator(), g=AC.createGain(), f=AC.createBiquadFilter();
+    f.type='lowpass'; f.frequency.value=1200;
+    const P={gun:[90,0.35,'square',0.30,900],can:[1400,0.18,'triangle',0.16,2600],
+      wedge:[220,0.30,'sawtooth',0.14,700],lock:[660,0.25,'sine',0.16,900],
+      hit:[140,0.22,'sawtooth',0.20,420],good:[520,0.22,'sine',0.12,1600],
+      bad:[110,0.45,'sawtooth',0.14,300],extract:[440,0.5,'sine',0.14,1200]}[kind]||[440,0.2,'sine',0.1,800];
+    o.type=P[2]; o.frequency.setValueAtTime(P[0],t);
+    if(kind==='can'||kind==='good'||kind==='extract') o.frequency.exponentialRampToValueAtTime(P[4],t+P[1]);
+    else o.frequency.exponentialRampToValueAtTime(Math.max(40,P[0]*0.4),t+P[1]);
+    g.gain.setValueAtTime(P[3],t); g.gain.exponentialRampToValueAtTime(0.0008,t+P[1]);
+    o.connect(f); f.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+P[1]+0.02);
+  }catch(e){}
+}
+
+/* =========================================================================
+ *  7. 输入
+ * =======================================================================*/
+const KEYMAP={KeyW:'up',ArrowUp:'up',KeyS:'down',ArrowDown:'down',KeyA:'left',ArrowLeft:'left',KeyD:'right',ArrowRight:'right'};
+addEventListener('keydown',ev=>{
+  if(ev.code==='Tab'){ev.preventDefault(); if(G&&$('#s-scene').classList.contains('active')) openLogbook(); return;}
+  if(ev.code==='Escape'){ if($('#modalRoot').classList.contains('on')) {} else if($('#s-scene').classList.contains('active')) confirmAbort(); return;}
+  if(ev.code==='Space') ev.preventDefault();
+  S.keys[ev.code]=true;
+  if(!$('#s-scene').classList.contains('active')||S.over) return;
+  if(ev.code==='KeyE') S.keysE=true;
+  if(ev.code==='KeyG') throwCan();
+  if(ev.code==='KeyQ') drink();
+  if(ev.code==='KeyR') reloadGun();
+  if(ev.code==='KeyF') useBandage();
+  if(/^Digit[1-5]$/.test(ev.code)){
+    const own=ownedWeapons(), w=own[+ev.code.slice(5)-1];
+    if(w){ S.player.wpn=w; S.player.ammo=w.ammo||0; toast((LANG==='zh'?'切换武器：':'Switched to: ')+(LANG==='zh'?w.zh:w.en),1400); }
+  }
+});
+addEventListener('keyup',ev=>{ S.keys[ev.code]=false; if(ev.code==='KeyE'){S.keysE=false; S.search=null; S.wedge=null; S.extract=null;} });
+cv.addEventListener('mousemove',ev=>{ const r=cv.getBoundingClientRect(); S.mouse.sx=ev.clientX-r.left; S.mouse.sy=ev.clientY-r.top; });
+cv.addEventListener('mousedown',ev=>{ if(ev.button===0){ S.down=true; attack(); } });
+addEventListener('mouseup',ev=>{ if(ev.button===0) S.down=false; });
+addEventListener('wheel',ev=>{ if($('#s-scene').classList.contains('active')){ CFG.PPM=clamp(CFG.PPM - Math.sign(ev.deltaY)*3,26,72); resize(); } },{passive:true});
+
+/* =========================================================================
+ *  8. 战斗 / 交互
+ * =======================================================================*/
+function canStand(x,y,r){
+  const a=S.map.at(Math.floor(x-r),Math.floor(y-r)), b=S.map.at(Math.floor(x+r),Math.floor(y-r)),
+        c=S.map.at(Math.floor(x-r),Math.floor(y+r)), d=S.map.at(Math.floor(x+r),Math.floor(y+r));
+  return !(blocksMove(a)||blocksMove(b)||blocksMove(c)||blocksMove(d));
+}
+function moveEnt(e,nx,ny,r,sp){
+  if(canStand(nx,e.y,r)) e.x=nx; if(canStand(e.x,ny,r)) e.y=ny;
+}
+function attack(){
+  const p=S.player;
+  if(S.over||!p||S.jam) return;
+  if(S.jam){ S.jam.hits++; return; }
+  if(S.atk.phase!=='idle') return;
+  const w=p.wpn;
+  if(w.ammo!==undefined){
+    if(p.ammo<=0){ toast(LANG==='zh'?'没弹药了。':'Out of ammo.'); return; }
+    shoot(w); return;
+  }
+  S.atk={t:0,phase:'up',w};
+  emitNoise(p.x,p.y,CFG.NOISE.slash,'#ffffff66','self');
+}
+function shoot(w){
+  const p=S.player; p.ammo--;
+  const spread=w.id==='shotgun'?(8+(p.bpm-70)*0.25)*Math.PI/180:0.012;
+  let hit=null;
+  S.ents.forEach(e=>{
+    if(e.dead||e.kind==='mate') return;
+    const d=dist(p.x,p.y,e.x,e.y); if(d>w.range) return;
+    const a=Math.atan2(e.y-p.y,e.x-p.x);
+    const halfAng=Math.atan2(0.45,d)+ (w.id==='shotgun'?spread/2:0);
+    if(Math.abs(angDiff(a,p.face))<=Math.max(halfAng,spread/2)){
+      if(!hit||d<dist(p.x,p.y,hit.x,hit.y)) hit=e;
+    }
+  });
+  sfx('gun'); emitNoise(p.x,p.y,CFG.NOISE.gun,'#fbbf24','gun');
+  S.ents.forEach(e=>{ if(!e.dead&&e.kind==='osk'){ e.state='investigate'; e.tx=p.x; e.ty=p.y; e.suspect=1.5; }});
+  if(hit){
+    const dmg = w.id==='shotgun'? w.dmg*(0.55+0.45*Math.max(0.25,1-dist(p.x,p.y,hit.x,hit.y)/w.range)) : w.dmg;
+    damageEnt(hit,dmg);
+  }
+  S.shotsFired=(S.shotsFired||0)+1;
+}
+function damageEnt(e,dmg){
+  e.hp-=dmg; e.hitFlash=0.15;
+  if(e.kind==='rabid'&&e.state!=='chase'){ e.state='chase'; e.alert=1; }
+  if(e.kind==='osk'){ e.state='investigate'; e.tx=S.player.x; e.ty=S.player.y; e.suspect=2; }
+  if(e.hp<=0&&!e.dead){
+    e.dead=true;
+    if(e.kind==='rabid'){ S.killed++; S.events.push({t:'kill',zh:'击杀狂暴感染者 ×1',en:'Killed 1 rabid'}); }
+    if(e.kind==='half'){
+      // 误杀：正在醒来的人
+      G.tally+=2; G.conscience-=15; G.flags.ptsd=true;
+      S.events.push({t:'bad',zh:'误杀正在醒来的人（卌 +2）',en:'Killed a waking person (卌 +2)'});
+      toast(LANG==='zh'?'<b style="color:#fca5a5">他手背的灰鳞正在剥落……你开枪了。卌 +2</b>':'<b style="color:#fca5a5">The scales were flaking off his hands… and you fired. 卌 +2</b>',3400);
+    }
+    if(e.kind==='osk'){ S.events.push({t:'kill',zh:'击杀清杀队员 ×1（全图警戒上升）',en:'Killed a purge trooper'});
+      S.ents.forEach(o=>{if(o.kind==='osk'&&!o.dead){o.suspect=2;o.state='investigate';o.tx=S.player.x;o.ty=S.player.y;}}); }
+  }
+}
+function throwCan(){
+  const p=S.player;
+  if((S.load.can||0)<=0){ toast(LANG==='zh'?'没有空罐头了。':'No tins left.'); return; }
+  S.load.can--;
+  const w=unproject(S.mouse.sx,S.mouse.sy);
+  let tx=w.x,ty=w.y; const d=dist(p.x,p.y,tx,ty); if(d>8){ tx=p.x+(tx-p.x)/d*8; ty=p.y+(ty-p.y)/d*8; }
+  sfx('can'); emitNoise(tx,ty,CFG.NOISE.can,'#e2e8f0','can');
+  toast(LANG==='zh'?'空罐头飞进阴影里——叮当。':'The tin arcs into the dark — clatter.',1500);
+}
+function drink(){
+  const p=S.player;
+  if((S.load.water||0)<=0){ toast(LANG==='zh'?'水壶空了。':'The flask is empty.'); return; }
+  S.load.water--; p.warmth=clamp(p.warmth+26,0,100); p.drink=1.2;
+  if(G.flags.ptsd) toast(LANG==='zh'?'温水滑过喉咙。吞咽的末尾，耳边响起：<b>……Пить（渴）……</b>':'Warm water. As you swallow, a voice in your ear: <b>…Пить (Thirsty)…</b>',3200);
+  else toast(LANG==='zh'?'体温回升了一点。':'A little warmer.',1500);
+}
+function reloadGun(){ const p=S.player; if(p.wpn&&p.wpn.ammo!==undefined) p.ammo=p.wpn.ammo; }
+function useBandage(){
+  const p=S.player;
+  if((S.load.band||0)<=0){ toast(LANG==='zh'?'没带绷带。':'No bandages carried.'); return; }
+  if(p.hp>=95){ toast(LANG==='zh'?'还不到包扎的时候。':'Not bleeding enough to waste it.'); return; }
+  S.load.band--; p.hp=clamp(p.hp+28,0,100);
+  emitNoise(p.x,p.y,1.5,'#e2e8f033','self');
+  toast(LANG==='zh'?'你撕开冻硬的绷带，缠紧伤口。':'You tear open a frozen bandage and wrap it tight.',1800);
+}
+
+/* ---------- 搜刮 / 卡门 / 半人交互 ---------- */
+function nearestInteract(){
+  const p=S.player; let best=null,bd=2.0;
+  S.map.conts.forEach(c=>{ if(c.searched)return; const d=dist(p.x,p.y,c.x,c.y); if(d<bd){bd=d;best={type:'cont',c};} });
+  const ti=Math.floor(p.x), tj=Math.floor(p.y);
+  for(let j=tj-1;j<=tj+1;j++)for(let i=ti-1;i<=ti+1;i++){
+    if(S.map.at(i,j)===TT.DOOR){ const d=dist(p.x,p.y,i+0.5,j+0.5); if(d<bd+0.4){bd=d;best={type:'door',i,j};} }
+  }
+  S.ents.forEach(e=>{ if(e.dead)return; if(e.kind==='half'&&!e.used){ const d=dist(p.x,p.y,e.x,e.y); if(d<bd+0.6){bd=d;best={type:'half',e};} } });
+  const dExit=dist(p.x,p.y,S.map.entry.x,S.map.entry.y);
+  if(dExit<1.6){ best={type:'exit'}; }
+  return best;
+}
+function genLoot(L,c){
+  const R=rnd, out=[];
+  const n = (c.type==='safe'?3:c.type==='hidden'?2:1) + (R()<0.42?1:0);
+  const CAT={
+    food:['rye','rye','can','water'], med:['asp','band','abx','dial'],
+    scrap:['scrap','scrap','wire','elec','wood'], warm:['wood','wood','kero','water'],
+    intel:['intel','intel','photo'], part:['barrel','stock','pin','bolt','ammo','blade'],
+    weapon:['blade','barrel','stock','pin','scrap','scrap'], val:['vodka','watch','tape','glass'],
+  };
+  const byType={medcab:['med','med'],fridge:['food','med'],crate:['scrap','food','warm'],
+    locker:['scrap','food','val'],briefcase:['intel','val','med'],safe:['val','part','med'],hidden:['part','med','val','intel']};
+  for(let i=0;i<n;i++){
+    let cat;
+    if(R()<0.62 && byType[c.type]) cat=byType[c.type][Math.floor(R()*byType[c.type].length)];
+    else cat=L.loot[Math.floor(R()*L.loot.length)];
+    if((cat==='part'||cat==='weapon')&&R()<0.62) cat='scrap';
+    if(cat==='med'&&R()<0.55) cat='band';
+    const pool=CAT[cat]||CAT.scrap;
+    out.push(pool[Math.floor(R()*pool.length)]);
+  }
+  if(c.type==='hidden'&&R()<0.5) out.push('dial');
+  return out;
+}
+function finishSearch(c){
+  c.searched=true; S.looted++;
+  const items=genLoot(S.L,c);
+  let got=0, full=false;
+  items.forEach(id=>{
+    if(S.pack.length>=S.packMax){ full=true; return; }
+    S.pack.push(id); got++;
+  });
+  if(full) toast(LANG==='zh'?'背包满了，有东西只能留在原地。':'Pack is full; you left something behind.',2600);
+  sfx('good');
+  if(got) toast((LANG==='zh'?'搜出：':'Found: ')+items.slice(0,got).map(itemName).join('、'),2000);
+  else toast(LANG==='zh'?'空的。只有冻硬的包装纸。':'Empty. Only frozen wrapping paper.',1600);
+  // 容器剩余量刷新
+  const st=nodeState(S.L.id); st.left=Math.max(0,st.left-1/Math.max(1,S.totalCont));
+}
+function coverHides(p,e){
+  const d=dist(p.x,p.y,e.x,e.y), steps=Math.ceil(d/0.5);
+  for(let i=0;i<=steps;i++){
+    const t=i/steps, x=p.x+(e.x-p.x)*t, y=p.y+(e.y-p.y)*t;
+    if(S.map.at(Math.floor(x),Math.floor(y))===TT.COVER && dist(x,y,p.x,p.y)<1.9) return true;
+  }
+  return false;
+}
+
+/* =========================================================================
+ *  9. 主更新
+ * =======================================================================*/
+function update(dt){
+  const p=S.player, m=S.map, L=S.L;
+  if(S.over) return;
+  // 瞄准
+  const w=unproject(S.mouse.sx,S.mouse.sy);
+  p.face=Math.atan2(w.y-p.y,w.x-p.x);
+  // 移动
+  let ix=0,iy=0;
+  for(const k in KEYMAP){ if(S.keys[k]){ const d=KEYMAP[k]; if(d==='up')iy-=1; if(d==='down')iy+=1; if(d==='left')ix-=1; if(d==='right')ix+=1; } }
+  p.sneak=!!S.keys.ControlLeft||!!S.keys.ControlRight;
+  p.sprint=!!(S.keys.ShiftLeft||S.keys.ShiftRight)&&!p.sneak&&p.stam>2&&(ix||iy);
+  const onSlush=m.at(Math.floor(p.x),Math.floor(p.y))===TT.SLUSH;
+  const jammed=!!S.jam;
+  let sp = jammed?0:(p.sneak?CFG.SPEED.sneak:(p.sprint?CFG.SPEED.sprint:CFG.SPEED.walk));
+  if(onSlush) sp*=0.65;
+  if(ix||iy){
+    const l=Math.hypot(ix,iy); ix/=l; iy/=l;
+    const nx=p.x+ix*sp*dt, ny=p.y+iy*sp*dt;
+    const px=p.x,py=p.y;
+    moveEnt(p,nx,ny,0.35);
+    const moved=dist(px,py,p.x,p.y);
+    S.noiseAcc+=moved;
+    const base=p.sneak?CFG.NOISE.sneak:(p.sprint?CFG.NOISE.sprint:CFG.NOISE.walk);
+    const thresh=p.sneak?0.9:1.4;
+    if(S.noiseAcc>thresh){
+      S.noiseAcc=0;
+      emitNoise(p.x,p.y, base*(onSlush?2.0:1), '#e2e8f055','self');
+    }
+  }
+  if(p.sprint) p.stam=clamp(p.stam-18*dt,0,100); else p.stam=clamp(p.stam+9*dt,0,100);
+  if(p.drink>0) p.drink-=dt;
+  if(p.iframe>0) p.iframe-=dt;
+  if(p.hurt>0) p.hurt-=dt;
+  // 体温
+  let nearFire=S.fires.some(f=>dist(f.x,f.y,p.x,p.y)<2.6);
+  let cold=L.cold*0.55*(onSlush?1.5:1)*(p.sneak?0.85:1);
+  if(nearFire) p.warmth=clamp(p.warmth+30*dt,0,100); else p.warmth=clamp(p.warmth-cold*dt,0,100);
+  if(p.warmth<25) p.hp-=(25-p.warmth)*0.09*dt;
+  if(p.warmth<30&&!S.coldWarned){ S.coldWarned=true; toast(LANG==='zh'?'<b style="color:#7dd3fc">手指开始不听使唤了——按 Q 喝热水，或去火堆旁站一会儿。</b>':'<b style="color:#7dd3fc">Your fingers are going numb — press Q for hot water, or stand by a fire.</b>',3200); }
+  if(p.warmth>45) S.coldWarned=false;
+  // 心率
+  let fear=0; S.ents.forEach(e=>{ if(!e.dead&&(e.kind==='rabid'||e.kind==='osk')) fear=Math.max(fear, clamp(1-dist(e.x,e.y,p.x,p.y)/10,0,1)); });
+  const target=70+(p.sprint?34:0)+(p.hp<45?22:0)+fear*26+(p.warmth<35?12:0);
+  p.bpm=lerp(p.bpm,target,1-Math.pow(0.02,dt));
+  // 攻击时序
+  if(S.atk.phase!=='idle'){
+    S.atk.t+=dt; const w2=S.atk.w;
+    if(S.atk.phase==='up'&&S.atk.t>=w2.up){
+      S.atk.phase='act'; S.atk.t=0;
+      S.ents.forEach(e=>{
+        if(e.dead||e.kind==='mate') return;
+        const d=dist(p.x,p.y,e.x,e.y); if(d>w2.range+0.4) return;
+        const a=Math.atan2(e.y-p.y,e.x-p.x);
+        if(Math.abs(angDiff(a,p.face))<=w2.arc*Math.PI/360+Math.atan2(0.5,d)){
+          if(w2.id==='cleaver'&&e.kind==='rabid'&&!S.jam&&Math.abs(angDiff(a,p.face))<0.7){
+            S.jam={t:1.5,hits:0}; e.hp-=8;
+            toast(LANG==='zh'?'<b>刀卡进锁骨缝了！1.5 秒内连按攻击键 6 次拔刀！</b>':'<b>The blade jams in the collarbone! Mash attack 6× in 1.5s!</b>',1600);
+          } else damageEnt(e,w2.dmg);
+        }
+      });
+    } else if(S.atk.phase==='act'&&S.atk.t>=w2.act){ S.atk.phase='rec'; S.atk.t=0; }
+    else if(S.atk.phase==='rec'&&S.atk.t>=w2.rec){ S.atk.phase='idle'; S.atk.t=0; }
+  }
+  if(S.jam){
+    S.jam.t-=dt;
+    if(S.jam.hits>=6){ S.jam=null; toast(LANG==='zh'?'刀拔出来了。手在抖。':'You wrench it free. Your hands are shaking.',1800); }
+    else if(S.jam.t<=0){ S.jam=null; p.hp-=22; p.hurt=0.4;
+      toast(LANG==='zh'?'<b style="color:#fca5a5">来不及了——你被带倒在地。</b>':'<b style="color:#fca5a5">Too slow — you are dragged down.</b>',2600); }
+  }
+  // 交互（按住 E）
+  if(S.keysE&&!S.jam){
+    const tgt=nearestInteract();
+    if(tgt&&tgt.type==='cont'){
+      S.search=S.search&&S.search.c===tgt.c?S.search:{c:tgt.c,prog:0,noise:0};
+      S.search.prog+=dt/1.7; S.search.noise+=dt;
+      if(S.search.noise>0.7){S.search.noise=0; emitNoise(p.x,p.y,CFG.NOISE.search,'#e2e8f044','self');}
+      if(S.search.prog>=1){ finishSearch(S.search.c); S.search=null; }
+    } else S.search=null;
+    if(tgt&&tgt.type==='door'){
+      S.wedge=S.wedge||{i:tgt.i,j:tgt.j,prog:0};
+      S.wedge.prog+=dt/1.2;
+      if(S.wedge.prog>=1){ m.set(tgt.i,tgt.j,TT.WEDGED);
+        setTimeout(()=>{ if(m.at(tgt.i,tgt.j)===TT.WEDGED) m.set(tgt.i,tgt.j,TT.DOOR); },15000);
+        S.wedge=null; sfx('wedge'); emitNoise(p.x,p.y,3.5,'#e2e8f055','self');
+        toast(LANG==='zh'?'撬棍卡进门轨：这扇门 15 秒内推不开。':'Crowbar wedged in the track: 15 seconds of lock.',2400); }
+    } else S.wedge=null;
+    if(tgt&&tgt.type==='exit'){
+      S.extract=S.extract||{prog:0};
+      S.extract.prog+=dt/1.5;
+      if(S.extract.prog>=1){ sfx('extract'); endScene('extracted'); return; }
+    } else S.extract=null;
+    if(tgt&&tgt.type==='half'&&!tgt.e.used){ S.keysE=false; openChoiceA(tgt.e); }
+  } else { S.search=null; S.wedge=null; S.extract=null; }
+  // 实体 AI
+  S.ents.forEach(e=>{
+    if(e.dead) return;
+    e.cd=(e.cd||0)-dt; e.hitFlash=(e.hitFlash||0)-dt;
+    const d=dist(e.x,e.y,p.x,p.y);
+    if(e.kind==='rabid'){
+      const sees = d<8.5 && losClear(e.x,e.y,p.x,p.y,{blockCover:false}) && !coverHides(p,e);
+      if(e.state==='idle'){
+        e.wt-=dt;
+        if(sees){ e.state='chase'; }
+        else if(e.wt<=0){ e.wt=1.6+rnd()*2.8; e.tx=e.home.x+(rnd()-0.5)*6; e.ty=e.home.y+(rnd()-0.5)*6; e.state='investigate'; }
+      } else if(e.state==='investigate'){
+        const sp2=1.5, a=Math.atan2(e.ty-e.y,e.tx-e.x);
+        moveEnt(e,e.x+Math.cos(a)*sp2*dt,e.y+Math.sin(a)*sp2*dt,0.32);
+        if(dist(e.x,e.y,e.tx,e.ty)<0.6||e.wt<-6){ e.state='idle'; e.wt=1+rnd()*3; }
+        if(sees) e.state='chase';
+      } else if(e.state==='chase'){
+        const sp2=3.3, a=Math.atan2(p.y-e.y,p.x-e.x);
+        moveEnt(e,e.x+Math.cos(a)*sp2*dt,e.y+Math.sin(a)*sp2*dt,0.32);
+        if(d<1.15){
+          e.bite=(e.bite||0)+dt;
+          if(e.bite>=0.45&&e.cd<=0&&!(p.iframe>0)){ e.cd=1.7; e.bite=0; p.hp-=8; p.iframe=0.75; p.hurt=0.35; p.bpm+=18;
+          sfx('hit'); emitNoise(p.x,p.y,6,'#ef4444','hit');
+            if(rnd()<0.30&&!G.flags.glasses) { G.flags.glasses=true; toast(LANG==='zh'?'<b>镜片裂了：视距 12m → 7.2m，边缘重影。</b>':'<b>Lens cracked: sight 12m → 7.2m, ghosting at the edges.</b>',3000); CFG.SIGHT=7.2; }
+          }
+        } else e.bite=0;
+        if(!sees){ e.lost=(e.lost||0)+dt; if(e.lost>5||d>13){ e.state='idle'; e.lost=0; } } else e.lost=0;
+      }
+      if(rnd()<dt*0.5) emitNoise(e.x,e.y,3.2,'#ef4444','rabid');
+    }
+    else if(e.kind==='osk'){
+      const ang=Math.atan2(p.y-e.y,p.x-e.x);
+      const inCone=Math.abs(angDiff(e.face,ang))<22.5*Math.PI/180;
+      const clear=losClear(e.x,e.y,p.x,p.y,{blockCover:false});
+      const hidden=p.sneak&&coverHides(p,e);
+      if(inCone&&d<14&&clear&&!hidden) e.suspect=clamp(e.suspect+dt*2.4,0,2);
+      else e.suspect=clamp(e.suspect-dt*0.8,0,2);
+      // 借刀：光锥里的感染者/半人
+      S.ents.forEach(o=>{
+        if(o.dead||o===e) return;
+        if(o.kind!=='rabid'&&o.kind!=='half') return;
+        const d2=dist(e.x,e.y,o.x,o.y), a2=Math.atan2(o.y-e.y,o.x-e.x);
+        if(d2<14&&Math.abs(angDiff(e.face,a2))<22.5*Math.PI/180&&losClear(e.x,e.y,o.x,o.y,{blockCover:false})){
+          e.lock=Math.max(e.lock||0,0)+dt; if(e.lock>0.5&&e.cd<=0&&!o.dead){
+            e.cd=0.9; o.hp=0; o.dead=true;
+            emitNoise(e.x,e.y,9,'#7dd3fc','osk');
+            if(o.kind==='rabid'){ S.killed++; S.events.push({t:'knife',zh:'借刀杀人：清杀队替你清掉 1 只狂暴者',en:'Borrowed knife: O.S.K. dropped 1 rabid for you'}); }
+            else { S.events.push({t:'witness',zh:'你看着清杀队射杀了那个正在退烧的人。',en:'You watched the purge squad gun down a recovering person.'}); G.conscience-=3; }
+          }
+        }
+      });
+      if(e.suspect>=1&&d<14&&clear&&!hidden){ e.lock=(e.lock||0)+dt; } else if(d>=14||!inCone) e.lock=Math.max(0,(e.lock||0)-dt);
+      if(e.lock>=1.0&&e.cd<=0){
+        e.cd=0.95; const acc=clamp(1-d/14,0.25,1)*0.75;
+        if(rnd()<acc&&!(p.iframe>0)){ p.hp-=18; p.iframe=0.6; p.hurt=0.4; }
+        sfx('lock'); emitNoise(e.x,e.y,10,'#7dd3fc','osk');
+        toast(LANG==='zh'?'<b style="color:#fca5a5">红外锁定——AKM 微声点射！</b>':'<b style="color:#fca5a5">IR lock — suppressed AKM burst!</b>',1600);
+      }
+      // 移动
+      let tx,ty;
+      if(e.suspect>=1.2){ tx=p.x; ty=p.y; }
+      else if(e.state==='investigate'){ tx=e.tx; ty=e.ty; if(dist(e.x,e.y,tx,ty)<1.0){ e.state='patrol'; e.wpi=(e.wpi+1)%e.wp.length; } }
+      else { const wpt=e.wp[e.wpi]||{x:e.x,y:e.y}; tx=wpt.x; ty=wpt.y; if(dist(e.x,e.y,tx,ty)<1.0) e.wpi=(e.wpi+1)%Math.max(1,e.wp.length); }
+      const a=Math.atan2(ty-e.y,tx-e.x), sp2=e.suspect>=1.2?3.0:1.7;
+      moveEnt(e,e.x+Math.cos(a)*sp2*dt,e.y+Math.sin(a)*sp2*dt,0.35);
+      e.face=lerp(e.face,a,1-Math.pow(0.001,dt));
+      e.face+=Math.sin(performance.now()/900)*0.012; // 扫视
+      if(rnd()<dt*1.4) emitNoise(e.x,e.y,5.5,'#7dd3fc','osk');
+    }
+    else if(e.kind==='half'){
+      e.ph+=dt;
+      if(rnd()<dt*0.45) emitNoise(e.x,e.y,4.2,'#cbd5e1','half');
+    }
+    else if(e.kind==='mate'){
+      const tx=p.x-Math.cos(p.face)*1.4, ty=p.y-Math.sin(p.face)*1.4;
+      const dd=dist(e.x,e.y,tx,ty);
+      if(dd>0.6){ const a=Math.atan2(ty-e.y,tx-e.x), sp2=Math.min(4.2,dd*3); moveEnt(e,e.x+Math.cos(a)*sp2*dt,e.y+Math.sin(a)*sp2*dt,0.2); }
+      e.bark=Math.max(0,(e.bark||0)-dt);
+      if(e.id==='ash'&&e.bark<=0){
+        const near=S.ents.find(o=>!o.dead&&o.kind==='rabid'&&dist(o.x,o.y,e.x,e.y)<7);
+        if(near){ e.bark=2.6; emitNoise(e.x,e.y,3.0,'#fde68a','ash'); }
+      }
+    }
+  });
+  // 波纹
+  S.ripples.forEach(r=>{ r.r+=Math.max(2.2,r.max*0.55)*dt; r.life-=dt/1.5; });
+  S.ripples=S.ripples.filter(r=>r.life>0&&r.r<r.max*1.05);
+  // 相机
+  S.cam.x=lerp(S.cam.x,p.x,1-Math.pow(0.0015,dt));
+  S.cam.y=lerp(S.cam.y,p.y,1-Math.pow(0.0015,dt));
+  // 夜晚计时
+  S.nightLeft-=dt;
+  const frac=S.nightLeft/S.nightMax;
+  if(frac<0.22&&!S.dawnWarned){ S.dawnWarned=true; toast(LANG==='zh'?'<b style="color:#7dd3fc">东边开始发白了——天亮前必须回到撤离点。</b>':'<b style="color:#7dd3fc">The east is going grey — get back to the extraction point before dawn.</b>',3200); }
+  if(S.nightLeft<=0){ endScene('dawn'); return; }
+  // 死亡
+  if(p.hp<=0){
+    if(S.mate==='gulya'&&!S.revived){ S.revived=true; p.hp=40; toast(LANG==='zh'?'古丽娅把你从雪里拖起来：一次，仅此一次。':'Gulya drags you out of the snow: once, and only once.',3000); }
+    else { endScene('downed'); return; }
+  }
+  computeVis();
+}
+
+/* =========================================================================
+ *  10. HUD
+ * =======================================================================*/
+const mini=$('#miniCv')||null;
+function drawMini(){
+  const c=document.getElementById('miniCv'); if(!c) return;
+  const g=c.getContext('2d'), m=S.map, sc=3.1;
+  g.clearRect(0,0,c.width,c.height);
+  g.fillStyle='#05070a'; g.fillRect(0,0,c.width,c.height);
+  for(let j=0;j<m.H;j++)for(let i=0;i<m.W;i++){
+    if(!S.explored[j*m.W+i]) continue;
+    const v=m.at(i,j);
+    g.fillStyle=(v===TT.WALL)?'#2b3542':(v===TT.SLUSH?'#24404f':(v===TT.DOOR||v===TT.WEDGED)?'#8a6a3c':'#141b23');
+    g.fillRect(i*sc,j*sc,sc,sc);
+  }
+  const e=m.entry; g.fillStyle='#4ade80'; g.fillRect(e.x*sc-2,e.y*sc-2,5,5);
+  S.ents.forEach(en=>{ if(en.dead) return; if(!S.vis[Math.floor(en.y)*m.W+Math.floor(en.x)]) return;
+    g.fillStyle=en.kind==='rabid'?'#ef4444':en.kind==='osk'?'#fde68a':en.kind==='half'?'#cbd5e1':'#8b98a9';
+    g.fillRect(en.x*sc-1.5,en.y*sc-1.5,3,3); });
+  g.fillStyle='#f8fafc'; g.fillRect(S.player.x*sc-2,S.player.y*sc-2,4,4);
+}
+function updateHUD(){
+  const p=S.player, L=S.L;
+  const elapsed=1-S.nightLeft/S.nightMax;
+  const mins=Math.floor(elapsed*7*60)+22*60;
+  const hh=String(Math.floor(mins/60)%24).padStart(2,'0'), mm=String(mins%60).padStart(2,'0');
+  const left=Math.max(0,S.nightLeft), lm=Math.floor(left/60), ls=Math.floor(left%60);
+  $('#hudTL').innerHTML=`<div class="hudbox">
+    <div style="font-size:13px;font-weight:700">${LANG==='zh'?L.zh:L.en}</div>
+    <div class="lab" style="margin-top:4px">${hh}:${mm} · ${LANG==='zh'?'距天亮':'to dawn'} <b class="mono" style="color:${left<60?'#fca5a5':'#cbd5e1'}">${lm}:${String(ls).padStart(2,'0')}</b></div>
+    <div class="lab" style="margin-top:3px;color:#6b7a8d">${LANG==='zh'?'危险度':'Danger'} ${'▲'.repeat(L.dg)}${'△'.repeat(5-L.dg)}</div>
+  </div>`;
+  const bar=(v,max,col)=>`<div class="meter"><i style="width:${clamp(v/max*100,0,100)}%;background:${col}"></i></div>`;
+  $('#hudTR').innerHTML=`<div class="hudbox">
+    <div class="lab">${t('hp')} <b class="mono">${Math.round(p.hp)}</b></div>${bar(p.hp,100,'#ef4444')}
+    <div class="lab" style="margin-top:5px">${t('warmth')} <b class="mono">${Math.round(p.warmth)}</b></div>${bar(p.warmth,100,p.warmth<30?'#7dd3fc':'#f59e0b')}
+    <div class="lab" style="margin-top:5px">${t('stam')} <b class="mono">${Math.round(p.stam)}</b> · ${t('bpm')} <b class="mono">${Math.round(p.bpm)}</b></div>${bar(p.stam,100,'#4ade80')}
+    <canvas id="miniCv" width="168" height="131" style="width:168px;height:131px"></canvas>
+  </div>`;
+  drawMini();
+  let slots='';
+  for(let i=0;i<S.packMax;i++){
+    const id=S.pack[i];
+    slots+=`<div class="slot ${id?'full':''}" title="${id?itemName(id):''}">${id?ITEMS[id].ic:''}</div>`;
+  }
+  $('#hudBL').innerHTML=`<div class="hudbox">
+    <div class="lab">${t('bag')} <b class="mono">${S.pack.length}/${S.packMax}</b> · ${t('looted').replace('%d',S.looted).replace('%d',S.totalCont)}</div>
+    <div class="slots">${slots}</div>
+    <div class="lab" style="margin-top:6px">${LANG==='zh'?'携带':'Carry'} 🥫${S.load.can} 🫖${S.load.water} 💊${S.load.asp} 🩹${S.load.band}</div>
+  </div>`;
+  $('#hudBR').innerHTML=`<div class="hudbox">
+    <div class="lab">${t('wpn')}</div>
+    <div style="font-size:13px;font-weight:700">${p.wpn.ic} ${LANG==='zh'?p.wpn.zh:p.wpn.en}${p.wpn.ammo!==undefined?` <b class="mono" style="color:#f59e0b">${p.ammo}/${p.wpn.ammo}</b>`:''}</div>
+    <div class="lab" style="margin-top:5px">${LANG==='zh'?'武器 1-5':'Weapons 1-5'}</div>
+    <div style="font-size:12px">${ownedWeapons().map((w,i)=>`<span style="color:${w.id===p.wpn.id?'#f59e0b':'#6b7280'}">${i+1}${w.ic}</span>`).join(' ')}</div>
+    <div class="lab" style="margin-top:5px">${LANG==='zh'?'伙伴':'Mate'}</div>
+    <div style="font-size:12px">${S.mate?(()=>{const M=MATES.find(x=>x.id===S.mate);return M.ic+' '+(LANG==='zh'?M.zh:M.en);})():(LANG==='zh'?'（独自行动）':' (alone)')}</div>
+    <div class="lab" style="margin-top:5px;color:#6b7a8d">${LANG==='zh'?'击杀':'Kills'} ${S.killed}</div>
+  </div>`;
+  // 交互提示
+  const tgt=nearestInteract(); let hint='';
+  if(S.jam) hint=`<span class="prompt-key">${LANG==='zh'?'连按':'MASH'}</span> ${LANG==='zh'?'左键 ×'+(6-S.jam.hits)+' 拔刀（'+S.jam.t.toFixed(1)+'s）':'LMB ×'+(6-S.jam.hits)+' to free the blade ('+S.jam.t.toFixed(1)+'s）'}`;
+  else if(tgt&&tgt.type==='cont') hint=`<span class="prompt-key">E</span> ${t('search')}`;
+  else if(tgt&&tgt.type==='door') hint=`<span class="prompt-key">E</span> ${t('open_door')}（1.2s）`;
+  else if(tgt&&tgt.type==='half') hint=`<span class="prompt-key">E</span> ${LANG==='zh'?'接触这个正在退烧的人（抉择 A）':'Approach the recovering person (Choice A)'}`;
+  else if(tgt&&tgt.type==='exit') hint=`<span class="prompt-key">E</span> ${LANG==='zh'?'撤离（长按 1.5s）':'Extract (hold 1.5s)'}`;
+  $('#hudBC').innerHTML= hint?`<div class="hudbox">${hint}</div>`:'';
+}
+
+/* =========================================================================
+ *  11. 模态框 / 剧情 / 抉择
+ * =======================================================================*/
+function modal(html){ $('#modalRoot').innerHTML='<div class="modal">'+html+'</div>'; $('#modalRoot').classList.add('on'); S.paused=true; S.keysE=false; }
+function closeModal(){ $('#modalRoot').classList.remove('on'); $('#modalRoot').innerHTML=''; S.paused=false; S.keysE=false; }
+function renderLines(lines){
+  return lines.map(l=>`${l.w?`<div class="who">— ${l.w}</div>`:''}<p class="line">${l.zh&&LANG==='zh'?l.zh:l.en}</p>`).join('');
+}
+function openStory(key){
+  const st=STORY[key]; if(!st) return;
+  const title=LANG==='zh'?st.title_zh:st.title_en;
+  const choices=st.choices.map((c,i)=>
+    `<button class="choice ${c.cls||''}" data-ci="${i}"><span class="ct">${LANG==='zh'?c.zh:c.en}</span><span class="cd">${LANG==='zh'?c.d:c.d}</span></button>`).join('');
+  modal(`<div class="lab" style="color:#f59e0b">${LANG==='zh'?'主线 · 剧情推进':'STORY BEAT'}</div>
+    <h3>${title}</h3><div class="sep"></div>${renderLines(st.lines)}
+    ${st.req?`<div class="chip warn" style="margin:6px 0">${LANG==='zh'?st.req.zh:st.req.en}</div>`:''}
+    ${choices}`);
+  $$('#modalRoot .choice').forEach(b=>b.addEventListener('click',()=>{
+    const c=st.choices[+b.dataset.ci];
+    try{ c.fx(G); }catch(err){ console.warn(err); }
+    G.storyDone[key]=true;
+    G.log.push({day:G.day,zh:`${title}：${c.zh}`,en:`${title}: ${c.en}`});
+    if(st.after) st.after(G);
+    closeModal();
+    afterStory(key);
+  }));
+}
+function afterStory(key){
+  if(key==='coldstore'){ G.flags.ash=true; }
+  if(key==='sanitarium'){ G.flags.anna=true; }
+  if(key==='market'){ G.flags.ivan=true; }
+  if(key==='canteen'){ G.flags.pavel=true; }
+  if(G.flags.lana_car3&&G.flags.endgame_known&&!G.ended){
+    G.ended=true;
+    setTimeout(()=>modal(`<div class="lab" style="color:#4ade80">${LANG==='zh'?'DEMO 边界':'DEMO BOUNDARY'}</div>
+      <h3>${LANG==='zh'?'主线已推进至 第四幕《鹰嘴崖底的第三节车厢》':'Story advanced to Act IV — Carriage No.3, Eagle Crag'}</h3>
+      <div class="sep"></div>
+      <p class="line">${LANG==='zh'?'你已经拿到了：妹妹在第三节车厢、发车时间 23:00、以及焚化炉的照片证据。正式版从此处进入终局闸 D（D1 营救 / D2 配合清杀 / D3 沉默逃离）与五结局判定。DEMO 到此为止——后续内容留待垂直切片。'
+      :'You now hold: Lana is in Boxcar 3, departure 23:00, and photographs of the furnace. The full game proceeds from here to Endgame Gate D (D1 rescue / D2 comply / D3 walk away) and the five endings. The demo stops here.'}</p>
+      <button class="btn primary" onclick="closeModal()">OK</button>`),400);
+  }
+}
+function openChoiceA(e){
+  const hasMed=(S.load.asp||0)>0&&(S.load.water||0)>0;
+  modal(`<div class="lab" style="color:#f59e0b">${LANG==='zh'?'抉择 A · 每夜常驻道德检定':'CHOICE A · NIGHTLY MORAL CHECK'}</div>
+   <h3>${t('choiceA')}</h3><div class="sep"></div>
+   <p class="line">${LANG==='zh'?'一个年轻人蜷在墙角，手背的灰鳞正在成片剥落。他抱着头，用俄语一遍遍念着什么——不是嘶吼，是人在发烧时说的胡话。'
+   :'A young man is curled against the wall, the grey scales flaking off the backs of his hands. He holds his head and repeats something in Russian — not a snarl. Fever talk.'}</p>
+   <p class="line ru">«…Воды… ребята, воды… я не кусаюсь…»（……水……兄弟们，水……我不咬人……）</p>
+   <button class="choice good" data-c="A1" ${hasMed?'':'style="opacity:.5"'}><span class="ct">A1 · ${LANG==='zh'?'冒险喂阿司匹林与温水（消耗 💊1 🫖1）':'Feed aspirin + warm water (-1 💊 -1 🫖)'}</span>
+     <span class="cd">${LANG==='zh'?'良知 ▲▲ · 他清醒后告诉你“老轨”伊万在西站水塔下的暗号（情报 +1）':'Conscience ▲▲ · He wakes and gives you Old Ivan\'s signal at the west water tower (+1 Intel)'}${hasMed?'':' · '+ (LANG==='zh'?'【缺少携带的药品/水】':' [missing supplies]')}</span></button>
+   <button class="choice" data-c="A2"><span class="ct">A2 · ${LANG==='zh'?'贴墙绕行，省下药水':'Bypass along the wall'}</span>
+     <span class="cd">${LANG==='zh'?'中立 · 五分钟后，你身后传来清杀队把他射杀的闷响（良知 ▼ 小）':'Neutral · Five minutes later you hear the muffled shots behind you'}</span></button>
+   <button class="choice bad" data-c="A3"><span class="ct">A3 · ${LANG==='zh'?'怕他出声引来清杀队，一撬棍灭口并搜走罐头':'Silence him with the crowbar, take his tin'}</span>
+     <span class="cd">${LANG==='zh'?'良知 ▼▼ · 《工作日志》背面划下一道血痕（卌 +1）':'Conscience ▼▼ · One stroke on the back page of the logbook (卌 +1)'}</span></button>`);
+  $$('#modalRoot .choice').forEach(b=>b.addEventListener('click',()=>{
+    const c=b.dataset.c; e.used=true;
+    if(c==='A1'&&!hasMed){ toast(LANG==='zh'?'你没带药和水。':'You brought no aspirin or water.'); return; }
+    if(c==='A1'){
+      S.load.asp--; S.load.water--; G.conscience+=7; S.halfSaved++;
+      S.pack.length<S.packMax?S.pack.push('intel'):null;
+      S.events.push({t:'good',zh:'A1 喂药退烧：良知 ▲▲，得到“老轨”暗号',en:'A1 Fed & cooled him: Conscience ▲▲, got Old Ivan\'s signal'});
+      e.kind='mate'; e.id='survivor'; e.state='follow';
+      toast(LANG==='zh'?'他的瞳孔回色了：“……水塔下面，找戴蓝毛线帽的老头……”':'His pupils clear: "…below the water tower, the old man in the blue wool cap…"',3200);
+    } else if(c==='A2'){
+      G.conscience-=2;
+      S.events.push({t:'note',zh:'A2 绕行：你听见了身后的枪声',en:'A2 Bypassed: you heard the shots behind you'});
+      setTimeout(()=>{ if(!e.dead){ e.dead=true; G.conscience-=2; emitNoise(e.x,e.y,9,'#7dd3fc','osk'); toast(LANG==='zh'?'身后传来三声微声点射。你没有回头。':'Three suppressed shots behind you. You did not look back.',2800);} },5000);
+    } else {
+      e.hp=0; e.dead=true; G.tally+=1; G.conscience-=10; G.flags.betrayed=true;
+      if(S.pack.length<S.packMax) S.pack.push('can');
+      if(S.pack.length<S.packMax) S.pack.push('scrap');
+      S.events.push({t:'bad',zh:'A3 撬棍灭口：卌 +1',en:'A3 Crowbar kill: 卌 +1'});
+      emitNoise(e.x,e.y,6,'#ef4444','hit');
+      toast(LANG==='zh'?'<b style="color:#fca5a5">你在日志背面划下第一道血痕。</b>':'<b style="color:#fca5a5">You carve the first stroke on the back page.</b>',3000);
+    }
+    closeModal();
+  }));
+}
+function openLogbook(){
+  const names=G.names.length?G.names.map(n=>`<div class="logline">✒ ${n}</div>`).join(''):`<div class="logline" style="color:#5f6f83">${LANG==='zh'?'（背面左页还空着。你还没为任何一个“账面已清零”的人写下真名。）':' (The left page is still blank. You have not written one real name yet.)'}</div>`;
+  const strokes='|'.repeat(G.tally)||'<span style="color:#334155">—</span>';
+  modal(`<div class="lab" style="color:#f59e0b">ДВУСТОРОННИЙ ЖУРНАЛ · ${LANG==='zh'?'《双面工作日志》':'THE TWO-SIDED LOGBOOK'}</div>
+   <h3>${LANG==='zh'?'正面：配给核销台账（填给区管委的）':'Front: Ration Reconciliation Ledger (for the Committee)'}</h3>
+   <div class="panel panel-pad" style="margin:8px 0 14px">
+     <div class="inv-item"><span>☑ ${LANG==='zh'?'第3居住区 · 越冬配给':'Block 3 · Winter ration'}</span><b style="color:#4ade80">ВЫДАНО / 已签收</b></div>
+     <div class="inv-item"><span>☑ ${LANG==='zh'?'当前坐标在册人数':'Persons at this coordinate'}</span><b style="color:#ef4444">0</b></div>
+     <div class="inv-item"><span>☑ ${LANG==='zh'?'实毁数与账面数闭合':'Physical count = ledger'}</span><b style="color:#4ade80">ДА</b></div>
+   </div>
+   <h3>${LANG==='zh'?'背面左页：活人真名（终章 302 高地点名用）':'Back-left: real names (for the Hill 302 roll call)'}</h3>
+   ${names}
+   <h3 style="margin-top:14px">${LANG==='zh'?'背面右页：“卌”五道划痕亏欠账':'Back-right: the 卌 five-stroke tally'}</h3>
+   <div class="tally">${strokes}</div>
+   <div class="sub" style="margin-top:6px">${LANG==='zh'?'每杀一名回退半人（A3）、上交古丽娅的手稿（B1）或背叛幸存者（C2），划下一道。终局能否救活拉娜，取决于这一页是否干净。'
+   :'One stroke per regressing half-human killed (A3), manuscript surrendered (B1), or survivor betrayed (C2). Whether Lana lives depends on this page being clean.'}</div>
+   ${G.flags.ptsd?`<div class="sep"></div><div class="logline" style="border-color:#7f1d1d">${LANG==='zh'?'<b>PTSD 干渴幻听</b>：每次喝水吞咽的末尾，耳边会响起微弱的“……Пить（渴）……”':'<b>PTSD Thirst Tinnitus</b>: every sip of water ends with a faint "…Пить (Thirsty)…"'}</div>`:''}
+   ${G.flags.glasses?`<div class="logline" style="border-color:#7f1d1d">${LANG==='zh'?'<b>镜片碎裂</b>：视距 12m → 7.2m。回据点可用黑绝缘胶布修补。':'<b>Cracked lens</b>: sight 12m → 7.2m. Repair at base with electrical tape.'}</div>`:''}
+   <div class="sep"></div>
+   <button class="btn" onclick="closeModal()">${LANG==='zh'?'合上日志':'Close'}</button>`);
+}
+function openHelp(){
+  modal(`<div class="lab" style="color:#f59e0b">${LANG==='zh'?'操作与系统说明':'CONTROLS & SYSTEMS'}</div>
+   <h3>${LANG==='zh'?'夜潜操作（探索场景）':'Night infiltration controls'}</h3>
+   <div class="grid" style="grid-template-columns:1fr 1fr;gap:6px;margin:10px 0">
+     <div><span class="kbd">W A S D</span> ${LANG==='zh'?'移动（鼠标决定朝向与 90° 视野方向）':'Move (mouse sets facing & 90° cone)'}</div>
+     <div><span class="kbd">Ctrl</span> ${LANG==='zh'?'潜行：噪声 0.8m，可躲进管道阴影':'Sneak: 0.8m noise, hides in pipe shadows'}</div>
+     <div><span class="kbd">Shift</span> ${LANG==='zh'?'冲刺：噪声 7.5m，惊动半屏':'Sprint: 7.5m noise, wakes half the map'}</div>
+     <div><span class="kbd">E</span> ${LANG==='zh'?'长按：搜刮 / 撬棍卡门 15s / 撤离':'Hold: search / wedge door 15s / extract'}</div>
+     <div><span class="kbd">G</span> ${LANG==='zh'?'投掷空罐头（借刀杀人）':'Throw tin (borrow the knife)'}</div>
+     <div><span class="kbd">左键</span> ${LANG==='zh'?'攻击 / 开枪 / 卡刀连打':'Attack / fire / mash free'}</div>
+     <div><span class="kbd">Q</span> ${LANG==='zh'?'喝热水（回温，PTSD 触发点）':'Drink hot water (warmth, PTSD trigger)'}</div>
+     <div><span class="kbd">F</span> ${LANG==='zh'?'用绷带（治疗 28）':'Use bandage (+28 HP)'}</div>
+     <div><span class="kbd">R</span> ${LANG==='zh'?'装填（枪械）':'Reload'}</div>
+     <div><span class="kbd">1-5</span> ${LANG==='zh'?'切换已收集的武器':'Switch collected weapons'}</div>
+     <div><span class="kbd">滚轮</span> ${LANG==='zh'?'缩放视野':'Zoom'}</div>
+     <div><span class="kbd">Tab</span> ${LANG==='zh'?'《双面工作日志》':'The two-sided logbook'}</div>
+     <div><span class="kbd">Esc</span> ${LANG==='zh'?'放弃本次夜潜':'Abort the raid'}</div>
+   </div>
+   <div class="sep"></div>
+   <h3>${LANG==='zh'?'三态辨识（杀与不杀）':'Tri-state identification'}</h3>
+   <div class="sub">
+    <b style="color:#ef4444">${LANG==='zh'?'Ⅰ 高热狂暴者':'I Rabid'}</b>：${LANG==='zh'?'暗红锯齿波纹，四肢着地扑咬。自卫击杀不记划痕。':'crimson jagged ripple, quadruped lunge. Self-defence kills add no stroke.'}<br>
+    <b style="color:#cbd5e1">${LANG==='zh'?'Ⅱ 回退半人':'II Regressing'}</b>：${LANG==='zh'?'灰白颤动波纹，瞳孔回色、抱头或自缚。喂药 / 绕行 / 灭口（A1/A2/A3）。':'ash-white trembling ripple, pupils clearing. Feed / bypass / kill (A1/A2/A3).'}<br>
+    <b style="color:#7dd3fc">${LANG==='zh'?'Ⅲ 清杀队 ОСК':'III Purge Squad'}</b>：${LANG==='zh'?'冷蓝波纹 + 45° 黄白探照灯。见感染者和夜潜者一律开火——用空罐头把他们引到尸群那里。':'cold-blue ripple + 45° searchlight. They shoot everything; use tins to steer them into the infected.'}
+   </div>
+   <div class="sep"></div>
+   <div class="sub">${LANG==='zh'?'本 DEMO 为纯灰盒：所有图形都是 Canvas 绘制的几何体，<b>零美术资源</b>。美术生产规格见仓库 <code>docs/zh/Z年纪事_美术资源生成Prompt规格书.md</code>。'
+   :'This demo is pure greybox: every shape is drawn on canvas, <b>zero art assets</b>. Production spec: <code>docs/zh/Z年纪事_美术资源生成Prompt规格书.md</code>.'}</div>
+   <div style="margin-top:12px"><button class="btn primary" onclick="closeModal()">OK</button></div>`);
+}
+function confirmAbort(){
+  modal(`<h3>${LANG==='zh'?'放弃本次夜潜？':'Abort this raid?'}</h3>
+   <p class="line">${LANG==='zh'?'背包里的东西全部丢在雪地里，天亮前你也回不到据点补给。':'Everything in your pack stays in the snow, and you will not resupply before dawn.'}</p>
+   <button class="choice bad" id="abortYes"><span class="ct">${LANG==='zh'?'放弃，空手撤回 602 室':'Abort. Go home empty-handed.'}</span></button>
+   <button class="choice" id="abortNo"><span class="ct">${LANG==='zh'?'继续':'Keep going'}</span></button>`);
+  $('#abortYes').onclick=()=>{ closeModal(); endScene('abort'); };
+  $('#abortNo').onclick=()=>closeModal();
+}
+
+/* =========================================================================
+ *  12. 界面：据点 / 地图 / 结算
+ * =======================================================================*/
+let SEL=null;
+function show(id){
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  $('#s-'+id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='scene') setTimeout(resize,20);
+}
+function objectiveText(){
+  if(!G.flags.ash) return {zh:'去城北四号铁路冷库领今天的征召工物资——顺便查查拉娜被带上了哪趟车。',en:'Report to Cold Storage No.4 for conscript labour — and find out which train took Lana.'};
+  if(!G.flags.lana_car3) return {zh:'凑够情报（调度单 ×2）和一份医疗物资，去旧传染病疗养院地下室找梁诺夫医生与古丽娅。',en:'Gather 2 Intel and 1 medical item, then find Dr Leonov and Gulya in the sanatorium basement.'};
+  if(!G.flags.endgame_known) return {zh:'去西站调车场，抄下今晚 23:00 铁壳号的发车令。',en:'Reach West Station yard and copy tonight\'s 23:00 Buran dispatch order.'};
+  return {zh:'去松林庄园二号库，拍下焚化炉，把 409 批腹透液带回来。',en:'Infiltrate Pine Manor Depot No.2: photograph the furnace, bring back Batch-409 fluid.'};
+}
+function renderBase(){
+  const obj=objectiveText();
+  const dialPct=clamp(G.dial/3*100,0,100);
+  $('#colStatus').innerHTML=`<div class="panel panel-pad">
+    <div class="card-h"><div class="ttl">${t('status')}</div><span class="chip">${t('day').replace('%d',G.day)}</span></div>
+    <div style="margin-bottom:10px">
+      <div class="stat"><span>${t('mother')}</span><b style="color:${G.motherAlive?(G.dial>1?'#86efac':'#fca5a5'):'#6b7280'}">${G.motherAlive?G.dial.toFixed(1)+' '+ (LANG==='zh'?'天':'days'):(LANG==='zh'?'已离世':'lost')}</b></div>
+      <div class="bar"><i style="width:${dialPct}%;background:linear-gradient(90deg,#0ea5e9,#4ade80)"></i></div>
+      <div class="sub" style="margin-top:5px">${G.motherAlive?(LANG==='zh'?'每过一天消耗 1 袋腹透液；断供两天以上，母亲会死于急性肺水肿。':'One bag of fluid per day. Two days without it and she dies of acute pulmonary oedema.'):(LANG==='zh'?'失母·荒原线已开启（正式版第八章分水岭）。':'Motherless route opened.')}</div>
+    </div>
+    <div class="stat"><span>${t('conscience')}</span><b style="color:#86efac">${Math.round(G.conscience)}</b></div>
+    <div class="bar"><i style="width:${clamp(G.conscience,0,100)}%;background:linear-gradient(90deg,#166534,#4ade80)"></i></div>
+    <div class="stat" style="margin-top:8px"><span>${t('tally')}（卌）</span><b class="tally" style="font-size:16px">${'|'.repeat(G.tally)||'—'}</b></div>
+    <div class="stat"><span>${t('truth')}</span><b style="color:${G.flags.truth?'#86efac':'#6b7280'}">${G.flags.truth?(LANG==='zh'?'是（手稿/照片在手）':'YES'):(LANG==='zh'?'否':'NO')}</b></div>
+    <div class="tagline">
+      ${G.flags.ptsd?`<span class="chip warn">PTSD ${LANG==='zh'?'干渴幻听':'thirst'}</span>`:''}
+      ${G.flags.glasses?`<span class="chip warn">${LANG==='zh'?'镜片碎裂':'cracked lens'}</span>`:''}
+      ${G.flags.betrayed?`<span class="chip warn">${LANG==='zh'?'曾背叛同类':'betrayed kin'}</span>`:''}
+      ${G.flags.vasily?`<span class="chip warn">${LANG==='zh'?'瓦西里':'Vasily'}</span>`:''}
+    </div>
+    <div class="sep"></div>
+    <div class="ttl" style="margin-bottom:6px">${t('stash')}</div>
+    <div>${Object.keys(G.stash).length?Object.keys(G.stash).map(k=>`<div class="inv-item"><span>${ITEMS[k].ic} ${itemName(k)}</span><b>×${G.stash[k]}</b></div>`).join(''):'<div class="sub">（空）</div>'}</div>
+  </div>`;
+
+  const mateLock={ash:LANG==='zh'?'城北冷库事件后入队':'joins after the Cold Storage beat',
+    anna:LANG==='zh'?'疗养院地下室救援后入队':'joins after the Sanatorium rescue',
+    gulya:LANG==='zh'?'与安娜一同获救':'rescued together with Anna',
+    pavel:LANG==='zh'?'东街食堂事件后入队':'joins after the Canteen beat',
+    ivan:LANG==='zh'?'黑市抉择 C 后入队':'joins after Black Market Choice C'};
+  $('#colParty').innerHTML=`<div class="panel panel-pad">
+    <div class="card-h"><div class="ttl">${t('party')}</div><span class="chip">${G.mate==='none'?(LANG==='zh'?'独自':'solo'):'1 / 1'}</span></div>
+    <div class="mate ${G.mate==='none'?'sel':''}" data-m="none"><div class="av">🚶</div><div><div style="font-size:12.5px;font-weight:700">${LANG==='zh'?'独自行动':'Go alone'}</div><div class="sub">${LANG==='zh'?'没有伙伴的噪音与破绽，也没有他们的能力。':'No companion noise, no companion perks.'}</div></div></div>
+    ${MATES.map(m=>{ const ok=G.mates[m.id];
+      return `<div class="mate ${G.mate===m.id?'sel':''} ${ok?'':'lock'}" data-m="${ok?m.id:''}">
+        <div class="av">${ok?m.ic:'🔒'}</div>
+        <div><div style="font-size:12.5px;font-weight:700">${LANG==='zh'?m.zh:m.en} ${ok?'':'<span style="color:#6b7280;font-weight:500">· '+mateLock[m.id]+'</span>'}</div>
+        <div class="sub">${LANG==='zh'?m.zh_p:m.en_p}</div></div></div>`; }).join('')}
+    <div class="sep"></div>
+    <div class="card-h"><div class="ttl">${t('weapons')}</div></div>
+    ${WEAPONS.map(w=>{ const own=weaponOwned(w), got=weaponParts(w);
+      return `<div class="wpn ${own?'owned':''}">
+        <div class="ic" style="${own?'':'opacity:.35'}">${w.ic}</div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <div style="font-size:12.5px;font-weight:700;color:${own?'#e2e8f0':'#6b7280'}">${LANG==='zh'?w.zh:w.en}</div>
+            <div class="pips">${(w.parts||[]).map(p=>`<span class="pip ${(G.stash[p]||0)>0?'f':''}" title="${itemName(p)}"></span>`).join('')}</div>
+          </div>
+          <div class="sub">${LANG==='zh'?w.note_zh:w.note_en}</div>
+          ${own?'':`<div class="sub" style="color:#8b6914">${LANG==='zh'?'收集度':'Collected'} ${got}/${w.need}${w.parts?': '+w.parts.map(p=>itemName(p)+' '+(G.stash[p]||0)).join(' · '):''}</div>`}
+        </div></div>`; }).join('')}
+  </div>`;
+
+  const unlocked=LOCS.filter(locUnlocked).length;
+  $('#colStory').innerHTML=`<div class="panel panel-pad">
+    <div class="card-h"><div class="ttl">${t('story')}</div><span class="chip">${unlocked}/${LOCS.length}</span></div>
+    <div class="lab">${LANG==='zh'?'当前目标':'Current objective'}</div>
+    <div class="logline" style="border-color:#f59e0b;color:#e2e8f0">${LANG==='zh'?obj.zh:obj.en}</div>
+    <div class="lab" style="margin-top:10px">${LANG==='zh'?'已解锁地点':'Unlocked locations'}</div>
+    ${LOCS.map(L=>{ const ok=locUnlocked(L), st=nodeState(L.id);
+      return `<div class="inv-item"><span style="color:${ok?'#cbd5e1':'#4b5563'}">${ok?'◼':'◻'} ${LANG==='zh'?L.zh:L.en}${L.story?' <span style="color:#f59e0b">▲</span>':''}
+        <span style="color:#5f6f83;font-size:10.5px">${st.visits?(LANG==='zh'?'已踏足 ':'visited ')+st.visits+' · '+(LANG==='zh'?'余量':'left ')+Math.round(st.left*100)+'%':''}</span></span>
+        <b style="color:${ok?'#6b7280':'#4b5563'}">${ok?'':'🔒'}</b></div>`; }).join('')}
+    <div class="lab" style="margin-top:10px">${LANG==='zh'?'日志背面的真名':'Names on the back page'}（${G.names.length}）</div>
+    ${G.names.length?G.names.map(n=>`<div class="logline">✒ ${n}</div>`).join(''):`<div class="sub">${LANG==='zh'?'还没有人为你在纸上活下来。':'Nobody is alive on paper yet.'}</div>`}
+    <div class="lab" style="margin-top:10px">${LANG==='zh'?'事件记录':'Event log'}</div>
+    ${G.log.slice(-6).reverse().map(l=>`<div class="logline">Д${l.day} · ${LANG==='zh'?l.zh:l.en}</div>`).join('')||`<div class="sub">—</div>`}
+  </div>`;
+  $$('#colParty .mate').forEach(el=>el.addEventListener('click',()=>{
+    const m=el.dataset.m; if(!m){ G.mate='none'; } else if(G.mates[m]) { G.mate = G.mate===m?'none':m; } else return;
+    renderBase();
+  }));
+}
+
+/* ---------- 地图 ---------- */
+const mc=$('#mapCanvas'), mctx=mc.getContext('2d');
+let hoverNode=null;
+function drawCityMap(){
+  const W=mc.width,H=mc.height;
+  mctx.clearRect(0,0,W,H);
+  // 底色与雪原
+  const g=mctx.createLinearGradient(0,0,W,H); g.addColorStop(0,'#0a0f15'); g.addColorStop(1,'#0d141c');
+  mctx.fillStyle=g; mctx.fillRect(0,0,W,H);
+  mctx.strokeStyle='#131c26'; mctx.lineWidth=1;
+  for(let x=0;x<W;x+=36){mctx.beginPath();mctx.moveTo(x,0);mctx.lineTo(x,H);mctx.stroke();}
+  for(let y=0;y<H;y+=36){mctx.beginPath();mctx.moveTo(0,y);mctx.lineTo(W,y);mctx.stroke();}
+  // 广轨铁道
+  mctx.strokeStyle='#2a3644'; mctx.lineWidth=6; mctx.beginPath();
+  mctx.moveTo(60,250); mctx.bezierCurveTo(300,300,420,180,760,300); mctx.stroke();
+  mctx.strokeStyle='#3f4d5e'; mctx.lineWidth=1; mctx.setLineDash([8,10]);
+  mctx.beginPath(); mctx.moveTo(60,250); mctx.bezierCurveTo(300,300,420,180,760,300); mctx.stroke(); mctx.setLineDash([]);
+  mctx.fillStyle='#2b3644'; mctx.font='11px JetBrains Mono'; mctx.fillText('БРОНЕПОЕЗД «БУРАН» · 广轨',120,238);
+  // 区域标注
+  const zones=[[110,395,LANG==='zh'?'第3居住区':'Block 3'],[110,80,LANG==='zh'?'城北工业区':'North Yards'],[470,290,LANG==='zh'?'东街':'East St'],
+    [640,60,LANG==='zh'?'松林庄园（特权区）':'Pine Manor'],[790,340,LANG==='zh'?'西站':'West Station'],[600,505,LANG==='zh'?'白桦林荒原':'Birch Outland']];
+  zones.forEach(z=>{ mctx.fillStyle='#22303f'; mctx.font='11px Noto Sans SC'; mctx.fillText(z[2],z[0],z[1]); });
+  // 节点
+  LOCS.forEach(L=>{
+    const ok=locUnlocked(L), st=nodeState(L.id), sel=SEL&&SEL.id===L.id, hov=hoverNode===L.id;
+    const w=118,h=26,x=L.x-w/2,y=L.y-h/2;
+    mctx.fillStyle=ok?(sel?'#3a2a10':'#131c26'):'#0c1118';
+    mctx.strokeStyle=ok?(sel?'#f59e0b':'#3d4c5e'):'#1c2530'; mctx.lineWidth=sel?2:1;
+    mctx.beginPath(); mctx.roundRect(x,y,w,h,5); mctx.fill(); mctx.stroke();
+    mctx.fillStyle=ok?'#dbe3ee':'#3d4956'; mctx.font='11px Noto Sans SC';
+    const label=(LANG==='zh'?L.zh:L.en);
+    mctx.fillText(label.length>11?label.slice(0,10)+'…':label, x+8, y+17);
+    if(L.story){ mctx.fillStyle=ok?'#ef4444':'#3d2020'; mctx.beginPath(); mctx.moveTo(x+w-10,y+4); mctx.lineTo(x+w-4,y+4); mctx.lineTo(x+w-7,y+10); mctx.closePath(); mctx.fill(); }
+    // 危险点
+    for(let k=0;k<5;k++){ mctx.fillStyle=k<L.dg?'#ef4444':'#1e2833'; mctx.fillRect(x+6+k*7,y+h+3,5,3); }
+    if(st.visits){ mctx.fillStyle='#4b5563'; mctx.font='9px JetBrains Mono'; mctx.fillText(Math.round(st.left*100)+'%',x+w-26,y+h+9); }
+    if(hov){ mctx.strokeStyle='#f59e0b88'; mctx.beginPath(); mctx.arc(L.x,L.y,26,0,6.2832); mctx.stroke(); }
+  });
+  // 图例
+  mctx.fillStyle='#3d4956'; mctx.font='10px JetBrains Mono';
+  mctx.fillText(LANG==='zh'?'点选一处，今夜只去这一个地方。':'Pick one. You have one night.',20,H-14);
+}
+function renderMap(){
+  drawCityMap();
+  const L=SEL;
+  if(!L){ $('#mapPanel').innerHTML=`<div class="sub">${LANG==='zh'?'在地图上点选一个目标。':'Select a target on the map.'}</div>`; return; }
+  const st=nodeState(L.id), ok=locUnlocked(L);
+  let why='';
+  if(!ok){
+    if(L.reqFlag==='manor_tip') why=LANG==='zh'?'需要：黑市/安娜给出的松林庄园线索':'Requires: the Pine Manor lead from the market or Anna';
+    else if(L.reqFlag==='lana_car3') why=LANG==='zh'?'需要：先确认妹妹在第三节车厢（救援安娜）':'Requires: confirm Lana is in Boxcar 3 (rescue Anna)';
+    else if(L.req) why=(LANG==='zh'?'需要：':'Requires: ')+[L.req.intel?`${LANG==='zh'?'情报':'Intel'} ×${L.req.intel}`:'',L.req.med?`${LANG==='zh'?'医疗':'Medical'} ×${L.req.med}`:''].filter(Boolean).join(' · ');
+  }
+  const goods={food:'🌾',med:'💊',scrap:'🔩',intel:'📄',warm:'🔥',part:'🔫',weapon:'🔪',val:'💎'};
+  $('#mapPanel').innerHTML=`<div class="node-card">
+    <div class="ttl" style="font-size:15px">${LANG==='zh'?L.zh:L.en} ${L.story?'<span class="chip warn">▲ '+t('story_tag')+'</span>':''}</div>
+    <div class="row" style="margin:8px 0">
+      <span class="chip">${t('danger')}</span>${[1,2,3,4,5].map(k=>`<span class="risk-dot ${k<=L.dg?'on':''}"></span>`).join('')}
+      <span class="chip">${t('time')} <b class="mono">${Math.round(L.time*(G.mate==='ivan'?0.8:1))}${LANG==='zh'?'分':'m'}</b></span>
+      <span class="chip">${LANG==='zh'?'寒冷':'Cold'} <b class="mono">${'❄'.repeat(Math.round(L.cold*3))}</b></span>
+    </div>
+    <div class="tagline">${L.loot.map(c=>`<span class="chip">${goods[c]||''} ${({food:LANG==='zh'?'食物':'Food',med:LANG==='zh'?'医疗':'Medical',scrap:LANG==='zh'?'废料':'Scrap',intel:LANG==='zh'?'情报':'Intel',warm:LANG==='zh'?'取暖':'Warmth',part:LANG==='zh'?'枪械零件':'Gun parts',weapon:LANG==='zh'?'武器':'Weapons',val:LANG==='zh'?'值钱物':'Valuables'})[c]}</span>`).join('')}
+      <span class="chip">${LANG==='zh'?'容器余量':'Containers'} <b class="mono">${Math.round(st.left*100)}%</b></span></div>
+    <div class="sep"></div>
+    <div class="sub" style="font-size:12.5px">${st.visits===0?(LANG==='zh'?L.hint_zh:L.hint_en):(LANG==='zh'?L.hint2_zh:L.hint2_en)}</div>
+    ${st.visits===0?`<div class="sub" style="color:#5f6f83;margin-top:4px">${LANG==='zh'?'（未踏足：只听人说，没亲眼见过。）':' (Unvisited: rumour only, nothing verified.)'}</div>`:''}
+    ${why?`<div class="chip warn" style="margin-top:8px">🔒 ${why}</div>`:''}
+    <div class="sep"></div>
+    <div class="lab">${t('party')}</div>
+    <div class="row" style="margin:6px 0 10px">
+      <span class="chip ${G.mate==='none'?'on':''}" data-mate="none">🚶 ${LANG==='zh'?'独自':'solo'}</span>
+      ${MATES.filter(m=>G.mates[m.id]).map(m=>`<span class="chip ${G.mate===m.id?'on':''}" data-mate="${m.id}">${m.ic} ${LANG==='zh'?m.zh:m.en}</span>`).join('')||`<span class="sub">${LANG==='zh'?'（还没有伙伴）':' (no companions yet)'}</span>`}
+    </div>
+    <div class="lab">${t('sortie')}</div>
+    <div style="margin:6px 0 10px;display:grid;gap:5px">
+      ${['can','water','asp','band'].map(k=>`<div class="load-slot"><span>${ITEMS[k].ic} ${itemName(k)} <span style="color:#5f6f83">(${LANG==='zh'?'库存':'stock'} ${G.stash[k]||0})</span></span>
+        <span class="row" style="gap:5px"><button class="btn sm" data-load="${k}" data-d="-1">−</button><b class="mono" style="min-width:16px;text-align:center">${G.load[k]||0}</b>
+        <button class="btn sm" data-load="${k}" data-d="1">+</button></span></div>`).join('')}
+    </div>
+    <button class="btn primary" style="width:100%;justify-content:center" id="btnDepart" ${ok?'':'disabled'}>🗺 ${t('depart')}</button>
+  </div>`;
+  $$('#mapPanel [data-mate]').forEach(el=>el.addEventListener('click',()=>{ G.mate=el.dataset.mate; renderMap(); }));
+  $$('#mapPanel [data-load]').forEach(el=>el.addEventListener('click',()=>{
+    const k=el.dataset.load, d=+el.dataset.d;
+    G.load[k]=clamp((G.load[k]||0)+d,0,G.stash[k]||0);
+    renderMap();
+  }));
+  $('#btnDepart').addEventListener('click',()=>depart(L));
+}
+mc.addEventListener('mousemove',ev=>{
+  const r=mc.getBoundingClientRect(), sx=(ev.clientX-r.left)*(mc.width/r.width), sy=(ev.clientY-r.top)*(mc.height/r.height);
+  let h=null; LOCS.forEach(L=>{ if(Math.abs(sx-L.x)<62&&Math.abs(sy-L.y)<16) h=L.id; });
+  if(h!==hoverNode){ hoverNode=h; drawCityMap(); mc.style.cursor=h?'pointer':'default'; }
+});
+mc.addEventListener('click',()=>{ SEL=LOCS.find(L=>L.id===hoverNode)||SEL; renderMap(); });
+
+/* =========================================================================
+ *  13. 流程：出发 / 结算 / 推进
+ * =======================================================================*/
+function depart(L){
+  // 从库存扣除携带物
+  for(const k in G.load){ const n=G.load[k]||0; if(n>0){ if((G.stash[k]||0)<n) G.load[k]=G.stash[k]||0; takeItem(k,G.load[k]); } }
+  show('scene');
+  startScene(L);
+  const st=nodeState(L.id);
+  toast(LANG==='zh'
+    ? `【${L.zh}】${st.visits?(L.hint2_zh):(L.hint_zh)} · ${LANG==='zh'?'容器':'containers'} ${S.totalCont}`
+    : `【${L.en}】${st.visits?(L.hint2_en):(L.hint_en)} · containers ${S.totalCont}`, 4200);
+  if(L.story&&!G.storyDone[L.story]) setTimeout(()=>openStory(L.story),700);
+}
+function endScene(reason){
+  if(S.over) return; S.over=true;
+  const p=S.player;
+  let kept=S.pack.slice();
+  if(reason==='downed'){ kept=[]; }
+  if(reason==='abort'){ kept=[]; }
+  if(reason==='dawn'){ kept=S.pack.filter((_,i)=>i%2===0); p.hp=Math.max(6,p.hp-22); }
+  // 归还未消耗的携带物
+  for(const k in S.load) if(S.load[k]>0) addItem(k,S.load[k]);
+  const before=ownedWeapons().map(w=>w.id);
+  const gained={}; kept.forEach(id=>{ gained[id]=(gained[id]||0)+1; addItem(id,1); });
+  const after=ownedWeapons();
+  const newW=after.filter(w=>!before.includes(w.id));
+  // 节点状态
+  const st=nodeState(S.L.id); st.visits++; st.left=clamp(st.left-0.5,0.05,1);
+  G.lastReport={reason, gained, events:S.events.slice(), killed:S.killed, halfSaved:S.halfSaved,
+    looted:S.looted, total:S.totalCont, hp:Math.round(p.hp), warmth:Math.round(p.warmth), loc:S.L,
+    newW, day:G.day};
+  renderReport(); show('report');
+}
+const REASON={
+  extracted:{zh:'撤离成功',en:'EXTRACTED',c:'#4ade80'},
+  dawn:{zh:'天亮了 · 强行撤回',en:'DAWN · FORCED RETREAT',c:'#7dd3fc'},
+  downed:{zh:'重伤倒地 · 被拖回 602 室',en:'DOWNED · DRAGGED HOME',c:'#ef4444'},
+  abort:{zh:'放弃夜潜',en:'RAID ABORTED',c:'#f59e0b'},
+};
+function renderReport(){
+  const R=G.lastReport, meta=REASON[R.reason];
+  $('#repTitle').innerHTML=`<span style="color:${meta.c}">■</span> ${LANG==='zh'?meta.zh:meta.en} · ${LANG==='zh'?R.loc.zh:R.loc.en}`;
+  const g=Object.keys(R.gained);
+  const evIcon={good:'✚',bad:'✖',note:'·',kill:'☠',knife:'⚔',witness:'👁'};
+  $('#reportBody').innerHTML=`<div class="grid" style="grid-template-columns:1fr 1fr">
+    <div>
+      <div class="lab">${LANG==='zh'?'带回的物资':'Haul'}</div>
+      ${g.length?`<div class="tagline">${g.map(k=>`<span class="chip">${ITEMS[k].ic} ${itemName(k)} <b class="mono">×${R.gained[k]}</b></span>`).join('')}</div>`
+        :`<div class="sub">${LANG==='zh'?'空手而归。':'Nothing. You came back empty.'}</div>`}
+      <div class="sep"></div>
+      <div class="lab">${LANG==='zh'?'本次记录':'This run'}</div>
+      <div class="inv-item"><span>${LANG==='zh'?'搜刮容器':'Containers searched'}</span><b>${R.looted} / ${R.total}</b></div>
+      <div class="inv-item"><span>${LANG==='zh'?'击杀狂暴者':'Rabid killed'}</span><b>${R.killed}</b></div>
+      <div class="inv-item"><span>${LANG==='zh'?'救助半人':'Half-humans helped'}</span><b>${R.halfSaved}</b></div>
+      <div class="inv-item"><span>${LANG==='zh'?'归队状态':'Condition'}</span><b style="color:${R.hp>60?'#86efac':'#fca5a5'}">${R.hp} HP · ${R.warmth} ${LANG==='zh'?'体温':'warmth'}</b></div>
+    </div>
+    <div>
+      <div class="lab">${LANG==='zh'?'事件':'Events'}</div>
+      ${R.events.length?R.events.map(e=>`<div class="logline" style="border-color:${e.t==='bad'?'#7f1d1d':e.t==='good'?'#166534':'#243040'}">${evIcon[e.t]||'·'} ${LANG==='zh'?e.zh:e.en}</div>`).join(''):`<div class="sub">${LANG==='zh'?'什么都没发生。这在诺沃斯克是好事。':'Nothing happened. In Novorsk-17 that is a good night.'}</div>`}
+      <div class="sep"></div>
+      <div class="lab">${LANG==='zh'?'武器架更新':'Weapon rack'}</div>
+      ${R.newW.length?R.newW.map(w=>`<div class="chip on" style="margin:3px 3px 0 0">🔓 ${LANG==='zh'?'解锁':'Unlocked'}: ${LANG==='zh'?w.zh:w.en}</div>`).join(''):`<div class="sub">${LANG==='zh'?'没有新武器。收集度决定火力。':'Nothing new. Firepower follows what you collect.'}</div>`}
+      <div class="sep"></div>
+      <div class="lab">${LANG==='zh'?'《双面工作日志》背面':'Back page of the logbook'}</div>
+      <div class="tally">${'|'.repeat(G.tally)||'<span style="color:#334155">—</span>'}</div>
+      <div class="sub">${LANG==='zh'?'良知':'Conscience'} ${Math.round(G.conscience)} · ${LANG==='zh'?'真名':'Names'} ${G.names.length}</div>
+    </div>
+  </div>
+  ${G.motherAlive?`<div class="sep"></div><div class="sub">${LANG==='zh'?'母亲':'Mother'}: ${LANG==='zh'?'剩余腹透液可撑':'fluid left for'} <b>${G.dial.toFixed(1)}</b> ${LANG==='zh'?'天':'days'}。${G.dial<=1?'<span style="color:#fca5a5">明晚之前必须带回 409 批腹透液。</span>':''}</div>`:''}`;
+}
+function advanceDay(){
+  G.day++;
+  // 母亲：每夜消耗 1 袋腹透液
+  if(G.motherAlive){
+    if((G.stash.dial||0)>0){ takeItem('dial',1); G.dial=Math.min(3,G.dial+1); G.dayMsg=LANG==='zh'?'你给母亲换上了新的一袋。她的呼吸平缓了一点。':'You hang a fresh bag. Her breathing eases.'; }
+    else { G.dial-=1; G.dayMsg=LANG==='zh'?'透析液见底了。母亲的水肿又重了一分。':'No fluid left. The oedema climbs another notch.';
+      if(G.dial<=0){ G.motherAlive=false; G.flags.motherLost=true; G.conscience-=10;
+        G.dayMsg=LANG==='zh'?'<b style="color:#fca5a5">母亲在急性肺水肿中走了。失母·荒原线开启。</b>':'<b style="color:#fca5a5">She died of acute pulmonary oedema. The motherless route opens.</b>'; } }
+  } else G.dayMsg=LANG==='zh'?'602 室安静得只剩风声。':'Room 602 is quiet except for the wind.';
+  G.log.push({day:G.day,zh:'第 '+G.day+' 天：'+(G.dayMsg||'').replace(/<[^>]+>/g,''),en:'Day '+G.day+': '+(G.dayMsg||'').replace(/<[^>]+>/g,'')});
+  // 武器：收集度自动拼装
+  renderBase();
+}
+
+/* =========================================================================
+ *  14. 启动 / 主循环
+ * =======================================================================*/
+let last=performance.now(), hudTick=0;
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  if($('#s-scene').classList.contains('active')&&!S.paused&&!S.over&&S.map){
+    update(dt);
+    drawScene(); drawFog(); drawCones(); drawRipples(); drawCompass(); drawFlakes();
+    const p=S.player;
+    if(p){
+      if(p.hp<40||p.hurt>0){
+        const g=ctx.createRadialGradient(VW/2,VH/2,Math.min(VW,VH)*0.25,VW/2,VH/2,Math.max(VW,VH)*0.62);
+        g.addColorStop(0,'#ef444400'); g.addColorStop(1,'#ef444444'); ctx.fillStyle=g; ctx.fillRect(0,0,VW,VH);
+      }
+      if(p.warmth<35){
+        const g=ctx.createRadialGradient(VW/2,VH/2,Math.min(VW,VH)*0.2,VW/2,VH/2,Math.max(VW,VH)*0.6);
+        g.addColorStop(0,'#7dd3fc00'); g.addColorStop(1,'#7dd3fc33'); ctx.fillStyle=g; ctx.fillRect(0,0,VW,VH);
+      }
+    }
+    if((hudTick++)%4===0) updateHUD();
+  }
+  requestAnimationFrame(frame);
+}
+function applyLang(){
+  $$('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
+  $('#hdrSub').textContent=(LANG==='zh'?'探索循环灰盒 DEMO v0.1 · 零美术资源':'EXPLORATION LOOP GREYBOX DEMO v0.1 · ZERO ART ASSETS');
+  if(G){ $('#hdrDay').textContent=(LANG==='zh'?'第 ':'Day ')+G.day+(LANG==='zh'?' 天 · 夜':' · night');
+         $('#hdrTally').textContent='卌 '+G.tally; }
+  if($('#s-base').classList.contains('active')) renderBase();
+  if($('#s-map').classList.contains('active')) renderMap();
+}
+function boot(){
+  G=newGame();
+  $('#btnStart').onclick=()=>{ renderBase(); show('base'); };
+  $('#btnToMap').onclick=()=>{ SEL=LOCS.find(locUnlocked)||LOCS[0]; renderMap(); show('map'); };
+  $('#btnMapBack').onclick=()=>{ renderBase(); show('base'); };
+  $('#btnLog').onclick=()=>openLogbook();
+  $('#btnHelp').onclick=()=>openHelp();
+  $('#btnTitleHelp').onclick=()=>openHelp();
+  $('#btnLang').onclick=()=>{ LANG=LANG==='zh'?'en':'zh'; applyLang(); };
+  $('#btnSleep').onclick=()=>{ advanceDay(); toast(G.dayMsg||'',3400); };
+  $('#btnRepNext').onclick=()=>{ advanceDay(); show('base'); toast(G.dayMsg||'',3400); };
+  addEventListener('resize',resize);
+  resize(); applyLang(); requestAnimationFrame(frame);
+}
+boot();
+</script>
+</body>
+</html>
