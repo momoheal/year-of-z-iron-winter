@@ -794,6 +794,10 @@ function tileVisibleAt(wx,wy){
   const d=dist(p.x,p.y,wx,wy);
   if(d>sightNow()) return false;
   if(d<=CFG.NEAR_SENSE) return true;
+  // 2 格环形视野：身边 5×5 一圈不论朝向都可见，但照样受墙体遮挡
+  if(Math.abs(Math.floor(wx)-Math.floor(p.x))<=2 && Math.abs(Math.floor(wy)-Math.floor(p.y))<=2){
+    return losClear(p.x,p.y,wx,wy,{blockCover:false});
+  }
   const a=Math.atan2(wy-p.y,wx-p.x);
   if(Math.abs(angDiff(a,p.face))>CFG.FOV_DEG*Math.PI/360) return false;
   return losClear(p.x,p.y,wx,wy,{blockCover:false});
