@@ -717,9 +717,12 @@ const S={
 };
 function resize(){
   DPR=Math.min(2,window.devicePixelRatio||1);
-  VW=cv.clientWidth; VH=cv.clientHeight;
-  cv.width=VW*DPR; cv.height=VH*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
-  fogCv.width=VW*DPR; fogCv.height=VH*DPR; fctx.setTransform(DPR,0,0,DPR,0,0);
+  // 画布所在的 section 若还是 display:none，clientWidth/Height 会是 0（此前 fogCv 被设成 0x0，
+  // 导致 drawImage 抛 InvalidStateError）。此时回退到窗口尺寸，保证画布永远有效。
+  VW=cv.clientWidth||window.innerWidth||1280;
+  VH=cv.clientHeight||Math.max(320,(window.innerHeight||800)-47);
+  cv.width=Math.max(1,Math.round(VW*DPR)); cv.height=Math.max(1,Math.round(VH*DPR)); ctx.setTransform(DPR,0,0,DPR,0,0);
+  fogCv.width=Math.max(1,Math.round(VW*DPR)); fogCv.height=Math.max(1,Math.round(VH*DPR)); fctx.setTransform(DPR,0,0,DPR,0,0);
 }
 function project(wx,wy){
   return {x:(wx-S.cam.x)*CFG.PPM+VW/2, y:(wy-S.cam.y)*CFG.PPM*CFG.SQUASH+VH/2};
@@ -1018,6 +1021,7 @@ function drawEnt(e){
   }
 }
 function drawFog(){
+  if(!VW||!VH||!fogCv.width||!fogCv.height){ resize(); return; } // 尺寸没就绪：先修，本帧不画雾
   const m=S.map,pw=CFG.PPM,ph=CFG.PPM*CFG.SQUASH;
   fctx.setTransform(DPR,0,0,DPR,0,0);
   fctx.clearRect(0,0,VW,VH);
@@ -1709,7 +1713,7 @@ function show(id){
   $$('.screen').forEach(s=>s.classList.remove('active'));
   $('#s-'+id).classList.add('active');
   window.scrollTo(0,0);
-  if(id==='scene') setTimeout(resize,20);
+  if(id==='scene'){ resize(); setTimeout(resize,20); setTimeout(resize,140); }
 }
 function objectiveText(){
   if(!G.flags.ash) return {zh:'去城北四号铁路冷库领今天的征召工物资——顺便查查拉娜被带上了哪趟车。',en:'Report to Cold Storage No.4 for conscript labour — and find out which train took Lana.'};
@@ -1984,6 +1988,7 @@ function frame(now){
    try{
     update(dt);
     drawScene(); drawFog(); drawCones(); drawRipples(); drawCompass(); drawFlakes();
+    __frameErr=0; clearFatal();
     const p=S.player;
     if(p){
       if(p.hp<40||p.hurt>0){
@@ -1996,7 +2001,10 @@ function frame(now){
       }
     }
     if((hudTick++)%4===0) updateHUD();
-   }catch(err){ fatal('FRAME ERROR',err); S.over=true; }
+   }catch(err){
+      __frameErr=(__frameErr||0)+1;
+      if(__frameErr>=20){ fatal('FRAME ERROR',err); S.over=true; }  // 连续 20 帧才判死刑，避免偶发单帧异常把整局冻结
+    }
   }
   requestAnimationFrame(frame);
 }
@@ -2018,9 +2026,11 @@ function fatal(tag,err){
     box.style.cssText='position:fixed;inset:0;z-index:9999;background:#0b0f14;color:#fca5a5;'+
       'font:12.5px/1.8 ui-monospace,JetBrains Mono,monospace;padding:26px;white-space:pre-wrap;overflow:auto';
     box.textContent='['+tag+'] '+(err&&err.stack?err.stack:err)+'\n\n请把这段报错贴给开发者。';
-    document.body.appendChild(box);
+    document.body.appendChild(box); __fatalEl=box;
   }catch(e){}
 }
+let __fatalEl=null;
+function clearFatal(){ if(__fatalEl){ try{__fatalEl.remove();}catch(e){} __fatalEl=null; __fatalShown=false; } }
 addEventListener('error',ev=>fatal('RUNTIME ERROR',ev.error||ev.message));
 addEventListener('unhandledrejection',ev=>fatal('PROMISE ERROR',ev.reason));
 
