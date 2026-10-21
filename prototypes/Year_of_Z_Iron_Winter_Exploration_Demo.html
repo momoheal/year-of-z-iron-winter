@@ -526,6 +526,72 @@ function isSolid(v){ return v===TT.WALL||v===TT.COVER||v===TT.FENCE||v===TT.DOOR
 function blocksSight(v){ return v===TT.WALL||v===TT.WEDGED||v===TT.COVER; }
 function blocksMove(v){ return v===TT.WALL||v===TT.COVER||v===TT.FENCE||v===TT.WEDGED; }
 
+/* 生成后处理：保证整张图全连通
+ * 1) 从入口洪水填充，找出所有孤岛分量；
+ * 2) 每个孤岛用 L 形走廊接回入口（而不是删掉内容）；
+ * 3) 复核一遍，仍不可达的极小死区封成墙，里面的容器剔除（避免"看得见拿不到"）。 */
+function ensureConnected(W,H,at,set,conts,entry){
+  const walkable=v=>(v===TT.FLOOR||v===TT.SLUSH||v===TT.DOOR);
+  const comps=[], seen=new Int32Array(W*H).fill(-1);
+  for(let j=0;j<H;j++)for(let i=0;i<W;i++){
+    if(!walkable(at(i,j))||seen[j*W+i]>=0) continue;
+    const id=comps.length, cells=[]; const q=[i+j*W]; seen[j*W+i]=id;
+    for(let h=0;h<q.length;h++){
+      const x=q[h]%W, y=(q[h]-x)/W; cells.push([x,y]);
+      const nb=[[1,0],[-1,0],[0,1],[0,-1]];
+      for(let k=0;k<4;k++){
+        const nx=x+nb[k][0], ny=y+nb[k][1];
+        if(nx<0||ny<0||nx>=W||ny>=H) continue;
+        if(seen[ny*W+nx]>=0||!walkable(at(nx,ny))) continue;
+        seen[ny*W+nx]=id; q.push(nx+ny*W);
+      }
+    }
+    comps.push(cells);
+  }
+  if(!comps.length) return;
+  let ex=Math.floor(entry.x), ey=Math.floor(entry.y);
+  // 入口若落在墙上（极少见），就近挪到可走瓦片
+  if(!walkable(at(ex,ey))){
+    let ok=false;
+    for(let r=1;r<=6&&!ok;r++)for(let j=-r;j<=r&&!ok;j++)for(let i=-r;i<=r&&!ok;i++){
+      if(walkable(at(ex+i,ey+j))){ ex+=i; ey+=j; ok=true; }
+    }
+    if(ok){ entry.x=ex+0.5; entry.y=ey+0.5; }
+  }
+  const main=seen[ey*W+ex];
+  // 孤岛 -> 挖 L 形走廊接回入口
+  if(main>=0){
+    for(let c=0;c<comps.length;c++){
+      if(c===main||!comps[c].length) continue;
+      let best=comps[c][0], bd=1e9;
+      comps[c].forEach(([x,y])=>{ const d=(x-ex)*(x-ex)+(y-ey)*(y-ey); if(d<bd){bd=d;best=[x,y];} });
+      let x=best[0], y=best[1];
+      while(x!==ex){ set(x,y,TT.FLOOR); x+=(ex>x?1:-1); }
+      while(y!==ey){ set(x,y,TT.FLOOR); y+=(ey>y?1:-1); }
+      set(ex,ey,TT.FLOOR);
+    }
+  }
+  // 复核：封死残余死区，剔除其中的容器
+  const ok=new Uint8Array(W*H); const q2=[ex+ey*W]; ok[ey*W+ex]=1;
+  for(let h=0;h<q2.length;h++){
+    const x=q2[h]%W, y=(q2[h]-x)/W;
+    const nb=[[1,0],[-1,0],[0,1],[0,-1]];
+    for(let k=0;k<4;k++){
+      const nx=x+nb[k][0], ny=y+nb[k][1];
+      if(nx<0||ny<0||nx>=W||ny>=H) continue;
+      if(ok[ny*W+nx]||!walkable(at(nx,ny))) continue;
+      ok[ny*W+nx]=1; q2.push(nx+ny*W);
+    }
+  }
+  for(let j=0;j<H;j++)for(let i=0;i<W;i++){
+    if(!ok[j*W+i]&&(at(i,j)===TT.FLOOR||at(i,j)===TT.SLUSH)) set(i,j,TT.WALL);
+  }
+  for(let k=conts.length-1;k>=0;k--){
+    const c=conts[k];
+    if(!ok[Math.floor(c.y)*W+Math.floor(c.x)]) conts.splice(k,1);
+  }
+}
+
 function genMap(L){
   const R=mulberry32(L.seed + G.day*7);
   const W=54,H=42;
@@ -629,6 +695,7 @@ function genMap(L){
   // --- 出入口 ---
   const startRoom=rlist[0]||{cx:4,cy:4};
   const entry={x:startRoom.cx+0.5,y:startRoom.cy+0.5};
+  ensureConnected(W,H,at,set,conts,entry);
   return {W,H,g,at,set,rooms:rlist,conts,fires,entry,slushCount:slush.length};
 }
 
@@ -1752,7 +1819,9 @@ function drawCityMap(){
     const w=118,h=26,x=L.x-w/2,y=L.y-h/2;
     mctx.fillStyle=ok?(sel?'#3a2a10':'#131c26'):'#0c1118';
     mctx.strokeStyle=ok?(sel?'#f59e0b':'#3d4c5e'):'#1c2530'; mctx.lineWidth=sel?2:1;
-    mctx.beginPath(); mctx.roundRect(x,y,w,h,5); mctx.fill(); mctx.stroke();
+    mctx.beginPath();
+    if(mctx.roundRect) mctx.roundRect(x,y,w,h,5); else mctx.rect(x,y,w,h);
+    mctx.fill(); mctx.stroke();
     mctx.fillStyle=ok?'#dbe3ee':'#3d4956'; mctx.font='11px Noto Sans SC';
     const label=(LANG==='zh'?L.zh:L.en);
     mctx.fillText(label.length>11?label.slice(0,10)+'…':label, x+8, y+17);
@@ -1912,6 +1981,7 @@ let last=performance.now(), hudTick=0;
 function frame(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   if($('#s-scene').classList.contains('active')&&!S.paused&&!S.over&&S.map){
+   try{
     update(dt);
     drawScene(); drawFog(); drawCones(); drawRipples(); drawCompass(); drawFlakes();
     const p=S.player;
@@ -1926,6 +1996,7 @@ function frame(now){
       }
     }
     if((hudTick++)%4===0) updateHUD();
+   }catch(err){ fatal('FRAME ERROR',err); S.over=true; }
   }
   requestAnimationFrame(frame);
 }
@@ -1937,7 +2008,24 @@ function applyLang(){
   if($('#s-base').classList.contains('active')) renderBase();
   if($('#s-map').classList.contains('active')) renderMap();
 }
+/* ---------- 错误可视化：任何异常直接糊在屏幕上，便于定位 ---------- */
+let __fatalShown=false;
+function fatal(tag,err){
+  console.error(tag,err);
+  if(__fatalShown) return; __fatalShown=true;
+  try{
+    const box=document.createElement('div');
+    box.style.cssText='position:fixed;inset:0;z-index:9999;background:#0b0f14;color:#fca5a5;'+
+      'font:12.5px/1.8 ui-monospace,JetBrains Mono,monospace;padding:26px;white-space:pre-wrap;overflow:auto';
+    box.textContent='['+tag+'] '+(err&&err.stack?err.stack:err)+'\n\n请把这段报错贴给开发者。';
+    document.body.appendChild(box);
+  }catch(e){}
+}
+addEventListener('error',ev=>fatal('RUNTIME ERROR',ev.error||ev.message));
+addEventListener('unhandledrejection',ev=>fatal('PROMISE ERROR',ev.reason));
+
 function boot(){
+  try{
   G=newGame();
   $('#btnStart').onclick=()=>{ renderBase(); show('base'); };
   $('#btnToMap').onclick=()=>{ SEL=LOCS.find(locUnlocked)||LOCS[0]; renderMap(); show('map'); };
@@ -1949,7 +2037,8 @@ function boot(){
   $('#btnSleep').onclick=()=>{ advanceDay(); toast(G.dayMsg||'',3400); };
   $('#btnRepNext').onclick=()=>{ advanceDay(); show('base'); toast(G.dayMsg||'',3400); };
   addEventListener('resize',resize);
-  resize(); applyLang(); requestAnimationFrame(frame);
+    resize(); applyLang(); show('title'); requestAnimationFrame(frame);
+  }catch(err){ fatal('BOOT ERROR',err); }
 }
 boot();
 </script>
