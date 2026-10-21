@@ -1,0 +1,7 @@
+# Godot generated / local
+.godot/
+*.import
+*.translation
+# OS / editor
+.DS_Store
+Thumbs.db

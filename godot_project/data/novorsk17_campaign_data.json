@@ -1,0 +1,75 @@
+{
+  "project": "Year of Z: Iron Winter (Хроники Года Z: Железная Зима)",
+  "version": "4.0.0-godot4",
+  "setting": "Novorsk-17 (Новорск-17), -30C Siberian Railway Hub",
+  "metrics": {
+    "pixels_per_meter": 64,
+    "camera_oblique_angle_deg": 75,
+    "vision_cone_deg": 90,
+    "close_halo_m": 1.8,
+    "osk_searchlight_deg": 45,
+    "osk_searchlight_range_m": 14.0
+  },
+  "levels": [
+    {
+      "id": "L01",
+      "name_zh": "午夜的绿灯",
+      "name_en": "Green Light at Midnight",
+      "act": 1
+    },
+    {
+      "id": "L02",
+      "name_zh": "四号冷库与首潜",
+      "name_en": "Cold Storage No. 4 & First Stalk",
+      "act": 1
+    },
+    {
+      "id": "L03",
+      "name_zh": "白桦林四点整死窗",
+      "name_en": "The 4 PM Welded Hatch",
+      "act": 2
+    },
+    {
+      "id": "L04",
+      "name_zh": "积冰下穿道与《回退手稿》",
+      "name_en": "Underpass & Regression Manuscript",
+      "act": 2
+    },
+    {
+      "id": "L05",
+      "name_zh": "东街食堂锁骨卡刀",
+      "name_en": "Cleaver in the Collarbone (Пить)",
+      "act": 2
+    },
+    {
+      "id": "L06",
+      "name_zh": "盲射与0419号安娜",
+      "name_en": "Blind Fire & Prisoner 0419",
+      "act": 3
+    },
+    {
+      "id": "L07",
+      "name_zh": "松林庄园与焦油黑雪",
+      "name_en": "Pine Manor & Tar-Black Snow",
+      "act": 3
+    },
+    {
+      "id": "L08",
+      "name_zh": "焊死的消防门",
+      "name_en": "The Welded Fire Exit",
+      "act": 4
+    },
+    {
+      "id": "L09",
+      "name_zh": "鹰嘴崖底的第三节车厢",
+      "name_en": "Carriage No. 3 at Eagle's Crag",
+      "act": 4
+    },
+    {
+      "id": "L10",
+      "name_zh": "302高地血肉闸刀",
+      "name_en": "Hill 302 Flesh Switch & Polar Dawn",
+      "act": 5
+    }
+  ]
+}

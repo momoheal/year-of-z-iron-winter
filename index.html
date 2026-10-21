@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVORSK-17 TELETYPE TERMINAL // 《Z年纪事：凛冬铁轨 v4.0》GitHub 门户与在线试玩中心</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans SC', sans-serif;
+      background-color: #07090c;
+      color: #e2e8f0;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .crt-scanlines {
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+      );
+      background-size: 100% 4px;
+    }
+    .terminal-card {
+      background: linear-gradient(145deg, #10151d 0%, #0b0e14 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#07090c] text-slate-200 crt-scanlines">
+
+  <!-- Top Soviet Teletype Status Header -->
+  <header class="border-b border-emerald-500/30 bg-[#0b1017]/95 backdrop-blur sticky top-0 z-30 px-4 py-3">
+    <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-3 h-9 bg-emerald-400 rounded-sm shadow-[0_0_14px_rgba(16,185,129,0.85)]"></div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="mono text-xs font-bold text-emerald-400 tracking-wider">ТЕЛЕТАЙП НОВОРСК-17 // V4.0 MASTER REPOSITORY</span>
+            <span class="mono text-[11px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">GODOT 4.3+ READY</span>
+          </div>
+          <h1 class="text-base sm:text-xl font-bold text-white tracking-tight mt-0.5" id="hdrTitle">
+            《Z年纪事：凛冬铁轨（Year of Z: Iron Winter）》在线试玩门户与工程总览
+          </h1>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 text-xs">
+        <span class="mono text-[11px] px-2.5 py-1 rounded bg-emerald-950/70 border border-emerald-500/40 text-emerald-300">
+          ● ВЫДАНО 100% · -30°C BLIZZARD
+        </span>
+        <button type="button" id="btnLang" class="px-3 py-1.5 rounded font-bold bg-blue-600 hover:bg-blue-500 text-white transition mono">
+          🌐 EN / 中文
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Portal Content -->
+  <main class="flex-1 max-w-[1440px] w-full mx-auto p-4 sm:p-6 space-y-8">
+
+    <!-- Section 1: Hero & Instant Launchers for 3 Interactive HTML5 Prototypes -->
+    <section class="terminal-card border border-slate-800 rounded-xl p-5 sm:p-6 shadow-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-5">
+        <div>
+          <div class="mono text-xs text-amber-400 font-bold">INTERACTIVE_PROTOTYPE_MATRIX // 在线可玩原型矩阵</div>
+          <h2 class="text-lg font-bold text-white mt-0.5" id="secProtoTitle">
+            四大交互原型沙盘（全部已对齐 v4.0 诺沃斯克-17 中英双语设定）
+          </h2>
+        </div>
+        <span class="mono text-xs text-slate-400">ZERO-BUILD HTML5 CANVAS + WEB AUDIO SYNTH</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Prototype 0: Exploration Loop Demo (added in merge: this file only exists on remote main, not in the zip) -->
+        <div class="bg-[#131923] border-2 border-red-500/60 rounded-xl p-4 flex flex-col justify-between shadow-lg">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="mono text-[11px] px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-bold">★★ EXPLORATION LOOP DEMO</span>
+              <span class="mono text-[11px] text-emerald-400">ZH / EN</span>
+            </div>
+            <h3 class="text-base font-bold text-white mb-1.5">探索循环 DEMO · Exploration Loop Demo</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              完整一夜循环：据点 602 室 → 地图选点 → 夜潜探索 → 搜刮 → 撤离 → 结算推进剧情 → 第二天。10 个节点、程序化关卡、三方潜行与伙伴系统。Base → Map → Night raid → Scavenge → Extract → Report → Next day.
+            </p>
+          </div>
+          <button type="button" data-proto="prototypes/Year_of_Z_Iron_Winter_Exploration_Demo.html" data-title="探索循环 DEMO (Exploration Loop Demo)" class="proto-launch-btn w-full text-center py-2.5 px-4 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition shadow">
+            ▶ 立即启动探索循环 DEMO (Launch Exploration Demo)
+          </button>
+        </div>
+
+        <!-- Prototype 1: 5-in-1 Playable Greybox Gym -->
+        <div class="bg-[#131923] border-2 border-amber-500/60 rounded-xl p-4 flex flex-col justify-between shadow-lg">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="mono text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">★ PLAYABLE GYM (ROOMS A–E)</span>
+              <span class="mono text-[11px] text-emerald-400">ZH / EN</span>
+            </div>
+            <h3 class="text-base font-bold text-white mb-1.5" id="p1Title">5合1 可玩灰盒测试场 (Playable Greybox Gym)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4" id="p1Desc">
+              包含清杀队 45° 探照灯【投掷空罐头借刀杀人 (Room A)】、【道钉撬棍卡门与12cm窄缝推饭盒 (Room B)】、【账面0人与半人抉择A (Room C)】、【灰狼犬“灰烬”三态嗅觉 (Room D)】及【东街后厨瓦西里锁骨卡刀 6连按 QTE 与 Пить 幻听 (Room E)】。
+            </p>
+          </div>
+          <button type="button" data-proto="prototypes/Year_of_Z_Iron_Winter_Playable_Greybox_Gym.html" data-title="5合1 可玩灰盒测试场 (Playable Greybox Gym)" class="proto-launch-btn w-full text-center py-2.5 px-4 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow">
+            ▶ 立即启动 5合1 灰盒测试场 (Launch Gym)
+          </button>
+        </div>
+
+        <!-- Prototype 2: Upgraded v4.0 Top-Down Tactical Level Flow Blueprint -->
+        <div class="bg-[#131923] border-2 border-blue-500/60 rounded-xl p-4 flex flex-col justify-between shadow-lg">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="mono text-[11px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">★ UPGRADED v4.0 BLUEPRINT</span>
+              <span class="mono text-[11px] text-emerald-400">ZH / EN</span>
+            </div>
+            <h3 class="text-base font-bold text-white mb-1.5" id="p2Title">核心关卡俯视角平面动线图 (Tactical Flow Sandbox)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4" id="p2Desc">
+              全面升级至 v4.0 诺沃斯克-17 中英双语版！涵盖 L02 四号冷库、L03 白桦林四点整死窗、L05 东街食堂锁骨卡刀、L07 松林庄园焦油黑雪、L10 302高地帕维尔万伏血肉闸刀，支持拖拽阿列克谢与“灰烬”并旋转 90° 视野。
+            </p>
+          </div>
+          <button type="button" data-proto="prototypes/Z年纪事_核心关卡俯视角平面动线图.html" data-title="v4.0 核心关卡俯视角平面动线图 (Tactical Flow Sandbox)" class="proto-launch-btn w-full text-center py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition shadow">
+            🗺️ 打开 v4.0 关卡俯视动线沙盘 (Open Blueprint)
+          </button>
+        </div>
+
+        <!-- Prototype 3: Dual-Line & 5-Ending Russian Tally Simulator -->
+        <div class="bg-[#131923] border-2 border-emerald-500/60 rounded-xl p-4 flex flex-col justify-between shadow-lg">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="mono text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">5-ENDING TALLY SIM</span>
+              <span class="mono text-[11px] text-emerald-400">ZH / EN</span>
+            </div>
+            <h3 class="text-base font-bold text-white mb-1.5" id="p3Title">双线汇聚与“卌”字划痕五结局模拟器</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4" id="p3Desc">
+              实时推演白昼守母（602室卡佳妈妈腹透）与黑夜寻妹（铁壳号第三节车厢拉娜·0420），交互测试抉择 A/B/C/D 如何改变《工作日志》背面的俄式“卌”字血划痕并分流向 5 大结局。
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" data-proto="prototypes/Z年纪事_结局分支与双线汇聚流程图.html" data-title="双线汇聚与卌字划痕五结局模拟器 (ZH)" class="proto-launch-btn w-full text-center py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition">
+              🔀 中文版模拟器
+            </button>
+            <button type="button" data-proto="prototypes/Year_of_Z_Iron_Winter_Ending_Simulator_EN.html" data-title="5-Ending Russian Tally Simulator (EN)" class="proto-launch-btn w-full text-center py-2.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/40 font-bold text-xs transition">
+              🔀 English Sim
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: P0 Visual Target Concept Art Gallery (CON_01 ~ CON_03) -->
+    <section class="terminal-card border border-slate-800 rounded-xl p-5 sm:p-6 shadow-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-5">
+        <div>
+          <div class="mono text-xs text-cyan-400 font-bold">PHASE_0_VISUAL_TARGETS // 阶段零核心视觉概念图 (CON_01 – CON_03)</div>
+          <h2 class="text-lg font-bold text-white mt-0.5" id="secArtTitle">
+            诺沃斯克-17 美术与氛围靶心（直接指导 Godot 4 Light2D 与 CanvasItem Shader 参数）
+          </h2>
+        </div>
+        <span class="mono text-xs text-slate-400">assets/concept_art/CON_01..03.jpg</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- CON_01 -->
+        <div class="bg-[#121720] border border-slate-800 rounded-xl overflow-hidden flex flex-col">
+          <img src="assets/concept_art/CON_01_Novorsk17_Lighting_Script.jpg" alt="CON_01 Novorsk-17 Lighting Script" class="w-full h-52 object-cover border-b border-slate-800">
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <span class="mono text-[11px] text-amber-400 font-bold">CON_01 · COLOR & LIGHTING SCRIPT</span>
+              <h3 class="text-sm font-bold text-white mt-0.5 mb-1.5" id="con1Title">诺沃斯克-17 三幕冷暖色彩与光照脚本</h3>
+              <p class="text-xs text-slate-300 leading-relaxed" id="con1Desc">
+                ① 赫鲁晓夫楼门岗：-30℃暴风雪青灰 + 苏制电传机【ВЫДАНО】惨绿荧光 + 蓝白电焊弧光；② 东街食堂后厨：煤油灯暖琥珀光 + 大铁锅蒸汽 + 砧板宽背砍骨刀；③ 松林庄园特供库：26℃暖黄吊灯 + 2000℃焚化炉火光 + 窗外焦油黑雪。
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-slate-800/80 mono text-[10px] text-cyan-300">
+              Godot Target: DirectionalLight2D + PointLight2D ShadowMask
+            </div>
+          </div>
+        </div>
+
+        <!-- CON_02 -->
+        <div class="bg-[#121720] border border-slate-800 rounded-xl overflow-hidden flex flex-col">
+          <img src="assets/concept_art/CON_02_Character_TriState_Sheet.jpg" alt="CON_02 Character & Tri-State Sheet" class="w-full h-52 object-cover border-b border-slate-800">
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <span class="mono text-[11px] text-amber-400 font-bold">CON_02 · CHARACTER & TRI-STATE SHEET</span>
+              <h3 class="text-sm font-bold text-white mt-0.5 mb-1.5" id="con2Title">核心角色与“三态辨识”设定总表</h3>
+              <p class="text-xs text-slate-300 leading-relaxed" id="con2Desc">
+                主角阿列克谢（铁道部翻毛领大衣、黑胶布修补圆框眼镜、手背二级留观蓝印油、铸铁道钉撬棍）+ 妹妹拉娜0420与安娜0419（皮带自缚、手背灰鳞剥落）+ 内务清杀兵ОСК（铅灰防化服、GP-5猪嘴面具、消音AKM）+ 灰狼犬“灰烬（Пепел）”。
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-slate-800/80 mono text-[10px] text-cyan-300">
+              Godot Target: CharacterBody2D + WolfdogAsh Tri-State AI
+            </div>
+          </div>
+        </div>
+
+        <!-- CON_03 -->
+        <div class="bg-[#121720] border border-slate-800 rounded-xl overflow-hidden flex flex-col">
+          <img src="assets/concept_art/CON_03_Diegetic_Work_Logbook.jpg" alt="CON_03 Diegetic Dual Logbook UI" class="w-full h-52 object-cover border-b border-slate-800">
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <span class="mono text-[11px] text-amber-400 font-bold">CON_03 · DIEGETIC WORK LOGBOOK UI</span>
+              <h3 class="text-sm font-bold text-white mt-0.5 mb-1.5" id="con3Title">《双面工作日志（Рабочий Журнал）》与“卌”字账</h3>
+              <p class="text-xs text-slate-300 leading-relaxed" id="con3Desc">
+                翻开的背面设计：左页为钢笔手写的活人真名录（谢尔盖、玛丽亚、瓦西里、安娜0419）与曲别针别着的三页古丽娅《回退自愈临床手稿》；右页为俄式五道划痕计数法（卌，四竖一斜）与妹妹拉娜的一寸黑白旧照片。
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-slate-800/80 mono text-[10px] text-cyan-300">
+              Godot Target: LogbookManager.gd Autoload Singleton
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Godot 4.x Engine Migration & Documentation Index -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <!-- Left 7 Cols: Godot 4.3+ Architecture Summary -->
+      <div class="lg:col-span-7 terminal-card border border-slate-800 rounded-xl p-5 shadow-xl">
+        <div class="mono text-xs text-emerald-400 font-bold mb-1">GODOT_4_STARTER_ARCHITECTURE // 引擎工程包结构</div>
+        <h3 class="text-base font-bold text-white mb-3" id="gdTitle">
+          已内置可直接导入 Godot 4.3+ 的核心脚本、Shader 与配置 (`godot_project/`)
+        </h3>
+        <div class="bg-[#090c10] border border-slate-800 rounded-lg p-3.5 mono text-xs text-slate-300 space-y-1.5">
+          <div><span class="text-amber-400">godot_project/project.godot</span> — 8层物理碰撞掩码 (1m=64px, Forward+)</div>
+          <div><span class="text-emerald-400">godot_project/autoload/LogbookManager.gd</span> — 双面工作日志、俄式“卌”划痕与5结局状态机</div>
+          <div><span class="text-emerald-400">godot_project/autoload/AcousticRippleBus.gd</span> — 声波半径广播总线 (空罐头借刀/脚步/消音枪)</div>
+          <div><span class="text-cyan-400">godot_project/scripts/PlayerAleksei.gd</span> — 3C移动、蒸汽管阴影隐匿、锁骨卡刀6连按QTE</div>
+          <div><span class="text-cyan-400">godot_project/scripts/WolfdogAsh.gd</span> — 灰狼犬“灰烬”1.5m跟随与三态嗅觉AI</div>
+          <div><span class="text-cyan-400">godot_project/scripts/OSKPurgeSoldier.gd</span> — 清杀兵45°探照灯视野与无条件开火借刀逻辑</div>
+          <div><span class="text-cyan-400">godot_project/scripts/DoorWedgeInteractable.gd</span> — 道钉撬棍15s物理卡门与12cm门底推饭盒</div>
+          <div><span class="text-purple-400">godot_project/shaders/vision_fog_90deg.gdshader</span> — 90°扇形主视野 + 破眼镜折光 + 苏联旧报纸迷雾</div>
+        </div>
+      </div>
+
+      <!-- Right 5 Cols: Bilingual Documentation Links -->
+      <div class="lg:col-span-5 terminal-card border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="mono text-xs text-blue-400 font-bold mb-1">BILINGUAL_DOCS_INDEX // 中英双语文档库</div>
+          <h3 class="text-base font-bold text-white mb-3">核心剧本、GDD、灰盒规格书与 Godot 迁移指南</h3>
+          <ul class="space-y-2 text-xs">
+            <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
+              <span>📘 Godot 4 引擎迁移技术规范与架构指南 (ZH/EN)</span>
+              <span class="mono text-emerald-400">NEW v4.0</span>
+            </li>
+            <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
+              <span>🎬 《Z年纪事：凛冬铁轨》五幕完整总剧本 (ZH/EN)</span>
+              <span class="mono text-slate-400">v4.0 Master</span>
+            </li>
+            <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
+              <span>📐 游戏总策划案 GDD & 10大关卡蓝图 (ZH/EN)</span>
+              <span class="mono text-slate-400">v4.0 Master</span>
+            </li>
+            <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
+              <span>🔧 第一阶段灰盒原型规格书与美术清单 (ZH/EN)</span>
+              <span class="mono text-slate-400">Phase 1 Spec</span>
+            </li>
+          </ul>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 mono">
+          TIP: Push to GitHub and enable GitHub Pages on branch `main` (root `/`) to host this portal live.
+        </div>
+      </div>
+    </section>
+
+  <!-- Teletype Toast Banner -->
+  <div id="portalToast" class="hidden fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-xl bg-[#111822] border-2 border-emerald-500/80 text-emerald-200 px-4 py-3 rounded-xl shadow-2xl z-50 flex items-center justify-between gap-3 text-xs mono">
+    <span id="portalToastMsg"></span>
+    <button type="button" onclick="document.getElementById('portalToast').classList.add('hidden')" class="px-2 py-1 rounded bg-slate-800 text-slate-300 hover:bg-slate-700">✕</button>
+  </div>
+  </main>
+
+  <script>
+    let lang = "zh";
+    const DICT = {
+      zh: {
+        hdrTitle: "《Z年纪事：凛冬铁轨（Year of Z: Iron Winter）》在线试玩门户与工程总览",
+        secProtoTitle: "三大交互原型沙盘（全部已对齐 v4.0 诺沃斯克-17 中英双语设定）",
+        p1Title: "5合1 可玩灰盒测试场 (Playable Greybox Gym)",
+        p1Desc: "包含清杀队 45° 探照灯【投掷空罐头借刀杀人 (Room A)】、【道钉撬棍卡门与12cm窄缝推饭盒 (Room B)】、【账面0人与半人抉择A (Room C)】、【灰狼犬“灰烬”三态嗅觉 (Room D)】及【东街后厨瓦西里锁骨卡刀 6连按 QTE 与 Пить 幻听 (Room E)】。",
+        p2Title: "核心关卡俯视角平面动线图 (Tactical Flow Sandbox)",
+        p2Desc: "全面升级至 v4.0 诺沃斯克-17 中英双语版！涵盖 L02 四号冷库、L03 白桦林四点整死窗、L05 东街食堂锁骨卡刀、L07 松林庄园焦油黑雪、L10 302高地帕维尔万伏血肉闸刀，支持拖拽阿列克谢与“灰烬”并旋转 90° 视野。",
+        p3Title: "双线汇聚与“卌”字划痕五结局模拟器",
+        p3Desc: "实时推演白昼守母（602室卡佳妈妈腹透）与黑夜寻妹（铁壳号第三节车厢拉娜·0420），交互测试抉择 A/B/C/D 如何改变《工作日志》背面的俄式“卌”字血划痕并分流向 5 大结局。",
+        secArtTitle: "诺沃斯克-17 美术与氛围靶心（直接指导 Godot 4 Light2D 与 CanvasItem Shader 参数）",
+        con1Title: "诺沃斯克-17 三幕冷暖色彩与光照脚本",
+        con2Title: "核心角色与“三态辨识”设定总表",
+        con3Title: "《双面工作日志（Рабочий Журнал）》与“卌”字账",
+        gdTitle: "已内置可直接导入 Godot 4.3+ 的核心脚本、Shader 与配置 (`godot_project/`)"
+      },
+      en: {
+        hdrTitle: "Year of Z: Iron Winter (v4.0) — Interactive Prototype Portal & Godot 4 Hub",
+        secProtoTitle: "Three Interactive HTML5 Prototype Sandboxes (Aligned to v4.0 Novorsk-17 Bilingual Spec)",
+        p1Title: "5-in-1 Playable Greybox Prototype Gym (Rooms A–E)",
+        p1Desc: "Playable verification of O.S.K. 45° searchlight 'Borrowing the Knife' (Room A), Railway Crowbar Door Wedge & 12cm Gap Lunchbox Push (Room B), Paper Dead & Choice A (Room C), Wolfdog 'Ash' Tri-State AI (Room D), and Vasily's Collarbone Blade Jam QTE + 'Пить' PTSD (Room E).",
+        p2Title: "Top-Down Tactical Level Flow Blueprint (v4.0 Novorsk-17)",
+        p2Desc: "Upgraded to v4.0 Bilingual Edition! Covers L02 Cold Storage No. 4, L03 Birch Grove 4 PM Hatch, L05 East St. Kitchen Blade Jam, L07 Pine Manor Tar-Black Snow, and L10 Hill 302 Old Pavel's 10,000V Flesh Switch.",
+        p3Title: "Dual-Anchor Narrative & '卌' Tally 5-Ending Simulator",
+        p3Desc: "Simulate how Day Anchor (Mama Katya's dialysis in Apt 602) and Night Hook (Sister Lana 0420 in Carriage No. 3) converge across Choices A/B/C/D and the Russian 5-stroke guilt tally (卌).",
+        secArtTitle: "Novorsk-17 P0 Concept Art Visual Targets (Direct Reference for Godot 4 Light2D & Shaders)",
+        con1Title: "Novorsk-17 Three-Act Color & Lighting Script",
+        con2Title: "Core Characters & Tri-State Identification Sheet",
+        con3Title: "Diegetic Dual-Sided Work Logbook & '卌' Tally UI",
+        gdTitle: "Ready-to-Import Godot 4.3+ Scripts, Shaders & Collision Config (`godot_project/`)"
+      }
+    };
+
+    // Prototype Launcher Handler (GitHub Pages redirect + Canvas Status Toast)
+    document.querySelectorAll(".proto-launch-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.proto;
+        const title = btn.dataset.title;
+        if (window.location.protocol.startsWith("http") && !window.location.href.includes("blob:")) {
+          window.location.href = target;
+        } else {
+          const toast = document.getElementById("portalToast");
+          const toastMsg = document.getElementById("portalToastMsg");
+          if (toast && toastMsg) {
+            toastMsg.textContent = "[TELETYPE ROUTE] GitHub Pages Path: " + target + " | 沙盒预览模式下请直接点击下方卡片打开：《" + title + "》";
+            toast.classList.remove("hidden");
+          }
+        }
+      });
+    });
+
+    document.getElementById("btnLang").addEventListener("click", () => {
+      lang = lang === "zh" ? "en" : "zh";
+      const d = DICT[lang];
+      Object.keys(d).forEach(k => {
+        const el = document.getElementById(k);
+        if (el) el.textContent = d[k];
+      });
+    });
+  </script>
+</body>
+</html>

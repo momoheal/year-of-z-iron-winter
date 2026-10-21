@@ -3,21 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>《Z年纪事》核心关卡俯视角平面动线与战术蓝图系统</title>
+  <title>Year of Z: Iron Winter (v4.0) — Top-Down Level Flow & Tactical Blueprints | 《Z年纪事：凛冬铁轨》核心关卡俯视角平面动线图</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0b0d10;
-      --panel-dark: #12161b;
+      --bg-dark: #090b0f;
+      --panel-dark: #11151c;
       --border-dark: #242c37;
-      --stamp-blue: #3b82f6;
-      --system-green: #10b981;
-      --threat-red: #ef4444;
-      --warn-amber: #f59e0b;
-      --magic-purple: #a855f7;
     }
     body {
       font-family: 'Inter', 'Noto Sans SC', sans-serif;
@@ -28,7 +23,6 @@
     .mono {
       font-family: 'JetBrains Mono', monospace;
     }
-    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -40,11 +34,8 @@
       background: #2d3748;
       border-radius: 3px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #4a5568;
-    }
     .blueprint-grid {
-      background-image: 
+      background-image:
         linear-gradient(to right, rgba(59, 130, 246, 0.07) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(59, 130, 246, 0.07) 1px, transparent 1px),
         linear-gradient(to right, rgba(59, 130, 246, 0.16) 1px, transparent 1px),
@@ -52,60 +43,63 @@
       background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
     }
     .truth-grid {
-      background-image: 
-        linear-gradient(to right, rgba(226, 232, 240, 0.06) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(226, 232, 240, 0.06) 1px, transparent 1px),
-        linear-gradient(to right, rgba(226, 232, 240, 0.14) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(226, 232, 240, 0.14) 1px, transparent 1px);
+      background-image:
+        linear-gradient(to right, rgba(245, 158, 11, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(245, 158, 11, 0.06) 1px, transparent 1px),
+        linear-gradient(to right, rgba(245, 158, 11, 0.14) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(245, 158, 11, 0.14) 1px, transparent 1px);
       background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
     }
-    .glasses- cracked {
-      filter: blur(0.6px) contrast(1.08);
-    }
-    @keyframes dashFlow {
-      to {
-        stroke-dashoffset: -40;
-      }
-    }
-    .flow-line-animated {
-      animation: dashFlow 1.6s linear infinite;
+    .glasses-cracked {
+      filter: blur(0.5px) contrast(1.08) drop-shadow(2px 0 0 rgba(239,68,68,0.3));
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#0b0d10] text-slate-200 select-none">
+<body class="min-h-screen flex flex-col bg-[#090b0f] text-slate-200 select-none">
 
   <!-- Top Header & Level Navigation -->
-  <header class="border-b border-slate-800 bg-[#11151c]/95 backdrop-blur sticky top-0 z-30 px-4 py-2.5">
+  <header class="border-b border-slate-800 bg-[#10141c]/95 backdrop-blur sticky top-0 z-30 px-4 py-2.5">
     <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <div class="w-3 h-8 bg-blue-500 rounded-sm shadow-[0_0_12px_rgba(59,130,246,0.8)]" id="brandIndicator"></div>
+        <div class="w-3 h-8 bg-amber-500 rounded-sm shadow-[0_0_12px_rgba(245,158,11,0.8)]" id="brandIndicator"></div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">《Z年纪事》俯视角关卡平面动线蓝图</h1>
-            <span class="mono text-[11px] px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30" id="modeBadge">Z-YEAR MAGICAL REALISM</span>
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white" id="hdrTitle">
+              《Z年纪事：凛冬铁轨 v4.0》俯视角核心关卡平面动线与战术沙盘
+            </h1>
+            <span class="mono text-[11px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30" id="modeBadge">
+              NOVORSK-17 · V4.0 BLUEPRINT
+            </span>
           </div>
-          <p class="text-xs text-slate-400 hidden sm:block">2.5D Top-Down Tactical Level Design & Player Flow Sandbox · 支持移动许晨位置、旋转90°视野、切换一/二周目图层</p>
+          <p class="text-xs text-slate-400 hidden sm:block" id="hdrSub">
+            2.5D (75° Oblique) Tactical Level Design Sandbox · 拖拽阿列克谢(P)移动位置、旋转90°视野、切换中英双语与二周目真实图层
+          </p>
         </div>
       </div>
 
-      <!-- Level Selector Tabs -->
-      <nav class="flex items-center gap-1.5 overflow-x-auto py-1" id="levelTabs" aria-label="关卡选择">
-        <button type="button" data-level="L02" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-blue-600 text-white shadow-sm">
-          L02 · 旧四号冷库与雨棚
+      <!-- Level Selector Tabs & Language Switch -->
+      <div class="flex flex-wrap items-center gap-1.5 py-1">
+        <nav class="flex items-center gap-1.5 overflow-x-auto" id="levelTabs" aria-label="Level Select">
+          <button type="button" data-level="L02" class="level-tab px-2.5 py-1.5 rounded text-xs font-semibold transition-all bg-blue-600 text-white shadow-sm" id="tabL02">
+            L02 · 四号冷库与首潜
+          </button>
+          <button type="button" data-level="L03" class="level-tab px-2.5 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700" id="tabL03">
+            L03 · 白桦林四点整死窗
+          </button>
+          <button type="button" data-level="L05" class="level-tab px-2.5 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700" id="tabL05">
+            L05 · 东街食堂锁骨卡刀
+          </button>
+          <button type="button" data-level="L07" class="level-tab px-2.5 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700" id="tabL07">
+            L07 · 松林庄园焦油黑雪
+          </button>
+          <button type="button" data-level="L10" class="level-tab px-2.5 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700" id="tabL10">
+            L10 · 302高地血肉闸刀
+          </button>
+        </nav>
+        <button type="button" id="btnLangSwitch" class="px-2.5 py-1.5 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs mono transition">
+          🌐 EN / 中文
         </button>
-        <button type="button" data-level="L03" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700">
-          L03 · 锦绣苑四点整死窗
-        </button>
-        <button type="button" data-level="L05" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700">
-          L05 · 东街血砧板后厨
-        </button>
-        <button type="button" data-level="L07" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700">
-          L07 · 北苑特供仓与烤肉雪
-        </button>
-        <button type="button" data-level="L10" class="level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700">
-          L10 · 302高地死线广播塔
-        </button>
-      </nav>
+      </div>
     </div>
   </header>
 
@@ -114,37 +108,37 @@
     <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
       <!-- Layer Toggles -->
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-slate-400 font-medium mr-1">战术图层:</span>
+        <span class="text-slate-400 font-medium mr-1" id="lblLayers">战术图层:</span>
         <button type="button" id="togglePrimaryPath" class="px-2.5 py-1 rounded border border-emerald-500/50 bg-emerald-500/15 text-emerald-300 flex items-center gap-1.5 transition">
-          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>主推进动线
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span><span id="txtLayerPrimary">白昼/主推进动线</span>
         </button>
         <button type="button" id="toggleAltPath" class="px-2.5 py-1 rounded border border-amber-500/50 bg-amber-500/15 text-amber-300 flex items-center gap-1.5 transition">
-          <span class="w-2 h-2 rounded-full bg-amber-400"></span>潜行/推车分支动线
+          <span class="w-2 h-2 rounded-full bg-amber-400"></span><span id="txtLayerAlt">黑夜潜行/分支动线</span>
         </button>
         <button type="button" id="toggleThreats" class="px-2.5 py-1 rounded border border-rose-500/50 bg-rose-500/15 text-rose-300 flex items-center gap-1.5 transition">
-          <span class="w-2 h-2 rounded-full bg-rose-500"></span>威胁射界与封锁区
+          <span class="w-2 h-2 rounded-full bg-rose-500"></span><span id="txtLayerThreat">清杀队探照灯与威胁区</span>
         </button>
         <button type="button" id="toggleAudio" class="px-2.5 py-1 rounded border border-cyan-500/50 bg-cyan-500/15 text-cyan-300 flex items-center gap-1.5 transition">
-          <span class="w-2 h-2 rounded-full bg-cyan-400"></span>听觉迷雾波纹
+          <span class="w-2 h-2 rounded-full bg-cyan-400"></span><span id="txtLayerAudio">三色声音波纹</span>
         </button>
         <button type="button" id="toggleMagic" class="px-2.5 py-1 rounded border border-purple-500/50 bg-purple-500/15 text-purple-300 flex items-center gap-1.5 transition">
-          <span class="w-2 h-2 rounded-full bg-purple-400"></span>魔幻现实奇观层
+          <span class="w-2 h-2 rounded-full bg-purple-400"></span><span id="txtLayerAnomaly">官僚荒诞/高热异象层</span>
         </button>
         <button type="button" id="toggleVision" class="px-2.5 py-1 rounded border border-blue-500/50 bg-blue-500/15 text-blue-300 flex items-center gap-1.5 transition">
-          <span class="w-2 h-2 rounded-full bg-blue-400"></span>90°扇形视野模拟
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span><span id="txtLayerVision">90°扇形视野模拟</span>
         </button>
       </div>
 
-      <!-- Right Controls: Glasses State, Route Variant & Truth Mode -->
+      <!-- Right Controls: Glasses State, Route Variant & Clinical Truth Mode -->
       <div class="flex flex-wrap items-center gap-2">
         <button type="button" id="btnGlassesState" class="px-2.5 py-1 rounded border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition mono">
-          👓 眼镜状态: 完好 (100%视距)
+          👓 眼镜: 完好 (100%视距)
         </button>
         <button type="button" id="btnRouteVariant" class="px-2.5 py-1 rounded border border-orange-500/40 bg-orange-500/10 text-orange-300 hover:bg-orange-500/20 transition">
-          🏠 当前路线: 家园线 (保母潜行)
+          🏠 路线: 守母家园线 (602室)
         </button>
         <button type="button" id="btnTruthMode" class="px-3 py-1 rounded font-semibold border border-amber-400/60 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 transition shadow-sm">
-          👁️ 切换【二周目：零号真实模式】
+          👁️ 切换【二周目：临床真实视角】
         </button>
       </div>
     </div>
@@ -152,21 +146,23 @@
 
   <!-- Main Workspace: Left Map Canvas + Right Tactical Inspector -->
   <main class="flex-1 max-w-[1600px] w-full mx-auto p-3 sm:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-    
+
     <!-- Left Column: Interactive Top-Down Map Canvas (8 cols on lg) -->
     <div class="lg:col-span-8 flex flex-col bg-[#0e1217] border border-slate-800 rounded-lg overflow-hidden shadow-xl">
       <!-- Map Header Bar -->
       <div class="px-4 py-2.5 bg-[#141a23] border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
         <div>
           <div class="flex items-center gap-2">
-            <span class="mono text-xs font-bold text-blue-400" id="mapCodeLabel">MAP_L02_COLD_STORAGE</span>
-            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300" id="mapScaleLabel">比例尺 1:150 · 建议时长 18-25 min</span>
+            <span class="mono text-xs font-bold text-amber-400" id="mapCodeLabel">MAP_L02_COLD_STORAGE_NOVORSK17</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300" id="mapScaleLabel">1m = 64px · 建议时长 20-25 min</span>
           </div>
-          <h2 class="text-sm sm:text-base font-bold text-white mt-0.5" id="mapTitleLabel">L02 · 城北旧四号冷库与雨棚（空货位与无影人）</h2>
+          <h2 class="text-sm sm:text-base font-bold text-white mt-0.5" id="mapTitleLabel">
+            L02 · 四号铁路冷库与广轨盲道首潜（账面死人谢尔盖 & 借刀杀人）
+          </h2>
         </div>
         <div class="flex items-center gap-2 text-xs">
           <button type="button" id="btnSimStep" class="px-2.5 py-1 rounded bg-emerald-600/25 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/40 transition">
-            ▶ 沿主线推进许晨位置
+            ▶ 推进阿列克谢位置
           </button>
           <button type="button" id="btnResetPos" class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">
             ↺ 重置起点
@@ -179,32 +175,31 @@
         <canvas id="blueprintCanvas" class="w-full h-full block"></canvas>
 
         <!-- Floating HUD Overlay inside Map -->
-        <div class="absolute top-3 left-3 pointer-events-none flex flex-col gap-1.5 bg-slate-950/85 border border-slate-800/90 rounded p-2.5 text-[11px] backdrop-blur-sm max-w-[260px]">
+        <div class="absolute top-3 left-3 pointer-events-none flex flex-col gap-1.5 bg-slate-950/85 border border-slate-800/90 rounded p-2.5 text-[11px] backdrop-blur-sm max-w-[280px]">
           <div class="flex items-center justify-between gap-4">
-            <span class="text-slate-400">许晨心率 (BPM):</span>
-            <span class="mono font-bold text-emerald-400" id="hudHeartRate">78 BPM (平稳)</span>
+            <span class="text-slate-400" id="lblHudBpm">阿列克谢心率 (BPM):</span>
+            <span class="mono font-bold text-emerald-400" id="hudHeartRate">82 BPM</span>
           </div>
           <div class="flex items-center justify-between gap-4">
-            <span class="text-slate-400">手背蓝印章侵蚀:</span>
-            <span class="mono font-bold text-blue-400" id="hudBlueStamp">15% (手背毛细血管)</span>
+            <span class="text-slate-400" id="lblHudStamp">手背二级留观蓝印油:</span>
+            <span class="mono font-bold text-blue-400" id="hudBlueStamp">CLASS-II STAMPED</span>
           </div>
           <div class="flex items-center justify-between gap-4">
-            <span class="text-slate-400">手持核心工具:</span>
-            <span class="mono text-amber-300" id="hudTool">铸铁撬棍 (可卡门×2)</span>
+            <span class="text-slate-400" id="lblHudTool">随身装备:</span>
+            <span class="mono text-amber-300" id="hudTool">铸铁道钉撬棍 (Лом)</span>
           </div>
-          <div class="text-[10px] text-slate-400 border-t border-slate-800 pt-1 mt-0.5">
-            💡 <span class="text-slate-200">操作提示</span>：点击地图节点查看详情；拖拽<span class="text-emerald-400 font-semibold">许晨(P)</span>改变位置；移动鼠标旋转 90° 扇形视野。
+          <div class="text-[10px] text-slate-400 border-t border-slate-800 pt-1 mt-0.5" id="hudHintText">
+            💡 点击节点查看详情；拖拽<span class="text-emerald-400 font-semibold">阿列克谢(P)</span>移动位置；移动鼠标旋转 90° 视野锥。
           </div>
         </div>
 
         <!-- Bottom Legend Overlay -->
         <div class="absolute bottom-2.5 left-3 right-3 pointer-events-none flex flex-wrap items-center justify-between gap-2 bg-slate-950/90 border border-slate-800/90 rounded px-3 py-1.5 text-[11px]">
           <div class="flex flex-wrap items-center gap-3">
-            <span class="flex items-center gap-1"><span class="w-3 h-1 bg-emerald-400 inline-block"></span>主行动线</span>
-            <span class="flex items-center gap-1"><span class="w-3 h-1 bg-amber-400 border-b border-dashed inline-block"></span>潜行/绕行线</span>
-            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>狂暴/清剿威胁</span>
-            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-purple-400 inline-block"></span>魔幻现实奇观</span>
-            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500 inline-block"></span>撬棍卡门点(Choke)</span>
+            <span class="flex items-center gap-1"><span class="w-3 h-1 bg-emerald-400 inline-block"></span><span id="legMain">主行动线</span></span>
+            <span class="flex items-center gap-1"><span class="w-3 h-1 bg-amber-400 border-b border-dashed inline-block"></span><span id="legAlt">夜潜/分支线</span></span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span><span id="legThreat">清杀队(ОСК)/狂暴者</span></span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500 inline-block"></span><span id="legChoke">道钉撬棍卡门点(Wedge)</span></span>
           </div>
           <span class="mono text-slate-400" id="cursorCoords">X: 120m, Y: 85m</span>
         </div>
@@ -213,8 +208,8 @@
       <!-- Flow Timeline Stepper Bar -->
       <div class="px-4 py-3 bg-[#121720] border-t border-slate-800">
         <div class="text-xs font-semibold text-slate-400 mb-2 flex items-center justify-between">
-          <span>关卡节拍与动线阶段（点击阶段可快速定位许晨与拆解节点）：</span>
-          <span class="mono text-[11px] text-blue-400" id="activePhaseBadge">阶段 1 / 5</span>
+          <span id="lblStepperTitle">关卡节拍与动线阶段（点击阶段可快速定位阿列克谢与拆解节点）：</span>
+          <span class="mono text-[11px] text-amber-400" id="activePhaseBadge">STAGE 1 / 5</span>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="phaseStepsContainer">
           <!-- Populated dynamically via JS -->
@@ -222,207 +217,406 @@
       </div>
     </div>
 
-    <!-- Right Column: Tactical Inspector & Dual Ledger Details (4 cols on lg) -->
+    <!-- Right Column: Tactical Inspector & Dual Logbook Details (4 cols on lg) -->
     <div class="lg:col-span-4 flex flex-col gap-4">
-      
+
       <!-- Card 1: Selected Node Inspector -->
       <div class="bg-[#12161b] border border-slate-800 rounded-lg p-4 shadow-lg">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-3">
           <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-xs font-bold mono bg-blue-500/20 text-blue-400 border border-blue-500/30" id="nodeIdBadge">N-01</span>
-            <h3 class="text-sm font-bold text-white" id="nodeTitle">废弃收发亭 · 灰毛狗（灰灰）</h3>
+            <span class="px-2 py-0.5 rounded text-xs font-bold mono bg-amber-500/20 text-amber-300 border border-amber-500/30" id="nodeIdBadge">N-01</span>
+            <h3 class="text-sm font-bold text-white" id="nodeTitle">废弃收发亭 · 灰狼犬“灰烬 (Пепел)”</h3>
           </div>
-          <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300" id="nodeTypeTag">伙伴招募 / 潜行起点</span>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300" id="nodeTypeTag">伙伴入队</span>
         </div>
 
         <div class="space-y-3 text-xs leading-relaxed">
           <div>
-            <div class="text-slate-400 font-medium mb-1">📐 空间结构与掩体拓扑：</div>
-            <p class="text-slate-200 bg-slate-900/70 p-2.5 rounded border border-slate-800/80" id="nodeSpatialDesc">
-              位于园区大门外西侧 15 米半开放砖混亭，窗户已拆（提供 180° 观察射界），内有破花盆可作低矮掩体。是进入南库前的唯一安全整备点。
-            </p>
+            <div class="text-slate-400 font-medium mb-1" id="lblSpatial">📐 空间结构与掩体拓扑 (Godot 4 Collision):</div>
+            <p class="text-slate-200 bg-slate-900/70 p-2.5 rounded border border-slate-800/80" id="nodeSpatialDesc"></p>
           </div>
 
           <div>
-            <div class="text-slate-400 font-medium mb-1">🎮 动线交互与玩法机制（Gameplay Hook）：</div>
-            <p class="text-slate-200 bg-slate-900/70 p-2.5 rounded border border-slate-800/80" id="nodeGameplayDesc">
-              玩家下车活动时触发花盆异响。选择将早上剩下的半块冷面饼掰碎放在 3 米外并后退（不强行抚摸），灰灰将闻一闻许晨手背上的蓝印章并保持 5 米距离跟随，解锁【嗅觉辨识波纹】被动能力。
-            </p>
+            <div class="text-slate-400 font-medium mb-1" id="lblGameplay">🎮 动线交互与玩法机制 (Gameplay Hook):</div>
+            <p class="text-slate-200 bg-slate-900/70 p-2.5 rounded border border-slate-800/80" id="nodeGameplayDesc"></p>
           </div>
 
           <div class="p-2.5 rounded border border-purple-500/30 bg-purple-950/20" id="nodeMagicBox">
             <div class="text-purple-300 font-semibold mb-1 flex items-center justify-between">
-              <span id="nodeMagicHeader">✨ 魔幻现实奇观 / 二周目反转：</span>
-              <span class="mono text-[10px] uppercase text-purple-400">Magical Realism</span>
+              <span id="nodeMagicHeader">✨ 官僚荒诞细节 / 临床回退真相：</span>
+              <span class="mono text-[10px] uppercase text-purple-400">NOVORSK-17</span>
             </div>
-            <p class="text-purple-100/90" id="nodeMagicDesc">
-              灰灰不看食物，先对着许晨手背上正在往血管里钻的“留观初筛”蓝印章发出悲悯呜咽。它能看见南库里没有影子的活人。
-            </p>
+            <p class="text-purple-100/90" id="nodeMagicDesc"></p>
           </div>
         </div>
       </div>
 
-      <!-- Card 2: Dual Ledger & Route Impact -->
+      <!-- Card 2: Dual Logbook & Tally Impact -->
       <div class="bg-[#12161b] border border-slate-800 rounded-lg p-4 shadow-lg">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-          <h3 class="text-sm font-bold text-white flex items-center gap-2">
-            <span>📓 《双面笔记本》该关核心检定</span>
+          <h3 class="text-sm font-bold text-white flex items-center gap-2" id="lblLogbookCardTitle">
+            📓 《双面工作日志（Рабочий Журнал）》本关检定
           </h3>
-          <span class="mono text-[11px] text-amber-400">TAB_LEDGER_CHECK</span>
+          <span class="mono text-[11px] text-amber-400">TALLY_CHECK (卌)</span>
         </div>
 
         <div class="grid grid-cols-1 gap-2.5 text-xs">
           <div class="p-2.5 rounded bg-slate-900/90 border-l-2 border-emerald-500">
-            <div class="font-semibold text-emerald-400 mb-1">【正面：填报给体制的官样数字】</div>
-            <p class="text-slate-300" id="ledgerFrontText">
-              下拉菜单仅限填报【现场无人】或【已移交】。若直接勾选“无人”快速结单，南库 3 号柱的孙建国母子将在次日彻底失去物理碰撞体积并消失，蓝印章侵蚀 +15%。
-            </p>
+            <div class="font-semibold text-emerald-400 mb-1" id="lblLogFront">【正面：区管委电传核销表】</div>
+            <p class="text-slate-300" id="ledgerFrontText"></p>
           </div>
 
           <div class="p-2.5 rounded bg-slate-900/90 border-l-2 border-amber-400">
-            <div class="font-semibold text-amber-300 mb-1">【背面：用钢笔刻下的活人真名】</div>
-            <p class="text-slate-300" id="ledgerBackText">
-              撕下纸页亲手写下“孙建国、李秀芝，10月18日仍在南库3号柱”，并把水壶递过去。写完瞬间两人脚下重新长出黑影，终章 302 高地广播声浪强度 +1。
-            </p>
+            <div class="font-semibold text-amber-300 mb-1" id="lblLogBack">【背面：左页真名录 & 右页“卌”字划痕】</div>
+            <p class="text-slate-300" id="ledgerBackText"></p>
           </div>
         </div>
       </div>
 
-      <!-- Card 3: Level Design Metrics & Choke Point Analysis -->
+      <!-- Card 3: Level Design Metrics & Godot 4 Implementation Notes -->
       <div class="bg-[#12161b] border border-slate-800 rounded-lg p-4 shadow-lg">
-        <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2 mb-3">⚙️ 关卡设计参数与路线差异</h3>
-        <div class="space-y-2 text-xs" id="levelMetricsList">
-          <!-- Populated dynamically -->
-        </div>
+        <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2 mb-3" id="lblMetricsCardTitle">
+          ⚙️ 关卡设计参数与 Godot 4 节点规范
+        </h3>
+        <div class="space-y-2 text-xs" id="levelMetricsList"></div>
       </div>
 
     </div>
   </main>
 
   <script>
-    // Complete Level Blueprint Database (5 Representative Core Levels)
+    // =========================================================================
+    // V4.0 BILINGUAL LEVEL BLUEPRINT DATABASE (NOVORSK-17 · RUSSIAN WINTER)
+    // =========================================================================
+    let lang = "zh";
+
+    const UI_STRINGS = {
+      zh: {
+        hdrTitle: "《Z年纪事：凛冬铁轨 v4.0》俯视角核心关卡平面动线与战术沙盘",
+        hdrSub: "2.5D (75°斜俯视) 关卡设计蓝图 · 拖拽阿列克谢(P)移动位置、旋转90°视野、切换中英双语与临床真实图层",
+        tabs: {
+          L02: "L02 · 四号冷库与首潜",
+          L03: "L03 · 白桦林四点整死窗",
+          L05: "L05 · 东街食堂锁骨卡刀",
+          L07: "L07 · 松林庄园焦油黑雪",
+          L10: "L10 · 302高地血肉闸刀"
+        },
+        lblLayers: "战术图层:",
+        txtLayerPrimary: "白昼/主推进动线",
+        txtLayerAlt: "黑夜潜行/分支动线",
+        txtLayerThreat: "清杀队探照灯与威胁区",
+        txtLayerAudio: "三色声音波纹",
+        txtLayerAnomaly: "官僚荒诞/高热异象层",
+        txtLayerVision: "90°扇形视野模拟",
+        glassesOk: "👓 眼镜: 完好 (100%视距)",
+        glassesBroken: "👓 眼镜: 碎裂 (视距-40%/重影)",
+        routeHome: "🏠 路线: 守母家园线 (602室)",
+        routeOutland: "🔥 路线: 失母荒原游击线",
+        truthOff: "👁️ 切换【二周目：临床真实视角】",
+        truthOn: "🌀 返回【一周目：极寒压迫视角】",
+        btnStep: "▶ 推进阿列克谢位置",
+        btnReset: "↺ 重置起点",
+        lblHudBpm: "阿列克谢心率 (BPM):",
+        lblHudStamp: "手背二级留观蓝印油:",
+        lblHudTool: "随身装备:",
+        legMain: "主行动线",
+        legAlt: "夜潜/分支线",
+        legThreat: "清杀队(ОСК)/狂暴者",
+        legChoke: "道钉撬棍卡门点(Wedge)",
+        lblStepperTitle: "关卡节拍与动线阶段（点击阶段可快速定位阿列克谢与拆解节点）：",
+        lblSpatial: "📐 空间结构与掩体拓扑 (Godot 4 Collision):",
+        lblGameplay: "🎮 动线交互与玩法机制 (Gameplay Hook):",
+        magicHdrNormal: "✨ 官僚荒诞细节与戏剧张力：",
+        magicHdrTruth: "👁️ 【二周目：临床自愈真相】还原：",
+        lblLogbookCardTitle: "📓 《双面工作日志（Рабочий Журнал）》本关检定",
+        lblLogFront: "【正面：区管委电传核销表】",
+        lblLogBack: "【背面：左页真名录 & 右页“卌”字划痕】",
+        lblMetricsCardTitle: "⚙️ 关卡设计参数与 Godot 4 节点规范"
+      },
+      en: {
+        hdrTitle: "Year of Z: Iron Winter (v4.0) — Top-Down Level Flow & Tactical Blueprints",
+        hdrSub: "2.5D (75° Oblique) Tactical Level Sandbox · Drag Aleksei (P), rotate 90° vision cone, toggle ZH/EN & Clinical Truth layer",
+        tabs: {
+          L02: "L02 · Cold Storage & Stalk 1",
+          L03: "L03 · Birch Grove 4 PM Hatch",
+          L05: "L05 · East St. Kitchen Cleaver",
+          L07: "L07 · Pine Manor Tar-Black Snow",
+          L10: "L10 · Hill 302 Flesh Switch"
+        },
+        lblLayers: "Tactical Layers:",
+        txtLayerPrimary: "Day / Primary Flow",
+        txtLayerAlt: "Night Stealth / Branch Flow",
+        txtLayerThreat: "O.S.K. Searchlight & Threat",
+        txtLayerAudio: "Tri-Color Audio Ripples",
+        txtLayerAnomaly: "Bureaucratic Irony Layer",
+        txtLayerVision: "90° Vision Cone Sim",
+        glassesOk: "👓 Glasses: Intact (100% FoV)",
+        glassesBroken: "👓 Glasses: Cracked (-40% FoV)",
+        routeHome: "🏠 Route: Home Tethered (Apt 602)",
+        routeOutland: "🔥 Route: Motherless Outland",
+        truthOff: "👁️ Toggle [NG+ Clinical Truth View]",
+        truthOn: "🌀 Return to [Standard Fever View]",
+        btnStep: "▶ Advance Aleksei Along Flow",
+        btnReset: "↺ Reset Spawn",
+        lblHudBpm: "Aleksei Heart Rate:",
+        lblHudStamp: "Violet-Blue Hand Stamp:",
+        lblHudTool: "Active Loadout:",
+        legMain: "Primary Path",
+        legAlt: "Night Stealth Path",
+        legThreat: "O.S.K. / Rabid Cone",
+        legChoke: "Crowbar Wedge Choke",
+        lblStepperTitle: "Level Beats & Flow Stages (Click stage to teleport Aleksei & inspect node):",
+        lblSpatial: "📐 Spatial Topology & Cover (Godot 4 Collision):",
+        lblGameplay: "🎮 Gameplay Hook & Mechanics:",
+        magicHdrNormal: "✨ Bureaucratic Irony & Narrative Detail:",
+        magicHdrTruth: "👁️ [NG+ Clinical Regression Truth]:",
+        lblLogbookCardTitle: "📓 Dual Work Logbook (Рабочий Журнал) Check",
+        lblLogFront: "[Front Page: Official District Teletype Form]",
+        lblLogBack: "[Back Page: Real Names & '卌' Guilt Tally]",
+        lblMetricsCardTitle: "⚙️ Level Metrics & Godot 4 Node Spec"
+      }
+    };
+
     const LEVEL_DATA = {
       L02: {
-        code: "MAP_L02_COLD_STORAGE",
-        title: "L02 · 城北旧四号冷库与雨棚（空货位与无影人）",
-        scale: "比例尺 1:150 · 空间尺寸 120m × 75m",
-        defaultTool: "铸铁撬棍 (耐久 100%)",
-        heartRate: "82 BPM (警惕)",
-        blueStamp: "15% (手背初筛章)",
-        ledgerFront: "下拉菜单仅限填报【现场无人】或【已移交】。若直接勾选“无人”快速结单，南库 3 号柱的孙建国母子将在次日彻底失去物理碰撞体积并消失，蓝印章侵蚀 +15%。",
-        ledgerBack: "撕下纸页亲手写下“孙建国、李秀芝，10月18日仍在南库3号柱”，并把水壶递过去。写完瞬间两人脚下重新长出黑影，终章 302 高地广播声浪强度 +1。",
+        code: "MAP_L02_COLD_STORAGE_NOVORSK17",
+        title: {
+          zh: "L02 · 四号铁路冷库与广轨盲道首潜（账面死人谢尔盖 & 借刀杀人）",
+          en: "L02 · Railway Cold Storage No. 4 & First Night Stalk (Sergey & Borrowing the Knife)"
+        },
+        scale: {
+          zh: "比例尺 1m=64px · 空间跨度 120m × 75m · 昼夜双循环",
+          en: "Scale 1m=64px · Arena 120m × 75m · Day/Night Dual Loop"
+        },
+        defaultTool: {
+          zh: "铸铁道钉撬棍 (Лом) + 空沙丁鱼铁罐×3",
+          en: "Railway Spike Crowbar (Лом) + 3 Empty Tin Cans"
+        },
+        heartRate: "84 BPM",
+        blueStamp: "CLASS-II STAMPED",
+        ledgerFront: {
+          zh: "切尔诺夫中士的电传扫码器显示：【档案0892：昨日22:00已移交乌拉尔站，当前南库坐标在册人数：0】。若顺从勾选“0人”，配给箱直接锁死。",
+          en: "Sergeant Chernov's teletype scanner reads: [FILE 0892: TRANSFERRED. CURRENT COORDINATE HEADCOUNT: 0]. Checking '0 Persons' locks the ration crate."
+        },
+        ledgerBack: {
+          zh: "在背面左页用钢笔写下『谢尔盖、玛丽亚，11月18日滞留南库3号柱，活人』；夜潜涵洞遇到退烧半人青年选 A1 喂阿司匹林温水（+0道划痕）或选 A3 撬棍灭口（+2道卌字血痕）。",
+          en: "Write 'Sergey & Maria, Nov 18 at Pillar 3, Alive' on the Back Left Page; in the night culvert, choose A1 (Feed Aspirin Water, +0 strokes) or A3 (Crowbar Kill, +2 strokes on '卌' tally)."
+        },
         metrics: [
-          { label: "核心机制教学", val: "90°扇形视野盲区探查 + 灰灰嗅觉波纹 + 首次写名锚定无影人" },
-          { label: "关键卡门点 (Choke)", val: "南库变形侧门（撬棍开门噪声引怪假警报）、北雨棚末端铁丝网门" },
-          { label: "家园线 vs 流浪线", val: "第一卷基础关卡；决定是否及时带回首批封口膜与母亲透析消息" }
+          {
+            label: { zh: "核心机制教学", en: "Core Mechanics Taught" },
+            val: { zh: "灰狼犬“灰烬”三态嗅觉 + 门底12cm窄缝推铝饭盒 + 扔空罐头引清杀队借刀杀人", en: "Wolfdog 'Ash' Tri-State AI + 12cm Gap Lunchbox Push + Tin Can Lure ('Borrowing the Knife')" }
+          },
+          {
+            label: { zh: "关键卡门点 (Choke)", en: "Crowbar Wedge Choke" },
+            val: { zh: "南库变形铁门（按住E键1.2s插进导轨锁死15s）、广轨高架蒸汽管阴影掩体", en: "South Cold Storage Steel Door (Hold E 1.2s → Locked 15s) & Overhead Steam Pipe Shadow" }
+          },
+          {
+            label: { zh: "Godot 4 关键节点", en: "Godot 4 Scene Nodes" },
+            val: { zh: "PointLight2D (清杀兵45°探照灯) + LightOccluder2D (蒸汽管) + Area2D (冻雪泥减速区)", en: "PointLight2D (O.S.K. 45° Searchlight) + LightOccluder2D (Steam Pipe) + Area2D (Frozen Slush)" }
+          }
         ],
         rooms: [
-          { x: 40, y: 200, w: 95, h: 110, label: "废弃收发亭", sub: "Entrance Booth", fill: "#161f2c", stroke: "#3b82f6" },
-          { x: 190, y: 70, w: 310, h: 210, label: "南库 · 原退货周转仓 (South Warehouse)", sub: "6个空货位 / 黄色方框棺材印", fill: "#131822", stroke: "#475569" },
-          { x: 370, y: 90, w: 110, h: 95, label: "床单隔断区", sub: "无影母子滞留点", fill: "#1e1b2e", stroke: "#a855f7", dashed: true },
-          { x: 230, y: 280, w: 230, h: 65, label: "露天积水装卸道 (Puddle Alley)", sub: "涉水移动减速35% · 足音扩散翻倍", fill: "#0f2438", stroke: "#0284c7" },
-          { x: 540, y: 80, w: 260, h: 260, label: "北侧雨棚 · 封口膜与耗材区 (North Canopy)", sub: "托盘车拖拽区 / 潮湿纸箱", fill: "#141d26", stroke: "#475569" },
-          { x: 540, y: 340, w: 260, h: 115, label: "雨棚深处 · 焊死铁网隔离间", sub: "High-Risk Quarantine Cage", fill: "#28151b", stroke: "#ef4444" }
+          { x: 35, y: 195, w: 95, h: 115, label: { zh: "废弃收发亭", en: "Dispatch Booth" }, sub: "Wolfdog 'Ash' Spawn", fill: "#161f2c", stroke: "#3b82f6" },
+          { x: 175, y: 65, w: 300, h: 205, label: { zh: "四号冷库南仓 (South Cold Storage)", en: "Cold Storage South Hall" }, sub: "3号立柱谢尔盖母子 / 报错0人", fill: "#131822", stroke: "#475569" },
+          { x: 350, y: 85, w: 110, h: 90, label: { zh: "3号柱帆布隔断", en: "Pillar 3 Tarp Corner" }, sub: "Sergey & Maria (0 Persons)", fill: "#1e1b2e", stroke: "#a855f7", dashed: true },
+          { x: 205, y: 275, w: 245, h: 65, label: { zh: "冻雪泥装卸道 (Frozen Slush Alley)", en: "Frozen Slush Unloading Alley" }, sub: "减速35% · 留湿靴印4.0s", fill: "#0f2438", stroke: "#0284c7" },
+          { x: 510, y: 65, w: 350, h: 195, label: { zh: "北雨棚与12cm铁网门 (North Canopy)", en: "North Canopy & 12cm Fence Gap" }, sub: "撬棍弯头推入黑麦铝饭盒", fill: "#141d26", stroke: "#475569" },
+          { x: 510, y: 280, w: 350, h: 190, label: { zh: "夜间广轨盲道与涵洞 (Night Curfew Tracks)", en: "Broad-Gauge Siding & Culvert (01:30)" }, sub: "清杀队(ОСК)探照灯巡逻 + 抉择A半人", fill: "#231419", stroke: "#ef4444" }
         ],
         obstacles: [
-          { x: 220, y: 110, w: 55, h: 35, label: "空货架A" },
-          { x: 295, y: 110, w: 55, h: 35, label: "空货架B" },
-          { x: 220, y: 175, w: 55, h: 35, label: "空货架C" },
-          { x: 295, y: 175, w: 55, h: 35, label: "3号立柱(转位单)" },
-          { x: 580, y: 120, w: 70, h: 40, label: "受潮空罐托盘" },
-          { x: 690, y: 120, w: 80, h: 45, label: "完好封口膜(目标)" },
-          { x: 60, y: 360, w: 120, h: 55, label: "杜平短驳货车(撤离点)" }
+          { x: 205, y: 110, w: 55, h: 35, label: { zh: "冷库空货架A", en: "Empty Rack A" } },
+          { x: 280, y: 170, w: 60, h: 35, label: { zh: "3号柱电传终端", en: "Pillar 3 Teletype" } },
+          { x: 555, y: 120, w: 85, h: 40, label: { zh: "封口膜与医疗箱", en: "Medical Supply Crate" } },
+          { x: 720, y: 165, w: 110, h: 30, label: { zh: "12cm底缝铁丝网门", en: "12cm Gap Wire Fence" } },
+          { x: 555, y: 345, w: 125, h: 28, label: { zh: "高架供暖蒸汽管(阴影)", en: "Overhead Steam Pipe" } },
+          { x: 745, y: 390, w: 90, h: 45, label: { zh: "扳道房涵洞(抉择A)", en: "Switch Culvert (Choice A)" } }
         ],
         primaryPath: [
-          { x: 85, y: 255 },
-          { x: 155, y: 255 },
-          { x: 190, y: 195 },
-          { x: 320, y: 195 },
-          { x: 410, y: 145 },
-          { x: 320, y: 260 },
-          { x: 340, y: 310 },
-          { x: 670, y: 310 },
-          { x: 720, y: 165 }
+          { x: 80, y: 250 },
+          { x: 175, y: 190 },
+          { x: 310, y: 190 },
+          { x: 395, y: 130 },
+          { x: 320, y: 305 },
+          { x: 600, y: 160 },
+          { x: 765, y: 180 }
         ],
         altPath: [
-          { x: 720, y: 165 },
-          { x: 670, y: 335 },
-          { x: 450, y: 390 },
-          { x: 120, y: 390 }
+          { x: 320, y: 305 },
+          { x: 540, y: 360 },
+          { x: 645, y: 360 },
+          { x: 785, y: 410 }
         ],
         threats: [
-          { x: 670, y: 385, r: 62, angle: -90, spread: 80, label: "铁网门狂暴装卸工", truthLabel: "饿了五天低血糖发抖的装卸工" }
+          {
+            x: 645, y: 310, r: 95, angle: 85, spread: 45,
+            label: { zh: "内务清杀兵(ОСК) 45°探照灯", en: "O.S.K. Purge Soldier 45° Searchlight" },
+            truthLabel: { zh: "戴GP-5猪嘴面具无条件开火的清杀巡逻组", en: "GP-5 Hazmat Patrol Firing on Sight" }
+          }
         ],
         audioRipples: [
-          { x: 425, y: 135, r: 45, color: "#e2e8f0", text: "“……外头有人吗……” (多重无影回音)" },
-          { x: 670, y: 350, r: 55, color: "#ef4444", text: "哐当！铁网撞击与铝饭盒滚动声" }
+          { x: 400, y: 130, r: 45, color: "#e2e8f0", text: { zh: "哔哔——电传机：当前坐标0人", en: "BEEP—Teletype: 0 Persons at Coord" } },
+          { x: 785, y: 410, r: 55, color: "#38bdf8", text: { zh: "“……Воды（水）……拉娜在三号车厢……”", en: "'…Воды (Water)… Lana is in Car 3…'" } }
         ],
         nodes: [
           {
-            id: "N-01", x: 85, y: 255, phase: 1, title: "废弃收发亭 · 投喂灰灰", type: "伙伴招募 / 起点",
-            spatial: "位于园区大门外西侧 15 米半开放砖混亭，窗户已拆，内有破花盆可作掩体。",
-            gameplay: "掰碎半块饼放在地并后退，灰灰入队。解锁被动：靠近异常人类时通过吠叫/呜咽提前预警其真实状态。",
-            magic: "灰灰先闻许晨手背上正在往血管里钻的蓝印章，发出悲悯呜咽。",
-            truth: "【真实模式】一只脖子有项圈勒痕的走失家养犬，安静跟随许晨。"
+            id: "N-01", x: 80, y: 250, phase: 1,
+            title: { zh: "废弃收发亭 · 收留灰狼犬“灰烬 (Пепел)”", en: "Dispatch Booth · Recruit Wolfdog 'Ash (Пепел)'" },
+            type: { zh: "伙伴招募 / 嗅觉AI", en: "Companion / Olfactory AI" },
+            spatial: {
+              zh: "位于四号冷库大门外西侧半开放砖混亭，提供 180° 观察射界，是进入冷库前的整备点。",
+              en: "Semi-open brick booth outside Cold Storage No. 4 gate, offering a 180° sightline before entering."
+            },
+            gameplay: {
+              zh: "掰碎半块冷黑麦饼放在地上并后退，脖颈带铁丝勒痕的西伯利亚灰狼犬“灰烬”入队，解锁【三态嗅觉辨识（狂吠/低鸣/摇尾）】。",
+              en: "Place half a cold buckwheat flatbread on the snow and step back. 'Ash' joins, unlocking 100% accurate Tri-State Olfactory AI."
+            },
+            magic: {
+              zh: "“灰烬”先嗅了嗅阿列克谢冻裂右手背上的二级留观蓝印油，发出低沉悲悯的呜咽。",
+              en: "'Ash' sniffs the indelible violet-blue observation stamp on Aleksei's frostbitten hand and whimpers softly."
+            },
+            truth: {
+              zh: "【临床真实视角】原货运站老调度员养熟的西伯利亚工作犬，能靠气味分辨高烧40℃谵妄患者与退烧清醒者。",
+              en: "[Clinical Truth] A veteran railyard working dog able to scent-distinguish 40°C febrile delirium from recovering patients."
+            }
           },
           {
-            id: "N-02", x: 190, y: 195, phase: 2, title: "南库变形侧门 · 撬棍脱手假警报", type: "物理破障 / 心理压迫",
-            spatial: "下沿卡死在水泥框里的铁皮人员门，门内为 30 米跨度回音空仓。",
-            gameplay: "许晨首次使用撬棍压门滑脱，铁头砸地发出巨响（触发全屏心率飙升至 135 BPM 的惊吓教学，实则无怪物冲出）。",
-            magic: "门缝吹出的风带着四天前转运单的蓝复写纸味，地面六个黄色方框像敞开的墓穴。",
-            truth: "【真实模式】普通的生锈仓库侧门，需要垫木块撬开。"
+            id: "N-02", x: 175, y: 190, phase: 2,
+            title: { zh: "南库变形铁门 · 道钉撬棍物理卡门教学", en: "South Steel Door · Railway Crowbar Wedge Tutorial" },
+            type: { zh: "物理卡门 (Wedge)", en: "Door Wedge Mechanic" },
+            spatial: {
+              zh: "单扇宽 1.0m 的冷库变形铁门，关门时 100% 阻挡探照灯与视线。",
+              en: "1.0m deformed steel door; blocks 100% of searchlight cones and sightlines when closed."
+            },
+            gameplay: {
+              zh: "按住 [E] 键 1.2 秒将俄式铸铁道钉撬棍插进门轨，强制锁死门体 15 秒，阻断门外威胁。",
+              en: "Hold [E] for 1.2s to jam the cast-iron railway crowbar into the door track, locking it shut for 15.0 seconds."
+            },
+            magic: {
+              zh: "铁门内侧地面画着六个黄色油漆方框，电传表上叫做“待核销库位”。",
+              en: "Six yellow paint rectangles mark the floor inside—labeled 'Pending Liquidation Slots' on the teletype."
+            },
+            truth: {
+              zh: "【临床真实视角】断电冷库的防风隔热门，用道钉撬棍弯头即可物理别死导轨。",
+              en: "[Clinical Truth] Standard insulated cold-storage door wedged shut with a dispatcher's spike crowbar."
+            }
           },
           {
-            id: "N-03", x: 410, y: 145, phase: 3, title: "3号立柱与床单隔断 · 无影母子", type: "魔幻奇观 / 笔记本检定",
-            spatial: "南库东北角，用四条蓝白格旧床单拴在货架立柱上围成的 4m×4m 死角。",
-            gameplay: "老程用红外测温枪扫描显示『4.2℃ 未检测到生命体征』。玩家必须打开《笔记本背面》写下孙建国、李秀芝真名并递水。",
-            magic: "被系统误填为『已转出』的母子在阳光下没有影子，身体呈半透明旧报纸状；写下真名瞬间，黑影从脚底重新生长出来。",
-            truth: "【真实模式】被转运车遗落在断电冷库里冻得失温、差点死于急性哮喘的母子。"
+            id: "N-03", x: 395, y: 130, phase: 3,
+            title: { zh: "3号立柱 · 账面“0人”与谢尔盖母子真名", en: "Pillar 3 · '0 Persons' & Sergey's Real Name" },
+            type: { zh: "官僚荒诞 / 日志左页", en: "Bureaucratic Irony / Logbook" },
+            spatial: {
+              zh: "南库东北角 4m×4m 帆布隔断死角，靠墙放着一台连入主脑的苏制电传扫码机。",
+              en: "4m×4m canvas tarp corner behind Pillar 3 with a networked Soviet teletype scanner."
+            },
+            gameplay: {
+              zh: "切尔诺夫中士扫码显示『当前坐标在册人数：0』导致配给箱锁死。玩家翻开《工作日志》背面左页写下谢尔盖与玛丽亚真名并递出热茶壶。",
+              en: "Chernov's scanner reads '0 PERSONS AT COORDINATE', locking the ration box. Write Sergey & Maria's real names on the Logbook Back Left Page."
+            },
+            magic: {
+              zh: "在电传终端红灯闪烁下，被系统销账的母子在惨绿屏幕反光里仿佛没有影子，直到钢笔写下真名才恢复温度。",
+              en: "Under the terminal's error glare, the 'administratively zeroed' mother and son seem shadowless until their real names are inked."
+            },
+            truth: {
+              zh: "【临床真实视角】因前夜转运专列超载而被遗落在冷库、却在总表上被提前勾了“已移交”的母子。",
+              en: "[Clinical Truth] A mother and son left behind by an overloaded train whose transfer was prematurely checked off in the ledger."
+            }
           },
           {
-            id: "N-04", x: 720, y: 165, phase: 4, title: "北雨棚干区 · 封口膜与托盘车", type: "物资搬运 / 负重动线",
-            spatial: "北侧半露天雨棚靠墙干燥区，地面缠满废弃塑料打包带。",
-            gameplay: "核对批号拍照后，需操作手动液压托盘车沿积水通道往回拉。轮轴会被积水里的旧包装带卡死，需蹲下手动清理（耗时 8 秒）。",
-            magic: "银白色的空罐头在阴天里泛着奇异的油脂香，让许晨产生强烈的胃痉挛。",
-            truth: "【真实模式】常规的食品厂急需包材盘点与手动托盘车清障。"
+            id: "N-04", x: 765, y: 180, phase: 4,
+            title: { zh: "北雨棚铁丝网门 · 12cm窄缝推黑麦铝饭盒", en: "North Canopy Fence · 12cm Gap Lunchbox Push" },
+            type: { zh: "门底交互 / 善意锚点", en: "Under-Fence Interaction" },
+            spatial: {
+              zh: "宽 1.5m 的镀锌铁丝网隔离门，底部留有 12cm 排水缝（不挡视线与探照灯，阻挡移动）。",
+              en: "1.5m wire-mesh quarantine fence with a 12cm bottom drainage gap (transparent to light/sight, blocks movement)."
+            },
+            gameplay: {
+              zh: "门内高热装卸工从 12cm 窄缝伸出刮烂的手臂够向铝饭盒。按 [E] 用撬棍弯头把温热的黑麦铝饭盒推过窄缝。",
+              en: "A starving loader reaches a scraped arm under the 12cm gap. Press [E] to push the warm buckwheat lunchbox through with your crowbar hook."
+            },
+            magic: {
+              zh: "灰狼犬“灰烬”压低耳朵发出低鸣——证明门内人并非狂暴怪物，而是正在退烧的饥饿活人。",
+              en: "Wolfdog 'Ash' flattens his ears and whimpers—confirming the man inside is a starving, recovering human."
+            },
+            truth: {
+              zh: "【临床真实视角】被反锁在隔离间断粮四天、正在从高热回退期苏醒的年轻装卸工。",
+              en: "[Clinical Truth] A young loader locked inside for four days without food whose fever is naturally breaking."
+            }
           },
           {
-            id: "N-05", x: 670, y: 340, phase: 5, title: "雨棚铁网门 · 断骨血手与铝饭盒", type: "三态辨识 / 道德抉择",
-            spatial: "雨棚南端尽头的镀锌铁丝网门，门底留有 10cm 排水窄缝，门外水坑里倒扣着一只铝饭盒。",
-            gameplay: "第二趟拉车经过时触发扑门惊吓！对方从门底窄缝硬挤出一条折断的血手够向饭盒。抉择：①用撬棍砸烂手（蓝印章+15%）；②用撬棍弯头把饭盒推过去（解锁背面记录）。",
-            magic: "饭盒里散落的几粒干饭在水坑里像活蛆一样微微蠕动，门内人的眼翳在触碰到饭盒时短暂褪去。",
-            truth: "【真实模式】被外包老板反锁在工具间五天没吃饭、低血糖休克倒地伸手够饭盒的年轻临时工。"
+            id: "N-05", x: 645, y: 360, phase: 5,
+            title: { zh: "夜间广轨涵洞 · 蒸汽管躲探照灯与抉择 A", en: "Night Broad-Gauge Culvert · Pipe Stealth & Choice A" },
+            type: { zh: "借刀杀人 / 抉择A(卌)", en: "Borrowing the Knife / Choice A" },
+            spatial: {
+              zh: "01:30 宵禁广轨盲道，中央架设 0.8m 宽高压蒸汽管阴影区，右侧扳道涵洞蜷缩着回退期半人。",
+              en: "01:30 curfew tracks with an overhead steam-pipe shadow zone and a switch culvert holding a Regressing Youth."
+            },
+            gameplay: {
+              zh: "按 [Ctrl] 蹲在蒸汽管阴影下躲过清杀兵探照灯，目睹其射杀哭喊的退烧母亲；按 [G] 扔空罐头引清杀兵消灭狂暴者；在涵洞触发【抉择A：A1喂药 vs A3灭口记卌划痕】。",
+              en: "Hold [Ctrl] in pipe shadow to evade O.S.K. searchlights; press [G] to lure O.S.K. gunfire onto rabids; resolve Choice A (A1 Aspirin vs. A3 Crowbar Kill)."
+            },
+            magic: {
+              zh: "涵洞里的半人青年手背灰鳞正成片剥落，哭着说出妹妹拉娜（0420）被关在铁壳号第三节车厢的线索。",
+              en: "Grey scales flake off the youth's hand as he whispers that Sister Lana (0420) is locked in Carriage No. 3 of the Buran."
+            },
+            truth: {
+              zh: "【临床真实视角】熬过96小时高热后免疫系统自然清除灰鳞、恢复神智的青年铁路工。",
+              en: "[Clinical Truth] A young railway worker whose immune system naturally cleared the fever after 96 hours."
+            }
           }
         ]
       },
 
       L03: {
-        code: "MAP_L03_WEEPING_HATCH",
-        title: "L03 · 锦绣苑东侧交接窗（四点整渗奶的死窗）",
-        scale: "比例尺 1:200 · 8分钟生死时速跑酷地图",
-        defaultTool: "铸铁短撬棍 + 滚烫的抗敏奶粉罐",
-        heartRate: "148 BPM (极限奔跑)",
-        blueStamp: "15% (手背初筛章)",
-        ledgerFront: "系统词条库报错 404：仅存在『普通奶粉』，深度水解抗敏配方属于非标违禁品，按规定注水消杀。",
-        ledgerBack: "写下『林悦、小满，15:59分送达东侧窗口，非特供』。林悦坠楼后，这行字在笔记本背面永远带着乳白色的水渍。",
+        code: "MAP_L03_BIRCH_GROVE_HATCH",
+        title: {
+          zh: "L03 · 白桦林公寓东侧交接窗（15:59 千斤铁闸与冻奶冰碴）",
+          en: "L03 · Birch Grove East Hatch (15:59 Electric Shutter & Frozen Milk-Ice)"
+        },
+        scale: {
+          zh: "比例尺 1m=64px · 8分钟限时跑酷地图 (15:52–16:00)",
+          en: "Scale 1m=64px · 8-Minute Timed Sprint Arena (15:52–16:00)"
+        },
+        defaultTool: {
+          zh: "铸铁道钉撬棍 + 深度水解抗敏婴儿奶粉罐",
+          en: "Railway Crowbar + Hypoallergenic Infant Formula Tin"
+        },
+        heartRate: "152 BPM",
+        blueStamp: "CLASS-II STAMPED",
+        ledgerFront: {
+          zh: "电传终端词条库报错 404：仅存在『标准1号全脂粉』，深度水解抗敏奶粉被判定为“非标违禁品”，核算员拧开来苏尔消毒水准备注水销毁。",
+          en: "Teletype database Error 404: only '[Standard Whole Milk Powder]' exists. The clerk opens a bottle of Lysol to ruin the hypoallergenic tin."
+        },
+        ledgerBack: {
+          zh: "在背面左页写下『莉莉娅、婴儿米沙（白桦林公寓402室），15:59撬棍卡闸送达』。三天后莉莉娅因整栋楼匿名举报信与泼红漆跳楼。",
+          en: "Record 'Liliya & Baby Misha (Birch Grove Apt 402), delivered at 15:59'. Three days later Liliya leaps from the 6th floor after mass denunciations."
+        },
         metrics: [
-          { label: "核心机制", val: "8分钟硬性倒计时（15:52-16:00）+ 护罐防抢夺 + 撬棍硬卡千斤电动闸门" },
-          { label: "路线博弈", val: "北侧废车便道（近但有饥民劫掠） vs 南侧大路检疫站（远且有盖章官僚拖延）" },
-          { label: "魔幻奇观", val: "16:00 焊死的三层钢板窗口，每到 15:52 准时穿透钢铁渗出温热母乳，焊枪靠近即熄火" }
+          {
+            label: { zh: "核心机制", en: "Core Mechanic" },
+            val: { zh: "8分钟硬性倒计时 + 护罐防抢夺 + 15:59道钉撬棍硬卡千斤电动铁闸", en: "8-Minute Countdown + Formula Protection + 15:59 Crowbar Shutter Wedge" }
+          },
+          {
+            label: { zh: "双路线博弈", en: "Route Tradeoff" },
+            val: { zh: "北线施工铁皮便道（省3分钟但有饥民劫掠） vs 南线主街检疫亭（404卡单拖延）", en: "North Construction Alley (Saves 3m, Starving Looters) vs. South Checkpoint (Error 404 Delay)" }
+          },
+          {
+            label: { zh: "冷峻写实暴击", en: "Brutal Realism" },
+            val: { zh: "对面阳台几十部相机与望远镜偷拍举报；焊死铁窗下老妇人每天四点前跪着抠擦冻奶冰碴", en: "Balcony cameras & denunciation box overflow; grandmother scraping frozen milk-ice under the welded hatch" }
+          }
         ],
         rooms: [
-          { x: 35, y: 180, w: 110, h: 120, label: "起点 · 社区外勤站", sub: "方阿姨托付奶粉处", fill: "#151d28", stroke: "#3b82f6" },
-          { x: 200, y: 60, w: 280, h: 115, label: "北线 · 废弃施工围挡便道 (Shortcut)", sub: "省时3分钟 / 剥落铁皮噪音区 / 饥民拦路", fill: "#1f1924", stroke: "#f59e0b", dashed: true },
-          { x: 200, y: 285, w: 280, h: 125, label: "南线 · 大路临时检疫交接亭 (Main Road)", sub: "编码404卡单拖延 / 巡查队故障车堵路", fill: "#131c27", stroke: "#475569" },
-          { x: 540, y: 95, w: 145, h: 300, label: "锦绣苑外围封锁缓冲街", sub: "原西窗已封死 → 需绕行东侧新窗", fill: "#161922", stroke: "#64748b" },
-          { x: 705, y: 120, w: 140, h: 250, label: "锦绣苑四号楼 & 东侧死窗", sub: "16:00 焊死 / 几十部手机闪光灯审视区", fill: "#29151e", stroke: "#ef4444" }
+          { x: 35, y: 180, w: 110, h: 120, label: { zh: "起点 · 第3区外勤站", en: "Start · District 3 Post" }, sub: "老妇人托付抗敏奶粉处", fill: "#151d28", stroke: "#3b82f6" },
+          { x: 195, y: 60, w: 285, h: 115, label: { zh: "北线 · 铁皮围挡施工便道 (Shortcut)", en: "North · Sheet-Metal Alley (Shortcut)" }, sub: "省时3分钟 / 踩铁皮强噪声 / 饥民拦路", fill: "#1f1924", stroke: "#f59e0b", dashed: true },
+          { x: 195, y: 285, w: 285, h: 125, label: { zh: "南线 · 主街电传检疫亭 (Main Street)", en: "South · Main St. Teletype Booth" }, sub: "词条404报错卡单 / 故障装甲车堵路", fill: "#131c27", stroke: "#475569" },
+          { x: 535, y: 95, w: 145, h: 300, label: { zh: "白桦林公寓封锁缓冲街", en: "Birch Grove Buffer Street" }, sub: "西窗已焊死 → 绕行东侧交接窗", fill: "#161922", stroke: "#64748b" },
+          { x: 700, y: 120, w: 155, h: 250, label: { zh: "白桦林4号楼 & 东侧交接铁窗", en: "Birch Grove Bldg 4 & East Hatch" }, sub: "16:00落锁 / 阳台望远镜举报区 / 举报箱", fill: "#29151e", stroke: "#ef4444" }
         ],
         obstacles: [
-          { x: 260, y: 95, w: 65, h: 35, label: "报废面包车(伏击点)" },
-          { x: 380, y: 105, w: 60, h: 35, label: "剥落铁皮围挡" },
-          { x: 310, y: 330, w: 85, h: 40, label: "抛锚巡查车(路障)" },
-          { x: 575, y: 140, w: 75, h: 35, label: "旧窗口(已铁皮封死)" },
-          { x: 685, y: 220, w: 24, h: 55, label: "东侧交接铁闸窗(决战点)" }
+          { x: 255, y: 95, w: 65, h: 35, label: { zh: "报废拉达轿车", en: "Wrecked Lada Car" } },
+          { x: 380, y: 105, w: 65, h: 35, label: { zh: "生锈铁皮围挡", en: "Rusted Sheet Metal" } },
+          { x: 305, y: 330, w: 85, h: 40, label: { zh: "抛锚巡逻车", en: "Stalled Patrol Van" } },
+          { x: 680, y: 220, w: 26, h: 55, label: { zh: "东侧电动铁闸窗", en: "East Electric Hatch" } }
         ],
         primaryPath: [
           { x: 90, y: 240 },
@@ -430,88 +624,130 @@
           { x: 440, y: 120 },
           { x: 590, y: 190 },
           { x: 610, y: 250 },
-          { x: 685, y: 250 }
+          { x: 680, y: 250 }
         ],
         altPath: [
           { x: 90, y: 240 },
           { x: 240, y: 345 },
           { x: 450, y: 345 },
           { x: 610, y: 280 },
-          { x: 685, y: 250 }
+          { x: 680, y: 250 }
         ],
         threats: [
-          { x: 300, y: 115, r: 50, angle: 15, spread: 90, label: "断粮护食流民(抢夺奶粉)", truthLabel: "家里断奶急疯了的年轻邻居" },
-          { x: 740, y: 250, r: 85, angle: 180, spread: 110, label: "四号楼阳台手机闪光灯网暴射界", truthLabel: "几十部拍摄『特权投毒女』的业主手机镜头" }
+          {
+            x: 300, y: 115, r: 52, angle: 15, spread: 90,
+            label: { zh: "断粮护食饥民(抢夺奶粉罐)", en: "Starving Looters (Grab Formula)" },
+            truthLabel: { zh: "家里同样断粮急疯了的年轻工友", en: "Desperate Young Worker Out of Food" }
+          },
+          {
+            x: 745, y: 250, r: 85, angle: 180, spread: 110,
+            label: { zh: "对面阳台望远镜与相机偷拍举报区", en: "Balcony Cameras & Denunciation Sightcone" },
+            truthLabel: { zh: "几十个怀疑402室走私毒粉的恐惧邻居", en: "Panicked Neighbors Filming Room 402" }
+          }
         ],
         audioRipples: [
-          { x: 715, y: 250, r: 50, color: "#a855f7", text: "小满窒息喘鸣声 + 15:59铁闸轰鸣声" },
-          { x: 760, y: 190, r: 65, color: "#ef4444", text: "乌鸦般的阳台合唱：『拍下来！402私通外围黄牛！』" }
+          { x: 715, y: 250, r: 50, color: "#a855f7", text: { zh: "婴儿米沙窒息喘鸣 + 15:59铁闸落锁轰鸣", en: "Baby Misha gasping + 15:59 shutter slam" } },
+          { x: 760, y: 190, r: 65, color: "#ef4444", text: { zh: "阳台窃窃私语：『写举报信！402室私通外国毒粉！』", en: "Balcony whispers: 'Report Room 402! Foreign poison!'" } }
         ],
         nodes: [
           {
-            id: "N-01", x: 90, y: 240, phase: 1, title: "外勤站出发 · 像心脏一样跳动的奶粉罐", type: "任务起点",
-            spatial: "社区门口交接桌，方阿姨跪在地上按住失去粘性的处方胶布。",
-            gameplay: "接过抗敏奶粉罐。游戏开启右上角鲜红的电子跳字倒计时：距离 16:00 落锁仅剩 8 分钟。",
-            magic: "奶粉罐在许晨怀里保持着 38.5℃ 的婴儿体温，随着倒计时逼近，罐体发出一跳一跳的脉搏震动。",
-            truth: "【真实模式】一罐贴着儿科过敏处方笺的深度水解配方奶粉。"
+            id: "N-01", x: 90, y: 240, phase: 1,
+            title: { zh: "外勤站出发 · 8分钟生死倒计时启动", en: "District 3 Post · 8-Minute Countdown Starts" },
+            type: { zh: "限时起点", en: "Timed Start" },
+            spatial: { zh: "第3居住区交接桌，莉莉娅的老母亲跪在冰泥里把奶粉罐塞进阿列克谢怀里。", en: "Handover desk where Liliya's mother begs Aleksei to deliver the formula before 16:00." },
+            gameplay: { zh: "接过深度水解抗敏奶粉罐，右上角苏制翻页钟开始 15:52 → 16:00 硬性倒计时。", en: "Equip the hypoallergenic formula tin; the 8-minute countdown to 16:00 begins." },
+            magic: { zh: "罐体上贴着三张被退回的医院处方笺，因为电传目录里没有这个词条。", en: "Three rejected hospital prescriptions are taped to the tin—unrecognized by the teletype." },
+            truth: { zh: "【临床真实视角】早产婴儿米沙唯一能消化的深度水解氨基酸配方粉。", en: "[Clinical Truth] Amino-acid hypoallergenic formula required to keep premature baby Misha alive." }
           },
           {
-            id: "N-02", x: 290, y: 120, phase: 2, title: "北线施工围挡 · 抱罐突围与手伤崩裂", type: "潜行/跑酷抉择",
-            spatial: "狭窄的铁皮围挡夹道，风吹铁皮哗哗作响掩盖脚步声，但废车后藏着饥民。",
-            gameplay: "走北线可省下 3 分钟，但遭遇饥民伸手抢罐。玩家需按住护胸键用后背硬抗冲撞突围，手掌旧伤崩裂需在电线杆下花 5 秒重缠纱布。",
-            magic: "围挡上剥落的红油漆在狂风里卷成一条条舌头，舔舐着路过者的背包。",
-            truth: "【真实模式】封控街区之间缺乏照明的市政施工便道。"
+            id: "N-02", x: 290, y: 120, phase: 2,
+            title: { zh: "北线施工围挡 · 护罐突围与碎冰噪声", en: "North Sheet-Metal Alley · Protect Tin & Ice Noise" },
+            type: { zh: "捷径突围", en: "Shortcut Brawl" },
+            spatial: { zh: "狭窄的生锈铁皮围挡夹道，地面结满黑冰，擦碰铁皮会使声波半径扩大至 4.5m。", en: "Narrow sheet-metal alley coated in black ice; brushing metal expands noise ripples to 4.5m." },
+            gameplay: { zh: "走北线可省下 3 分钟，但需用后背硬抗饥民冲撞护住怀里的奶粉罐。", en: "Saves 3 minutes, but requires shielding the formula tin with your back against starving looters." },
+            magic: { zh: "围挡上刷着巨大的俄文标语：『一切为了零号防线！』", en: "Giant Cyrillic slogans on the metal sheets read: 'EVERYTHING FOR THE ZERO LINE!'" },
+            truth: { zh: "【临床真实视角】封控街区之间缺乏照明的市政供暖管施工便道。", en: "[Clinical Truth] Unlit municipal steam-pipe construction alley between locked districts." }
           },
           {
-            id: "N-03", x: 350, y: 345, phase: 3, title: "南线大路检疫亭 · 编码404与无章空转", type: "官僚路障",
-            spatial: "大路中央的蓝棚检疫台，前方被抛锚巡查车堵死。",
-            gameplay: "若走南线，检疫员因系统下拉菜单只有『普通奶粉』拒绝入账，卫生联络员磨蹭至最后一刻仍不盖章，浪费宝贵的 4 分钟。",
-            magic: "抽屉里的公章自己在盒子里咚咚乱跳，但检疫员的右手像生锈的机械臂一样永远停在半空。",
-            truth: "【真实模式】因分类目录僵化而不敢担责签字的基层临时岗亭。"
+            id: "N-03", x: 350, y: 345, phase: 3,
+            title: { zh: "南线电传检疫亭 · 报错404与官僚空转", en: "South Teletype Booth · Error 404 Bureaucracy" },
+            type: { zh: "官僚路障", en: "Bureaucratic Delay" },
+            spatial: { zh: "主街中央的铁皮检疫亭，前方被抛锚装甲车堵死。", en: "Main street checkpoint booth blocked by a stalled patrol van." },
+            gameplay: { zh: "若走南线，核算员因电传机只有『标准全脂粉』拒绝放行，白白耗费 4 分钟。", en: "Taking the south route wastes 4 minutes as the clerk refuses to process a non-catalog item." },
+            magic: { zh: "核算员指着惨绿屏幕说：『机器里没有的奶粉，就是不存在的病。』", en: "The clerk points at the green CRT: 'If the formula isn't in the machine, the allergy doesn't exist.'" },
+            truth: { zh: "【临床真实视角】死守僵化物资编码表、不敢越权签字的基层核算岗亭。", en: "[Clinical Truth] A rigid rationing checkpoint paralyzed by an incomplete database schema." }
           },
           {
-            id: "N-04", x: 685, y: 250, phase: 4, title: "东侧交接死窗 · 撬棍硬卡千斤铁闸", type: "关底高潮 QTE",
-            spatial: "宽仅 30cm 的铁皮投递槽，外侧为两名持钢叉保安，内侧为臭水沟与铁丝网。",
-            gameplay: "15:59 检疫员拧开消毒水要往奶粉罐里灌！许晨将胳膊塞进投递槽死死夺回罐子，在电动闸门落下的瞬间拔出撬棍竖卡进导轨，将奶粉从门底臭水沟推进去！",
-            magic: "四号楼阳台上几十部手机的闪光灯连成一片惨白的电网，每一道闪光都在林悦身上留下一道焦黑的烙印。",
-            truth: "【真实模式】按时送到了救命奶粉，但交接视频被断章取义发进业主群，引发致命网暴。"
+            id: "N-04", x: 680, y: 250, phase: 4,
+            title: { zh: "东侧交接铁窗 · 15:59 撬棍硬卡千斤铁闸", en: "East Hatch · 15:59 Crowbar Shutter Wedge" },
+            type: { zh: "关底高潮 QTE", en: "Climax Wedge QTE" },
+            spatial: { zh: "宽仅 30cm 的铁皮投递槽，上方为千斤电动落锁铁闸，下方为冰水排水沟。", en: "30cm steel delivery chute beneath a heavy motorized shutter and above an icy gutter." },
+            gameplay: { zh: "15:59 核算员拧开来苏尔消毒水要往罐里灌！阿列克谢夺回奶粉罐，在电动铁闸落下的瞬间用道钉撬棍硬卡住导轨，将奶粉从冰水沟推给莉莉娅！", en: "At 15:59 the clerk tries to pour Lysol into the tin! Aleksei snatches it back, jams his railway crowbar into the closing shutter track, and shoves the tin through the gutter!" },
+            magic: { zh: "对面四号楼阳台上几十部相机快门与望远镜反光同时亮起，当夜一楼举报箱被塞爆。", en: "Dozens of cameras click from upper balconies; that night the hallway denunciation box overflows." },
+            truth: { zh: "【临床真实视角】奶粉虽按时送达，但被饥饿嫉妒的邻居举报为“走私西方毒粉”，酿成三日后的悲剧。", en: "[Clinical Truth] The formula arrives in time, but neighbor denunciations drive Liliya to despair." }
           },
           {
-            id: "N-05", x: 715, y: 250, phase: 5, title: "三日后重返 · 四点整渗出母乳的焊缝", type: "魔幻尾声奇观",
-            spatial: "已被三层厚钢板彻底焊死的东侧窗口，墙根停着殡仪馆灰面包车。",
-            gameplay: "林悦坠楼身亡后，许晨于 15:52 再次经过此处触发剧情检定，拾取方阿姨留下的半截包布绳。",
-            magic: "每到下午 15:52，三层焊死的钢板焊缝就会滋滋作响，穿透钢铁渗出带着奶香与体温的乳白色水雾，保安的焊枪一靠近就会自动熄火。",
-            truth: "【真实模式】焊死的铁窗下摆着一束被雨水打湿的白色菊花，方阿姨独自抱着外孙的病历站在冷风里。"
+            id: "N-05", x: 720, y: 250, phase: 5,
+            title: { zh: "三日后重返 · 焊缝下的冻奶冰碴", en: "Three Days Later · Frozen Milk-Ice Under the Weld" },
+            type: { zh: "冷峻写实尾声", en: "Tragic Epilogue" },
+            spatial: { zh: "已被三层钢板焊死的东侧交接窗，402室防盗门被泼满红漆。", en: "The east hatch welded shut with triple steel plates; Room 402's door splashed with red paint." },
+            gameplay: { zh: "莉莉娅从六楼跳下后，阿列克谢重返此处触发日志记录，目睹老母亲在下午四点前跪着抠擦焊缝下那道被消毒水冲入泥沟冻硬的白色奶冰碴。", en: "After Liliya leaps from the 6th floor, Aleksei witnesses her mother kneeling before 4 PM, scraping frozen white milk-ice from beneath the welded seam." },
+            magic: { zh: "没有任何超自然渗奶——只有老妇人冻裂流血的指甲和混着来苏尔味、冻在黑冰里的白色奶粉碴，比任何鬼故事都刺骨。", en: "No supernatural phenomena—only a grandmother's bleeding fingernails scraping Lysol-tainted frozen formula from black ice." },
+            truth: { zh: "【临床真实视角】流言、举报箱与僵化台账共同杀死了一位刚刚救活孩子的年轻母亲。", en: "[Clinical Truth] Denunciation boxes and bureaucratic rigidity killed a young mother whose baby had just survived." }
           }
         ]
       },
 
       L05: {
-        code: "MAP_L05_THE_CLEAVER",
-        title: "L05 · 东街旧职工宿舍后厨（骨缝里的菜刀与“渴”）",
-        scale: "比例尺 1:80 · 室内CQB幽闭困兽死斗图",
-        defaultTool: "空背包 → 厨房宽背生锈菜刀",
-        heartRate: "175 BPM (濒死惊恐)",
-        blueStamp: "35% (染血后长出紫色血管分支)",
-        ledgerFront: "配给总表登记为【一栋：已全员转移】。事后机动队结案文书：【正当防卫免责，奖励猪肉罐头两听】。",
-        ledgerBack: "翻到笔记本背面，颤抖着写下第一行血字：『冯志远。昨天，我拿了厨房的刀。他说渴。』",
+        code: "MAP_L05_EAST_CANTEEN_CLEAVER",
+        title: {
+          zh: "L05 · 东街工人食堂后厨（瓦西里锁骨卡刀与“……Пить 渴……”）",
+          en: "L05 · East St. Canteen Kitchen (Vasily Collarbone Jam & '…Пить Thirsty…')"
+        },
+        scale: {
+          zh: "比例尺 1m=64px · 室内 CQB 幽闭肉搏测试图 (8m × 6m)",
+          en: "Scale 1m=64px · Claustrophobic CQB Kitchen Arena (8m × 6m)"
+        },
+        defaultTool: {
+          zh: "空配给包 → 东街宽背生锈砍骨刀 (Секач)",
+          en: "Empty Pack → East St. Rusty Butcher Cleaver (Секач)"
+        },
+        heartRate: "172 BPM",
+        blueStamp: "BLOOD-STAINED",
+        ledgerFront: {
+          zh: "区管委总表登记为【东街1栋：在册人数0，已全员清空】。事后清杀队结案回执：【正当防卫清除狂暴体1名，奖励特供牛肉罐头两听】。",
+          en: "Master ledger reads: [EAST ST. BLDG 1: 0 PERSONS, CLEARED]. O.S.K. report: [JUSTIFIED ELIMINATION OF 1 RABID. REWARD: 2 BEEF TINS]."
+        },
+        ledgerBack: {
+          zh: "阿列克谢在背面左页颤抖着写下带血渍的一行字：『瓦西里·费奥多罗维奇（20岁）。今天我拿了厨房的砍骨刀。他死前眼睛变清澈了，他说渴（Пить）。』",
+          en: "Aleksei writes in blood-streaked ink: 'Vasily Fyodorovich (20). Today I took the kitchen cleaver. His eyes cleared before dying—he said Пить (Thirsty).'"
+        },
         metrics: [
-          { label: "空间特征", val: "极度狭窄的 8m×6m 备餐后厨，餐桌与灶台构成环形死胡同（无处可逃）" },
-          { label: "核心机制", val: "近战『卡骨阻滞』机制首次触发 + 永久负面状态【永恒干渴诅咒】解锁" },
-          { label: "叙事暴击", val: "全书第一次亲手致死事件；死者咽气前恢复清澈的瞳孔与半个『渴』字" }
+          {
+            label: { zh: "空间特征", en: "Arena Geometry" },
+            val: { zh: "8m×6m 极度狭窄后厨，铁锅灶台与备餐砧板构成环形死胡同", en: "8m×6m cramped kitchen where stove and butcher block form a dead-end loop" }
+          },
+          {
+            label: { zh: "核心机制", en: "Core Mechanic" },
+            val: { zh: "正面重劈100%触发【锁骨卡刀 1.5s内6连按QTE】+ 永久解锁【PTSD干渴耳鸣】", en: "100% Collarbone Blade Jam (6x Press in 1.5s QTE) + Permanent [PTSD Thirst Tinnitus]" }
+          },
+          {
+            label: { zh: "叙事觉醒", en: "Narrative Awakening" },
+            val: { zh: "全作第一次亲手致死；放血降温使瓦西里死前瞳孔回色，证实感染者能恢复神智", en: "First direct kill; blood loss breaks Vasily's fever before death, proving infected can recover" }
+          }
         ],
         rooms: [
-          { x: 40, y: 120, w: 155, h: 250, label: "东街铁丝网缺口 & 院落", sub: "冯志远电动车停放处(忌口纸牌)", fill: "#141b24", stroke: "#475569" },
-          { x: 195, y: 90, w: 270, h: 310, label: "原职工活动室 · 十九只碗的礼堂", sub: "系统登记『已清空』 / 19名无影老人领餐处", fill: "#161d29", stroke: "#3b82f6" },
-          { x: 465, y: 90, w: 220, h: 310, label: "临时厨房 · 血砧板死斗区 (Kitchen Arena)", sub: "煮着旧日历的大锅 / 备餐砧板台", fill: "#23171c", stroke: "#f59e0b" },
-          { x: 685, y: 135, w: 155, h: 220, label: "旧值班杂物间 (The Locked Room)", sub: "报纸糊窗 / 冯志远关押点", fill: "#2d1219", stroke: "#ef4444" }
+          { x: 40, y: 120, w: 155, h: 250, label: { zh: "东街铁丝网缺口 & 院落", en: "East St. Fence Gap & Yard" }, sub: "瓦西里送饼雪橇停放处", fill: "#141b24", stroke: "#475569" },
+          { x: 195, y: 90, w: 270, h: 310, label: { zh: "旧工人食堂礼堂 (19只搪瓷碗)", en: "Canteen Hall (19 Enamel Bowls)" }, sub: "账面『已清空』 / 19名留守老铁路工", fill: "#161d29", stroke: "#3b82f6" },
+          { x: 465, y: 90, w: 220, h: 310, label: { zh: "食堂后厨 · 锁骨卡刀死斗区", en: "Canteen Kitchen · Blade Jam Arena" }, sub: "白菜汤大铁锅 / 备餐砧板与砍骨刀", fill: "#23171c", stroke: "#f59e0b" },
+          { x: 685, y: 135, w: 155, h: 220, label: { zh: "后厨杂物间 (The Pantry)", en: "Locked Pantry Room" }, sub: "40℃高烧谵妄的瓦西里关押点", fill: "#2d1219", stroke: "#ef4444" }
         ],
         obstacles: [
-          { x: 95, y: 280, w: 65, h: 40, label: "志远的送菜电动车" },
-          { x: 250, y: 160, w: 160, h: 55, label: "长条分餐桌(17只破碗)" },
-          { x: 505, y: 125, w: 75, h: 55, label: "土灶大铁锅(煮旧日历)" },
-          { x: 520, y: 230, w: 85, h: 50, label: "油腻木餐桌(翻倒掩体)" },
-          { x: 485, y: 330, w: 145, h: 45, label: "备餐砧板台(生锈菜刀/烂萝卜)" }
+          { x: 95, y: 280, w: 65, h: 40, label: { zh: "瓦西里的木雪橇", en: "Vasily's Bread Sled" } },
+          { x: 250, y: 160, w: 160, h: 55, label: { zh: "分餐长桌(17份配给)", en: "17-Ration Long Table" } },
+          { x: 505, y: 125, w: 75, h: 55, label: { zh: "沸水白菜汤大铁锅", en: "Boiling Cabbage Cauldron" } },
+          { x: 520, y: 230, w: 85, h: 50, label: { zh: "油腻木餐桌(格挡)", en: "Greasy Table (Cover)" } },
+          { x: 485, y: 330, w: 145, h: 45, label: { zh: "备餐砧板(宽背砍骨刀)", en: "Butcher Block (Cleaver)" } }
         ],
         primaryPath: [
           { x: 115, y: 210 },
@@ -528,230 +764,323 @@
           { x: 140, y: 330 }
         ],
         threats: [
-          { x: 685, y: 245, r: 95, angle: 180, spread: 75, label: "冯志远破门扑击轨迹", truthLabel: "40度高烧脱水、摔倒撞门找水喝的冯志远" }
+          {
+            x: 685, y: 245, r: 95, angle: 180, spread: 75,
+            label: { zh: "瓦西里(40℃脑炎谵妄)破门扑击轨迹", en: "Vasily (40°C Delirium) Breach Lunge" },
+            truthLabel: { zh: "高烧40℃严重脱水、撞门找水喝的20岁小伙瓦西里", en: "20-Year-Old Vasily Delirious with Thirst" }
+          }
         ],
         audioRipples: [
-          { x: 730, y: 245, r: 55, color: "#ef4444", text: "刺啦——指甲刮门声与水杯摔碎声" },
-          { x: 560, y: 325, r: 45, color: "#a855f7", text: "噗嗤！菜刀卡入锁骨缝 + 濒死气音：『……渴……』" }
+          { x: 730, y: 245, r: 55, color: "#ef4444", text: { zh: "砰！！杂物间木门炸裂与搪瓷缸摔碎声", en: "CRASH!! Pantry door breach & mug shatter" } },
+          { x: 560, y: 325, r: 48, color: "#38bdf8", text: { zh: "噗嗤！锁骨卡刀 + 临终气音：『……Пить（渴）……』", en: "CRUNCH! Collarbone jam + dying sigh: '…Пить…'" } }
         ],
         nodes: [
           {
-            id: "N-01", x: 115, y: 280, phase: 1, title: "院口送菜电动车 · 房号与忌口硬纸牌", type: "叙事伏笔",
-            spatial: "铁丝网门内侧墙根，停着一辆后架绑着两只大塑料筐的旧电动车。",
-            gameplay: "入场与离场两次检视点：车把挂着洗发白的布手套，筐里硬纸牌用大字写着楼上孤寡老人的房号与忌口。事前看是普通道具，杀完冯志远出来再看直接触发许晨跪地干呕。",
-            magic: "纸牌上的字迹在暮色里像血管一样微微搏动，替整栋被系统注销的危楼维持着最后一口气。",
-            truth: "【真实模式】冯师傅儿子每天自费骑车给十七位老人跑腿送菜的电动车。"
+            id: "N-01", x: 115, y: 280, phase: 1,
+            title: { zh: "院口送饼木雪橇 · 孤寡老工友忌口纸牌", en: "Yard Bread Sled · Retiree Diet Cards" },
+            type: { zh: "叙事伏笔", en: "Narrative Foreshadow" },
+            spatial: { zh: "东街危楼院口停着一辆绑着两只柳条筐的手拉木雪橇。", en: "A hand-pulled wooden sled with two wicker baskets parked inside the courtyard." },
+            gameplay: { zh: "入场与离场两次检视点：雪橇把手上挂着洗发白的帆布手套，硬纸牌上写着四楼瘫痪老工友的房号。杀完瓦西里出来再看，触发阿列克谢跪在雪地干呕。", en: "Inspect before and after the kitchen fight: cardboard tags list paralyzed retirees on the 4th floor—triggering Aleksei's breakdown afterward." },
+            magic: { zh: "瓦西里正是为了给这些“账面已注销”的老人送黑麦饼，在暴风雪里冻了一宿才染上40度高热。", en: "Vasily contracted his 40°C fever delivering rye flatbreads through the blizzard to these 'unrecorded' retirees." },
+            truth: { zh: "【临床真实视角】二十岁小伙子瓦西里每天拉着雪橇替独眼老父亲费奥多尔给老邻居送饭。", en: "[Clinical Truth] 20-year-old Vasily pulled this sled daily to feed bedridden neighbors." }
           },
           {
-            id: "N-02", x: 330, y: 240, phase: 2, title: "礼堂分餐桌 · 十七只破碗与十九个活人", type: "账实核验",
-            spatial: "原职工活动室，墙上挂着褪色歌咏比赛照，一排拔掉插头的电饭锅。",
-            gameplay: "按电话报备带了17份餐，现场却走出19位老人。冯师傅推让自己的口粮，许晨需掏出背包里的个人干粮补齐缺口，并将表格上的『总人数』手改为『本次到场』。",
-            magic: "因为东街在表里属于『已清空拆迁区』，十九位老人坐在阴影里像半透明的泥塑，直到接过热饭盒才恢复活人血色。",
-            truth: "【真实模式】不会用智能手机登记、被网格表遗漏在危楼里的十九名留守老人。"
+            id: "N-02", x: 330, y: 240, phase: 2,
+            title: { zh: "食堂礼堂 · 17份配给与19个账外活人", en: "Canteen Hall · 17 Rations for 19 Unrecorded Retirees" },
+            type: { zh: "账实核验", en: "Ledger Discrepancy" },
+            spatial: { zh: "挂着褪色苏联铁路劳动奖旗的旧礼堂，长桌上摆着19只缺口搪瓷碗。", en: "Faded Soviet railway hall where 19 chipped enamel bowls sit on the long table." },
+            gameplay: { zh: "按电传报备只发了17份黑麦糊，现场却走出19位老人。独眼老炊事员费奥多尔让出自己的口粮，阿列克谢需掏出个人干粮补齐。", en: "Only 17 rations were issued, yet 19 elders appear. One-eyed cook Fyodor gives up his own bowl while Aleksei shares his dry rations." },
+            magic: { zh: "老人们安静得像旧照片，因为一旦发出声音就会被巡逻队发现“东街还有未清零活人”。", en: "The retirees sit in total silence lest patrolling squads discover 'unzeroed' residents in East Street." },
+            truth: { zh: "【临床真实视角】不会操作新式电传磁卡、被区管委总表直接抹除的十九名退休老铁路工。", en: "[Clinical Truth] Nineteen retired railway workers omitted from the digital ration database." }
           },
           {
-            id: "N-03", x: 540, y: 155, phase: 3, title: "后厨土灶 · 煮着旧日历的大铁锅", type: "魔幻环境交互",
-            spatial: "临时厨房北侧灶台，蒸汽蒙住窗户。",
-            gameplay: "等待沈医生上楼巡诊期间，许晨在后厨核对名单，发现冯师傅眼神不断瞟向身后的旧值班室木门。",
-            magic: "断粮三天的铁锅里沸水翻滚，煮着一页页撕下来的『10月17日』旧日历和榆树皮，熬出一锅散发着公文油墨味的灰浆糊。",
-            truth: "【真实模式】只剩最后一点白菜帮子和面疙瘩的清水锅。"
+            id: "N-03", x: 540, y: 155, phase: 3,
+            title: { zh: "后厨铁锅 · 煤油灯与旧报纸糊窗", en: "Kitchen Cauldron · Kerosene Lamp & Newspaper Windows" },
+            type: { zh: "环境压迫", en: "Atmosphere" },
+            spatial: { zh: "8m×6m 幽闭后厨，大铁锅冒着白菜汤白雾，遮挡右侧视线。", en: "8m×6m kitchen filled with steam from the cabbage cauldron, obscuring the right doorway." },
+            gameplay: { zh: "阿列克谢在后厨核对回执单时，发现独眼费奥多尔老爹神色慌张地挡在杂物间木门前。", en: "While checking manifests, Aleksei notices one-eyed Fyodor nervously guarding the pantry door." },
+            magic: { zh: "门缝底下塞着半块沾血的湿毛巾，里面传来指甲抓挠木板的刺啦声。", en: "A blood-stained wet towel is stuffed under the door as fingernails scrape the wood inside." },
+            truth: { zh: "【临床真实视角】费奥多尔老爹怕高烧的儿子被清杀队拉去矿坑烧掉，偷偷把他反锁在杂物间物理降温。", en: "[Clinical Truth] Fyodor locked his febrile son in the pantry to cool his fever rather than let O.S.K. liquidate him." }
           },
           {
-            id: "N-04", x: 665, y: 245, phase: 4, title: "值班室木门 · 父子相扑与破门瞬间", type: "危机爆发点",
-            spatial: "糊着旧报纸的木板门，门闩已松动。",
-            gameplay: "屋内传来摔倒声，冯师傅不顾许晨劝阻拉开一条门缝——整扇门瞬间爆裂，高烧异变的冯志远将父亲扑倒并咬伤左臂，随后转身将许晨逼向死角！",
-            magic: "门板炸裂瞬间，糊在玻璃上的旧报纸化作无数黑色的飞蛾扑面而来，遮蔽了许晨的视线。",
-            truth: "【真实模式】高烧40度引发惊厥谵妄的冯志远撞倒门板，与试图抱住他的老父亲摔作一团。"
+            id: "N-04", x: 665, y: 245, phase: 4,
+            title: { zh: "杂物间破门 · 父子相扑与绝境逼入", en: "Pantry Breach · Father Knocked Down" },
+            type: { zh: "危机爆发", en: "Breach Event" },
+            spatial: { zh: "杂物间木门炸裂，桌椅翻倒堵死退路。", en: "The pantry door splinters open, overturning tables and blocking the exit." },
+            gameplay: { zh: "屋里传来水缸砸碎声，费奥多尔拉开一条门缝想喂水——整扇门瞬间爆裂！40℃高烧谵妄的瓦西里扑倒老父亲，转身将阿列克谢逼入备餐砧板死角！", en: "Hearing a water jug shatter, Fyodor cracks the door—Vasily bursts out in 40°C delirium, knocking down his father and cornering Aleksei!" },
+            magic: { zh: "瓦西里双眼布满紫黑血翳，喉咙里发出滚水般的嘶吼，那是退烧前最猛烈的第四天神经风暴。", en: "Vasily's sclera are purple-black with 40°C encephalitic storm—the final peak before natural regression." },
+            truth: { zh: "【临床真实视角】处于第四天退烧临界风暴、因极度干渴而失去理智扑向水源的瓦西里。", en: "[Clinical Truth] Vasily at the 96-hour febrile crisis, lunging blindly toward water." }
           },
           {
-            id: "N-05", x: 560, y: 325, phase: 5, title: "备餐砧板台 · 锁骨卡刀与永恒之渴", type: "生死肉搏 QTE / 核心转折",
-            spatial: "厨房南侧死角备餐台，台面有一把宽背锈菜刀与半截干缩白萝卜。",
-            gameplay: "椅子抵挡失败，许晨后腰撞上台沿，闭眼抓起菜刀劈下！触发【卡骨阻滞】：刀刃死死卡在冯志远锁骨缝里拔不出来。冯志远瞳孔恢复清澈，吐出『……渴……』后滑落死亡。",
-            magic: "滚烫黑血浇在许晨右手上，蓝印章长出紫色血管；从此许晨染上【永恒干渴诅咒】，无论喝多少水喉咙都像吞着烧红的木炭。",
-            truth: "【真实模式】砧板上没有菜刀，只有一瓢凉水。许晨协助冯师傅用湿毛巾按住高烧的冯志远，喂他喝下凉水退烧。"
+            id: "N-05", x: 560, y: 325, phase: 5,
+            title: { zh: "备餐砧板 · 锁骨卡刀 QTE 与“……Пить（渴）……”", en: "Butcher Block · Collarbone Jam QTE & '…Пить…'" },
+            type: { zh: "锁骨卡刀 / PTSD解锁", en: "Blade Jam / PTSD Unlock" },
+            spatial: { zh: "后厨南侧死角厚木砧板，插着一把俄式宽背生锈砍骨刀（Секач）。", en: "Heavy wooden butcher block in the south corner holding a wide-backed rusty cleaver." },
+            gameplay: { zh: "阿列克谢抓起砍骨刀迎面劈下！100%触发【锁骨卡刀（1.5s内连按6次空格拔刀）】！拔刀瞬间鲜血喷涌降温，瓦西里眼中紫翳退去，恢复二十岁小伙清澈的蓝眼睛，吐出半个词：『……Пить（渴）……』后咽气。", en: "Aleksei swings the cleaver—triggering the 6-hit Collarbone Blade Jam QTE! As blood loss drops his temperature, Vasily's eyes clear to blue and he whispers '…Пить (Thirsty)…' before dying." },
+            magic: { zh: "永久解锁【PTSD 干渴幻听】：此后每次按 Q 喝水，吞咽末尾耳边都会响起瓦西里微弱的『……Пить……』。", en: "Permanently unlocks [PTSD Thirst Tinnitus]: every sip of water [Q] echoes with Vasily's dying whisper '…Пить…'." },
+            truth: { zh: "【临床真实视角】如果当时手里拿的不是砍骨刀而是一瓢冷水，瓦西里再熬过两个小时就能退烧醒来。", en: "[Clinical Truth] Had Aleksei held a ladle of cold water instead of a cleaver, Vasily would have woken up two hours later." }
           }
         ]
       },
 
       L07: {
-        code: "MAP_L07_BEHIND_THE_WALL",
-        title: "L07 · 北苑二号特供仓（烤肉雪与白面犹大）",
-        scale: "比例尺 1:180 · 特权区双路线潜入/劫掠图",
-        defaultTool: "周小姐磁卡 + 相机 (流浪线：改装霰弹枪+铝热剂)",
-        heartRate: "128 BPM (高压潜行)",
-        blueStamp: "40% (延伸至小臂)",
-        ledgerFront: "北苑账面显示：【公共机动医疗与越冬储备，库容合规】。实则将临期进口牛排与瑞士透析滤器成吨推入焚化炉销毁。",
-        ledgerBack: "记录『北苑二库焚毁409批次腹透交换液、谷饲牛排300箱；周处长签字』。以及诊室里赵网格换来的『二十袋白面』。",
+        code: "MAP_L07_PINE_MANOR_INCINERATOR",
+        title: {
+          zh: "L07 · 松林庄园二号特供库（26℃焚化炉、409批腹透液与焦油黑雪）",
+          en: "L07 · Pine Manor Depot No. 2 (26°C Furnace, Batch-409 & Tar-Black Snow)"
+        },
+        scale: {
+          zh: "比例尺 1m=64px · 特权疗养区潜入与取证图",
+          en: "Scale 1m=64px · Privileged Enclave Infiltration Arena"
+        },
+        defaultTool: {
+          zh: "叶莲娜的门禁磁卡 + 老式胶片相机 (荒原线：改装双管猎枪 Обрез)",
+          en: "Yelena's Keycard + Film Camera (Outland Route: Sawed-Off Обрез)"
+        },
+        heartRate: "134 BPM",
+        blueStamp: "CLASS-II STAMPED",
+        ledgerFront: {
+          zh: "松林庄园台账显示：【越冬战略储备库容100%合规，零过期损耗】。实则将临期15天的谷饲牛排与瑞士409批腹透液成吨推入2000℃焚化炉销账。",
+          en: "Pine Manor ledger reads: [WINTER RESERVE STORAGE 100% COMPLIANT]. In reality, tonnes of marbled beef and Swiss Batch-409 dialysis fluid are incinerated to balance year-end quotas."
+        },
+        ledgerBack: {
+          zh: "记录『松林庄园二库维克多主任、茹科夫专员焚毁瑞士409批腹透液与牛排300箱；老列车长伊万确认今晚23:00铁壳号走鹰嘴崖坠崖线』。",
+          en: "Record 'Viktor & Commissioner Zhukov incinerated 300 crates of beef & Batch-409 dialysis fluid; Old Ivan confirmed Buran departs 23:00 for Eagle's Crag'."
+        },
         metrics: [
-          { label: "双路线裂变", val: "【家园线】穿协勤服刷卡潜入拍账本 vs 【流浪线】炸开侧墙强攻劫走透析机与抗生素" },
-          { label: "环境压迫", val: "二楼走廊周处长与重机枪哨戒视野 + 2000℃工业焚化炉热浪区" },
-          { label: "魔幻奇观", val: "烟囱喷出的烤牛肉香灰白大雪落满全城，饥民伸舌去接却变成满嘴苦涩的公文纸灰" }
+          {
+            label: { zh: "双路线裂变", en: "Dual-Route Split" },
+            val: { zh: "【守母家园线】穿后勤服刷卡潜入拍照 vs 【失母荒原线】撬开侧门强攻夺取医疗物资", en: "[Home Route] Stealth photo evidence vs. [Outland Route] Armed raid with Old Pavel" }
+          },
+          {
+            label: { zh: "黑市前置抉择 C", en: "Black Market Choice C" },
+            val: { zh: "进入庄园前在铁路黑市遇重伤老谢苗：C1/C3合作分药(+0划痕) vs C2锁门背叛抢药(+1道卌划痕)", en: "Rail Black Market Old Semyon: C1/C3 Cooperate (+0 strokes) vs. C2 Betray & Lock Door (+1 stroke)" }
+          },
+          {
+            label: { zh: "核心视觉奇观", en: "Visual Spectacle" },
+            val: { zh: "墙内26℃暖气与2000℃焚化炉 vs 墙外零下35℃飘落闻着有肉香、吃进嘴是黑油垢的『焦油黑雪』", en: "26°C warehouse & 2000°C furnace vs. -35°C 'Tar-Black Snow' raining greasy soot over workers' blocks" }
+          }
         ],
         rooms: [
-          { x: 40, y: 150, w: 130, h: 210, label: "北苑四米电网外墙 & 侧门", sub: "周小姐断跟皮鞋接应点", fill: "#141a24", stroke: "#3b82f6" },
-          { x: 170, y: 80, w: 340, h: 290, label: "北苑二号恒温特供立体库 (10m高货架)", sub: "暖气26℃ / 澳洲牛排、丹麦奶粉、瑞士腹透液", fill: "#1b1926", stroke: "#f59e0b" },
-          { x: 210, y: 370, w: 280, h: 85, label: "二楼行政监控钢廊 (Overwatch Balcony)", sub: "周处长拔枪对峙点 / 俯视射界", fill: "#1f1622", stroke: "#ef4444" },
-          { x: 510, y: 80, w: 325, h: 375, label: "巨型工业焚化炉车间 (The Incinerator)", sub: "2000℃炉膛 / 叉车铲入临期特供 / 烤肉雪烟囱", fill: "#2b1414", stroke: "#ef4444" }
+          { x: 35, y: 145, w: 135, h: 220, label: { zh: "铁路黑市 & 松林庄园电网门", en: "Rail Black Market & Fence Gate" }, sub: "老谢苗抉择C / 叶莲娜接应点", fill: "#141a24", stroke: "#3b82f6" },
+          { x: 170, y: 80, w: 340, h: 290, label: { zh: "松林庄园二号恒温特供库 (26℃)", en: "Pine Manor Depot No. 2 (26°C)" }, sub: "瑞士409批腹透液 / 进口牛排 / 伏特加", fill: "#1b1926", stroke: "#f59e0b" },
+          { x: 210, y: 370, w: 280, h: 85, label: { zh: "二楼行政监控钢廊 (Overwatch)", en: "2F Executive Steel Catwalk" }, sub: "维克多主任与茹科夫专员俯视射界", fill: "#1f1622", stroke: "#ef4444" },
+          { x: 510, y: 80, w: 345, h: 375, label: { zh: "2000℃工业焚化车间 & 西站调车场暗门", en: "2000°C Incinerator & Railyard Exit" }, sub: "叉车铲入牛排与腹透液 / 老轨伊万情报点", fill: "#2b1414", stroke: "#ef4444" }
         ],
         obstacles: [
-          { x: 220, y: 125, w: 95, h: 45, label: "瑞士腹透液货架(409批)" },
-          { x: 355, y: 125, w: 110, h: 45, label: "进口谷饲牛排冷柜" },
-          { x: 220, y: 220, w: 95, h: 45, label: "工坊被调走的无缝钢管" },
-          { x: 355, y: 220, w: 110, h: 45, label: "私人储藏间(内部上锁)" },
-          { x: 560, y: 195, w: 90, h: 55, label: "铲粮叉车(移动掩体)" },
-          { x: 690, y: 150, w: 115, h: 180, label: "2000℃主焚化炉膛" }
+          { x: 215, y: 125, w: 105, h: 45, label: { zh: "瑞士409批腹透液托盘", en: "Swiss Batch-409 Dialysis" } },
+          { x: 355, y: 125, w: 110, h: 45, label: { zh: "特供谷饲牛排冷柜", en: "Marbled Beef Freezer" } },
+          { x: 220, y: 225, w: 95, h: 45, label: { zh: "机车厂无缝钢管", en: "Locomotive Steel Pipes" } },
+          { x: 560, y: 195, w: 90, h: 55, label: { zh: "铲货叉车(移动掩体)", en: "Forklift (Moving Cover)" } },
+          { x: 690, y: 150, w: 125, h: 175, label: { zh: "2000℃主焚化炉膛", en: "2000°C Furnace Maw" } }
         ],
         primaryPath: [
-          { x: 105, y: 255 },
+          { x: 100, y: 255 },
           { x: 205, y: 290 },
           { x: 270, y: 185 },
           { x: 410, y: 185 },
           { x: 545, y: 270 },
-          { x: 655, y: 245 }
+          { x: 655, y: 245 },
+          { x: 790, y: 380 }
         ],
         altPath: [
-          { x: 105, y: 180 },
+          { x: 100, y: 180 },
           { x: 265, y: 110 },
           { x: 530, y: 120 },
           { x: 655, y: 245 },
-          { x: 105, y: 330 }
+          { x: 790, y: 380 }
         ],
         threats: [
-          { x: 350, y: 400, r: 150, angle: -75, spread: 65, label: "二楼监控廊探照灯与哨兵射界", truthLabel: "内部纪检与保卫处巡逻视线" },
-          { x: 690, y: 240, r: 75, angle: 180, spread: 120, label: "焚化炉高温热浪与叉车作业区", truthLabel: "正在销毁临期账目物资的后勤叉车" }
+          {
+            x: 350, y: 400, r: 145, angle: -75, spread: 65,
+            label: { zh: "二楼钢廊维克多与卫兵探照灯射界", en: "2F Catwalk Viktor & Guard Searchlight" },
+            truthLabel: { zh: "特权疗养区内部保卫处巡逻视线", en: "Sanatorium Internal Security Sightcone" }
+          },
+          {
+            x: 690, y: 240, r: 75, angle: 180, spread: 120,
+            label: { zh: "2000℃焚化炉热浪与叉车作业区", en: "2000°C Furnace Heat & Forklift Zone" },
+            truthLabel: { zh: "连夜销毁临期特供账目物资的后勤叉车", en: "Forklift Incinerating Near-Expiry Stock" }
+          }
         ],
         audioRipples: [
-          { x: 740, y: 240, r: 70, color: "#f59e0b", text: "轰隆！牛排与腹透管推进炉膛的油脂爆裂声" },
-          { x: 350, y: 410, r: 55, color: "#3b82f6", text: "周处长拉枪栓声：『把储存卡扔进炉子里！』" }
+          { x: 740, y: 240, r: 70, color: "#f59e0b", text: { zh: "轰隆！牛排与409批腹透液推入火海的油脂爆裂声", en: "ROAR! Beef & Batch-409 burning in furnace" } },
+          { x: 350, y: 410, r: 55, color: "#38bdf8", text: { zh: "茹科夫专员拉动马卡洛夫手枪栓：『叶莲娜，把胶卷扔进炉子！』", en: "Zhukov racks Makarov: 'Yelena, burn the film!'" } }
         ],
         nodes: [
           {
-            id: "N-01", x: 105, y: 255, phase: 1, title: "北苑侧门 · 断跟皮鞋与两个世界", type: "潜入起点",
-            spatial: "四米高通电围墙下的隐蔽刷卡门，墙外是冻土，墙内是26℃暖气管道。",
-            gameplay: "周小姐踩着一高一低的断跟皮鞋用磁卡开门。推门瞬间热浪与烤肉油脂香扑面而来，触发许晨与陈工3秒『饥饿眩晕』检定。",
-            magic: "门里门外温差高达35度，门槛上结着一层半边是红酒渍、半边是黑冻泥的诡异冰棱。",
-            truth: "【真实模式】机关家属大院后勤保障库的内部刷卡通道。"
+            id: "N-01", x: 100, y: 255, phase: 1,
+            title: { zh: "黑市老谢苗抉择 C & 电网侧门", en: "Black Market Choice C & Electrified Gate" },
+            type: { zh: "抉择C(卌) / 潜入起点", en: "Choice C / Infiltration" },
+            spatial: { zh: "四米电网高墙外的铁路黑市涵洞与刷卡侧门，墙外-35℃，墙内26℃。", en: "Rail black market culvert outside the 4m electrified fence (-35°C outside vs. 26°C inside)." },
+            gameplay: { zh: "先处置重伤幸存者老谢苗（C1/C3合作救助+0划痕 vs C2锁门背叛抢盘尼西林+1道卌划痕），随后由叶莲娜刷卡带入二号库。", en: "Resolve Old Semyon (C1/C3 Cooperate +0 strokes vs. C2 Betray & Lock Door +1 stroke), then enter Depot No. 2 with Yelena." },
+            magic: { zh: "推开侧门瞬间，26℃的热浪夹杂着烤牛排油脂香扑面而来，冻僵的阿列克谢与帕维尔触发3秒眩晕。", en: "Opening the door unleashes a 26°C wave of warmth and roasted beef aroma, dizzying the freezing stalkers." },
+            truth: { zh: "【临床真实视角】特权干部疗养区恒温仓库的内部后勤通道。", en: "[Clinical Truth] Staff service entrance to the heated cadre sanatorium warehouse." }
           },
           {
-            id: "N-02", x: 270, y: 185, phase: 2, title: "立体货架区 · 母亲没等到的409批腹透液", type: "核心取证点",
-            spatial: "十米高重型货架走廊，堆满未拆封的进口医疗耗材与无缝钢管。",
-            gameplay: "陈工认出工坊被『统筹』调走的无缝钢管；许晨在货架底层发现与母亲医院同批次的腹透交换液（若在失母流浪线，许晨会直接掏出撬棍砸开箱子，触发狂怒加成）。",
-            magic: "那些腹透液袋子在货架上发出像母亲肺部呼吸一样的湿啰音。",
-            truth: "【真实模式】因调拨手续繁琐而积压在特供库房里的医疗配件与无缝管材。"
+            id: "N-02", x: 270, y: 185, phase: 2,
+            title: { zh: "立体货架 · 卡佳妈妈没等到的瑞士409批腹透液", en: "High Racks · Mama Katya's Missing Swiss Batch-409" },
+            type: { zh: "核心取证 / 情感暴击", en: "Evidence / Emotional Hit" },
+            spatial: { zh: "十米高重型货架走廊，堆满未拆封的瑞士原装409批腹膜透析液与谷饲牛排。", en: "10m-high heavy shelving stacked with unopened Swiss Batch-409 peritoneal dialysis fluid." },
+            gameplay: { zh: "阿列克谢在货架底层发现原本拨给第3居住区、却被截留在此的409批腹透液（若在失母荒原线，阿列克谢会痛哭着用撬棍砸开木箱）。", en: "Aleksei discovers the requisitioned Batch-409 dialysis fluid meant for District 3 (triggering rage in the Motherless Outland Route)." },
+            magic: { zh: "货架上贴着维克多主任签发的封条：『因外包装受潮降级，待集中高温核销』。", en: "Viktor's seal on the pallets reads: 'Downgraded due to carton moisture—scheduled for thermal liquidation.'" },
+            truth: { zh: "【临床真实视角】为了给新年特供腾出库容指标而被行政截留报废的救命医疗耗材。", en: "[Clinical Truth] Life-saving medical supplies administratively written off to clear year-end warehouse quota." }
           },
           {
-            id: "N-03", x: 655, y: 245, phase: 3, title: "2000℃焚化炉 · 铲入火海的牛排与烤肉雪", type: "魔幻高潮奇观",
-            spatial: "仓库东侧巨型工业焚化车间，叉车正将临期15天的特供物资整铲推入火海。",
-            gameplay: "许晨需借叉车掩护抵近炉口，拍下焚毁批次单与原始硬盘；死死抱住想要冲上去拼命的陈工，避免触发重机枪警报。",
-            magic: "烟囱排出的浓烟在寒夜凝结成满城飘落的『烤肉味白雪』；全城饥民伸舌头去接，雪花一碰舌尖就变成苦涩刺鼻的公文纸灰。",
-            truth: "【真实模式】为腾出新年度库容、掩盖超标领用账目而连夜销毁临期食品的后勤焚烧炉。"
+            id: "N-03", x: 655, y: 245, phase: 3,
+            title: { zh: "2000℃焚化炉 · 铲入火海的牛排与“焦油黑雪”", en: "2000°C Furnace · Burning Beef & 'Tar-Black Snow'" },
+            type: { zh: "写实奇观 / 拍照取证", en: "Furnace Evidence" },
+            spatial: { zh: "东侧巨型工业焚化炉车间，叉车正将一托盘又一托盘牛排与腹透液推入火海。", en: "Industrial incinerator bay where forklifts dump pallets of beef and dialysis fluid into the flames." },
+            gameplay: { zh: "借移动叉车掩护抵近炉口，用胶片相机拍下焚毁批次台账，并死死按住想要冲上去拼命的帕维尔老爹。", en: "Use the moving forklift as cover to photograph the incineration ledger while holding back Old Pavel." },
+            magic: { zh: "烟囱排出的油脂黑烟混着暴风雪飘向下风口的工人居住区，落满窗台的“焦油黑雪”闻着有烤肉香，抓进嘴里却是刺鼻的烧塑料黑油垢。", en: "Greasy smoke mixes with the blizzard downwind, coating workers' windowsills in 'Tar-Black Snow' that smells of roast beef but tastes of toxic burned plastic." },
+            truth: { zh: "【临床真实视角】冷酷的官僚库容核销制度：宁可烧成黑灰也不肯下发给两公里外的饥民，因为下发需要担责签字。", en: "[Clinical Truth] Bureaucratic quota liquidation: burning surplus is safer than signing off on public distribution." }
           },
           {
-            id: "N-04", x: 350, y: 375, phase: 4, title: "二楼钢廊对峙 · 父女拔枪与炉口硬盘", type: "戏剧冲突顶点",
-            spatial: "横跨仓库南侧的二楼监控钢廊，周处长居高临下持枪瞄准炉口。",
-            gameplay: "周处长逼女儿交出硬盘跟自己回家。周小姐将原始硬盘悬在2000度炉口上方，抓起一盒腹透管砸在父亲脚下，掩护许晨与陈工撤离。",
-            magic: "周处长身后的墙上挂着巨大的『公平均衡配给图』，图上的红线像血管一样正往他脚下的私人储藏间里输血。",
-            truth: "【真实模式】体制内高级干部与决意公开违规台账的女儿之间的彻底决裂。"
+            id: "N-04", x: 350, y: 375, phase: 4,
+            title: { zh: "二楼钢廊对峙 · 叶莲娜与茹科夫专员决裂", en: "2F Catwalk Standoff · Yelena Breaks with Zhukov" },
+            type: { zh: "戏剧冲突顶点", en: "Dramatic Climax" },
+            spatial: { zh: "横跨仓库南侧的二楼监控钢廊，茹科夫专员拔出马卡洛夫手枪居高临下。", en: "Second-floor steel catwalk where Commissioner Zhukov draws his Makarov pistol." },
+            gameplay: { zh: "茹科夫逼女儿叶莲娜交出胶卷。叶莲娜将原始台账悬在2000℃炉口上方，抓起一箱腹透管砸在父亲脚下，掩护阿列克谢与帕维尔从调车场侧门撤离。", en: "Zhukov orders his daughter to surrender the film. Yelena holds the ledger over the 2000°C furnace, buying time for Aleksei and Pavel to escape." },
+            magic: { zh: "茹科夫身后的墙上挂着巨大的《第17区零损耗先进表彰锦旗》。", en: "Behind Zhukov hangs a giant banner: 'SECTOR 17 ZERO-WASTE EXCELLENCE AWARD'." },
+            truth: { zh: "【临床真实视角】特权阶层内部觉醒的年轻一代与父辈体制的彻底决裂。", en: "[Clinical Truth] A privileged official's daughter breaking ranks with her father's apparatus." }
           },
           {
-            id: "N-05", x: 105, y: 330, phase: 5, title: "返程旧诊室 · 鼻血与白面糊脸的犹大", type: "道德审判抉择",
-            spatial: "返回旧疗养院接诊室后的废墟现场，满地碎玻璃与刺破的面粉袋。",
-            gameplay: "诊室被抄，陈工一拳砸断叛徒赵网格的鼻梁。满脸鼻血混着白面粉的赵网格哭喊儿子饿得嚼绘本，只为换二十袋真白面。抉择：扬了脏面粉，或把面粉踢给他并永久逐出队伍。",
-            magic: "赵网格吐出的每一口血沫都变成白色的面疙瘩，掉在地上却长出了红色的封条。",
-            truth: "【真实模式】因本网格断粮、儿子高烧而被迫用梁医生诊室地址交换配额的基层网格员。"
+            id: "N-05", x: 790, y: 380, phase: 5,
+            title: { zh: "西站调车场暗门 · “老轨”伊万的鹰嘴崖密令", en: "Railyard Postern · Old Ivan's Eagle's Crag Dispatch" },
+            type: { zh: "终局引子", en: "Act IV Hook" },
+            spatial: { zh: "连接松林庄园后墙与广轨调车场的蒸汽管涵洞。", en: "Steam-pipe culvert linking Pine Manor's rear wall to the broad-gauge railyard." },
+            gameplay: { zh: "老列车长“老轨”伊万将绝密调度令拍在阿列克谢胸口：今晚23:00，铁壳号将走乌拉尔鹰嘴崖坠崖线，把第三节车厢里的妹妹拉娜（0420）等176名退烧活人拉进3号矿坑炸山填埋！", en: "Conductor 'Old Rail' Ivan hands over the secret dispatch: tonight at 23:00, the Buran takes the Eagle's Crag cliff line to bury Carriage No. 3 (including Sister Lana 0420) in Mine Shaft No. 3!" },
+            magic: { zh: "远处调车场上，喷着黑烟与白雾的钢铁巨兽“布拉风号（铁壳号）”拉响了第一声凄厉的汽笛。", en: "Across the railyard, the armored train 'Buran' blasts its first mournful steam whistle." },
+            truth: { zh: "【临床真实视角】内务部得知古丽娅的自愈手稿压不住了，企图连夜销毁第三节车厢全部人证。", en: "[Clinical Truth] Knowing Guliya's regression report has leaked, O.S.K. moves to liquidate all 176 witnesses tonight." }
           }
         ]
       },
 
       L10: {
-        code: "MAP_L10_FINAL_BROADCAST",
-        title: "L10 · 302高地死线广播塔（人形铜丝与铁锈花）",
-        scale: "比例尺 1:120 · 180秒终极死守沙盘 (Last Stand)",
-        defaultTool: "压弯的铸铁撬棍 + 染血笔记本 + 高压发射机",
-        heartRate: "190 BPM (生死极限)",
-        blueStamp: "视玩家路线而定 (真结局将随广播崩裂褪去)",
-        ledgerFront: "机动队清剿令：【302高地发现非法劫持公频信号源，出动三辆破障装甲车，执行物理静默】。",
-        ledgerBack: "对着滚烫的麦克风，一字一顿念出笔记本背面所有的真名：冯志远、林悦、张桂芳、鹰嘴崖第三节车厢 176 人！",
+        code: "MAP_L10_HILL302_FLESH_SWITCH",
+        title: {
+          zh: "L10 · 302高地苏联广播塔（帕维尔万伏血肉闸刀与极夜破晓）",
+          en: "L10 · Hill 302 Soviet Radio Tower (Pavel's 10,000V Flesh Switch & Polar Dawn)"
+        },
+        scale: {
+          zh: "比例尺 1m=64px · 180秒终极死守与五结局分流图",
+          en: "Scale 1m=64px · 180s Last Stand & 5-Ending Branching Arena"
+        },
+        defaultTool: {
+          zh: "压弯的道钉撬棍 + 染血《双面工作日志》 + 高压发射机麦",
+          en: "Bent Railway Crowbar + Blood-Stained Logbook + Radio Mic"
+        },
+        heartRate: "188 BPM",
+        blueStamp: "BREAKING FREE",
+        ledgerFront: {
+          zh: "内务清杀局紧急指令：【302高地发现非法劫持全城有线广播信号源，出动三辆BTR破障装甲车，执行物理静默】。",
+          en: "MVD Purge Directive: [UNAUTHORIZED BROADCAST DETECTED AT HILL 302. DEPLOY 3 BTR BREACHING VEHICLES FOR PHYSICAL SILENCING]."
+        },
+        ledgerBack: {
+          zh: "拉娜(0420)、安娜(0419)与左肩中弹的阿列克谢对着麦克风吼出日志背面所有活人真名！随后检定背面右页【“卌”字划痕是否为0】，分流向真结局α/β或结局B。",
+          en: "Lana (0420), Anna (0419), and wounded Aleksei broadcast every real name! The Logbook's '卌' tally is then checked (0 strokes → True Ending α/β; >0 strokes → Ending B)."
+        },
         metrics: [
-          { label: "核心玩法", val: "180秒三波次不对称据点死守 + 陈工肉身接电 + 许晨撬棍肉搏护麦" },
-          { label: "立体防线", val: "外围工棚铁门（第一防线）→ 催泪瓦斯走廊（第二防线）→ 高压发射机房（核心死守点）" },
-          { label: "终极奇观", val: "陈工化作发光钨丝人形灯泡；广播传出瞬间，全城所有焊死铁门的焊缝同时崩裂开满红铁锈花" }
+          {
+            label: { zh: "前置条件", en: "Prerequisite" },
+            val: { zh: "仅在 L09 鹰嘴崖第三节车厢选择【终局闸 D1：砸窗救出妹妹拉娜并冲上302高地】时进入本关", en: "Entered only if Choice D1 (Smash Windows, Rescue Sister Lana & Storm Hill 302) is selected at Eagle's Crag" }
+          },
+          {
+            label: { zh: "三层立体防线", en: "3-Tier Defense" },
+            val: { zh: "外围工棚铁门（撬棍最后一次卡门）→ 催泪瓦斯前厅（切尔诺夫莫辛纳甘掩护）→ 万伏配电室与发射台", en: "Outer Shed Door (Final Crowbar Wedge) → Tear-Gas Foyer (Chernov Mosin-Nagant Cover) → 10kV Switch & Mic" }
+          },
+          {
+            label: { zh: "终极良知检定 (卌)", en: "Conscience Tally Check" },
+            val: { zh: "零划痕(0/5)+母存 → 真结局α【再见拉娜】；零划痕+失母 → 真结局β【荒原之火】；有划痕(>0) → 结局B【破门但痛失妹妹】", en: "0 Strokes + Mom Alive → True α; 0 Strokes + Outland → True β; >0 Strokes → Ending B (Gates Open, Sister Lost)" }
+          }
         ],
         rooms: [
-          { x: 40, y: 80, w: 190, h: 360, label: "302高地外围泥坡 & 攻城槌冲击区", sub: "3辆机动队装甲破障车推进线", fill: "#1b1418", stroke: "#ef4444" },
-          { x: 230, y: 110, w: 220, h: 300, label: "前厅缓冲工棚 (催泪瓦斯灌入区)", sub: "撬棍卡门点 / 老程沙袋掩体位", fill: "#161d26", stroke: "#f59e0b" },
-          { x: 450, y: 110, w: 240, h: 300, label: "核心机房 · 电子管广播发射室", sub: "阿宁与许晨直播麦位 / 决战中心", fill: "#142030", stroke: "#3b82f6" },
-          { x: 690, y: 130, w: 150, h: 260, label: "高压配电室 & 信号铁塔基座", sub: "陈工肉身接通万伏铜母线位置", fill: "#241934", stroke: "#a855f7" }
+          { x: 35, y: 80, w: 190, h: 360, label: { zh: "302高地冻土坡 & BTR攻城槌区", en: "Hill 302 Slope & BTR Breaching Zone" }, sub: "3辆BTR装甲车液压攻城槌推进", fill: "#1b1418", stroke: "#ef4444" },
+          { x: 225, y: 110, w: 220, h: 300, label: { zh: "前厅缓冲工棚 (催泪瓦斯区)", en: "Foyer Buffer Shed (Tear Gas)" }, sub: "撬棍卡门点 / 切尔诺夫中士沙袋掩体", fill: "#161d26", stroke: "#f59e0b" },
+          { x: 445, y: 110, w: 240, h: 300, label: { zh: "核心机房 · 苏联电子管广播室", en: "Core Transmitter · Vacuum-Tube Studio" }, sub: "拉娜(0420)、安娜(0419)与阿列克谢直播麦位", fill: "#142030", stroke: "#3b82f6" },
+          { x: 685, y: 130, w: 165, h: 260, label: { zh: "万伏高压配电室 (10,000V Switch)", en: "10,000V High-Voltage Switchroom" }, sub: "帕维尔老爹管钳与血肉顶闸牺牲处", fill: "#241934", stroke: "#a855f7" }
         ],
         obstacles: [
-          { x: 80, y: 140, w: 95, h: 55, label: "1号装甲破障车(攻城槌)" },
-          { x: 80, y: 310, w: 95, h: 55, label: "2号突击运兵车" },
-          { x: 225, y: 225, w: 22, h: 70, label: "工棚主铁门(焊死防线)" },
-          { x: 310, y: 165, w: 75, h: 45, label: "老程射击沙袋掩体" },
-          { x: 525, y: 215, w: 95, h: 85, label: "大功率模拟发射机(麦克风)" },
-          { x: 720, y: 215, w: 90, h: 90, label: "被打穿的万伏高压配电箱" }
+          { x: 75, y: 140, w: 95, h: 55, label: { zh: "1号BTR破障装甲车", en: "BTR Breacher No. 1" } },
+          { x: 75, y: 310, w: 95, h: 55, label: { zh: "2号清杀队突击车", en: "O.S.K. Assault Van 2" } },
+          { x: 220, y: 225, w: 22, h: 70, label: { zh: "工棚主铁门(卡门点)", en: "Main Shed Door (Wedge)" } },
+          { x: 305, y: 165, w: 80, h: 45, label: { zh: "切尔诺夫沙袋掩体", en: "Chernov Sandbag Cover" } },
+          { x: 520, y: 215, w: 95, h: 85, label: { zh: "巨型电子管发射机麦", en: "Vacuum-Tube Radio Mic" } },
+          { x: 720, y: 215, w: 95, h: 90, label: { zh: "万伏高压铜闸刀箱", en: "10,000V Copper Switch" } }
         ],
         primaryPath: [
           { x: 340, y: 260 },
-          { x: 245, y: 260 },
+          { x: 235, y: 260 },
           { x: 480, y: 260 },
-          { x: 735, y: 260 },
-          { x: 570, y: 260 }
+          { x: 745, y: 260 },
+          { x: 565, y: 260 }
         ],
         altPath: [
-          { x: 175, y: 170 },
-          { x: 240, y: 260 },
+          { x: 170, y: 170 },
+          { x: 235, y: 260 },
           { x: 350, y: 320 },
           { x: 525, y: 260 }
         ],
         threats: [
-          { x: 185, y: 260, r: 120, angle: 0, spread: 70, label: "攻城槌破门与突击手红外锁定线", truthLabel: "全副武装的治安防暴队强行断电清场" }
+          {
+            x: 185, y: 260, r: 120, angle: 0, spread: 70,
+            label: { zh: "BTR液压攻城槌与清杀突击队红外锁定线", en: "BTR Hydraulic Ram & O.S.K. Laser Sightcone" },
+            truthLabel: { zh: "企图在黎明前掐断广播总闸的内务清杀突击队", en: "O.S.K. Squads Ordered to Cut Broadcast Power" }
+          }
         ],
         audioRipples: [
-          { x: 755, y: 260, r: 75, color: "#a855f7", text: "滋啦啦——万伏电弧击穿陈工肉身的雷鸣声" },
-          { x: 570, y: 260, r: 130, color: "#10b981", text: "全城3000个高音喇叭共振：『想活命的，自己把门砸开！！』" }
+          { x: 755, y: 260, r: 75, color: "#a855f7", text: { zh: "滋啦啦——万伏高压电弧击穿帕维尔老爹双臂的轰鸣", en: "ZZZZT—10,000V arc surging through Old Pavel's chest" } },
+          { x: 565, y: 260, r: 130, color: "#10b981", text: { zh: "全城3000只铁皮喇叭共振：『想活命的，拿起大锤自己把门砸开！！』", en: "3,000 horns: 'Pick up your hammers and smash open the gates!!'" } }
         ],
         nodes: [
           {
-            id: "N-01", x: 235, y: 260, phase: 1, title: "工棚主铁门 · 攻城槌撞击与最后一次卡门", type: "第一防线 (0-60s)",
-            spatial: "加固过的双扇铁皮工棚门，外侧正遭受液压攻城槌猛烈撞击。",
-            gameplay: "倒计时前60秒，玩家需配合灰灰与老程，在铁门被撞变形的瞬间将铸铁撬棍死死塞进门轴，延缓突击队破门时间。",
-            magic: "每一次攻城槌撞击，机房地面上的铁锈都会跳起来，在空中拼成『禁止喧哗』四个字又被震碎。",
-            truth: "【真实模式】外围工棚看守人与同伴用身体和木方顶住被强拆的广播室大门。"
+            id: "N-01", x: 235, y: 260, phase: 1,
+            title: { zh: "工棚主铁门 · 液压攻城槌与最后一次撬棍卡门", en: "Main Shed Door · Hydraulic Ram & Final Crowbar Wedge" },
+            type: { zh: "第一防线 (0-60s)", en: "Tier 1 Defense (0-60s)" },
+            spatial: { zh: "加固过的双扇铁皮工棚门，外侧正遭受 BTR 装甲车液压攻城槌撞击。", en: "Reinforced double steel shed doors battered by a BTR hydraulic ram." },
+            gameplay: { zh: "前60秒，玩家需在铁门变形瞬间将那根陪伴了一整路的铸铁道钉撬棍死死塞进门轴，延缓清杀队突击手破门。", en: "During the first 60s, jam your bent cast-iron railway crowbar into the hinge to delay the O.S.K. breach." },
+            magic: { zh: "道钉撬棍在千钧撞击下弯成一道满月般的弧线，却死死咬住导轨不松口。", en: "The cast-iron railway crowbar bends like a drawn bow under the ram's force yet refuses to snap." },
+            truth: { zh: "【临床真实视角】用重型铁路道钉撬棍别死发射站外门导轨。", en: "[Clinical Truth] Wedging the transmitter station's outer steel door with a solid iron track bar." }
           },
           {
-            id: "N-02", x: 345, y: 190, phase: 2, title: "前厅沙袋位 · 老程与灰灰的侧翼火线", type: "第二防线 (60-120s)",
-            spatial: "催泪瓦斯弥漫的狭窄前厅，视野能见度降至 40%。",
-            gameplay: "铁门破开后，老程架起步枪压制第一波突击手；灰灰扑咬投掷震撼弹的敌兵手腕。玩家需在浓烟中靠听觉波纹掩护机房内正在播音的阿宁。",
-            magic: "老程扯掉官方袖标的手臂在催泪瓦斯里泛着微光，打出的每一颗子弹都带着鹰嘴崖幸存者的呼喊回音。",
-            truth: "【真实模式】老程与工友拉起人墙阻拦冲入机房拔线的执法人员。"
+            id: "N-02", x: 345, y: 190, phase: 2,
+            title: { zh: "催泪瓦斯前厅 · 切尔诺夫中士与“灰烬”侧翼死守", en: "Tear-Gas Foyer · Sgt. Chernov & 'Ash' Flank Defense" },
+            type: { zh: "第二防线 (60-120s)", en: "Tier 2 Defense (60-120s)" },
+            spatial: { zh: "催泪瓦斯弥漫的狭窄缓冲前厅，视野能见度降至 40%。", en: "Tear-gas-filled buffer foyer where visibility drops to 40%." },
+            gameplay: { zh: "铁门破开后，扯掉内务部袖标的切尔诺夫中士架起莫辛纳甘步枪压制第一波突击手；灰狼犬“灰烬”扑咬投掷震撼弹的敌兵手腕。", en: "Having torn off his MVD armband, Sgt. Chernov suppresses breachers with his Mosin-Nagant while 'Ash' mauls grenade throwers." },
+            magic: { zh: "切尔诺夫每开一枪都用俄语报出一个他在冷库和街区见过的活人名字。", en: "With every shot, Chernov calls out the name of a living citizen he saw erased by the terminals." },
+            truth: { zh: "【临床真实视角】良知觉醒的基层护卫班长用生命替广播室争取最后两分钟。", en: "[Clinical Truth] A conscience-stricken guard sergeant buying the broadcast two final minutes." }
           },
           {
-            id: "N-03", x: 755, y: 260, phase: 3, title: "高压配电室 · 陈工的人形钨丝灯", type: "魔幻献祭高潮 (120s)",
-            spatial: "机房东侧高压配电间，主铜母线被反器材步枪打断，相距10cm冒着万伏电弧。",
-            gameplay: "广播中断！千钧一发之际，陈工不戴护具扑上去，用双手死死攥住两截断裂的万伏高压铜缆，用肉身强行导通电路！",
-            magic: "在万伏强光下，陈工的皮肤变得半透明，全身骨骼与血管化作烧红的发光钨丝，像一盏巨大的人形白炽灯泡照亮整个黑夜，双手烧成焦炭仍死死锁住电缆！",
-            truth: "【真实模式】陈工在漏电起火的配电箱前严重触电灼伤，仍死死用绝缘钳顶住跳闸总开关直到播音结束。"
+            id: "N-03", x: 755, y: 260, phase: 3,
+            title: { zh: "万伏配电室 · 帕维尔老爹的“血肉闸刀”", en: "10,000V Switchroom · Old Pavel's 'Flesh Switch'" },
+            type: { zh: "悲壮献祭 (120s)", en: "Heroic Sacrifice (120s)" },
+            spatial: { zh: "机房东侧万伏高压配电室，绝缘瓷瓶被穿甲弹打碎，主供电铜闸刀弹开。", en: "East 10,000V transformer room where an armor-piercing round shatters the insulator, popping the main copper switch open." },
+            gameplay: { zh: "发射机断电！七级老钳工帕维尔老爹抓起重型包胶管钳卡进滚烫的高压铜闸刀之间，用自己的肩膀和胸膛死死顶住管钳柄，靠血肉之躯强行将万伏电闸压回触点！", en: "Power dies! Grade-7 machinist Old Pavel jams his heavy insulated pipe wrench between the contacts and braces it with his own chest, conducting 10,000 volts through his body!" },
+            magic: { zh: "狂暴的蓝白电弧顺着帕维尔双臂炸开，但他双脚死死蹬住水泥槽，像一尊焊死在配电箱前的乌拉尔铁塔，直到生命最后一刻也没有松手！", en: "Blinding blue-white arcs sear Pavel's arms, yet he stands locked like a Ural iron tower until his dying breath!" },
+            truth: { zh: "【临床真实视角】一辈子与钢铁和机车打交道的老钳工，用自己的身体完成了最后一次合闸。", en: "[Clinical Truth] A veteran locomotive machinist using his own body weight to keep the high-voltage circuit closed." }
           },
           {
-            id: "N-04", x: 570, y: 260, phase: 4, title: "直播麦克风 · 阿宁与许晨的死线点名", type: "终极叙事爆发 (120-180s)",
-            spatial: "烧得通红的电子管发射机台前，三道红外激光点已锁定阿宁后心。",
-            gameplay: "许晨跃出掩体，用压弯的撬棍砸偏突击手枪口，左肩中弹倒在发射台前，抓起麦克风吼出《笔记本背面》收集的所有死难者与幸存者真名！",
-            magic: "『想活命的，自己把门砸开——！！』声浪化作实质的金色冲击波冲出机房。",
-            truth: "【真实模式】一段只有三分钟、却通过有线广播与市民手机录屏传遍全城的实名证言。"
+            id: "N-04", x: 565, y: 260, phase: 4,
+            title: { zh: "直播麦克风 · 拉娜(0420)、安娜(0419)与真名广播", en: "Live Microphone · Lana (0420), Anna (0419) & Real-Name Broadcast" },
+            type: { zh: "终极点名 (120-180s)", en: "Final Roll Call (120-180s)" },
+            spatial: { zh: "重新亮起红灯的巨型电子管发射台前，全城3000只铁皮喇叭同时切入。", en: "Before the glowing vacuum-tube transmitter connected to 3,000 street horns across Novorsk-17." },
+            gameplay: { zh: "拉娜与安娜哭着向全城喊出“灰鳞高热第4天会自然退烧自愈，铁壳号第三节车厢全是活人！”；左肩中弹的阿列克谢翻开《工作日志》背面吼出谢尔盖、莉莉娅、瓦西里等所有真名！", en: "Lana and Anna broadcast that Grey-Scale Fever naturally recovers after Day 4 and Carriage No. 3 is full of living people; wounded Aleksei reads every real name from the back of his Logbook!" },
+            magic: { zh: "『电传机上的“已签收”是假的！门是从外面焊死的！想活命的，拿起大锤和撬棍，自己把门砸开——！！』", en: "'The green Received light on the teletype is a lie! The doors are welded from outside! Pick up your hammers and prybars and smash open the gates yourselves!!'" },
+            truth: { zh: "【临床真实视角】戳破“实毁数与账面数强制闭合”谎言的三分钟全城实名广播。", en: "[Clinical Truth] A three-minute citywide broadcast that shatters the bureaucratic lie." }
           },
           {
-            id: "N-05", x: 110, y: 260, phase: 5, title: "全城共振 · 焊缝里疯长的红铁锈花", type: "终章破闸引子",
-            spatial: "由302高地辐射至全城二十四个安全区、东街、三号楼与第一关卡。",
-            gameplay: "广播完成的瞬间进入终章【破闸】：玩家操控带伤的许晨走向第一安全区主升降杆，与活人及亡魂虚影共同掰断锁死的齿轮。",
-            magic: "全城所有被电焊焊死的铁门、铁窗、工字钢横梁的焊缝同时裂开，从钢铁缝隙里疯长出一朵朵鲜红如血的铁锈花，成千上万处焊点齐声崩断！",
-            truth: "【真实模式】次日清晨，成千上万拿着空餐盒与病历的市民走上街头，修理工与年轻门卫一起抬起了卡死的升降栏杆。"
+            id: "N-05", x: 110, y: 260, phase: 5,
+            title: { zh: "极夜破晓 · “卌”字划痕检定与主铁闸破门", en: "Polar Dawn · '卌' Tally Check & Main Gate Breach" },
+            type: { zh: "五结局分流终点", en: "5-Ending Resolution" },
+            spatial: { zh: "诺沃斯克-17第一安全区主升降铁闸（或白桦林荒原卡佳妈妈坟前）。", en: "Sector 1 Main Checkpoint Barrier (or Mama Katya's grave on the birch permafrost ridge)." },
+            gameplay: { zh: "检定《工作日志》背面右页的俄式五道划痕（卌）：若零划痕(0/5)且保住母亲 → 触发【真结局α：极夜破晓·再见拉娜】（兄妹与母亲及全城工人合力掰断主铁闸齿轮）；若零划痕+失母线 → 【真结局β：荒原之火·兄妹北行】；若有划痕(>0) → 【结局B：破门但拉娜死于黎明前流弹】。", en: "Checks the Russian '卌' tally: 0 Strokes + Mother Alive → [True Ending α: Hello Again, Lana]; 0 Strokes + Outland → [True Ending β: Fires of the Outland]; >0 Strokes → [Ending B: Gates open, but Lana dies before dawn]." },
+            magic: { zh: "当成千上万只冻裂的手一起搭在阿列克谢那根弯曲的道钉撬棍上时，锁死整座城市的生锈齿轮发出了清脆的崩断声。", en: "When thousands of frostbitten hands lay over Aleksei's bent railway crowbar, the rusted gear locking the city snaps clean in two." },
+            truth: { zh: "【临床真实视角】唯有在漫长极夜里从未向同类挥出屠刀的人，才能在天亮时分完整地找回自己的亲人。", en: "[Clinical Truth] Only those who refused to become executioners in the dark can bring their loved ones home whole at dawn." }
           }
         ]
       }
     };
 
-    // Application State
     const state = {
       currentLevel: "L02",
       activeNodeId: "N-01",
@@ -765,20 +1094,24 @@
         vision: true
       },
       glassesBroken: false,
-      outlandRoute: false, // false = 家园线, true = 流浪线
-      truthMode: false,    // false = 一周目魔幻现实, true = 二周目真实模式
-      playerPos: { x: 85, y: 255 },
-      aimAngle: 0,         // in radians
+      outlandRoute: false,
+      truthMode: false,
+      playerPos: { x: 80, y: 250 },
+      aimAngle: 0,
       isDraggingPlayer: false,
       animTick: 0
     };
 
     const canvas = document.getElementById("blueprintCanvas");
     const ctx = canvas.getContext("2d");
-
-    // Initialize Canvas Resolution (Logical 900 x 520 coordinate space)
     const LOGICAL_W = 900;
     const LOGICAL_H = 520;
+
+    function t(obj) {
+      if (!obj) return "";
+      if (typeof obj === "string") return obj;
+      return obj[lang] || obj.zh || "";
+    }
 
     function resizeCanvas() {
       const rect = canvas.parentElement.getBoundingClientRect();
@@ -788,7 +1121,46 @@
       drawBlueprint();
     }
 
-    // Load Level Data into State & UI
+    function applyStaticLanguageUI() {
+      const u = UI_STRINGS[lang];
+      document.getElementById("hdrTitle").textContent = u.hdrTitle;
+      document.getElementById("hdrSub").textContent = u.hdrSub;
+      document.getElementById("tabL02").textContent = u.tabs.L02;
+      document.getElementById("tabL03").textContent = u.tabs.L03;
+      document.getElementById("tabL05").textContent = u.tabs.L05;
+      document.getElementById("tabL07").textContent = u.tabs.L07;
+      document.getElementById("tabL10").textContent = u.tabs.L10;
+      document.getElementById("lblLayers").textContent = u.lblLayers;
+      document.getElementById("txtLayerPrimary").textContent = u.txtLayerPrimary;
+      document.getElementById("txtLayerAlt").textContent = u.txtLayerAlt;
+      document.getElementById("txtLayerThreat").textContent = u.txtLayerThreat;
+      document.getElementById("txtLayerAudio").textContent = u.txtLayerAudio;
+      document.getElementById("txtLayerAnomaly").textContent = u.txtLayerAnomaly;
+      document.getElementById("txtLayerVision").textContent = u.txtLayerVision;
+
+      document.getElementById("btnGlassesState").textContent = state.glassesBroken ? u.glassesBroken : u.glassesOk;
+      document.getElementById("btnRouteVariant").textContent = state.outlandRoute ? u.routeOutland : u.routeHome;
+      document.getElementById("btnTruthMode").textContent = state.truthMode ? u.truthOn : u.truthOff;
+      document.getElementById("btnSimStep").textContent = u.btnStep;
+      document.getElementById("btnResetPos").textContent = u.btnReset;
+
+      document.getElementById("lblHudBpm").textContent = u.lblHudBpm;
+      document.getElementById("lblHudStamp").textContent = u.lblHudStamp;
+      document.getElementById("lblHudTool").textContent = u.lblHudTool;
+      document.getElementById("legMain").textContent = u.legMain;
+      document.getElementById("legAlt").textContent = u.legAlt;
+      document.getElementById("legThreat").textContent = u.legThreat;
+      document.getElementById("legChoke").textContent = u.legChoke;
+
+      document.getElementById("lblStepperTitle").textContent = u.lblStepperTitle;
+      document.getElementById("lblSpatial").textContent = u.lblSpatial;
+      document.getElementById("lblGameplay").textContent = u.lblGameplay;
+      document.getElementById("lblLogbookCardTitle").textContent = u.lblLogbookCardTitle;
+      document.getElementById("lblLogFront").textContent = u.lblLogFront;
+      document.getElementById("lblLogBack").textContent = u.lblLogBack;
+      document.getElementById("lblMetricsCardTitle").textContent = u.lblMetricsCardTitle;
+    }
+
     function loadLevel(levelKey) {
       state.currentLevel = levelKey;
       const lvl = LEVEL_DATA[levelKey];
@@ -798,62 +1170,69 @@
       state.playerPos = { x: firstNode.x, y: firstNode.y };
       state.aimAngle = 0;
 
-      // Update Top Tabs UI
       document.querySelectorAll(".level-tab").forEach(btn => {
         if (btn.dataset.level === levelKey) {
-          btn.className = "level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-blue-600 text-white shadow-sm";
+          btn.className = "level-tab px-2.5 py-1.5 rounded text-xs font-semibold transition-all bg-blue-600 text-white shadow-sm";
         } else {
-          btn.className = "level-tab px-3 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700";
+          btn.className = "level-tab px-2.5 py-1.5 rounded text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700";
         }
       });
 
-      // Update Map Header & HUD
+      refreshLevelUI();
+    }
+
+    function refreshLevelUI() {
+      const lvl = LEVEL_DATA[state.currentLevel];
       document.getElementById("mapCodeLabel").textContent = lvl.code;
-      document.getElementById("mapScaleLabel").textContent = lvl.scale;
-      document.getElementById("mapTitleLabel").textContent = lvl.title;
-      document.getElementById("hudHeartRate").textContent = state.truthMode ? "72 BPM (平稳)" : lvl.heartRate;
-      document.getElementById("hudBlueStamp").textContent = state.truthMode ? "0% (普通印章)" : lvl.blueStamp;
-      document.getElementById("hudTool").textContent = state.truthMode ? "手推车 / 笔记本 / 凉水瓢" : (state.outlandRoute ? "改装防暴霰弹枪 + 撬棍" : lvl.defaultTool);
+      document.getElementById("mapScaleLabel").textContent = t(lvl.scale);
+      document.getElementById("mapTitleLabel").textContent = t(lvl.title);
+      document.getElementById("hudHeartRate").textContent = state.truthMode ? "74 BPM" : lvl.heartRate;
+      document.getElementById("hudBlueStamp").textContent = lvl.blueStamp;
+      document.getElementById("hudTool").textContent = t(lvl.defaultTool);
 
-      // Update Dual Ledger
-      document.getElementById("ledgerFrontText").textContent = lvl.ledgerFront;
-      document.getElementById("ledgerBackText").textContent = lvl.ledgerBack;
+      document.getElementById("ledgerFrontText").textContent = t(lvl.ledgerFront);
+      document.getElementById("ledgerBackText").textContent = t(lvl.ledgerBack);
 
-      // Update Metrics List
       const metricsEl = document.getElementById("levelMetricsList");
-      metricsEl.innerHTML = lvl.metrics.map(m => `
+      metricsEl.innerHTML = lvl.metrics
+        .map(
+          m => `
         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-2 rounded bg-slate-900/70 border border-slate-800/70 gap-1">
-          <span class="text-slate-400 font-medium">${m.label}</span>
-          <span class="text-slate-200 sm:text-right">${m.val}</span>
+          <span class="text-amber-300/90 font-medium shrink-0">${t(m.label)}</span>
+          <span class="text-slate-200 sm:text-right">${t(m.val)}</span>
         </div>
-      `).join("");
+      `
+        )
+        .join("");
 
       renderPhaseStepper();
-      selectNode(firstNode.id);
-      drawBlueprint();
+      selectNode(state.activeNodeId);
     }
 
     function renderPhaseStepper() {
       const lvl = LEVEL_DATA[state.currentLevel];
       const container = document.getElementById("phaseStepsContainer");
-      document.getElementById("activePhaseBadge").textContent = `阶段 ${state.activePhase} / ${lvl.nodes.length}`;
+      document.getElementById("activePhaseBadge").textContent = `STAGE ${state.activePhase} / ${lvl.nodes.length}`;
 
-      container.innerHTML = lvl.nodes.map((n, idx) => {
-        const isActive = n.id === state.activeNodeId;
-        return `
+      container.innerHTML = lvl.nodes
+        .map((n, idx) => {
+          const isActive = n.id === state.activeNodeId;
+          const titleStr = t(n.title);
+          return `
           <button type="button" data-node="${n.id}" class="phase-step-btn text-left p-2 rounded border transition-all ${
-            isActive 
-              ? "bg-blue-600/20 border-blue-500 text-white shadow-sm" 
+            isActive
+              ? "bg-blue-600/20 border-blue-500 text-white shadow-sm"
               : "bg-slate-900/80 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
           }">
             <div class="flex items-center justify-between text-[10px] mono mb-0.5">
-              <span class="${isActive ? "text-blue-400 font-bold" : "text-slate-500"}">STEP 0${idx + 1} · ${n.id}</span>
-              <span>${n.type.split("/")[0]}</span>
+              <span class="${isActive ? "text-amber-400 font-bold" : "text-slate-500"}">STEP 0${idx + 1} · ${n.id}</span>
+              <span>${t(n.type).split("/")[0]}</span>
             </div>
-            <div class="text-xs font-semibold truncate">${n.title.split("·")[1] || n.title}</div>
+            <div class="text-xs font-semibold truncate">${titleStr.split("·")[1] || titleStr}</div>
           </button>
         `;
-      }).join("");
+        })
+        .join("");
 
       container.querySelectorAll(".phase-step-btn").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -874,34 +1253,33 @@
       state.activePhase = node.phase;
 
       document.getElementById("nodeIdBadge").textContent = node.id;
-      document.getElementById("nodeTitle").textContent = node.title;
-      document.getElementById("nodeTypeTag").textContent = node.type;
-      document.getElementById("nodeSpatialDesc").textContent = node.spatial;
-      document.getElementById("nodeGameplayDesc").textContent = node.gameplay;
+      document.getElementById("nodeTitle").textContent = t(node.title);
+      document.getElementById("nodeTypeTag").textContent = t(node.type);
+      document.getElementById("nodeSpatialDesc").textContent = t(node.spatial);
+      document.getElementById("nodeGameplayDesc").textContent = t(node.gameplay);
 
       const magicBox = document.getElementById("nodeMagicBox");
       const magicHeader = document.getElementById("nodeMagicHeader");
       const magicDesc = document.getElementById("nodeMagicDesc");
+      const u = UI_STRINGS[lang];
 
       if (state.truthMode) {
         magicBox.className = "p-2.5 rounded border border-amber-500/40 bg-amber-950/20";
-        magicHeader.textContent = "👁️ 【二周目：零号真实模式】还原真相：";
+        magicHeader.textContent = u.magicHdrTruth;
         magicDesc.className = "text-amber-100/90";
-        magicDesc.textContent = node.truth;
+        magicDesc.textContent = t(node.truth);
       } else {
         magicBox.className = "p-2.5 rounded border border-purple-500/30 bg-purple-950/20";
-        magicHeader.textContent = "✨ 魔幻现实奇观机制：";
+        magicHeader.textContent = u.magicHdrNormal;
         magicDesc.className = "text-purple-100/90";
-        magicDesc.textContent = node.magic;
+        magicDesc.textContent = t(node.magic);
       }
 
       renderPhaseStepper();
       drawBlueprint();
     }
 
-    // Core Canvas Drawing Engine
     function drawBlueprint() {
-      const dpr = window.devicePixelRatio || 1;
       const w = canvas.width;
       const h = canvas.height;
       const scaleX = w / LOGICAL_W;
@@ -913,21 +1291,20 @@
 
       const lvl = LEVEL_DATA[state.currentLevel];
 
-      // 1. Draw Rooms & Architectural Zones
+      // 1. Rooms
       lvl.rooms.forEach(r => {
         ctx.save();
-        ctx.fillStyle = state.truthMode ? "#161b22" : r.fill;
+        ctx.fillStyle = state.truthMode ? "#151a22" : r.fill;
         ctx.strokeStyle = state.truthMode ? "#64748b" : r.stroke;
         ctx.lineWidth = 2;
         if (r.dashed) ctx.setLineDash([6, 4]);
         ctx.fillRect(r.x, r.y, r.w, r.h);
         ctx.strokeRect(r.x, r.y, r.w, r.h);
 
-        // Room Corner Ticks
         ctx.setLineDash([]);
-        ctx.fillStyle = state.truthMode ? "#cbd5e1" : "#f8fafc";
+        ctx.fillStyle = "#f8fafc";
         ctx.font = "bold 12px 'Noto Sans SC', sans-serif";
-        ctx.fillText(r.label, r.x + 10, r.y + 20);
+        ctx.fillText(t(r.label), r.x + 10, r.y + 20);
 
         ctx.fillStyle = "#94a3b8";
         ctx.font = "10px 'JetBrains Mono', 'Noto Sans SC', sans-serif";
@@ -935,11 +1312,12 @@
         ctx.restore();
       });
 
-      // 2. Draw Obstacles, Cover & Choke Points
+      // 2. Obstacles & Choke Points
       lvl.obstacles.forEach(obs => {
         ctx.save();
-        const isChoke = obs.label.includes("门") || obs.label.includes("窗") || obs.label.includes("车");
-        ctx.fillStyle = isChoke ? "rgba(245, 158, 11, 0.18)" : "rgba(30, 41, 59, 0.85)";
+        const lbl = t(obs.label);
+        const isChoke = lbl.includes("门") || lbl.includes("窗") || lbl.includes("Door") || lbl.includes("Hatch") || lbl.includes("Fence");
+        ctx.fillStyle = isChoke ? "rgba(245, 158, 11, 0.20)" : "rgba(30, 41, 59, 0.85)";
         ctx.strokeStyle = isChoke ? "#f59e0b" : "#475569";
         ctx.lineWidth = 1.5;
         ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
@@ -948,11 +1326,11 @@
         ctx.fillStyle = isChoke ? "#fcd34d" : "#cbd5e1";
         ctx.font = "10px 'Noto Sans SC', sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(obs.label, obs.x + obs.w / 2, obs.y + obs.h / 2 + 4);
+        ctx.fillText(lbl, obs.x + obs.w / 2, obs.y + obs.h / 2 + 4);
         ctx.restore();
       });
 
-      // 3. Draw Threat Zones & Sightcones
+      // 3. Threats & O.S.K. Searchlights
       if (state.layers.threats) {
         lvl.threats.forEach(th => {
           ctx.save();
@@ -964,18 +1342,12 @@
           ctx.arc(th.x, th.y, th.r, rad - halfSpread, rad + halfSpread);
           ctx.closePath();
 
-          if (state.truthMode) {
-            ctx.fillStyle = "rgba(251, 191, 36, 0.12)";
-            ctx.strokeStyle = "rgba(251, 191, 36, 0.5)";
-          } else {
-            ctx.fillStyle = "rgba(239, 68, 68, 0.18)";
-            ctx.strokeStyle = "rgba(239, 68, 68, 0.65)";
-          }
+          ctx.fillStyle = state.truthMode ? "rgba(251, 191, 36, 0.14)" : "rgba(239, 68, 68, 0.20)";
+          ctx.strokeStyle = state.truthMode ? "rgba(251, 191, 36, 0.55)" : "rgba(239, 68, 68, 0.7)";
           ctx.lineWidth = 1.5;
           ctx.fill();
           ctx.stroke();
 
-          // Threat Origin Dot
           ctx.beginPath();
           ctx.arc(th.x, th.y, 6, 0, Math.PI * 2);
           ctx.fillStyle = state.truthMode ? "#f59e0b" : "#ef4444";
@@ -984,19 +1356,19 @@
           ctx.fillStyle = state.truthMode ? "#fde68a" : "#fca5a5";
           ctx.font = "bold 10px 'Noto Sans SC', sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText(state.truthMode ? th.truthLabel : th.label, th.x, th.y - 10);
+          ctx.fillText(state.truthMode ? t(th.truthLabel) : t(th.label), th.x, th.y - 10);
           ctx.restore();
         });
       }
 
-      // 4. Draw Magical Realism Visual Layer
+      // 4. Anomaly Pulse Rings
       if (state.layers.magic && !state.truthMode) {
         lvl.nodes.forEach(n => {
           ctx.save();
           const pulse = (Math.sin(state.animTick * 0.06) + 1) * 0.5;
           ctx.beginPath();
-          ctx.arc(n.x, n.y, 18 + pulse * 12, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(168, 85, 247, 0.10)";
+          ctx.arc(n.x, n.y, 18 + pulse * 11, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(168, 85, 247, 0.09)";
           ctx.strokeStyle = "rgba(168, 85, 247, 0.45)";
           ctx.setLineDash([3, 3]);
           ctx.fill();
@@ -1005,7 +1377,7 @@
         });
       }
 
-      // 5. Draw Audio Ripples Layer
+      // 5. Audio Ripples
       if (state.layers.audio) {
         lvl.audioRipples.forEach((ar, idx) => {
           ctx.save();
@@ -1017,16 +1389,16 @@
           ctx.lineWidth = 2;
           ctx.stroke();
 
-          ctx.globalAlpha = 0.9;
+          ctx.globalAlpha = 0.92;
           ctx.fillStyle = ar.color;
           ctx.font = "italic 10px 'Noto Sans SC', sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText("))) " + ar.text, ar.x, ar.y + ar.r * 0.55);
+          ctx.fillText("))) " + t(ar.text), ar.x, ar.y + ar.r * 0.55);
           ctx.restore();
         });
       }
 
-      // 6. Draw Alt / Stealth / Outland Flow Path
+      // 6. Alt / Night Path
       if (state.layers.altPath && lvl.altPath.length > 1) {
         ctx.save();
         ctx.beginPath();
@@ -1042,7 +1414,7 @@
         ctx.restore();
       }
 
-      // 7. Draw Primary Flow Path with Direction Arrows
+      // 7. Primary Path
       if (state.layers.primaryPath && lvl.primaryPath.length > 1) {
         ctx.save();
         ctx.beginPath();
@@ -1056,7 +1428,6 @@
         ctx.lineDashOffset = -state.animTick * 0.7;
         ctx.stroke();
 
-        // Draw directional arrowheads along segments
         ctx.setLineDash([]);
         for (let i = 0; i < lvl.primaryPath.length - 1; i++) {
           const p1 = lvl.primaryPath[i];
@@ -1080,11 +1451,11 @@
         ctx.restore();
       }
 
-      // 8. Draw Interactive 90-Degree Vision Cone from Player Token
+      // 8. Player 90° Vision Cone
       if (state.layers.vision) {
         ctx.save();
         const coneRadius = state.glassesBroken ? 115 : 195;
-        const coneSpread = (90 * Math.PI) / 180;
+        const coneSpread = Math.PI / 2;
 
         const grad = ctx.createRadialGradient(
           state.playerPos.x, state.playerPos.y, 10,
@@ -1113,7 +1484,7 @@
         ctx.restore();
       }
 
-      // 9. Draw Interactive Nodes (N-01 to N-05)
+      // 9. Interactive Nodes (N-01 to N-05)
       lvl.nodes.forEach(n => {
         const isSelected = n.id === state.activeNodeId;
         ctx.save();
@@ -1121,16 +1492,16 @@
         if (isSelected) {
           ctx.beginPath();
           ctx.arc(n.x, n.y, 18, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(59, 130, 246, 0.28)";
+          ctx.fillStyle = "rgba(245, 158, 11, 0.28)";
           ctx.fill();
-          ctx.strokeStyle = "#60a5fa";
+          ctx.strokeStyle = "#fbbf24";
           ctx.lineWidth = 2;
           ctx.stroke();
         }
 
         ctx.beginPath();
         ctx.arc(n.x, n.y, 11, 0, Math.PI * 2);
-        ctx.fillStyle = isSelected ? "#2563eb" : "#1e293b";
+        ctx.fillStyle = isSelected ? "#d97706" : "#1e293b";
         ctx.fill();
         ctx.strokeStyle = isSelected ? "#ffffff" : "#94a3b8";
         ctx.lineWidth = 2;
@@ -1141,22 +1512,15 @@
         ctx.textAlign = "center";
         ctx.fillText(n.id.replace("N-0", ""), n.x, n.y + 3);
 
-        // Node Title Tag
-        ctx.fillStyle = isSelected ? "#93c5fd" : "#cbd5e1";
+        const titleStr = t(n.title);
+        ctx.fillStyle = isSelected ? "#fde047" : "#cbd5e1";
         ctx.font = "bold 11px 'Noto Sans SC', sans-serif";
-        ctx.fillText(n.title.split("·")[1] || n.title, n.x, n.y - 16);
+        ctx.fillText(titleStr.split("·")[1] || titleStr, n.x, n.y - 16);
         ctx.restore();
       });
 
-      // 10. Draw Player Token (Xu Chen + Huihui Companion Dot)
+      // 10. Player Token (Aleksei) + Companion Wolfdog "Ash" (Пепел)
       ctx.save();
-      // Player Shadow (missing if corrupted, visible otherwise)
-      ctx.beginPath();
-      ctx.ellipse(state.playerPos.x + 3, state.playerPos.y + 6, 10, 5, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
-      ctx.fill();
-
-      // Player Circle
       ctx.beginPath();
       ctx.arc(state.playerPos.x, state.playerPos.y, 9, 0, Math.PI * 2);
       ctx.fillStyle = state.outlandRoute ? "#f97316" : "#10b981";
@@ -1170,7 +1534,6 @@
       ctx.textAlign = "center";
       ctx.fillText("P", state.playerPos.x, state.playerPos.y + 3.5);
 
-      // Huihui Companion Token (Grey Dog trailing slightly behind)
       const dogX = state.playerPos.x - Math.cos(state.aimAngle) * 18;
       const dogY = state.playerPos.y - Math.sin(state.aimAngle) * 18;
       ctx.beginPath();
@@ -1185,7 +1548,6 @@
       ctx.restore();
     }
 
-    // Animation Loop for Flowing Arrows & Audio Ripples
     let animFrameId = null;
     function startAnimationLoop() {
       if (animFrameId) cancelAnimationFrame(animFrameId);
@@ -1197,29 +1559,23 @@
       animFrameId = requestAnimationFrame(step);
     }
 
-    // Helper: Convert Mouse/Touch Event to Logical Canvas Coordinates
     function getLogicalCoords(e) {
       const rect = canvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      const x = ((clientX - rect.left) / rect.width) * LOGICAL_W;
-      const y = ((clientY - rect.top) / rect.height) * LOGICAL_H;
-      return { x, y };
+      return {
+        x: ((clientX - rect.left) / rect.width) * LOGICAL_W,
+        y: ((clientY - rect.top) / rect.height) * LOGICAL_H
+      };
     }
 
-    // Event Listeners for Canvas Interaction
     canvas.addEventListener("mousedown", e => {
       const pt = getLogicalCoords(e);
       const lvl = LEVEL_DATA[state.currentLevel];
-
-      // Check if clicking near Player Token to drag
-      const distPlayer = Math.hypot(pt.x - state.playerPos.x, pt.y - state.playerPos.y);
-      if (distPlayer <= 16) {
+      if (Math.hypot(pt.x - state.playerPos.x, pt.y - state.playerPos.y) <= 16) {
         state.isDraggingPlayer = true;
         return;
       }
-
-      // Check if clicking a Node
       for (const n of lvl.nodes) {
         if (Math.hypot(pt.x - n.x, pt.y - n.y) <= 18) {
           state.playerPos = { x: n.x, y: n.y };
@@ -1227,15 +1583,12 @@
           return;
         }
       }
-
-      // Otherwise teleport player to clicked spot & orient vision
       state.playerPos = { x: pt.x, y: pt.y };
     });
 
     canvas.addEventListener("mousemove", e => {
       const pt = getLogicalCoords(e);
       document.getElementById("cursorCoords").textContent = `X: ${Math.round(pt.x / 5)}m, Y: ${Math.round(pt.y / 5)}m`;
-
       if (state.isDraggingPlayer) {
         state.playerPos = {
           x: Math.max(20, Math.min(LOGICAL_W - 20, pt.x)),
@@ -1250,29 +1603,11 @@
       state.isDraggingPlayer = false;
     });
 
-    // Touch support
-    canvas.addEventListener("touchstart", e => {
-      const pt = getLogicalCoords(e);
-      const lvl = LEVEL_DATA[state.currentLevel];
-      for (const n of lvl.nodes) {
-        if (Math.hypot(pt.x - n.x, pt.y - n.y) <= 24) {
-          state.playerPos = { x: n.x, y: n.y };
-          selectNode(n.id);
-          return;
-        }
-      }
-      state.playerPos = { x: pt.x, y: pt.y };
-    }, { passive: true });
-
-    // Level Tabs Binding
     document.querySelectorAll(".level-tab").forEach(btn => {
-      btn.addEventListener("click", () => {
-        loadLevel(btn.dataset.level);
-      });
+      btn.addEventListener("click", () => loadLevel(btn.dataset.level));
     });
 
-    // Layer Toggle Buttons Binding
-    function setupLayerButton(btnId, layerKey, activeClass) {
+    function setupLayerButton(btnId, layerKey) {
       const btn = document.getElementById(btnId);
       btn.addEventListener("click", () => {
         state.layers[layerKey] = !state.layers[layerKey];
@@ -1287,7 +1622,6 @@
     setupLayerButton("toggleMagic", "magic");
     setupLayerButton("toggleVision", "vision");
 
-    // Step Along Primary Flow Button
     document.getElementById("btnSimStep").addEventListener("click", () => {
       const lvl = LEVEL_DATA[state.currentLevel];
       const currentIndex = lvl.nodes.findIndex(n => n.id === state.activeNodeId);
@@ -1295,15 +1629,11 @@
       const nextNode = lvl.nodes[nextIndex];
       state.playerPos = { x: nextNode.x, y: nextNode.y };
       if (lvl.nodes[currentIndex]) {
-        state.aimAngle = Math.atan2(
-          nextNode.y - lvl.nodes[currentIndex].y,
-          nextNode.x - lvl.nodes[currentIndex].x
-        );
+        state.aimAngle = Math.atan2(nextNode.y - lvl.nodes[currentIndex].y, nextNode.x - lvl.nodes[currentIndex].x);
       }
       selectNode(nextNode.id);
     });
 
-    // Reset Position Button
     document.getElementById("btnResetPos").addEventListener("click", () => {
       const lvl = LEVEL_DATA[state.currentLevel];
       const first = lvl.nodes[0];
@@ -1312,65 +1642,45 @@
       selectNode(first.id);
     });
 
-    // Glasses State Toggle
-    document.getElementById("btnGlassesState").addEventListener("click", e => {
+    document.getElementById("btnGlassesState").addEventListener("click", () => {
       state.glassesBroken = !state.glassesBroken;
       const container = document.getElementById("canvasContainer");
-      if (state.glassesBroken) {
-        e.currentTarget.textContent = "👓 眼镜状态: 镜片碎裂 (视距-40%/重影)";
-        e.currentTarget.className = "px-2.5 py-1 rounded border border-rose-500/60 bg-rose-500/20 text-rose-300 transition mono";
-        container.classList.add("glasses-cracked");
-      } else {
-        e.currentTarget.textContent = "👓 眼镜状态: 完好 (100%视距)";
-        e.currentTarget.className = "px-2.5 py-1 rounded border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 transition mono";
-        container.classList.remove("glasses-cracked");
-      }
+      if (state.glassesBroken) container.classList.add("glasses-cracked");
+      else container.classList.remove("glasses-cracked");
+      applyStaticLanguageUI();
       drawBlueprint();
     });
 
-    // Route Variant Toggle (Home Tethered vs Outland Nomad)
-    document.getElementById("btnRouteVariant").addEventListener("click", e => {
+    document.getElementById("btnRouteVariant").addEventListener("click", () => {
       state.outlandRoute = !state.outlandRoute;
-      if (state.outlandRoute) {
-        e.currentTarget.textContent = "🔥 当前路线: 失母·域外流浪线 (武装劫掠)";
-        e.currentTarget.className = "px-2.5 py-1 rounded border border-orange-500 bg-orange-600/30 text-orange-200 font-semibold transition";
-      } else {
-        e.currentTarget.textContent = "🏠 当前路线: 家园线 (保母潜行)";
-        e.currentTarget.className = "px-2.5 py-1 rounded border border-orange-500/40 bg-orange-500/10 text-orange-300 hover:bg-orange-500/20 transition";
-      }
-      loadLevel(state.currentLevel);
+      applyStaticLanguageUI();
+      refreshLevelUI();
     });
 
-    // Truth Mode (Second Playthrough Zero-Zombie Mode) Toggle
-    document.getElementById("btnTruthMode").addEventListener("click", e => {
+    document.getElementById("btnTruthMode").addEventListener("click", () => {
       state.truthMode = !state.truthMode;
       const container = document.getElementById("canvasContainer");
-      const badge = document.getElementById("modeBadge");
-      const indicator = document.getElementById("brandIndicator");
-
       if (state.truthMode) {
-        e.currentTarget.textContent = "🌀 返回【一周目：Z年魔幻现实模式】";
-        e.currentTarget.className = "px-3 py-1 rounded font-semibold border border-blue-400/60 bg-blue-500/20 text-blue-200 transition shadow-sm";
         container.classList.remove("blueprint-grid");
         container.classList.add("truth-grid");
-        badge.textContent = "TRUTH MODE · ZERO ZOMBIES";
-        badge.className = "mono text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40";
-        indicator.className = "w-3 h-8 bg-amber-400 rounded-sm shadow-[0_0_12px_rgba(251,191,36,0.8)]";
       } else {
-        e.currentTarget.textContent = "👁️ 切换【二周目：零号真实模式】";
-        e.currentTarget.className = "px-3 py-1 rounded font-semibold border border-amber-400/60 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 transition shadow-sm";
         container.classList.remove("truth-grid");
         container.classList.add("blueprint-grid");
-        badge.textContent = "Z-YEAR MAGICAL REALISM";
-        badge.className = "mono text-[11px] px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30";
-        indicator.className = "w-3 h-8 bg-blue-500 rounded-sm shadow-[0_0_12px_rgba(59,130,246,0.8)]";
       }
-      loadLevel(state.currentLevel);
+      applyStaticLanguageUI();
+      refreshLevelUI();
+    });
+
+    document.getElementById("btnLangSwitch").addEventListener("click", () => {
+      lang = lang === "zh" ? "en" : "zh";
+      applyStaticLanguageUI();
+      refreshLevelUI();
     });
 
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("load", () => {
       resizeCanvas();
+      applyStaticLanguageUI();
       loadLevel("L02");
       startAnimationLoop();
     });

@@ -24,23 +24,37 @@ By day, you play as former freight dispatcher **Aleksei "Alyosha" Morozov**, acc
 ```text
 year-of-z-iron-winter/
 ├── README.md                                                     # Bilingual Project Overview & Push Guide
+├── index.html                                                    # ★ Soviet Teletype Terminal GitHub Pages Portal (Bilingual ZH/EN)
 ├── push_to_github.sh                                             # One-click GitHub repository creation & push script
+├── assets/
+│   └── concept_art/                                              # Phase 0 Concept Art Visual Targets (CON_01 ~ CON_03)
+│       ├── CON_01_Novorsk17_Lighting_Script.jpg
+│       ├── CON_02_Character_TriState_Sheet.jpg
+│       └── CON_03_Diegetic_Work_Logbook.jpg
 ├── docs/
 │   ├── zh/                                                       # 中文核心设定与剧本 (Chinese Documentation)
 │   │   ├── Z年纪事_魔幻现实主义游戏剧本.md                       # v4.0 俄式冷峻写实叙事总剧本 (Master Script ZH)
 │   │   ├── Z年纪事_游戏总策划案_GDD.md                           # v4.0 游戏总策划案 (GDD ZH)
 │   │   ├── Z年纪事_第一阶段灰盒原型规格书与美术资产清单.md       # v4.0 第一阶段灰盒规格书与资产清单 (Greybox Spec ZH)
-│   │   └── Z年纪事_美术资源生成Prompt规格书.md                   # ★ AI 出图生产规格：视觉宪法 / 宏 / 逐资产 Prompt (Art Prompt Spec ZH)
+│   │   ├── Z年纪事_美术资源生成Prompt规格书.md                   # ★ AI 出图生产规格：视觉宪法 / 宏 / 逐资产 Prompt (Art Prompt Spec ZH)
+│   │   └── Z年纪事_Godot4引擎迁移技术规范与架构指南.md           # ★ Godot 4.3+ 引擎迁移技术规范与架构指南 (ZH)
 │   └── en/                                                       # English Documentation (v4.0 Russian Winter)
 │       ├── Year_of_Z_Iron_Winter_Master_Script_EN.md             # Full 5-Act Master Screenplay (EN)
 │       ├── Year_of_Z_Iron_Winter_GDD_EN.md                       # Game Design Document v4.0 (EN)
-│       └── Year_of_Z_Iron_Winter_Greybox_Spec_EN.md              # Phase 1 Greybox Spec & Asset List (EN)
-└── prototypes/                                                   # Interactive HTML5 Prototypes & Sandboxes
-    ├── Year_of_Z_Iron_Winter_Exploration_Demo.html               # ★★ 探索循环 DEMO：据点→地图选点→夜潜→搜刮→撤离→结算 (Bilingual ZH/EN)
-    ├── Year_of_Z_Iron_Winter_Playable_Greybox_Gym.html           # ★ Single-File HTML5 Playable 5-in-1 Greybox Gym (Bilingual ZH/EN)
-    ├── Z年纪事_结局分支与双线汇聚流程图.html                     # 俄式“卌”字划痕与五结局交互模拟器 (ZH)
-    ├── Year_of_Z_Iron_Winter_Ending_Simulator_EN.html            # Dual-Anchor & 5-Ending Tally Simulator (EN)
-    └── Z年纪事_核心关卡俯视角平面动线图.html                     # 核心关卡俯视角平面动线与战术沙盘 (Tactical Blueprints)
+│       ├── Year_of_Z_Iron_Winter_Greybox_Spec_EN.md              # Phase 1 Greybox Spec & Asset List (EN)
+│       └── Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md    # ★ Godot 4.3+ Engine Migration & Architecture Guide (EN)
+├── prototypes/                                                   # Interactive HTML5 Prototypes & Sandboxes
+│   ├── Year_of_Z_Iron_Winter_Exploration_Demo.html               # ★★ 探索循环 DEMO：据点→地图选点→夜潜→搜刮→撤离→结算 (Bilingual ZH/EN)
+│   ├── Year_of_Z_Iron_Winter_Playable_Greybox_Gym.html           # ★ Single-File HTML5 Playable 5-in-1 Greybox Gym (Bilingual ZH/EN)
+│   ├── Z年纪事_结局分支与双线汇聚流程图.html                     # 俄式“卌”字划痕与五结局交互模拟器 (ZH)
+│   ├── Year_of_Z_Iron_Winter_Ending_Simulator_EN.html            # Dual-Anchor & 5-Ending Tally Simulator (EN)
+│   └── Z年纪事_核心关卡俯视角平面动线图.html                     # v4.0 核心关卡俯视角平面动线与战术沙盘，中英双语切换 (Tactical Blueprints)
+└── godot_project/                                                # ★ Ready-to-Import Godot 4.3+ Starter Project (scripts + shader + data, no scenes yet)
+    ├── project.godot                                             # 8 Physics Layers (1m = 64px, 1920x1080)
+    ├── autoload/                                                 # LogbookManager, AcousticRippleBus
+    ├── scripts/                                                  # PlayerAleksei, WolfdogAsh, OSKPurgeSoldier, DoorWedgeInteractable
+    ├── shaders/                                                  # vision_fog_90deg.gdshader
+    └── data/                                                     # novorsk17_campaign_data.json (L01–L10)
 ```
 
 ---
@@ -84,6 +98,25 @@ Open `prototypes/Year_of_Z_Iron_Winter_Playable_Greybox_Gym.html` directly in an
 * **Room C (The Paper Dead & Choice A `卌` Tally)**: Record **Sergey & Maria**'s real names on the back of your Work Logbook when the Soviet teletype terminal reads `0 PERSONS AT COORDINATE`, and resolve **Choice A** with the Regressing Half-Human in the culvert.
 * **Room D (Siberian Wolfdog "Ash / Пепел" Tri-State Olfactory AI)**: Walk past 3 quarantine cages to test Ash's automatic olfactory detection (`Bark` vs. `Whimper` vs. `Tail Wag`) and speak with self-bound **Anna (`0419`)** about Sister **Lana (`0420`)** in Carriage No. 3.
 * **Room E (East Street Canteen Kitchen — Collarbone Blade Jam QTE & PTSD Thirst)**: Equip the rusty Butcher Cleaver, confront **Vasily** in `40°C` delirium, complete the **6-hit Collarbone Blade Jam QTE**, witness his eyes clear to blue as he whispers *"…Пить (Thirsty)…"*, and experience the permanent **PTSD Thirst Tinnitus** when drinking water (`Press Q`).
+
+---
+
+## 🖥️ GitHub Pages Portal | `index.html`
+
+Open `index.html` (or enable GitHub Pages on branch `main`, root `/`) for the Soviet Teletype Terminal portal: it links all prototypes including the Exploration Demo, plus the Phase 0 concept art gallery below. Note: on `file://` the portal buttons only show the target path; serve over HTTP or use GitHub Pages to navigate.
+
+## 🎨 Phase 0 Visual Target Concept Art (`assets/concept_art/`)
+
+| `CON_01` · Color & Lighting Script | `CON_02` · Character & Tri-State Sheet | `CON_03` · Diegetic Work Logbook (`卌`) |
+| :---: | :---: | :---: |
+| ![CON_01](assets/concept_art/CON_01_Novorsk17_Lighting_Script.jpg) | ![CON_02](assets/concept_art/CON_02_Character_TriState_Sheet.jpg) | ![CON_03](assets/concept_art/CON_03_Diegetic_Work_Logbook.jpg) |
+| **Khrushchyovka Blizzard / East St. Kitchen / Pine Manor** | **Aleksei / Sister Lana (`0420`) / O.S.K. Purge Squad / Wolfdog "Ash"** | **Left: Verified Real Names / Right: `卌` Tally** |
+
+## 🎮 Godot 4.3+ Starter (`godot_project/`)
+
+Import `godot_project/project.godot` in Godot 4.3+ (Forward+). It already contains the 8 physics layers, the `LogbookManager` / `AcousticRippleBus` autoloads, the four core GDScripts, the 90° vision-fog shader, and the L01–L10 campaign JSON. Full spec: `docs/zh/Z年纪事_Godot4引擎迁移技术规范与架构指南.md` / `docs/en/Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md`.
+
+> ⚠️ Current limit, stated plainly: this is a **code starter, not yet a runnable game**. There is no main scene, no `.tscn` files, and no input map in `project.godot` yet, so importing it opens the project but has nothing to play. The next Godot step is to add the input map + a Room A test scene wiring `PlayerAleksei` / `WolfdogAsh` / `OSKPurgeSoldier`.
 
 ---
 
