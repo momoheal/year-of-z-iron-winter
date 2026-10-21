@@ -774,7 +774,7 @@ function resize(){
   fogCv.width=Math.max(1,Math.round(VW*DPR)); fogCv.height=Math.max(1,Math.round(VH*DPR)); fctx.setTransform(DPR,0,0,DPR,0,0);
 }
 function project(wx,wy){
-  return {x:(wx-S.cam.x)*CFG.PPM+VW/2, y:(wy-S.cam.y)*CFG.PPM*CFG.SQUASH+VH/2};
+  return {x:(wx-S.cam.x)*CFG.PPM+VW/2+(S.shakeOX||0), y:(wy-S.cam.y)*CFG.PPM*CFG.SQUASH+VH/2+(S.shakeOY||0)};
 }
 function unproject(sx,sy){
   return {x:(sx-VW/2)/CFG.PPM+S.cam.x, y:(sy-VH/2)/(CFG.PPM*CFG.SQUASH)+S.cam.y};
@@ -831,7 +831,7 @@ function startScene(L){
   S.nightMax = S.nightLeft;
   S.pack=[]; S.packMax=CFG.BAG + (G.mate==='anna'?4:0);
   S.over=false; S.ended=false; S.killed=0; S.halfSaved=0; S.looted=0; S.totalCont=S.map.conts.length;
-  S.jam=null; S.search=null; S.wedge=null; S.extract=null; S.dawnWarned=false; S.revived=false; S.clinicDone=false;
+  S.jam=null; S.search=null; S.wedge=null; S.extract=null; S.dawnWarned=false; S.revived=false; S.clinicDone=false; S.shake=0; S.shakeOX=0; S.shakeOY=0; S.hitStop=0; S.floaters=[];
   S.atk={t:0,phase:'idle'};
   const wp=[WEAPONS.find(w=>w.id==='mosin'&&weaponOwned(w))||WEAPONS.find(w=>w.id==='shotgun'&&weaponOwned(w))||WEAPONS.find(w=>w.id==='cleaver'&&weaponOwned(w))||WEAPONS[1]];
   S.player={x:S.map.entry.x,y:S.map.entry.y,face:-Math.PI/2,hp:100,stam:100,warmth:100,
@@ -907,7 +907,7 @@ function startScene(L){
 const COL={
   floor:'#232e3d', floor2:'#151c26', grout:'#334155',
   slush:'#22323f', slush2:'#2b4657',
-  wallTop:'#2f3846', wallFront:'#12181f', wallEdge:'#3c4859',
+  wallTop:'#4b5a70', wallFront:'#1e2836', wallEdge:'#8fa1b8',
   cover:'#3a4655', coverRust:'#6a4a2a',
   fence:'#4a5766', door:'#5a4028', wedged:'#8a6520',
   fire:'#f59e0b', entry:'#4ade80',
@@ -1031,6 +1031,14 @@ function drawScene(){
   });
   // 玩家
   drawPlayer();
+  // 飘字（伤害数字）
+  (S.floaters||[]).forEach(f=>{
+    const s=project(f.x,f.y-(0.8-f.t)*0.8);
+    ctx.globalAlpha=clamp(f.t/0.8,0,1);
+    ctx.fillStyle=f.crit?'#fbbf24':'#f8fafc'; ctx.font='bold 14px JetBrains Mono';
+    ctx.fillText(f.txt,s.x-10,s.y);
+    ctx.globalAlpha=1;
+  });
 }
 function drawPlayer(){
   const p=S.player, s=project(p.x,p.y);
@@ -1137,7 +1145,8 @@ function drawFog(){
   for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){
     if(!S.explored[j*m.W+i]) continue;
     const s=project(i,j);
-    fctx.fillStyle='rgba(0,0,0,'+(S.vis[j*m.W+i]?1:0.42)+')';
+    const isWall=m.at(i,j)===TT.WALL;
+    fctx.fillStyle='rgba(0,0,0,'+(S.vis[j*m.W+i]?1:(isWall?0.72:0.42))+')';
     fctx.fillRect(s.x,s.y,pw+1,ph+1);
   }
   const pp=project(S.player.x,S.player.y);
@@ -1296,12 +1305,21 @@ function shoot(w){
   S.ents.forEach(e=>{ if(!e.dead&&e.kind==='osk'){ e.state='investigate'; e.tx=p.x; e.ty=p.y; e.suspect=1.5; }});
   if(hit){
     const dmg = w.id==='shotgun'? w.dmg*(0.55+0.45*Math.max(0.25,1-dist(p.x,p.y,hit.x,hit.y)/w.range)) : w.dmg;
-    damageEnt(hit,dmg);
+    damageEnt(hit,dmg,p.x,p.y);
   }
   S.shotsFired=(S.shotsFired||0)+1;
 }
-function damageEnt(e,dmg){
-  e.hp-=dmg; e.hitFlash=0.15;
+function damageEnt(e,dmg,fromX,fromY){
+  e.hp-=dmg; e.hitFlash=0.22;
+  if(fromX!==undefined&&!e.dead){
+    const dd=dist(fromX,fromY,e.x,e.y)||0.001;
+    const kb=e.kind==='osk'?0.35:(e.brute?0.25:0.6);
+    moveEnt(e,e.x+(e.x-fromX)/dd*kb,e.y+(e.y-fromY)/dd*kb,0.32);
+  }
+  S.floaters=S.floaters||[];
+  S.floaters.push({x:e.x,y:e.y,txt:'-'+Math.round(dmg),t:0.8,crit:e.hp<=0});
+  if(e.hp<=0) S.hitStop=0.09; else S.hitStop=0.045;
+  S.shake=Math.min(6,(S.shake||0)+(e.hp<=0?4:2));
   if(e.kind==='rabid'&&e.state!=='chase'){ e.state='chase'; e.alert=1; }
   if(e.kind==='osk'){ e.state='investigate'; e.tx=S.player.x; e.ty=S.player.y; e.suspect=2; }
   if(e.hp<=0&&!e.dead){
@@ -1527,9 +1545,9 @@ function update(dt){
         const a=Math.atan2(e.y-p.y,e.x-p.x);
         if(Math.abs(angDiff(a,p.face))<=w2.arc*Math.PI/360+Math.atan2(0.5,d)){
           if(w2.id==='cleaver'&&e.kind==='rabid'&&!S.jam&&Math.abs(angDiff(a,p.face))<0.7){
-            S.jam={t:1.5,hits:0}; e.hp-=8;
+            S.jam={t:1.5,hits:0}; e.hp-=8; e.hitFlash=0.22;
             toast(LANG==='zh'?'<b>刀卡进锁骨缝了！1.5 秒内连按攻击键 6 次拔刀！</b>':'<b>The blade jams in the collarbone! Mash attack 6× in 1.5s!</b>',1600);
-          } else damageEnt(e,w2.dmg);
+          } else damageEnt(e,w2.dmg,p.x,p.y);
         }
       });
     } else if(S.atk.phase==='act'&&S.atk.t>=w2.act){ S.atk.phase='rec'; S.atk.t=0; }
@@ -1587,7 +1605,7 @@ function update(dt){
         moveEnt(e,e.x+Math.cos(a)*sp2*dt,e.y+Math.sin(a)*sp2*dt,0.32);
         if(d<1.15){
           e.bite=Math.min((e.bite||0)+dt, 0.45);   // 封顶：冷却/无敌帧期间不再累加，否则绘制半径会穿零变负
-          if(e.bite>=0.45&&e.cd<=0&&!(p.iframe>0)){ e.cd=1.7; e.bite=0; p.hp-=(e.brute?15:8); p.iframe=0.75; p.hurt=0.35; p.bpm+=18;
+          if(e.bite>=0.45&&e.cd<=0&&!(p.iframe>0)){ e.cd=1.7; e.bite=0; p.hp-=(e.brute?15:8); p.iframe=0.75; p.hurt=0.35; S.shake=5; p.bpm+=18;
           sfx('hit'); emitNoise(p.x,p.y,6,'#ef4444','hit');
             if(rnd()<0.30&&!G.flags.glasses) { G.flags.glasses=true; toast(LANG==='zh'?'<b>镜片裂了：视距 12m → 7.2m，边缘重影。</b>':'<b>Lens cracked: sight 12m → 7.2m, ghosting at the edges.</b>',3000); CFG.SIGHT=7.2; }
           }
@@ -1620,7 +1638,7 @@ function update(dt){
       if(e.suspect>=1&&d<14&&clear&&!hidden){ e.lock=(e.lock||0)+dt; } else if(d>=14||!inCone) e.lock=Math.max(0,(e.lock||0)-dt);
       if(e.lock>=1.0&&e.cd<=0){
         e.cd=0.95; e.lock=0; const acc=clamp(1-d/14,0.25,1)*0.75;
-        if(rnd()<acc&&!(p.iframe>0)){ p.hp-=18; p.iframe=0.6; p.hurt=0.4; }
+        if(rnd()<acc&&!(p.iframe>0)){ p.hp-=18; p.iframe=0.6; p.hurt=0.4; S.shake=5; }
         sfx('lock'); emitNoise(e.x,e.y,10,'#7dd3fc','osk');
         toast(LANG==='zh'?'<b style="color:#fca5a5">红外锁定——AKM 微声点射！</b>':'<b style="color:#fca5a5">IR lock — suppressed AKM burst!</b>',1600);
       }
@@ -1666,6 +1684,21 @@ function update(dt){
     if(S.mate==='gulya'&&!S.revived){ S.revived=true; p.hp=40; toast(LANG==='zh'?'古丽娅把你从雪里拖起来：一次，仅此一次。':'Gulya drags you out of the snow: once, and only once.',3000); }
     else { endScene('downed'); return; }
   }
+  // 实体碰撞：玩家与敌对实体、敌对实体之间不再重叠（撞墙停住）
+  const sep=(a,b,minD)=>{
+    const d=dist(a.x,a.y,b.x,b.y); if(d>=minD) return;
+    const ux=d<0.001?1:(b.x-a.x)/d, uy=d<0.001?0:(b.y-a.y)/d;
+    const push=(minD-d)/2;
+    moveEnt(a,a.x-ux*push,a.y-uy*push,0.35);
+    moveEnt(b,b.x+ux*push,b.y+uy*push,0.32);
+  };
+  S.ents.forEach(e=>{
+    if(e.dead||(e.kind!=='rabid'&&e.kind!=='osk')) return;
+    sep(p,e,0.75);
+  });
+  const hostiles=S.ents.filter(e=>!e.dead&&(e.kind==='rabid'||e.kind==='osk'));
+  for(let a=0;a<hostiles.length;a++) for(let b=a+1;b<hostiles.length;b++) sep(hostiles[a],hostiles[b],0.7);
+  S.floaters=(S.floaters||[]).filter(f=>{ f.t-=dt; return f.t>0; });
   computeVis();
 }
 
@@ -2163,7 +2196,9 @@ function frame(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   if($('#s-scene').classList.contains('active')&&!S.paused&&!S.over&&S.map){
    try{
-    update(dt);
+    if(S.hitStop>0) S.hitStop-=dt; else update(dt);
+    S.shakeOX=(Math.random()-0.5)*(S.shake||0); S.shakeOY=(Math.random()-0.5)*(S.shake||0)*CFG.SQUASH;
+    S.shake=Math.max(0,(S.shake||0)-dt*26);
     drawScene(); drawFog(); drawCones(); drawRipples(); drawCompass(); drawFlakes();
     __frameErr=0; clearFatal();
     const p=S.player;
