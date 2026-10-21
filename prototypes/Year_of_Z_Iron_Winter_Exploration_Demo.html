@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Year of Z: Iron Winter — Exploration Loop Demo |《Z年纪事：凛冬铁轨》探索循环 DEMO</title>
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -134,6 +134,13 @@
   .scroll::-webkit-scrollbar-thumb{background:#1d2732;border-radius:4px}
   .flash-red{animation:fr .5s}
   @keyframes fr{0%,100%{box-shadow:none}30%{box-shadow:inset 0 0 120px #ef444455}}
+#cv{touch-action:none}
+#touchUI{display:none;position:absolute;inset:0;pointer-events:none;z-index:30}
+#touchUI .joy{position:absolute;left:18px;bottom:150px;width:120px;height:120px;border-radius:50%;background:#ffffff14;border:2px solid #ffffff30;pointer-events:auto}
+#touchUI .knob{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:#ffffff40;border:2px solid #ffffff60}
+#touchUI .tbtn{position:absolute;pointer-events:auto;min-width:52px;height:52px;padding:0 8px;border-radius:14px;background:#0f172acc;border:1.5px solid #ffffff40;color:#f8fafc;font:600 13px/1.2 'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center}
+#touchUI .tbtn.on{background:#38bdf866}
+#touchUI .tbtn.atk{background:#dc262ccc}
 </style>
 </head>
 <body>
@@ -230,6 +237,19 @@
   <div class="hud" id="hudBL"></div>
   <div class="hud" id="hudBC"></div>
   <div class="hud" id="hudBR"></div>
+  <div id="touchUI">
+    <div class="joy" id="joyBase"><div class="knob" id="joyKnob"></div></div>
+    <button class="tbtn atk" id="tAtk" style="right:18px;bottom:230px">攻击</button>
+    <button class="tbtn" id="tE" style="right:84px;bottom:230px">交互 E</button>
+    <button class="tbtn" id="tG" style="right:18px;bottom:170px">扔罐 G</button>
+    <button class="tbtn" id="tQ" style="right:84px;bottom:170px">喝水 Q</button>
+    <button class="tbtn" id="tF" style="right:150px;bottom:170px">绷带 F</button>
+    <button class="tbtn" id="tR" style="right:216px;bottom:170px">换弹 R</button>
+    <button class="tbtn" id="tRun" style="right:18px;bottom:110px">疾跑</button>
+    <button class="tbtn" id="tCrouch" style="right:84px;bottom:110px">蹲伏</button>
+    <button class="tbtn" id="tZoomIn" style="right:150px;bottom:110px">视野＋</button>
+    <button class="tbtn" id="tZoomOut" style="right:216px;bottom:110px">视野－</button>
+  </div>
 </section>
 
 <!-- ================= REPORT ================= -->
@@ -258,7 +278,7 @@ const angDiff=(a,b)=>{let d=(a-b)%(Math.PI*2); if(d>Math.PI)d-=Math.PI*2; if(d<-
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
 const CFG={
-  PPM:44,               // 每逻辑米像素（1080p 下 64px/m 为最终规格，DEMO 用 44 以看到更大范围）
+  PPM:38,               // 每逻辑米像素（1080p 下 64px/m 为最终规格，DEMO 用 38 以看到更大范围；按 - / = 缩放 26–72）
   SQUASH:0.62,          // y 轴压缩：75° 斜俯视近似
   TILE:1.0,             // 1 格 = 1 逻辑米
   WALL_H:0.62,          // 墙体挤出高度（屏幕比例）
@@ -404,6 +424,18 @@ const LOCS=[
   loot:['warm','scrap'],hint_zh:'风小，能捡到柴。偶尔有逃出来的人躲在这儿。',hint_en:'Sheltered. Firewood, and sometimes people who ran.',
   hint2_zh:'低风险补给点，适合缺体温的夜里。',hint2_en:'Low-risk resupply. Good when you are freezing.',
   time:60,cold:1.5,story:null},
+ {id:'workshop',x:480,y:130,dg:2,seed:6606,zh:'机修车间',en:'Machine Workshop',
+  loot:['scrap','part'],hint_zh:'车床边散落着零件，焊机还能打着火。',hint_en:'Parts by the lathes; the welder still sparks.',
+  hint2_zh:'车间里工具多，但巡逻队常来查。',hint2_en:'Plenty of tools — and patrols check in often.',
+  time:70,cold:0.8,story:null},
+ {id:'greenhouse',x:480,y:470,dg:1,seed:7707,zh:'温室大棚',en:'Greenhouse',
+  loot:['food','warm'],hint_zh:'塑料布还算严实，冻土里埋着去年的土豆。',hint_en:'The plastic still holds; last year\'s potatoes are in the frozen soil.',
+  hint2_zh:'低风险食物点，适合缺粮的夜里。',hint2_en:'Low-risk food. Good when you are hungry.',
+  time:60,cold:0.6,story:null},
+ {id:'archive',x:920,y:250,dg:3,seed:8808,zh:'档案馆电报局',en:'Archive & Telegraph Office',
+  loot:['intel','val'],hint_zh:'旧电报和花名册都在，值钱的情报也在。',hint_en:'Old telegrams and rosters — and valuable intel.',
+  hint2_zh:'高风险：清杀队重点盯防的情报点。',hint2_en:'High risk: an intel site the purge squads watch closely.',
+  time:90,cold:0.7,story:null},
 ];
 
 /* 主线剧情节拍（进入地点时触发） */
@@ -594,16 +626,16 @@ function ensureConnected(W,H,at,set,conts,entry){
 
 function genMap(L){
   const R=mulberry32(L.seed + G.day*7);
-  const W=54,H=42;
+  const W=64,H=48;
   const g=new Uint8Array(W*H).fill(TT.WALL);
   const set=(x,y,v)=>{ if(x>0&&y>0&&x<W-1&&y<H-1) g[y*W+x]=v; };
   const at=(x,y)=> (x<0||y<0||x>=W||y>=H)?TT.WALL:g[y*W+x];
   // --- BSP rooms ---
   const rooms=[];
   (function split(r){
-    const minS=9;
-    if(rooms.length>=9 && R()<0.5) { rooms.push(r); return; }
-    if((r.w<minS*2 && r.h<minS*2) || rooms.length>=11){ rooms.push(r); return; }
+    const minS=8;
+    if(rooms.length>=12 && R()<0.5) { rooms.push(r); return; }
+    if((r.w<minS*2 && r.h<minS*2) || rooms.length>=14){ rooms.push(r); return; }
     let horiz = r.w<r.h ? true : (r.h<r.w ? false : R()<0.5);
     if(horiz){
       if(r.h<minS*2){rooms.push(r);return;}
@@ -618,7 +650,9 @@ function genMap(L){
   rooms.forEach(r=>{
     const w=Math.max(5,Math.floor(r.w*lerp(0.6,0.86,R()))), h=Math.max(5,Math.floor(r.h*lerp(0.6,0.86,R())));
     const x=r.x+Math.floor((r.w-w)*R()), y=r.y+Math.floor((r.h-h)*R());
-    const room={x,y,w,h,cx:Math.floor(x+w/2),cy:Math.floor(y+h/2)};
+    const mechRoll=R();
+    const mech=mechRoll<0.22?'storage':mechRoll<0.36?'freezer':mechRoll<0.50?'dark':mechRoll<0.64?'kitchen':mechRoll<0.76?'clinic':mechRoll<0.88?'patrol':mechRoll<0.96?'workshop':null;
+    const room={x,y,w,h,cx:Math.floor(x+w/2),cy:Math.floor(y+h/2),mech};
     for(let j=y;j<y+h;j++) for(let i=x;i<x+w;i++) set(i,j,TT.FLOOR);
     r.room=room; 
   });
@@ -671,7 +705,7 @@ function genMap(L){
   // --- 容器 ---
   const contTypes=['crate','locker','medcab','fridge','briefcase','safe','hidden'];
   const conts=[];
-  const nCont=Math.round((6+L.dg*2.4)*(0.85+R()*0.4)*nodeState(L.id).left);
+  const nCont=Math.round((8+L.dg*3.0)*(0.85+R()*0.4)*nodeState(L.id).left);
   for(let k=0;k<nCont;k++){
     const r=rlist[Math.floor(R()*rlist.length)]; if(!r) break;
     let placed=false;
@@ -680,12 +714,27 @@ function genMap(L){
       if(at(x,y)!==TT.FLOOR && at(x,y)!==TT.SLUSH) continue;
       if(conts.some(c=>dist(c.x,c.y,x,y)<2)) continue;
       let type=contTypes[Math.floor(R()*contTypes.length)];
+      if(r.mech==='kitchen') type=['fridge','fridge','crate'][Math.floor(R()*3)];
+      else if(r.mech==='clinic') type=['medcab','medcab','briefcase'][Math.floor(R()*3)];
+      else if(r.mech==='workshop') type=['briefcase','safe','locker'][Math.floor(R()*3)];
       if(type==='safe'&&R()<0.6) type='locker';
       if(type==='hidden'&&R()<0.75) type='crate';
       conts.push({x:x+0.5,y:y+0.5,type,searched:false,loot:null,prog:0});
       placed=true;
     }
   }
+  // 储藏室机制：额外 2 个容器；厨房机制：自带火堆
+  rlist.forEach(r=>{
+    if(r.mech==='storage'){
+      for(let k=0;k<2;k++){
+        const x=r.x+Math.floor(R()*r.w), y=r.y+Math.floor(R()*r.h);
+        if(at(x,y)!==TT.FLOOR && at(x,y)!==TT.SLUSH) continue;
+        if(conts.some(c=>dist(c.x,c.y,x,y)<2)) continue;
+        conts.push({x:x+0.5,y:y+0.5,type:R()<0.5?'crate':'locker',searched:false,loot:null,prog:0});
+      }
+    }
+    if(r.mech==='kitchen') fires.push({x:r.cx+0.5, y:r.cy+0.5});
+  });
   // --- 火堆 / 蒸汽口（回温）---
   const nFire = L.cold>1.0?2:1;
   for(let k=0;k<nFire;k++){
@@ -730,10 +779,20 @@ function project(wx,wy){
 function unproject(sx,sy){
   return {x:(sx-VW/2)/CFG.PPM+S.cam.x, y:(sy-VH/2)/(CFG.PPM*CFG.SQUASH)+S.cam.y};
 }
+function roomAt(x,y){
+  const m=S.map; if(!m) return null;
+  return m.rooms.find(r=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h)||null;
+}
+function roomMechAt(x,y){ const r=roomAt(x,y); return r?r.mech:null; }
+function sightNow(){
+  let s=CFG.SIGHT;
+  if(S.player && roomMechAt(S.player.x,S.player.y)==='dark') s*=0.65;
+  return s;
+}
 function tileVisibleAt(wx,wy){
   const p=S.player; if(!p) return false;
   const d=dist(p.x,p.y,wx,wy);
-  if(d>CFG.SIGHT) return false;
+  if(d>sightNow()) return false;
   if(d<=CFG.NEAR_SENSE) return true;
   const a=Math.atan2(wy-p.y,wx-p.x);
   if(Math.abs(angDiff(a,p.face))>CFG.FOV_DEG*Math.PI/360) return false;
@@ -772,7 +831,7 @@ function startScene(L){
   S.nightMax = S.nightLeft;
   S.pack=[]; S.packMax=CFG.BAG + (G.mate==='anna'?4:0);
   S.over=false; S.ended=false; S.killed=0; S.halfSaved=0; S.looted=0; S.totalCont=S.map.conts.length;
-  S.jam=null; S.search=null; S.wedge=null; S.extract=null; S.dawnWarned=false; S.revived=false;
+  S.jam=null; S.search=null; S.wedge=null; S.extract=null; S.dawnWarned=false; S.revived=false; S.clinicDone=false;
   S.atk={t:0,phase:'idle'};
   const wp=[WEAPONS.find(w=>w.id==='mosin'&&weaponOwned(w))||WEAPONS.find(w=>w.id==='shotgun'&&weaponOwned(w))||WEAPONS.find(w=>w.id==='cleaver'&&weaponOwned(w))||WEAPONS[1]];
   S.player={x:S.map.entry.x,y:S.map.entry.y,face:-Math.PI/2,hp:100,stam:100,warmth:100,
@@ -788,7 +847,7 @@ function startScene(L){
   const R=mulberry32(L.seed*3+G.day);
   const rooms=S.map.rooms.slice(1);
   const farRoom=()=>rooms.length?rooms[Math.floor(R()*rooms.length)]:{cx:S.map.entry.x+6,cy:S.map.entry.y+6};
-  const nRab=Math.round(1+L.dg*0.95+R()*1.2);
+  const nRab=Math.round(2+L.dg*1.3+R()*1.5);
   for(let i=0;i<nRab;i++){
     const r=farRoom();
     let x=r.cx+ (R()-0.5)*Math.max(2,r.w*0.6), y=r.cy+(R()-0.5)*Math.max(2,r.h*0.6);
@@ -797,14 +856,24 @@ function startScene(L){
     S.ents.push({kind:'rabid',x,y,hp:60,state:'idle',tx:x,ty:y,alert:0,dead:false,cd:0,
       wt:R()*3, home:{x,y}, hitFlash:0});
   }
-  const nOsk=Math.max(0,Math.round((L.dg-1)*0.55+R()*0.55));
-  for(let i=0;i<nOsk;i++){
+  if(L.dg>=2){
+    const br=farRoom();
+    S.ents.push({kind:'rabid',brute:true,x:br.cx+0.5,y:br.cy+0.5,hp:150,state:'idle',tx:br.cx+0.5,ty:br.cy+0.5,alert:0,dead:false,cd:0,
+      wt:R()*3, home:{x:br.cx+0.5,y:br.cy+0.5}, hitFlash:0});
+  }
+  const nOskPairs=Math.max(L.dg>=2?1:0,Math.round((L.dg-1)*0.4+R()*0.5));
+  for(let i=0;i<nOskPairs;i++){
     const r=farRoom();
-    S.ents.push({kind:'osk',x:r.cx+0.5,y:r.cy+0.5,face:R()*6.28,hp:120,state:'patrol',suspect:0,lock:0,
-      dead:false,cd:0,wp:[{x:r.cx+0.5,y:r.cy+0.5}],wpi:0,sweep:0,tx:r.cx,ty:r.cy});
-    // 生成巡逻路径
-    const e=S.ents[S.ents.length-1];
-    for(let k=0;k<3;k++){ const rr=farRoom(); e.wp.push({x:rr.cx+0.5,y:rr.cy+0.5}); }
+    const wp=[{x:r.cx+0.5,y:r.cy+0.5}];
+    const patrolRooms=S.map.rooms.filter(rm=>rm.mech==='patrol');
+    for(let k=0;k<3;k++){
+      const rr=patrolRooms.length&&R()<0.6?patrolRooms[Math.floor(R()*patrolRooms.length)]:farRoom();
+      wp.push({x:rr.cx+0.5,y:rr.cy+0.5});
+    }
+    for(let j=0;j<2;j++){
+      S.ents.push({kind:'osk',x:r.cx+0.5+(j?0.9:0),y:r.cy+0.5,face:R()*6.28,hp:120,state:'patrol',suspect:0,lock:0,
+        dead:false,cd:0,wp:wp.map(p=>({x:p.x,y:p.y})),wpi:0,sweep:0,tx:r.cx,ty:r.cy});
+    }
   }
   const nHalf=(R()<0.72?1:0)+(R()<0.35?1:0);
   for(let i=0;i<nHalf;i++){
@@ -812,6 +881,18 @@ function startScene(L){
     const x=r.cx+(R()-0.5)*3, y=r.cy+(R()-0.5)*3;
     if(S.map.at(Math.floor(x),Math.floor(y))!==TT.FLOOR) continue;
     S.ents.push({kind:'half',x,y,hp:40,state:'crouch',dead:false,used:false,ph:R()*6.28});
+  }
+  // NPC：商人与委托人
+  const traderRoom=farRoom();
+  S.ents.push({kind:'npc',role:'trader',name: LANG==='zh'?'黑市贩子老周':'Black-Market Zhou', x:traderRoom.cx+0.5, y:traderRoom.cy+0.5, hp:100, dead:false,
+    want:['vodka','watch','tape','glass'][Math.floor(R()*4)],
+    offer:['band','asp','rye','can','water'][Math.floor(R()*5)], traded:false});
+  if(L.dg>=2){
+    const qRoom=farRoom();
+    const qType=['fetch','hunt','rescue'][Math.floor(R()*3)];
+    S.ents.push({kind:'npc',role:'quest',name: LANG==='zh'?'避难所联络员':'Shelter Liaison', x:qRoom.cx+0.5, y:qRoom.cy+0.5, hp:100, dead:false,
+      quest:{type:qType, need:qType==='fetch'?2:(qType==='hunt'?3:1), fromKilled:0, fromSaved:0, done:false, accepted:false,
+        target:qType==='fetch'?['rye','can','water','scrap'][Math.floor(R()*4)]:null}});
   }
   // 携带消耗品
   S.load={can:0,water:0,asp:0,band:0};
@@ -824,7 +905,7 @@ function startScene(L){
  *  6. 渲染（75° 斜俯视灰盒）
  * =======================================================================*/
 const COL={
-  floor:'#1b222c', floor2:'#171e27', grout:'#0e1319',
+  floor:'#232e3d', floor2:'#151c26', grout:'#334155',
   slush:'#22323f', slush2:'#2b4657',
   wallTop:'#2f3846', wallFront:'#12181f', wallEdge:'#3c4859',
   cover:'#3a4655', coverRust:'#6a4a2a',
@@ -906,11 +987,18 @@ function drawScene(){
       if(Math.floor(c.y)!==j) return;
       if(!S.explored[j*m.W+Math.floor(c.x)]) return;
       const s=project(c.x-0.35,c.y-0.35);
-      const w=pw*0.7,h=ph*0.7,hh=ht*0.55;
+      const w=pw*0.85,h=ph*0.85,hh=ht*0.55;
       const pal={crate:['#6b5232','#2e2314','#8a6a3c'],locker:['#3a4c60','#161d26','#4f6478'],
         medcab:['#2f5a4a','#12241d','#3f7a63'],fridge:['#4c5763','#1b2128','#667585'],
         briefcase:['#4a3d28','#1e1810','#6b5a3c'],safe:['#2b323b','#12161b','#454f5b'],hidden:['#6b5a2a','#241d0e','#8f7a35']}[c.type]||['#555','#222','#777'];
       drawBox(s.x,s.y,w,h,hh,pal[0],pal[1],pal[2]);
+      ctx.strokeStyle=pal[2]; ctx.lineWidth=2; ctx.strokeRect(s.x-1,s.y-1,w+2,h+hh+2);
+      ctx.fillStyle='#00000044'; ctx.beginPath(); ctx.ellipse(s.x+w/2,s.y+h+hh+3,w*0.45,4,0,0,6.2832); ctx.fill();
+      const cIcon={crate:'📦',locker:'🗄️',medcab:'✚',fridge:'🧊',briefcase:'💼',safe:'🔒',hidden:'？'}[c.type]||'▦';
+      const cName={crate:'木箱',locker:'储物柜',medcab:'药柜',fridge:'冷柜',briefcase:'公文包',safe:'保险柜',hidden:'暗格'}[c.type]||'容器';
+      const dc=dist(c.x,c.y,S.player.x,S.player.y);
+      if(!c.searched && dc<3.2){ ctx.fillStyle='#f8fafc'; ctx.font='bold 13px JetBrains Mono'; ctx.fillText(cIcon,s.x+w/2-7,s.y-6); ctx.font='11px JetBrains Mono'; ctx.fillText(cName+' [E]',s.x+w/2-22,s.y-20); }
+      else if(!c.searched && c.type!=='hidden'){ ctx.fillStyle='#e2e8f0'; ctx.font='11px JetBrains Mono'; ctx.fillText(cIcon,s.x+w/2-5,s.y-4); }
       if(c.type==='medcab'){ ctx.fillStyle='#e2e8f0'; ctx.fillRect(s.x+w/2-1.5,s.y+3,3,h-6); ctx.fillRect(s.x+3,s.y+h/2-1.5,w-6,3); }
       if(c.searched){ ctx.fillStyle='#0b0f1499'; ctx.fillRect(s.x,s.y,w,h+hh); ctx.fillStyle='#4b5563'; ctx.font='10px JetBrains Mono'; ctx.fillText('✓',s.x+w/2-3,s.y+h+hh*0.7); }
       else if(c.type==='safe'){ ctx.fillStyle='#f59e0b'; ctx.font='10px JetBrains Mono'; ctx.fillText('🔒',s.x+w/2-5,s.y+h+hh*0.7); }
@@ -934,6 +1022,13 @@ function drawScene(){
     // 实体
     (entsByRow[j]||[]).forEach(e=>drawEnt(e));
   }
+  // 房间机制标签（已探索房间中心）
+  m.rooms.forEach(r=>{
+    if(!r.mech || !S.explored[r.cy*m.W+r.cx]) return;
+    const s=project(r.cx+0.5,r.cy+0.5);
+    const mechName={storage:'储藏室',freezer:'冷库区',dark:'暗室',kitchen:'厨房',clinic:'诊所',patrol:'巡逻区',workshop:'车间'}[r.mech];
+    if(mechName){ ctx.fillStyle='#94a3b855'; ctx.font='11px JetBrains Mono'; ctx.fillText(mechName,s.x-18,s.y-8); }
+  });
   // 玩家
   drawPlayer();
 }
@@ -986,9 +1081,11 @@ function drawEnt(e){
   }
   const bob=Math.sin(performance.now()/260+e.x)*1.2;
   if(e.kind==='rabid'){
-    ctx.fillStyle=e.hitFlash>0?'#fca5a5':'#7f1d1d';
-    ctx.beginPath(); ctx.ellipse(s.x,s.y-9+bob,9,11,0,0,6.2832); ctx.fill();
-    ctx.fillStyle='#450a0a'; ctx.beginPath(); ctx.arc(s.x,s.y-17+bob,5.5,0,6.2832); ctx.fill();
+    const bz=e.brute?1.5:1;
+    ctx.fillStyle=e.hitFlash>0?'#fca5a5':(e.brute?'#450a0a':'#7f1d1d');
+    ctx.beginPath(); ctx.ellipse(s.x,s.y-9+bob,9*bz,11*bz,0,0,6.2832); ctx.fill();
+    ctx.fillStyle='#450a0a'; ctx.beginPath(); ctx.arc(s.x,s.y-17+bob,5.5*bz,0,6.2832); ctx.fill();
+    if(e.brute){ ctx.fillStyle='#fca5a5'; ctx.font='11px JetBrains Mono'; ctx.fillText('⬢',s.x-5,s.y-26+bob); }
     if(e.state==='chase'){ ctx.fillStyle='#ef4444'; ctx.font='11px serif'; ctx.fillText('!',s.x-2,s.y-26+bob); }
     if(e.bite>0.12){ ctx.strokeStyle='#ef4444'; ctx.lineWidth=2.5;
       const bk=clamp(e.bite/0.45,0,1);                    // 钳到 [0,1]：蓄力圈 20→10 后停住，不会再缩成负数
@@ -1003,6 +1100,13 @@ function drawEnt(e){
     ctx.fillStyle='#a16207'; ctx.fillRect(s.x-4,s.y-23+bob,8,4); // 猪嘴
     ctx.fillStyle=e.lock>0?'#ef4444':'#fde68a'; ctx.fillRect(s.x-2,s.y-13+bob,4,3); // 探照灯
     if(e.lock>0){ ctx.strokeStyle='#ef4444'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(s.x,s.y-13,9+Math.sin(performance.now()/90)*2,0,6.2832); ctx.stroke(); }
+  } else if(e.kind==='npc'){
+    ctx.fillStyle=e.role==='trader'?'#b45309':'#0e7490';
+    ctx.beginPath(); ctx.ellipse(s.x,s.y-9+bob,9,11,0,0,6.2832); ctx.fill();
+    ctx.fillStyle='#f8fafc'; ctx.beginPath(); ctx.arc(s.x,s.y-17+bob,5.5,0,6.2832); ctx.fill();
+    ctx.fillStyle=e.role==='trader'?'#f59e0b':'#22d3ee'; ctx.font='bold 12px JetBrains Mono';
+    ctx.fillText(e.role==='trader'?'💰':'❗',s.x-6,s.y-26+bob);
+    if(dist(e.x,e.y,S.player.x,S.player.y)<6){ ctx.fillStyle='#e2e8f0'; ctx.font='11px JetBrains Mono'; ctx.fillText(e.name,s.x-24,s.y-34+bob); }
   } else if(e.kind==='mate'){
     if(e.id==='ash'){
       ctx.fillStyle='#8b98a9'; ctx.beginPath(); ctx.ellipse(s.x,s.y-6+bob,11,6,0,0,6.2832); ctx.fill();
@@ -1139,7 +1243,7 @@ addEventListener('keydown',ev=>{
   if(ev.code==='KeyG') throwCan();
   if(ev.code==='KeyQ') drink();
   if(ev.code==='KeyR') reloadGun();
-  if(ev.code==='KeyF') useBandage();
+  if(ev.code==='KeyF') useBandage();   if(ev.code==='Minus') setZoom(-1);   if(ev.code==='Equal') setZoom(1);
   if(/^Digit[1-5]$/.test(ev.code)){
     const own=ownedWeapons(), w=own[+ev.code.slice(5)-1];
     if(w){ S.player.wpn=w; S.player.ammo=w.ammo||0; toast((LANG==='zh'?'切换武器：':'Switched to: ')+(LANG==='zh'?w.zh:w.en),1400); }
@@ -1240,6 +1344,67 @@ function useBandage(){
 }
 
 /* ---------- 搜刮 / 卡门 / 半人交互 ---------- */
+function npcQuestProgress(q){
+  if(q.type==='fetch') return S.pack.filter(x=>x===q.target).length;
+  if(q.type==='hunt') return S.killed-(q.fromKilled||0);
+  if(q.type==='rescue') return S.halfSaved-(q.fromSaved||0);
+  return 0;
+}
+function npcQuestDesc(q){
+  if(q.type==='fetch') return (LANG==='zh'?`带回 ${q.need} 个${itemName(q.target)}`:`Bring ${q.need} × ${itemName(q.target)}`);
+  if(q.type==='hunt') return (LANG==='zh'?`击杀 ${q.need} 只狂暴者`:`Kill ${q.need} rabid`);
+  return (LANG==='zh'?`救出 ${q.need} 名回退半人（抉择 A 喂药）`:`Save ${q.need} regressing half-human (Choice A, feed)`);
+}
+function openNpcTalk(e){
+  if(e.role==='trader'){
+    if(e.traded){
+      modal(`<div class="lab" style="color:#f59e0b">${e.name}</div><h3>${LANG==='zh'?'今天就这些货了。':'That\'s all for today.'}</h3><button class="choice" data-c="ok"><span class="ct">${LANG==='zh'?'离开':'Leave'}</span></button>`);
+    } else {
+      modal(`<div class="lab" style="color:#f59e0b">${e.name} · ${LANG==='zh'?'黑市交易':'Black-market trade'}</div>
+      <h3>${LANG==='zh'?`我用${itemName(e.offer)}换你的${itemName(e.want)}，一换一。`:`One ${itemName(e.offer)} for your ${itemName(e.want)}.`}</h3>
+      <p class="line">${LANG==='zh'?'包里有货就能换。':'If it\'s in your pack, we can trade.'}</p>
+      <button class="choice good" data-c="trade"><span class="ct">${LANG==='zh'?'交换':'Trade'}</span><span class="cd">${LANG==='zh'?`付出 ${itemName(e.want)}，得到 ${itemName(e.offer)}`:`Give ${itemName(e.want)}, get ${itemName(e.offer)}`}</span></button>
+      <button class="choice" data-c="ok"><span class="ct">${LANG==='zh'?'再想想':'Not now'}</span></button>`);
+    }
+  } else {
+    const q=e.quest;
+    if(q.done){
+      modal(`<div class="lab" style="color:#22d3ee">${e.name}</div><h3>${LANG==='zh'?'谢了，这事算结了。':'Thanks — that\'s settled.'}</h3><button class="choice" data-c="ok"><span class="ct">${LANG==='zh'?'离开':'Leave'}</span></button>`);
+    } else if(!q.accepted){
+      modal(`<div class="lab" style="color:#22d3ee">${e.name} · ${LANG==='zh'?'分支委托':'Side job'}</div>
+      <h3>${npcQuestDesc(q)}</h3><p class="line">${LANG==='zh'?'报酬：绷带、黑麦面包和罐头。接不接？':'Reward: bandages, rye bread and a tin. Take it?'}</p>
+      <button class="choice good" data-c="accept"><span class="ct">${LANG==='zh'?'接下委托':'Accept'}</span></button>
+      <button class="choice" data-c="ok"><span class="ct">${LANG==='zh'?'再想想':'Not now'}</span></button>`);
+    } else {
+      const prog=npcQuestProgress(q);
+      const complete=prog>=q.need;
+      modal(`<div class="lab" style="color:#22d3ee">${e.name} · ${LANG==='zh'?'分支委托':'Side job'}</div>
+      <h3>${npcQuestDesc(q)}</h3><p class="line">${LANG==='zh'?`进度：${prog} / ${q.need}`:`Progress: ${prog} / ${q.need}`}</p>
+      ${complete?`<button class="choice good" data-c="complete"><span class="ct">${LANG==='zh'?'交差领报酬':'Turn in for reward'}</span></button>`:''}
+      <button class="choice" data-c="ok"><span class="ct">${LANG==='zh'?'离开':'Leave'}</span></button>`);
+    }
+  }
+  $$('#modalRoot .choice').forEach(b=>b.addEventListener('click',()=>{
+    const c=b.dataset.c;
+    if(c==='ok'){ closeModal(); return; }
+    if(c==='trade'){
+      const ix=S.pack.indexOf(e.want);
+      if(ix<0){ toast(LANG==='zh'?`你没有${itemName(e.want)}。`:`You don't have ${itemName(e.want)}.`,2000); return; }
+      S.pack.splice(ix,1); S.pack.push(e.offer); e.traded=true;
+      toast(LANG==='zh'?`交易完成：得到${itemName(e.offer)}。`:`Traded: got ${itemName(e.offer)}.`,2200);
+      closeModal(); return;
+    }
+    if(c==='accept'){ e.quest.accepted=true; e.quest.fromKilled=S.killed; e.quest.fromSaved=S.halfSaved; toast(LANG==='zh'?'已接下委托。':'Job accepted.',1800); closeModal(); return; }
+    if(c==='complete'){
+      const q=e.quest;
+      if(q.type==='fetch'){ for(let k=0;k<q.need;k++){ const ix=S.pack.indexOf(q.target); if(ix>=0) S.pack.splice(ix,1); } }
+      ['band','rye','can'].forEach(id=>{ if(S.pack.length<S.packMax) S.pack.push(id); });
+      q.done=true;
+      toast(LANG==='zh'?'委托完成：绷带、黑麦面包、罐头已入包。':'Job done: bandages, rye and a tin added.',2600);
+      closeModal(); return;
+    }
+  }));
+}
 function nearestInteract(){
   const p=S.player; let best=null,bd=2.0;
   S.map.conts.forEach(c=>{ if(c.searched)return; const d=dist(p.x,p.y,c.x,c.y); if(d<bd){bd=d;best={type:'cont',c};} });
@@ -1248,6 +1413,7 @@ function nearestInteract(){
     if(S.map.at(i,j)===TT.DOOR){ const d=dist(p.x,p.y,i+0.5,j+0.5); if(d<bd+0.4){bd=d;best={type:'door',i,j};} }
   }
   S.ents.forEach(e=>{ if(e.dead)return; if(e.kind==='half'&&!e.used){ const d=dist(p.x,p.y,e.x,e.y); if(d<bd+0.6){bd=d;best={type:'half',e};} } });
+  S.ents.forEach(e=>{ if(e.dead)return; if(e.kind==='npc'){ const d=dist(p.x,p.y,e.x,e.y); if(d<bd+0.6){bd=d;best={type:'npc',e};} } });
   const dExit=dist(p.x,p.y,S.map.entry.x,S.map.entry.y);
   if(dExit<1.6){ best={type:'exit'}; }
   return best;
@@ -1337,11 +1503,15 @@ function update(dt){
   if(p.hurt>0) p.hurt-=dt;
   // 体温
   let nearFire=S.fires.some(f=>dist(f.x,f.y,p.x,p.y)<2.6);
-  let cold=L.cold*0.55*(onSlush?1.5:1)*(p.sneak?0.85:1);
+  let cold=L.cold*0.55*(onSlush?1.5:1)*(p.sneak?0.85:1)*(roomMechAt(p.x,p.y)==='freezer'?1.6:1);
   if(nearFire) p.warmth=clamp(p.warmth+30*dt,0,100); else p.warmth=clamp(p.warmth-cold*dt,0,100);
   if(p.warmth<25) p.hp-=(25-p.warmth)*0.09*dt;
   if(p.warmth<30&&!S.coldWarned){ S.coldWarned=true; toast(LANG==='zh'?'<b style="color:#7dd3fc">手指开始不听使唤了——按 Q 喝热水，或去火堆旁站一会儿。</b>':'<b style="color:#7dd3fc">Your fingers are going numb — press Q for hot water, or stand by a fire.</b>',3200); }
   if(p.warmth>45) S.coldWarned=false;
+  if(roomMechAt(p.x,p.y)==='clinic' && !S.clinicDone){
+    S.clinicDone=true; p.hp=clamp(p.hp+25,0,100);
+    toast(LANG==='zh'?'诊所残存的器械还能用：包扎了一下，生命 +25。':'The clinic still has usable supplies: +25 HP.',2600);
+  }
   // 心率
   let fear=0; S.ents.forEach(e=>{ if(!e.dead&&(e.kind==='rabid'||e.kind==='osk')) fear=Math.max(fear, clamp(1-dist(e.x,e.y,p.x,p.y)/10,0,1)); });
   const target=70+(p.sprint?34:0)+(p.hp<45?22:0)+fear*26+(p.warmth<35?12:0);
@@ -1352,7 +1522,7 @@ function update(dt){
     if(S.atk.phase==='up'&&S.atk.t>=w2.up){
       S.atk.phase='act'; S.atk.t=0;
       S.ents.forEach(e=>{
-        if(e.dead||e.kind==='mate') return;
+        if(e.dead||e.kind==='mate'||e.kind==='npc') return;
         const d=dist(p.x,p.y,e.x,e.y); if(d>w2.range+0.4) return;
         const a=Math.atan2(e.y-p.y,e.x-p.x);
         if(Math.abs(angDiff(a,p.face))<=w2.arc*Math.PI/360+Math.atan2(0.5,d)){
@@ -1394,6 +1564,7 @@ function update(dt){
       if(S.extract.prog>=1){ sfx('extract'); endScene('extracted'); return; }
     } else S.extract=null;
     if(tgt&&tgt.type==='half'&&!tgt.e.used){ S.keysE=false; openChoiceA(tgt.e); }
+    if(tgt&&tgt.type==='npc'){ S.keysE=false; openNpcTalk(tgt.e); }
   } else { S.search=null; S.wedge=null; S.extract=null; }
   // 实体 AI
   S.ents.forEach(e=>{
@@ -1412,11 +1583,11 @@ function update(dt){
         if(dist(e.x,e.y,e.tx,e.ty)<0.6||e.wt<-6){ e.state='idle'; e.wt=1+rnd()*3; }
         if(sees) e.state='chase';
       } else if(e.state==='chase'){
-        const sp2=3.3, a=Math.atan2(p.y-e.y,p.x-e.x);
+        const sp2=3.3*(e.brute?0.7:1), a=Math.atan2(p.y-e.y,p.x-e.x);
         moveEnt(e,e.x+Math.cos(a)*sp2*dt,e.y+Math.sin(a)*sp2*dt,0.32);
         if(d<1.15){
           e.bite=Math.min((e.bite||0)+dt, 0.45);   // 封顶：冷却/无敌帧期间不再累加，否则绘制半径会穿零变负
-          if(e.bite>=0.45&&e.cd<=0&&!(p.iframe>0)){ e.cd=1.7; e.bite=0; p.hp-=8; p.iframe=0.75; p.hurt=0.35; p.bpm+=18;
+          if(e.bite>=0.45&&e.cd<=0&&!(p.iframe>0)){ e.cd=1.7; e.bite=0; p.hp-=(e.brute?15:8); p.iframe=0.75; p.hurt=0.35; p.bpm+=18;
           sfx('hit'); emitNoise(p.x,p.y,6,'#ef4444','hit');
             if(rnd()<0.30&&!G.flags.glasses) { G.flags.glasses=true; toast(LANG==='zh'?'<b>镜片裂了：视距 12m → 7.2m，边缘重影。</b>':'<b>Lens cracked: sight 12m → 7.2m, ghosting at the edges.</b>',3000); CFG.SIGHT=7.2; }
           }
@@ -1515,9 +1686,13 @@ function drawMini(){
   }
   const e=m.entry; g.fillStyle='#4ade80'; g.fillRect(e.x*sc-2,e.y*sc-2,5,5);
   S.ents.forEach(en=>{ if(en.dead) return; if(!S.vis[Math.floor(en.y)*m.W+Math.floor(en.x)]) return;
-    g.fillStyle=en.kind==='rabid'?'#ef4444':en.kind==='osk'?'#fde68a':en.kind==='half'?'#cbd5e1':'#8b98a9';
+    g.fillStyle=en.kind==='rabid'?'#ef4444':en.kind==='osk'?'#fde68a':en.kind==='half'?'#cbd5e1':en.kind==='npc'?'#f59e0b':'#8b98a9';
     g.fillRect(en.x*sc-1.5,en.y*sc-1.5,3,3); });
   g.fillStyle='#f8fafc'; g.fillRect(S.player.x*sc-2,S.player.y*sc-2,4,4);
+}
+function setZoom(dir){
+  CFG.PPM=clamp(Math.round(CFG.PPM+(dir>0?6:-6)),26,72);
+  toast((LANG==='zh'?'视野：':'View: ')+CFG.PPM+'px/m',900);
 }
 function updateHUD(){
   const p=S.player, L=S.L;
@@ -1529,6 +1704,7 @@ function updateHUD(){
     <div style="font-size:13px;font-weight:700">${LANG==='zh'?L.zh:L.en}</div>
     <div class="lab" style="margin-top:4px">${hh}:${mm} · ${LANG==='zh'?'距天亮':'to dawn'} <b class="mono" style="color:${left<60?'#fca5a5':'#cbd5e1'}">${lm}:${String(ls).padStart(2,'0')}</b></div>
     <div class="lab" style="margin-top:3px;color:#6b7a8d">${LANG==='zh'?'危险度':'Danger'} ${'▲'.repeat(L.dg)}${'△'.repeat(5-L.dg)}</div>
+    <div class="lab" style="margin-top:3px;color:#6b7a8d">${LANG==='zh'?'视野':'View'} ${CFG.PPM}px/m [-/= ${LANG==='zh'?'缩放':'zoom'}]</div>
   </div>`;
   const bar=(v,max,col)=>`<div class="meter"><i style="width:${clamp(v/max*100,0,100)}%;background:${col}"></i></div>`;
   $('#hudTR').innerHTML=`<div class="hudbox">
@@ -2035,6 +2211,52 @@ function clearFatal(){ if(__fatalEl){ try{__fatalEl.remove();}catch(e){} __fatal
 addEventListener('error',ev=>fatal('RUNTIME ERROR',ev.error||ev.message));
 addEventListener('unhandledrejection',ev=>fatal('PROMISE ERROR',ev.reason));
 
+function initTouch(){
+  const ui=$('#touchUI'); if(!ui) return;
+  const isTouch=(typeof window!=='undefined'&&'ontouchstart' in window)||(typeof navigator!=='undefined'&&navigator.maxTouchPoints>0);
+  if(!isTouch) return;
+  ui.style.display='block';
+  const joy=$('#joyBase'), knob=$('#joyKnob');
+  let joyId=null;
+  const setKeys=(dx,dy)=>{
+    S.keys.KeyW=dy<-0.25; S.keys.KeyS=dy>0.25; S.keys.KeyA=dx<-0.25; S.keys.KeyD=dx>0.25;
+  };
+  const joyMove=(t)=>{
+    const r=joy.getBoundingClientRect();
+    const ccx=r.left+r.width/2, ccy=r.top+r.height/2;
+    let dx=(t.clientX-ccx)/55, dy=(t.clientY-ccy)/55;
+    const l=Math.hypot(dx,dy); if(l>1){ dx/=l; dy/=l; }
+    knob.style.transform='translate('+dx*35+'px,'+dy*35+'px)';
+    setKeys(dx,dy);
+  };
+  const joyEnd=()=>{ joyId=null; knob.style.transform=''; S.keys.KeyW=S.keys.KeyS=S.keys.KeyA=S.keys.KeyD=false; };
+  joy.addEventListener('touchstart',ev=>{ ev.preventDefault(); const t=ev.changedTouches[0]; joyId=t.identifier; joyMove(t); },{passive:false});
+  joy.addEventListener('touchmove',ev=>{ ev.preventDefault(); for(const t of ev.changedTouches){ if(t.identifier===joyId) joyMove(t); } },{passive:false});
+  joy.addEventListener('touchend',ev=>{ for(const t of ev.changedTouches){ if(t.identifier===joyId) joyEnd(); } });
+  joy.addEventListener('touchcancel',ev=>{ for(const t of ev.changedTouches){ if(t.identifier===joyId) joyEnd(); } });
+  const bindTap=(id,fn)=>{
+    const b=$(id); if(!b) return;
+    b.addEventListener('touchstart',ev=>{ ev.preventDefault(); fn(); },{passive:false});
+  };
+  bindTap('#tAtk',()=>{ attack(); });
+  bindTap('#tG',()=>{ throwCan(); });
+  bindTap('#tQ',()=>{ drink(); });
+  bindTap('#tF',()=>{ useBandage(); });
+  bindTap('#tR',()=>{ reloadGun(); });
+  bindTap('#tZoomIn',()=>{ setZoom(1); });
+  bindTap('#tZoomOut',()=>{ setZoom(-1); });
+  const holdE=$('#tE');
+  holdE.addEventListener('touchstart',ev=>{ ev.preventDefault(); S.keysE=true; },{passive:false});
+  const endE=()=>{ S.keysE=false; S.search=null; S.wedge=null; S.extract=null; };
+  holdE.addEventListener('touchend',endE);
+  holdE.addEventListener('touchcancel',endE);
+  const tRun=$('#tRun'), tCrouch=$('#tCrouch');
+  tRun.addEventListener('touchstart',ev=>{ ev.preventDefault(); S.keys.ShiftLeft=!S.keys.ShiftLeft; tRun.classList.toggle('on',!!S.keys.ShiftLeft); },{passive:false});
+  tCrouch.addEventListener('touchstart',ev=>{ ev.preventDefault(); S.keys.ControlLeft=!S.keys.ControlLeft; tCrouch.classList.toggle('on',!!S.keys.ControlLeft); },{passive:false});
+  // 触屏瞄准：手指在画面上滑动即瞄准（不触发攻击，攻击只走 攻击 按钮）
+  cv.addEventListener('touchstart',ev=>{ ev.preventDefault(); const t=ev.changedTouches[0]; const r=cv.getBoundingClientRect(); S.mouse.sx=t.clientX-r.left; S.mouse.sy=t.clientY-r.top; },{passive:false});
+  cv.addEventListener('touchmove',ev=>{ ev.preventDefault(); const t=ev.changedTouches[0]; const r=cv.getBoundingClientRect(); S.mouse.sx=t.clientX-r.left; S.mouse.sy=t.clientY-r.top; },{passive:false});
+}
 function boot(){
   try{
   G=newGame();
@@ -2048,7 +2270,7 @@ function boot(){
   $('#btnSleep').onclick=()=>{ advanceDay(); toast(G.dayMsg||'',3400); };
   $('#btnRepNext').onclick=()=>{ advanceDay(); show('base'); toast(G.dayMsg||'',3400); };
   addEventListener('resize',resize);
-    resize(); applyLang(); show('title'); requestAnimationFrame(frame);
+    resize(); applyLang(); initTouch(); show('title'); requestAnimationFrame(frame);
   }catch(err){ fatal('BOOT ERROR',err); }
 }
 boot();
