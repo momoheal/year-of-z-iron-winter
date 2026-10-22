@@ -631,85 +631,175 @@ function genMap(L){
   const g=new Uint8Array(W*H).fill(TT.WALL);
   const set=(x,y,v)=>{ if(x>0&&y>0&&x<W-1&&y<H-1) g[y*W+x]=v; };
   const at=(x,y)=> (x<0||y<0||x>=W||y>=H)?TT.WALL:g[y*W+x];
-  // --- BSP rooms ---
-  const rooms=[];
-  (function split(r){
-    const minS=8;
-    if(rooms.length>=12 && R()<0.5) { rooms.push(r); return; }
-    if((r.w<minS*2 && r.h<minS*2) || rooms.length>=14){ rooms.push(r); return; }
-    let horiz = r.w<r.h ? true : (r.h<r.w ? false : R()<0.5);
-    if(horiz){
-      if(r.h<minS*2){rooms.push(r);return;}
-      const cut=Math.floor(lerp(minS, r.h-minS, R()));
-      split({x:r.x,y:r.y,w:r.w,h:cut}); split({x:r.x,y:r.y+cut,w:r.w,h:r.h-cut});
+  // --- 美术先行：先画街区草图（街道 / 楼块 / 空地），再由草图长出格子 ---
+  // 街道网：主横街 + 主竖街 + 支路（全部离边界 ≥2 格，不切断边界环）
+  const streetRects=[];
+  const carveH=(y0,th,x0,x1)=>{ for(let j=y0;j<y0+th;j++)for(let i=x0;i<=x1;i++) set(i,j,TT.FLOOR); streetRects.push({x0,y0,x1,y1:y0+th-1}); };
+  const carveV=(x0,th,y0,y1)=>{ for(let i=x0;i<x0+th;i++)for(let j=y0;j<=y1;j++) set(i,j,TT.FLOOR); streetRects.push({x0,y0,x1:x0+th-1,y1}); };
+  const onStreet=(x,y)=>streetRects.some(r=>x>=r.x0&&x<=r.x1&&y>=r.y0&&y<=r.y1);
+  const hMain=10+Math.floor(R()*(H-20)), hTh=4+Math.floor(R()*2);
+  const vMain=10+Math.floor(R()*(W-20)), vTh=4+Math.floor(R()*2);
+  carveH(hMain,hTh,2,W-3);
+  carveV(vMain,vTh,2,H-3);
+  const hBands=[[hMain,hMain+hTh-1]], vBands=[[vMain,vMain+vTh-1]];
+  const clearOf=(bands,a,b,pad)=>bands.every(([x,y])=>b<x-pad||a>y+pad);
+  for(let k=0;k<2+Math.floor(R()*2);k++){
+    if(R()<0.5){
+      const y=6+Math.floor(R()*(H-15)), th=3;
+      if(!clearOf(hBands,y,y+th-1,4)) continue;
+      carveH(y,th,2,W-3);
+      hBands.push([y,y+th-1]);
     } else {
-      if(r.w<minS*2){rooms.push(r);return;}
-      const cut=Math.floor(lerp(minS, r.w-minS, R()));
-      split({x:r.x,y:r.y,w:cut,h:r.h}); split({x:r.x+cut,y:r.y,w:r.w-cut,h:r.h});
+      const x=6+Math.floor(R()*(W-15)), th=3;
+      if(!clearOf(vBands,x,x+th-1,4)) continue;
+      carveV(x,th,2,H-3);
+      vBands.push([x,x+th-1]);
     }
-  })({x:2,y:2,w:W-4,h:H-4});
-  rooms.forEach(r=>{
-    const w=Math.max(5,Math.floor(r.w*lerp(0.6,0.86,R()))), h=Math.max(5,Math.floor(r.h*lerp(0.6,0.86,R())));
-    const x=r.x+Math.floor((r.w-w)*R()), y=r.y+Math.floor((r.h-h)*R());
-    const mechRoll=R();
-    const mech=mechRoll<0.22?'storage':mechRoll<0.36?'freezer':mechRoll<0.50?'dark':mechRoll<0.64?'kitchen':mechRoll<0.76?'clinic':mechRoll<0.88?'patrol':mechRoll<0.96?'workshop':null;
-    const room={x,y,w,h,cx:Math.floor(x+w/2),cy:Math.floor(y+h/2),mech};
-    for(let j=y;j<y+h;j++) for(let i=x;i<x+w;i++) set(i,j,TT.FLOOR);
-    r.room=room; 
-  });
-  const rlist=rooms.filter(r=>r.room).map(r=>r.room);
-  // --- corridors ---
-  for(let k=1;k<rlist.length;k++){
-    const a=rlist[k-1], b=rlist[k];
-    let x=a.cx,y=a.cy;
-    while(x!==b.cx){ set(x,y,TT.FLOOR); set(x,y+1,TT.FLOOR); x+= Math.sign(b.cx-x); }
-    while(y!==b.cy){ set(x,y,TT.FLOOR); set(x+1,y,TT.FLOOR); y+= Math.sign(b.cy-y); }
-    set(b.cx,b.cy,TT.FLOOR);
   }
-  // --- 可进建筑（PZ式）：在实墙区另挖 2-3 栋封闭小楼，配一扇锁着的门 ---
-  // 注意：建筑不进走廊链、不参与 ensureConnected 的连通（靠 prot 保护），
-  // 封起来也不会截断 BSP 房间链。
+  hBands.sort((a,b)=>a[0]-b[0]); vBands.sort((a,b)=>a[0]-b[0]);
+  // 扇区：街道带之间的空地（≥4 格才成扇区）
+  const sectors=[];
+  {
+    const yGaps=[], xGaps=[];
+    let prev=2;
+    hBands.forEach(b=>{ if(b[0]-prev>=4) yGaps.push([prev,b[0]-1]); prev=b[1]+1; });
+    if(H-2-prev>=4) yGaps.push([prev,H-3]);
+    let prevX=2;
+    vBands.forEach(b=>{ if(b[0]-prevX>=4) xGaps.push([prevX,b[0]-1]); prevX=b[1]+1; });
+    if(W-2-prevX>=4) xGaps.push([prevX,W-3]);
+    xGaps.forEach(xg=>{ yGaps.forEach(yg=>{
+      sectors.push({x:xg[0],y:yg[0],w:xg[1]-xg[0]+1,h:yg[1]-yg[0]+1});
+    });});
+  }
+  // 扇区内容：整片空地 + 1-2 栋实心楼（不压中心 3×3）+ 至多 1 栋可进建筑
+  const yardRooms=[];
   const buildings=[];
   const prot=new Set();
-  {
-    for(let t=0;t<220&&buildings.length<3;t++){
-      const w=5+Math.floor(R()*3), h=4+Math.floor(R()*2);
-      const x=2+Math.floor(R()*(W-4-w)), y=2+Math.floor(R()*(H-4-h));
-      if(buildings.some(b=>x<b.x+b.w+2&&x+w+2>b.x&&y<b.y+b.h+2&&y+h+2>b.y)) continue;
-      let ok=true;
-      for(let j=y;j<y+h&&ok;j++)for(let i=x;i<x+w;i++) if(at(i,j)!==TT.WALL) ok=false;
-      if(!ok) continue;
-      for(let i=x-1;i<=x+w&&ok;i++){ if(at(i,y-1)!==TT.WALL||at(i,y+h)!==TT.WALL) ok=false; }
-      for(let j=y-1;j<=y+h&&ok;j++){ if(at(x-1,j)!==TT.WALL||at(x+w,j)!==TT.WALL) ok=false; }
-      if(!ok) continue;
-      const spots=[];
-      for(let i=x;i<x+w;i++){
-        if(at(i,y-2)===TT.FLOOR) spots.push({i,j:y-1});
-        if(at(i,y+h+1)===TT.FLOOR) spots.push({i,j:y+h});
-      }
-      for(let j=y;j<y+h;j++){
-        if(at(x-2,j)===TT.FLOOR) spots.push({i:x-1,j});
-        if(at(x+w+1,j)===TT.FLOOR) spots.push({i:x+w,j});
-      }
-      if(!spots.length) continue;
-      const d=spots[Math.floor(R()*spots.length)];
-      for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++) set(i,j,TT.FLOOR);
-      set(d.i,d.j,TT.BDOOR);
-      const b={x,y,w,h,cx:Math.floor(x+w/2),cy:Math.floor(y+h/2),mech:null,building:{door:d}};
-      buildings.push(b);
-      for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++) prot.add(j*W+i);
-      prot.add(d.j*W+d.i);
+  const mechPool=['storage','freezer','dark','kitchen','clinic','patrol','workshop',null];
+  const sectorConnected=(s)=>{
+    const seen=new Set(), q=[];
+    for(let j=s.y;j<s.y+s.h;j++)for(let i=s.x;i<s.x+s.w;i++){
+      if(at(i,j)!==TT.FLOOR) continue;
+      if(onStreet(i-1,j)||onStreet(i+1,j)||onStreet(i,j-1)||onStreet(i,j+1)){ seen.add(j*W+i); q.push([i,j]); }
     }
-  }
+    if(!q.length) return false;
+    for(let h=0;h<q.length;h++){
+      const [x,y]=q[h];
+      for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+        const nx=x+dx, ny=y+dy;
+        if(nx<s.x||nx>=s.x+s.w||ny<s.y||ny>=s.y+s.h||seen.has(ny*W+nx)) continue;
+        if(at(nx,ny)!==TT.FLOOR) continue;
+        seen.add(ny*W+nx); q.push([nx,ny]);
+      }
+    }
+    for(let j=s.y;j<s.y+s.h;j++)for(let i=s.x;i<s.x+s.w;i++){
+      if(at(i,j)===TT.FLOOR && !seen.has(j*W+i) && !buildings.some(b=>i>=b.x&&i<b.x+b.w&&j>=b.y&&j<b.y+b.h)) return false;
+    }
+    return true;
+  };
+  sectors.forEach((s,idx)=>{
+    for(let j=s.y;j<s.y+s.h;j++)for(let i=s.x;i<s.x+s.w;i++) set(i,j,TT.FLOOR);
+    const blocks=[];
+    // 可进建筑：除出生扇区外挑能塞下的扇区（1-3 栋）
+    if(idx>0 && buildings.length<3 && s.w>=7 && s.h>=6 && R()<0.7){
+      for(let t=0;t<40;t++){
+        const iw=5+Math.floor(R()*3), ih=4+Math.floor(R()*2);
+        if(iw+2>s.w||ih+2>s.h) continue;
+        const ix=s.x+1+Math.floor(R()*Math.max(1,s.w-2-iw)), iy=s.y+1+Math.floor(R()*Math.max(1,s.h-2-ih));
+        for(let i=ix-1;i<=ix+iw;i++){ set(i,iy-1,TT.WALL); set(i,iy+ih,TT.WALL); }
+        for(let j=iy-1;j<=iy+ih;j++){ set(ix-1,j,TT.WALL); set(ix+iw,j,TT.WALL); }
+        const spots=[];
+        for(let i=ix;i<ix+iw;i++){
+          if(onStreet(i,iy-2)) spots.push({i,j:iy-1});
+          if(onStreet(i,iy+ih+1)) spots.push({i,j:iy+ih});
+        }
+        for(let j=iy;j<iy+ih;j++){
+          if(onStreet(ix-2,j)) spots.push({i:ix-1,j});
+          if(onStreet(ix+iw+1,j)) spots.push({i:ix+iw,j});
+        }
+        if(!spots.length){
+          for(let i=ix-1;i<=ix+iw;i++){ set(i,iy-1,TT.FLOOR); set(i,iy+ih,TT.FLOOR); }
+          for(let j=iy-1;j<=iy+ih;j++){ set(ix-1,j,TT.FLOOR); set(ix+iw,j,TT.FLOOR); }
+          continue;
+        }
+        const d=spots[Math.floor(R()*spots.length)];
+        set(d.i,d.j,TT.BDOOR);
+        const b={x:ix,y:iy,w:iw,h:ih,cx:Math.floor(ix+iw/2),cy:Math.floor(iy+ih/2),mech:null,building:{door:d}};
+        buildings.push(b);
+        blocks.push({x:ix-1,y:iy-1,w:iw+2,h:ih+2});
+        for(let j=iy;j<iy+ih;j++)for(let i=ix;i<ix+iw;i++) prot.add(j*W+i);
+        for(let i=ix-1;i<=ix+iw;i++){ prot.add((iy-1)*W+i); prot.add((iy+ih)*W+i); }
+        for(let j=iy-1;j<=iy+ih;j++){ prot.add(j*W+ix-1); prot.add(j*W+ix+iw); }
+        prot.add(d.j*W+d.i);
+        if(!sectorConnected(s)){
+          for(let i=ix-1;i<=ix+iw;i++){ set(i,iy-1,TT.FLOOR); set(i,iy+ih,TT.FLOOR); }
+          for(let j=iy-1;j<=iy+ih;j++){ set(ix-1,j,TT.FLOOR); set(ix+iw,j,TT.FLOOR); }
+          for(let j=iy;j<iy+ih;j++)for(let i=ix;i<ix+iw;i++) prot.delete(j*W+i);
+          for(let i=ix-1;i<=ix+iw;i++){ prot.delete((iy-1)*W+i); prot.delete((iy+ih)*W+i); }
+          for(let j=iy-1;j<=iy+ih;j++){ prot.delete(j*W+ix-1); prot.delete(j*W+ix+iw); }
+          prot.delete(d.j*W+d.i);
+          buildings.pop(); blocks.pop();
+          continue;
+        }
+        break;
+      }
+    }
+    // 实心楼：1-2 栋（不贴已有的楼）
+    const nBlock=(s.w>=14&&s.h>=12)?2:1;
+    for(let b=0;b<nBlock;b++){
+      for(let t=0;t<30;t++){
+        const bw=5+Math.floor(R()*5), bh=4+Math.floor(R()*3);
+        if(bw>s.w-2||bh>s.h-2) continue;
+        const bx=s.x+1+Math.floor(R()*Math.max(1,s.w-2-bw)), by=s.y+1+Math.floor(R()*Math.max(1,s.h-2-bh));
+        if(blocks.some(o=>bx<o.x+o.w+1&&bx+bw+1>o.x&&by<o.y+o.h+1&&by+bh+1>o.y)) continue;
+        for(let j=by;j<by+bh;j++)for(let i=bx;i<bx+bw;i++) set(i,j,TT.WALL);
+        blocks.push({x:bx,y:by,w:bw,h:bh});
+        if(!sectorConnected(s)){
+          for(let j=by;j<by+bh;j++)for(let i=bx;i<bx+bw;i++) set(i,j,TT.FLOOR);
+          blocks.pop();
+          continue;
+        }
+        break;
+      }
+    }
+    // 房中心：从扇区中心螺旋找一块干净空地（不在楼内、不在楼块上）
+    let ccx=Math.floor(s.x+s.w/2), ccy=Math.floor(s.y+s.h/2);
+    if(at(ccx,ccy)!==TT.FLOOR || buildings.some(b=>ccx>=b.x&&ccx<b.x+b.w&&ccy>=b.y&&ccy<b.y+b.h)){
+      let found=false;
+      for(let rad=1;rad<=Math.max(s.w,s.h)&&!found;rad++){
+        for(let j=ccy-rad;j<=ccy+rad&&!found;j++)for(let i=ccx-rad;i<=ccx+rad&&!found;i++){
+          if(i<s.x||i>=s.x+s.w||j<s.y||j>=s.y+s.h) continue;
+          if(at(i,j)!==TT.FLOOR) continue;
+          if(buildings.some(b=>i>=b.x&&i<b.x+b.w&&j>=b.y&&j<b.y+b.h)) continue;
+          ccx=i; ccy=j; found=true;
+        }
+      }
+    }
+    const mech=mechPool[Math.floor(R()*mechPool.length)];
+    yardRooms.push({x:s.x,y:s.y,w:s.w,h:s.h,cx:ccx,cy:ccy,mech});
+  });
+  const rlist=yardRooms;
+  // 门外侧一格不铺掩体/铁丝网（保证门能走出去）
+  const doorApproach=new Set();
+  buildings.forEach(b=>{
+    const d=b.building.door;
+    let ax=d.i, ay=d.j;
+    if(d.j===b.y-1) ay=d.j-1; else if(d.j===b.y+b.h) ay=d.j+1;
+    else if(d.i===b.x-1) ax=d.i-1; else ax=d.i+1;
+    doorApproach.add(ax+','+ay);
+  });
   // --- 环境：雪泥 / 掩体 / 铁丝网 / 门 ---
   const slush=[], cover=[], fences=[], doors=[], fires=[], vents=[];
   for(let k=0;k<Math.floor(18+R()*14);k++){
     const r=rlist[Math.floor(R()*rlist.length)]; if(!r) break;
     const cx=r.x+1+Math.floor(R()*Math.max(1,r.w-2)), cy=r.y+1+Math.floor(R()*Math.max(1,r.h-2));
+    if(buildings.some(b=>cx>=b.x&&cx<b.x+b.w&&cy>=b.y&&cy<b.y+b.h)) continue;
     const rad=1+Math.floor(R()*2);
     for(let j=-rad;j<=rad;j++)for(let i=-rad;i<=rad;i++){
       const x=cx+i,y=cy+j;
       if(x<r.x||x>=r.x+r.w||y<r.y||y>=r.y+r.h) continue;
+      if(x===r.cx&&y===r.cy) continue; // 房中心格不铺雪泥
+      if(buildings.some(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h)) continue;
       if(at(x,y)===TT.FLOOR && R()<0.62) set(x,y,TT.SLUSH);
     }
     slush.push({x:cx,y:cy});
@@ -722,6 +812,10 @@ function genMap(L){
     for(let i=0;i<len;i++){
       const px=x+(horiz?i:0), py=y+(horiz?0:i);
       if(px<r.x||px>=r.x+r.w||py<r.y||py>=r.y+r.h) continue;
+      if(px===r.cx&&py===r.cy) continue; // 房中心格不铺掩体（出生/重生站位）
+      if(onStreet(px-1,py)||onStreet(px+1,py)||onStreet(px,py-1)||onStreet(px,py+1)) continue; // 临街一格不铺（出口）
+      if(doorApproach.has(px+','+py)) continue;
+      if(buildings.some(b=>px>=b.x&&px<b.x+b.w&&py>=b.y&&py<b.y+b.h)) continue;
       if(at(px,py)===TT.FLOOR) set(px,py,TT.COVER);
     }
   }
@@ -729,19 +823,23 @@ function genMap(L){
     const r=rlist[Math.floor(R()*rlist.length)]; if(!r) break;
     const len=2+Math.floor(R()*4), horiz=R()<0.5;
     const x=r.x+1+Math.floor(R()*Math.max(1,r.w-3)), y=r.y+1+Math.floor(R()*Math.max(1,r.h-3));
-    for(let i=0;i<len;i++){ const px=x+(horiz?i:0), py=y+(horiz?0:i); if(px<r.x||px>=r.x+r.w||py<r.y||py>=r.y+r.h) continue; if(at(px,py)===TT.FLOOR) set(px,py,TT.FENCE); }
+    for(let i=0;i<len;i++){ const px=x+(horiz?i:0), py=y+(horiz?0:i); if(px<r.x||px>=r.x+r.w||py<r.y||py>=r.y+r.h) continue; if(px===r.cx&&py===r.cy) continue; if(onStreet(px-1,py)||onStreet(px+1,py)||onStreet(px,py-1)||onStreet(px,py+1)) continue; if(doorApproach.has(px+','+py)) continue; if(buildings.some(b=>px>=b.x&&px<b.x+b.w&&py>=b.y&&py<b.y+b.h)) continue; if(at(px,py)===TT.FLOOR) set(px,py,TT.FENCE); }
   }
-  // 门：走廊窄口
+  // 门：走廊窄口（房中心格不铺门，出生/重生站位保持干净地板）
+  const centerTiles=new Set();
+  rlist.forEach(r=>centerTiles.add(r.cx+','+r.cy));
+  buildings.forEach(b=>centerTiles.add(b.cx+','+b.cy));
   for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
     if(at(x,y)!==TT.FLOOR) continue;
+    if(centerTiles.has(x+','+y)) continue;
     const h=at(x-1,y)===TT.FLOOR&&at(x+1,y)===TT.FLOOR, v=at(x,y-1)===TT.FLOOR&&at(x,y+1)===TT.FLOOR;
     if((h&&!v)||(!h&&v)){
       const solidN=(at(x-1,y)===TT.WALL?1:0)+(at(x+1,y)===TT.WALL?1:0)+(at(x,y-1)===TT.WALL?1:0)+(at(x,y+1)===TT.WALL?1:0);
       if(solidN>=2 && R()<0.30) set(x,y,TT.DOOR);
     }
   }
-  // 建筑进房间表：容器、标签、roomAt 才能认到建筑内部
-  rlist.push(...buildings);
+  // 建筑插进房间表第 2 位（出生房之后）：roomAt 在楼内先认到楼
+  rlist.splice(1,0,...buildings);
   // --- 容器 ---
   const contTypes=['crate','locker','medcab','briefcase','safe','hidden','car','dumpster','supply'];
   const conts=[];
@@ -752,6 +850,7 @@ function genMap(L){
     for(let tries=0;tries<24&&!placed;tries++){
       const x=r.x+Math.floor(R()*r.w), y=r.y+Math.floor(R()*r.h);
       if(at(x,y)!==TT.FLOOR && at(x,y)!==TT.SLUSH) continue;
+      if(!r.building && rlist.some(br=>br.building&&x>=br.x&&x<br.x+br.w&&y>=br.y&&y<br.y+br.h)) continue;
       if(conts.some(c=>dist(c.x,c.y,x,y)<2)) continue;
       let type=contTypes[Math.floor(R()*contTypes.length)];
       if(r.mech==='kitchen') type=r.building?['fridge','fridge','crate'][Math.floor(R()*3)]:['supply','supply','dumpster'][Math.floor(R()*3)];
@@ -770,6 +869,7 @@ function genMap(L){
       for(let k=0;k<2;k++){
         const x=r.x+Math.floor(R()*r.w), y=r.y+Math.floor(R()*r.h);
         if(at(x,y)!==TT.FLOOR && at(x,y)!==TT.SLUSH) continue;
+        if(rlist.some(br=>br.building&&x>=br.x&&x<br.x+br.w&&y>=br.y&&y<br.y+br.h)) continue;
         if(conts.some(c=>dist(c.x,c.y,x,y)<2)) continue;
         conts.push({x:x+0.5,y:y+0.5,type:R()<0.5?'crate':'locker',searched:false,loot:null,prog:0});
       }
@@ -780,7 +880,11 @@ function genMap(L){
   const nFire = L.cold>1.0?2:1;
   for(let k=0;k<nFire;k++){
     const r=rlist[Math.floor(R()*rlist.length)]; if(!r)break;
-    fires.push({x:r.x+1+Math.floor(R()*Math.max(1,r.w-2))+0.5, y:r.y+1+Math.floor(R()*Math.max(1,r.h-2))+0.5});
+    for(let t=0;t<10;t++){
+      const fx=r.x+1+Math.floor(R()*Math.max(1,r.w-2)), fy=r.y+1+Math.floor(R()*Math.max(1,r.h-2));
+      if(at(fx,fy)!==TT.FLOOR) continue;
+      fires.push({x:fx+0.5, y:fy+0.5}); break;
+    }
   }
   // --- 出入口 ---
   const startRoom=rlist[0]||{cx:4,cy:4};
@@ -941,7 +1045,8 @@ function startScene(L){
   const nHalf=(R()<0.72?1:0)+(R()<0.35?1:0);
   for(let i=0;i<nHalf;i++){
     const r=farRoomOpen();
-    const x=r.cx+(R()-0.5)*3, y=r.cy+(R()-0.5)*3;
+    let x=r.cx+(R()-0.5)*3, y=r.cy+(R()-0.5)*3;
+    if(S.map.rooms.some(br=>br.building&&x>=br.x&&x<br.x+br.w&&y>=br.y&&y<br.y+br.h)){ x=r.cx+0.5; y=r.cy+0.5; }
     if(S.map.at(Math.floor(x),Math.floor(y))!==TT.FLOOR) continue;
     S.ents.push({kind:'half',x,y,hp:40,state:'crouch',dead:false,used:false,ph:R()*6.28});
   }
@@ -1044,22 +1149,19 @@ function drawScene(){
       const v=m.at(i,j), s=project(i,j);
       if(!S.explored[j*m.W+i]) continue;
       if(v===TT.WALL){
-        let bld=false;
-        if(i===0||j===0||i===m.W-1||j===m.H-1) bld=true;
-        else if(j===1) bld=(m.at(i,0)===TT.WALL);
-        else if(j===m.H-2) bld=(m.at(i,m.H-1)===TT.WALL);
-        else if(i===1) bld=(m.at(0,j)===TT.WALL);
-        else if(i===m.W-2) bld=(m.at(m.W-1,j)===TT.WALL);
-        if(bld){ // 边界建筑：屋顶 + 亮窗
+        const inner = m.at(i-1,j)===TT.WALL && m.at(i+1,j)===TT.WALL && m.at(i,j-1)===TT.WALL && m.at(i,j+1)===TT.WALL;
+        const wh=hash2(i,j);
+        if(inner){ // 楼块内部：整片屋顶
           drawBox(s.x,s.y,pw,ph,ht,'#2a3444','#141a24','#4a5a70');
           ctx.fillStyle='#e2e8f055'; ctx.fillRect(s.x+1,s.y+1,pw-2,3);
-          ctx.fillStyle='#f59e0b88'; ctx.fillRect(s.x+4,s.y+ph+3,5,5); ctx.fillRect(s.x+pw-9,s.y+ph+3,5,5);
-        } else {
+          if(wh<0.4){ ctx.fillStyle='#1e293b'; ctx.fillRect(s.x+3,s.y+ph*0.4,pw-6,2); }
+        } else { // 楼块边缘：立面 + 窗
           drawBox(s.x,s.y,pw,ph,ht,COL.wallTop,COL.wallFront,COL.wallEdge);
-          const wh=hash2(i,j);
           if(wh<0.6){ ctx.fillStyle='#e2e8f055'; ctx.fillRect(s.x+1,s.y+1,pw-2,3); }
-          if(wh<0.4){ ctx.strokeStyle='#0a0e1388'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(s.x+4+wh*20,s.y+ph+2); ctx.lineTo(s.x+8+wh*16,s.y+ph+ht*0.5); ctx.lineTo(s.x+5+wh*22,s.y+ph+ht*0.8); ctx.stroke(); }
-          if(wh>0.85){ ctx.fillStyle='#3f4a58'; ctx.fillRect(s.x+pw-7,s.y+ph+2,3,ht*0.7); }
+          ctx.fillStyle=(wh<0.45)?'#f59e0b88':'#1e293b';
+          ctx.fillRect(s.x+4,s.y+ph+3,5,5);
+          if(wh>0.3&&wh<0.75){ ctx.fillStyle='#334155'; ctx.fillRect(s.x+pw-9,s.y+ph+3,5,5); }
+          if(wh>0.85){ ctx.strokeStyle='#0f172a88'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(s.x+pw*0.6,s.y+ph+2); ctx.lineTo(s.x+pw*0.6-2,s.y+ph+ht*0.6); ctx.stroke(); }
         }
       }
       else if(v===TT.BDOOR){ // 建筑的门：锁着，E 打开
