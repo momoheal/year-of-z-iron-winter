@@ -14,17 +14,21 @@
 * **拉伸模式（Stretch）**：`mode = "canvas_items"`, `aspect = "expand"`（确保双面工作日志 UI 与 2D 像素/手绘混合贴图在不同分辨率下保持锐利）
 * **2D 光影与阴影滤镜**：开启 `rendering/2d/sdf/oversize` 与柔和阴影滤波（`filter = 1 (PCF5)`），用于渲染内务清杀兵（ОСК）的 `45°` 高压探照灯光锥与暴风雪粒子遮挡。
 
-### 2. 2D 物理碰撞层规划（Physics Layers 1–6）
-在 Godot 4 `Project Settings -> Layer Names -> 2D Physics` 中严格按以下 6 层配置，这是实现**“灰烬不卡走廊”、“铁丝网门底 12cm 窄缝推饭盒不挡探照灯”**的核心保证：
+### 2. 2D 物理碰撞层规划（Physics Layers 1–8）
+在 Godot 4 `Project Settings -> Layer Names -> 2D Physics` 中严格按以下 8 层配置（与 `project.godot` 实际配置一致），这是实现**“灰烬不卡走廊”、“铁丝网门底 12cm 窄缝推饭盒不挡探照灯”、“蒸汽管阴影可藏人但不挡视线”**的核心保证：
 
 | 物理层编号 | 层名称 (`Layer Name`) | 碰撞体归属 | 遮挡与交互法则 (`Collision Mask`) |
 | :--- | :--- | :--- | :--- |
-| **Layer 1** | `World_SolidWall` | 赫鲁晓夫楼墙体、冷库立柱、关死的变形铁门 | 阻挡所有角色移动；挂载 `LightOccluder2D` 100% 阻挡玩家视野与清杀队探照灯。 |
-| **Layer 2** | `World_WireFence_12cmGap` | 冷库铁丝网隔离门、铁壳号第三节闷罐车透气窗 | **阻挡角色移动（Mask 3, 4）**，但**不挂载 `LightOccluder2D`（探照灯与视线 100% 穿透）**；允许底部 `12cm` 投递判定区穿过。 |
-| **Layer 3** | `Player_Aleksei` | 主角阿列克谢 (`CharacterBody2D`, 半径 `22px / 0.35m`) | 与 Layer 1, 2, 5, 6 交互；**忽略 Layer 4（防止灰狼犬“灰烬”在 1m 宽狭窄后厨/走廊把玩家堵死）**。 |
-| **Layer 4** | `Companion_WolfdogAsh` | 西伯利亚灰狼犬“灰烬” (`CharacterBody2D`, 半径 `16px / 0.25m`) | 仅与 Layer 1, 2 发生物理阻挡；自带 `Area2D` 嗅觉感知圈（半径 `220px`）扫描 Layer 5。 |
-| **Layer 5** | `NPC_And_Infected` | 灰鳞狂暴者、回退期半人（抉择A）、清杀兵（ОСК）、平民 | 挂载独立 `TriStateIdentity` 枚举（`RABID_FEVER`, `REGRESSING_HALF_HUMAN`, `SAFE_CIVILIAN`, `OSK_SOLDIER`）。 |
-| **Layer 6** | `Interactable_And_Cover` | 高架供暖蒸汽管阴影区、冻雪泥坑、电传终端、砍骨刀砧板 | 纯 `Area2D` 触发层：检测玩家进入蒸汽管阴影并按住 `Ctrl` 时，设置 `player.is_hidden_in_pipe_shadow = true`。 |
+| **Layer 1** | `World_Wall_Full` | 赫鲁晓夫楼墙体、冷库立柱、关死的变形铁门 | 阻挡所有角色移动；100% 阻挡玩家视野与清杀队探照灯（视线判定唯一硬阻挡）。 |
+| **Layer 2** | `Low_Cover_SteamPipe` | 高架供暖蒸汽管、低矮掩体箱 | 阻挡角色移动（可绕行/贴靠），但**不阻挡视线**；玩家蹲伏且距掩体 ≤1.9m 时判定为隐藏（`coverHides`），敌人视线穿过但不发现玩家。 |
+| **Layer 3** | `Wire_Mesh_Fence_12cm` | 冷库铁丝网隔离门、铁壳号第三节闷罐车透气窗 | **阻挡角色移动**，但**视线/探照灯 100% 穿透**；允许底部 `12cm` 投递判定区穿过。 |
+| **Layer 4** | `Player_Aleksei` | 主角阿列克谢（碰撞半径 `0.35m`） | 与 Layer 1, 2, 3, 6, 7 交互；**忽略 Layer 5（防止灰狼犬“灰烬”在 1m 宽狭窄后厨/走廊把玩家堵死）**。 |
+| **Layer 5** | `Companion_Ash` | 西伯利亚灰狼犬“灰烬”（碰撞半径 `0.25m`） | 仅与 Layer 1, 2, 3 发生物理阻挡；自带嗅觉感知圈扫描 Layer 6。 |
+| **Layer 6** | `Infected_TriState` | 灰鳞狂暴者、回退期半人（抉择A） | 挂载独立 `TriStateIdentity` 枚举（`RABID_FEVER`, `REGRESSING_HALF_HUMAN`, `SAFE_CIVILIAN`）。 |
+| **Layer 7** | `OSK_Purge_Squad` | 内务清杀兵（ОСК） | 与 Layer 1, 2, 3, 4, 6 分离碰撞；黄锥探照 + 红外锁定开火逻辑独立于第 6 层。 |
+| **Layer 8** | `Interactable_Wedge_Door` | 冻雪泥坑、电传终端、砍骨刀砧板、撤离点、撬棍卡门 | 纯 `Area2D` 触发层：检测玩家进入蒸汽管阴影并按住 `Ctrl` 时设置隐藏状态，长按 `E` 触发撤离/卡门。 |
+
+> 注：当前 Room A 垂直切片为 1:1 HTML 架构（单 Node2D + 手动碰撞/分离 + `_draw()` 立即模式），上述物理层为后续房间接入原生 `CharacterBody2D` / `Area2D` 时保留，`project.godot` 中已全部预配。
 
 ### 3. 输入映射表（Input Map）
 | Action 名称 | 绑定按键 | 对应《凛冬铁轨 v4.0》核心动作 |

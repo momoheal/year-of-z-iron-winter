@@ -49,11 +49,17 @@ year-of-z-iron-winter/
 │   ├── Z年纪事_结局分支与双线汇聚流程图.html                     # 俄式“卌”字划痕与五结局交互模拟器 (ZH)
 │   ├── Year_of_Z_Iron_Winter_Ending_Simulator_EN.html            # Dual-Anchor & 5-Ending Tally Simulator (EN)
 │   └── Z年纪事_核心关卡俯视角平面动线图.html                     # v4.0 核心关卡俯视角平面动线与战术沙盘，中英双语切换 (Tactical Blueprints)
-└── godot_project/                                                # ★ Ready-to-Import Godot 4.7+ Starter Project (scripts + shader + data, no scenes yet)
-    ├── project.godot                                             # 8 Physics Layers (1m = 64px, 1920x1080)
+└── godot_project/                                                # ★ Room A Playable Vertical Slice (Godot 4.7.2, 1:1 HTML architecture)
+    ├── project.godot                                             # 8 Physics Layers, 14 input actions, 1920x1080
+    ├── scenes/main.tscn                                          # 单场景：根 Node2D + HUD CanvasLayer
+    ├── scripts/
+    │   ├── Sim.gd                                                # 纯逻辑层（RefCounted 实体 + 手动更新/碰撞/视线/AI）
+    │   ├── Main.gd                                               # 单 Node2D：输入 + 投影 + _draw() 立即模式全画面渲染
+    │   ├── HUD.gd                                                # CanvasLayer HUD（状态条/目标/波纹提示/结算）
+    │   ├── WolfdogAsh.gd / DoorWedgeInteractable.gd             # 伙伴与交互（后续房间使用）
     ├── autoload/                                                 # LogbookManager, AcousticRippleBus
-    ├── scripts/                                                  # PlayerAleksei, WolfdogAsh, OSKPurgeSoldier, DoorWedgeInteractable
-    ├── shaders/                                                  # vision_fog_90deg.gdshader
+    ├── tests/room_a_smoke.gd                                     # 20 项 headless 机制冒烟测试
+    ├── screenshots/                                              # 垂直切片实机截图
     └── data/                                                     # novorsk17_campaign_data.json (L01–L10)
 ```
 
@@ -112,11 +118,34 @@ Open `index.html` (or enable GitHub Pages on branch `main`, root `/`) for the So
 | ![CON_01](assets/concept_art/CON_01_Novorsk17_Lighting_Script.jpg) | ![CON_02](assets/concept_art/CON_02_Character_TriState_Sheet.jpg) | ![CON_03](assets/concept_art/CON_03_Diegetic_Work_Logbook.jpg) |
 | **Khrushchyovka Blizzard / East St. Kitchen / Pine Manor** | **Aleksei / Sister Lana (`0420`) / O.S.K. Purge Squad / Wolfdog "Ash"** | **Left: Verified Real Names / Right: `卌` Tally** |
 
-## 🎮 Godot 4.7+ Starter (`godot_project/`)
+## 🎮 Godot 4.7+ Room A Vertical Slice (`godot_project/`)
 
-Import `godot_project/project.godot` in Godot 4.7+ (created and verified with Godot 4.7.2-stable, Forward+). It already contains the 8 physics layers, the `LogbookManager` / `AcousticRippleBus` autoloads, the four core GDScripts, the 90° vision-fog shader, and the L01–L10 campaign JSON. Full spec: `docs/zh/Z年纪事_Godot4引擎迁移技术规范与架构指南.md` / `docs/en/Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md`.
+`godot_project/` is a **playable Room A vertical slice** (created and verified with Godot 4.7.2-stable, Forward+), built as a 1:1 architecture port of the HTML greybox `prototypes/Year_of_Z_Iron_Winter_Exploration_Demo.html`: a single `Node2D` scene, all entities as plain `RefCounted` data objects updated by hand every frame (no `CharacterBody2D`, no physics bodies, no native lights), and the entire frame rendered in immediate mode inside `_draw()` — CPU fog-of-war with hole-cutting, searchlight cones, acoustic ripples, extruded walls, steam-pipe cylinders and snow particles. The HUD is the only `CanvasLayer`.
 
-> ⚠️ Current limit, stated plainly: this is a **code starter, not yet a runnable game**. There is no main scene, no `.tscn` files, and no input map in `project.godot` yet, so importing it opens the project but has nothing to play. The next Godot step is to add the input map + a Room A test scene wiring `PlayerAleksei` / `WolfdogAsh` / `OSKPurgeSoldier`.
+| 文件 | 职责 |
+| :--- | :--- |
+| `scripts/Sim.gd` | 纯逻辑层：30×20 网格、移动/碰撞分离、LOS/掩体规则、噪声波纹、玩家/狂暴者/清杀兵 AI、罐头投掷、借刀杀人、撤离、胜负判定 |
+| `scripts/Main.gd` | 单 `Node2D`：输入、75° 斜俯视投影/反投影、按 HTML 帧顺序的 `_draw()` 全画面渲染、CPU 雾层 Image、SystemFont 中英文字 |
+| `scripts/HUD.gd` | CanvasLayer：HP/体力/体温/BPM、姿态与噪声、罐头与水、目标提示、撤离进度条、toast、胜负横幅 |
+| `tests/room_a_smoke.gd` | 20 项 headless 冒烟测试（输入映射、地图、移动碰撞、噪声调查、管道隐匿、借刀双杀、暴露被射、撤离、死亡） |
+
+**Run / 运行**（with Godot 4.7.2-stable）:
+
+```bash
+# Play Room A
+Godot_v4.7.2-stable_win64 --path godot_project
+
+# Headless smoke test (20 assertions; prints ROOM_A_SMOKE_PASS on success)
+Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/room_a_smoke.gd
+```
+
+**Controls 操作（Room A）**：`WASD` 移动 · 鼠标定朝向 · `Ctrl` 蹲伏隐匿 · `Shift` 冲刺 · `G` 投掷空罐头（借刀杀人）· `Q` 喝水 · `E` 按住 1.5s 在绿色撤离点撤离 · `Enter` 重开。
+
+| 借刀杀人构图（士兵黄色探照锥 + 玩家 90° 视野锥 + 蒸汽管阴影） | 出生点 HUD 与撤离点 |
+| :---: | :---: |
+| ![Room A vertical slice](godot_project/screenshots/room_a_vertical_slice.png) | ![Room A spawn HUD](godot_project/screenshots/room_a_spawn_hud.png) |
+
+> 说明：所有数值（速度、噪声半径、视野、锁定/射击间隔、掩体规则、雪泥减速等）均逐行对齐 HTML 原型，由 20 项 headless 测试固定行为；本仓库为无美术灰盒，画面全部为 `_draw()` 几何绘制。迁移架构与后续房间扩展规范见 `docs/zh/Z年纪事_Godot4引擎迁移技术规范与架构指南.md` / `docs/en/Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md`。
 
 ---
 

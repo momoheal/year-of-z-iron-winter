@@ -13,17 +13,21 @@
 * **Viewport**: `1920 × 1080`, Stretch Mode = `canvas_items`, Aspect = `expand`.
 * **2D Shadows & Searchlights**: Enable `PointLight2D` shadows (`Shadow Filter = PCF5`) on all **O.S.K. Purge Squad** `45°` helmet searchlights and Aleksei's `90°` directional vision cone.
 
-### 2. 2D Physics Collision Layers (`Layers 1–6`)
-Configure `Project Settings -> Layer Names -> 2D Physics` exactly as follows to guarantee zero hallway body-blocking with Wolfdog "Ash" and accurate `12cm` under-fence interactions:
+### 2. 2D Physics Collision Layers (`Layers 1–8`)
+Configure `Project Settings -> Layer Names -> 2D Physics` exactly as the 8 layers below (matching the shipped `project.godot`) to guarantee zero hallway body-blocking with Wolfdog "Ash", accurate `12cm` under-fence interactions, and hideable-but-not-sight-blocking steam-pipe cover:
 
 | Layer # | Layer Name | Assigned Entities | Collision & Occlusion Rules |
 | :--- | :--- | :--- | :--- |
-| **Layer 1** | `World_SolidWall` | Khrushchyovka walls, Cold Storage pillars, closed steel doors | Blocks all movement; carries `LightOccluder2D` to block both player sight and O.S.K. searchlights. |
-| **Layer 2** | `World_WireFence_12cmGap` | Quarantine wire-mesh fences, *"Buran"* Carriage No. 3 vents | **Blocks movement (Layers 3, 4)**, but carries **NO `LightOccluder2D`** (transparent to searchlights/sight) and permits `12cm` bottom-gap item delivery. |
-| **Layer 3** | `Player_Aleksei` | Aleksei Morozov (`CharacterBody2D`, radius `22px / 0.35m`) | Collides with Layers 1, 2, 5, 6; **ignores Layer 4 (Wolfdog "Ash" never blocks narrow doorways)**. |
-| **Layer 4** | `Companion_WolfdogAsh` | Siberian Wolfdog "Ash" (`CharacterBody2D`, radius `16px / 0.25m`) | Collides only with Layers 1, 2; carries a `220px` `Area2D` olfactory sensor scanning Layer 5. |
-| **Layer 5** | `NPC_And_Infected` | Febrile Rabids, Regressing Half-Humans, O.S.K. Soldiers, Civilians | Carries `TriStateIdentity` enum (`RABID_FEVER`, `REGRESSING_HALF_HUMAN`, `SAFE_CIVILIAN`, `OSK_SOLDIER`). |
-| **Layer 6** | `Interactable_And_Cover` | Overhead steam-pipe shadows, frozen slush pits, teletype terminals | `Area2D` triggers: holding `Ctrl` inside a steam-pipe shadow sets `player.is_hidden_in_pipe_shadow = true`. |
+| **Layer 1** | `World_Wall_Full` | Khrushchyovka walls, Cold Storage pillars, closed steel doors | Blocks all movement; the only hard blocker for player sight and O.S.K. searchlights. |
+| **Layer 2** | `Low_Cover_SteamPipe` | Overhead steam pipes, low cover crates | Blocks movement (walk around / hug it), but **never blocks sight**; a crouched player within 1.9 m of cover is hidden (`coverHides`) while the enemy line of sight passes through. |
+| **Layer 3** | `Wire_Mesh_Fence_12cm` | Quarantine wire-mesh fences, *"Buran"* Carriage No. 3 vents | **Blocks movement**, but is **fully transparent to searchlights/sight** and permits `12cm` bottom-gap item delivery. |
+| **Layer 4** | `Player_Aleksei` | Aleksei Morozov (collision radius `0.35m`) | Collides with Layers 1, 2, 3, 6, 7; **ignores Layer 5 (Wolfdog "Ash" never blocks narrow doorways)**. |
+| **Layer 5** | `Companion_Ash` | Siberian Wolfdog "Ash" (collision radius `0.25m`) | Collides only with Layers 1, 2, 3; carries an olfactory sensor scanning Layer 6. |
+| **Layer 6** | `Infected_TriState` | Febrile Rabids, Regressing Half-Humans | Carries the `TriStateIdentity` enum (`RABID_FEVER`, `REGRESSING_HALF_HUMAN`, `SAFE_CIVILIAN`). |
+| **Layer 7** | `OSK_Purge_Squad` | O.S.K. Purge Soldiers | Separation collisions with Layers 1, 2, 3, 4, 6; the yellow cone + lock-and-fire logic is independent of Layer 6. |
+| **Layer 8** | `Interactable_Wedge_Door` | Frozen slush pits, teletype terminals, extraction point, door wedges | `Area2D` triggers: holding `Ctrl` inside a steam-pipe shadow sets the hidden state; holding `E` triggers extraction / wedging. |
+
+> Note: the current Room A vertical slice is a 1:1 port of the HTML architecture (single Node2D + hand-rolled collision/separation + immediate-mode `_draw()`). These layers are pre-configured for later rooms that adopt native `CharacterBody2D` / `Area2D` nodes.
 
 ### 3. Input Map (`project.godot`)
 | Action Name | Default Key | v4.0 Mechanic |
