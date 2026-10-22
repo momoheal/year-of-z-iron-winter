@@ -882,6 +882,9 @@ function startScene(L){
   S.L=L; S.map=genMap(L);
   S.vis=new Uint8Array(S.map.W*S.map.H);
   S.explored=new Uint8Array(S.map.W*S.map.H);
+  // 边界环开局即已知（城市天际线：小地图上直接看得到边，进视野范围时远远就能看到 dim 的建筑/围墙）
+  for(let i=0;i<S.map.W;i++){ S.explored[i]=1; S.explored[(S.map.H-1)*S.map.W+i]=1; }
+  for(let j=0;j<S.map.H;j++){ S.explored[j*S.map.W]=1; S.explored[j*S.map.W+S.map.W-1]=1; }
   S.ents=[]; S.ripples=[]; S.fires=S.map.fires.slice(); S.events=[];
   S.nightLeft=CFG.NIGHT_SEC - (G.mate==='ivan'?0:0);
   const cap = L.time * (G.mate==='ivan'?0.8:1.0);
@@ -1268,15 +1271,16 @@ function drawRoofs(){
   S.map.buildings.forEach(r=>{
     if(!r.building) return;
     const d=r.building.door;
-    if(!S.explored[d.j*S.map.W+d.i]) return; // 没见过门就不知道有建筑
     if(roomAt(p.x,p.y)===r) return; // 在里面：不画屋顶
     if(Math.floor(p.x)===d.i&&Math.floor(p.y)===d.j) return; // 站在门口：不画
+    ctx.globalAlpha=S.explored[d.j*S.map.W+d.i]?1:0.5; // 没见过门：只显示淡淡的剪影
     for(let j=r.y;j<r.y+r.h;j++)for(let i=r.x;i<r.x+r.w;i++){
       const s=project(i,j);
       ctx.fillStyle='#20293a'; ctx.fillRect(s.x,s.y,CFG.PPM+1,CFG.PPM*CFG.SQUASH+1);
       ctx.fillStyle='#2e3b50'; ctx.fillRect(s.x,s.y+CFG.PPM*CFG.SQUASH*0.5,CFG.PPM+1,1);
       if(hash2(i,j)<0.3){ ctx.fillStyle='#e2e8f0'; ctx.fillRect(s.x+2,s.y+2,CFG.PPM-4,2); }
     }
+    ctx.globalAlpha=1;
   });
 }
 function drawFog(){
@@ -1893,7 +1897,7 @@ function drawMini(){
   for(let j=0;j<m.H;j++)for(let i=0;i<m.W;i++){
     if(!S.explored[j*m.W+i]) continue;
     const v=m.at(i,j);
-    g.fillStyle=(v===TT.WALL)?'#2b3542':(v===TT.SLUSH?'#24404f':(v===TT.DOOR||v===TT.WEDGED||v===TT.BDOOR)?'#8a6a3c':'#141b23');
+    g.fillStyle=(v===TT.WALL)?'#2b3542':(v===TT.FENCE?'#6b7a8a':(v===TT.SLUSH?'#24404f':(v===TT.DOOR||v===TT.WEDGED||v===TT.BDOOR)?'#8a6a3c':'#141b23'));
     g.fillRect(i*sc,j*sc,sc,sc);
   }
   const e=m.entry; g.fillStyle='#4ade80'; g.fillRect(e.x*sc-2,e.y*sc-2,5,5);
