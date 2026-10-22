@@ -1,6 +1,6 @@
 # Year of Z: Iron Winter (v4.0) — Godot 4.x Engine Migration & Technical Architecture Guide
 
-> **Target Engine**: Godot Engine `4.3+` (2D Compatibility or Forward+ renderer)
+> **Target Engine**: Godot Engine `4.7+` (project upgraded and saved with Godot 4.7.2-stable; 2D Compatibility or Forward+ renderer)
 > **Base Resolution & Scale**: `1920 × 1080` viewport, `1 World Meter = 64 Pixels` (`30m × 16.875m` visible arena per screen)
 > **Camera Projection**: **2D `75°` Top-Down Oblique** — south-facing walls retain `48px–64px` prefabricated Khrushchyovka concrete panel thickness, paired with `PointLight2D` searchlights and `LightOccluder2D` steam-pipe shadow stealth.
 > **Ready-to-Import Starter Project**: The `godot_project/` directory in this repository includes a pre-configured `project.godot`, Autoload singletons (`LogbookManager.gd`, `AcousticRippleBus.gd`), core gameplay GDScript controllers, a `.gdshader` vision fog shader, and bilingual JSON campaign data.
@@ -43,7 +43,7 @@ Configure `Project Settings -> Layer Names -> 2D Physics` exactly as follows to 
 
 ```text
 res:// (godot_project/)
-├── project.godot                                  # Pre-configured Godot 4.3+ project file
+├── project.godot                                  # Pre-configured Godot 4.7+ project file (with .uid files for .gd/.gdshader)
 ├── autoload/
 │   ├── LogbookManager.gd                          # [Autoload] Dual Logbook, Real Names, '卌' Tally & 5-Ending Evaluator
 │   └── AcousticRippleBus.gd                       # [Autoload] Global acoustic wave bus for footsteps, tin cans & gunfire

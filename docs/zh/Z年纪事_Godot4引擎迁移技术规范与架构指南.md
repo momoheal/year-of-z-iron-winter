@@ -1,6 +1,6 @@
 # 《Z年纪事：凛冬铁轨（Year of Z: Iron Winter v4.0）》Godot 4.x 引擎迁移技术规范与工程架构指南
 
-> **适用引擎版本**：Godot Engine `4.3+` (Forward+ 或 Compatibility 渲染管线，推荐 2D Compatibility / Mobile 以获得最佳 2D 光影与 Shader 跨平台兼容性)
+> **适用引擎版本**：Godot Engine `4.7+`（工程已由 Godot 4.7.2-stable 升级并保存；Forward+ 或 Compatibility 渲染管线，推荐 2D Compatibility / Mobile 以获得最佳 2D 光影与 Shader 跨平台兼容性）
 > **基准分辨率与比例尺**：`1920 × 1080` 视口，`1 逻辑米 (World Meter) = 64 Pixels`（单屏可视范围 `30m × 16.875m`）
 > **相机视角**：**2D `75°` 斜俯视（Top-Down Oblique）**，墙体南立面保留 `48px~64px` 预制混凝土板立面厚度，配合 `PointLight2D` 探照灯与 `LightOccluder2D` 实现蒸汽管道阴影潜行。
 > **工程脚手架位置**：仓库内 `godot_project/` 目录已预置可直接导入 Godot 4 的 `project.godot`、Autoload 全局单例、核心角色/AI GDScript 脚本、`.gdshader` 视野迷雾着色器及双语 JSON 数据表。
@@ -44,7 +44,7 @@
 
 ```text
 res:// (godot_project/)
-├── project.godot                                  # Godot 4.3+ 工程配置文件
+├── project.godot                                  # Godot 4.7+ 工程配置文件（含 .gd/.gdshader 对应的 .uid 文件）
 ├── autoload/
 │   ├── LogbookManager.gd                          # [Autoload 单例] 双面工作日志、真名录、“卌”字划痕与五结局判定机
 │   └── AcousticRippleBus.gd                       # [Autoload 单例] 全局声音波纹事件总线（足音/空罐头/消音AKM）
