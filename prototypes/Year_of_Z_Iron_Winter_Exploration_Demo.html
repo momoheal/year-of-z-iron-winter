@@ -553,20 +553,21 @@ function toast(msg,ms){
 /* =========================================================================
  *  4. 关卡程序化生成（灰盒）
  * =======================================================================*/
-const TT={FLOOR:0, WALL:1, SLUSH:2, COVER:3, FENCE:4, DOOR:5, WEDGED:6};
-function isSolid(v){ return v===TT.WALL||v===TT.COVER||v===TT.FENCE||v===TT.DOOR||v===TT.WEDGED; }
-function blocksSight(v){ return v===TT.WALL||v===TT.WEDGED||v===TT.COVER; }
-function blocksMove(v){ return v===TT.WALL||v===TT.COVER||v===TT.FENCE||v===TT.WEDGED; }
+const TT={FLOOR:0, WALL:1, SLUSH:2, COVER:3, FENCE:4, DOOR:5, WEDGED:6, BDOOR:7};
+function isSolid(v){ return v===TT.WALL||v===TT.COVER||v===TT.FENCE||v===TT.DOOR||v===TT.WEDGED||v===TT.BDOOR; }
+function blocksSight(v){ return v===TT.WALL||v===TT.WEDGED||v===TT.COVER||v===TT.BDOOR; }
+function blocksMove(v){ return v===TT.WALL||v===TT.COVER||v===TT.FENCE||v===TT.WEDGED||v===TT.BDOOR; }
 
 /* 生成后处理：保证整张图全连通
  * 1) 从入口洪水填充，找出所有孤岛分量；
  * 2) 每个孤岛用 L 形走廊接回入口（而不是删掉内容）；
  * 3) 复核一遍，仍不可达的极小死区封成墙，里面的容器剔除（避免"看得见拿不到"）。 */
-function ensureConnected(W,H,at,set,conts,entry){
+function ensureConnected(W,H,at,set,conts,entry,prot){
+  prot=prot||new Set();
   const walkable=v=>(v===TT.FLOOR||v===TT.SLUSH||v===TT.DOOR);
   const comps=[], seen=new Int32Array(W*H).fill(-1);
   for(let j=0;j<H;j++)for(let i=0;i<W;i++){
-    if(!walkable(at(i,j))||seen[j*W+i]>=0) continue;
+    if(!walkable(at(i,j))||prot.has(j*W+i)||seen[j*W+i]>=0) continue;
     const id=comps.length, cells=[]; const q=[i+j*W]; seen[j*W+i]=id;
     for(let h=0;h<q.length;h++){
       const x=q[h]%W, y=(q[h]-x)/W; cells.push([x,y]);
@@ -574,7 +575,7 @@ function ensureConnected(W,H,at,set,conts,entry){
       for(let k=0;k<4;k++){
         const nx=x+nb[k][0], ny=y+nb[k][1];
         if(nx<0||ny<0||nx>=W||ny>=H) continue;
-        if(seen[ny*W+nx]>=0||!walkable(at(nx,ny))) continue;
+        if(seen[ny*W+nx]>=0||prot.has(ny*W+nx)||!walkable(at(nx,ny))) continue;
         seen[ny*W+nx]=id; q.push(nx+ny*W);
       }
     }
@@ -598,8 +599,8 @@ function ensureConnected(W,H,at,set,conts,entry){
       let best=comps[c][0], bd=1e9;
       comps[c].forEach(([x,y])=>{ const d=(x-ex)*(x-ex)+(y-ey)*(y-ey); if(d<bd){bd=d;best=[x,y];} });
       let x=best[0], y=best[1];
-      while(x!==ex){ set(x,y,TT.FLOOR); x+=(ex>x?1:-1); }
-      while(y!==ey){ set(x,y,TT.FLOOR); y+=(ey>y?1:-1); }
+      while(x!==ex){ if(!prot.has(y*W+x)) set(x,y,TT.FLOOR); x+=(ex>x?1:-1); }
+      while(y!==ey){ if(!prot.has(y*W+x)) set(x,y,TT.FLOOR); y+=(ey>y?1:-1); }
       set(ex,ey,TT.FLOOR);
     }
   }
@@ -611,16 +612,16 @@ function ensureConnected(W,H,at,set,conts,entry){
     for(let k=0;k<4;k++){
       const nx=x+nb[k][0], ny=y+nb[k][1];
       if(nx<0||ny<0||nx>=W||ny>=H) continue;
-      if(ok[ny*W+nx]||!walkable(at(nx,ny))) continue;
+      if(ok[ny*W+nx]||prot.has(ny*W+nx)||!walkable(at(nx,ny))) continue;
       ok[ny*W+nx]=1; q2.push(nx+ny*W);
     }
   }
   for(let j=0;j<H;j++)for(let i=0;i<W;i++){
-    if(!ok[j*W+i]&&(at(i,j)===TT.FLOOR||at(i,j)===TT.SLUSH)) set(i,j,TT.WALL);
+    if(!ok[j*W+i]&&!prot.has(j*W+i)&&(at(i,j)===TT.FLOOR||at(i,j)===TT.SLUSH)) set(i,j,TT.WALL);
   }
   for(let k=conts.length-1;k>=0;k--){
     const c=conts[k];
-    if(!ok[Math.floor(c.y)*W+Math.floor(c.x)]) conts.splice(k,1);
+    if(!ok[Math.floor(c.y)*W+Math.floor(c.x)]&&!prot.has(Math.floor(c.y)*W+Math.floor(c.x))) conts.splice(k,1);
   }
 }
 
@@ -665,6 +666,41 @@ function genMap(L){
     while(y!==b.cy){ set(x,y,TT.FLOOR); set(x+1,y,TT.FLOOR); y+= Math.sign(b.cy-y); }
     set(b.cx,b.cy,TT.FLOOR);
   }
+  // --- 可进建筑（PZ式）：在实墙区另挖 2-3 栋封闭小楼，配一扇锁着的门 ---
+  // 注意：建筑不进走廊链、不参与 ensureConnected 的连通（靠 prot 保护），
+  // 封起来也不会截断 BSP 房间链。
+  const buildings=[];
+  const prot=new Set();
+  {
+    for(let t=0;t<220&&buildings.length<3;t++){
+      const w=5+Math.floor(R()*3), h=4+Math.floor(R()*2);
+      const x=2+Math.floor(R()*(W-4-w)), y=2+Math.floor(R()*(H-4-h));
+      if(buildings.some(b=>x<b.x+b.w+2&&x+w+2>b.x&&y<b.y+b.h+2&&y+h+2>b.y)) continue;
+      let ok=true;
+      for(let j=y;j<y+h&&ok;j++)for(let i=x;i<x+w;i++) if(at(i,j)!==TT.WALL) ok=false;
+      if(!ok) continue;
+      for(let i=x-1;i<=x+w&&ok;i++){ if(at(i,y-1)!==TT.WALL||at(i,y+h)!==TT.WALL) ok=false; }
+      for(let j=y-1;j<=y+h&&ok;j++){ if(at(x-1,j)!==TT.WALL||at(x+w,j)!==TT.WALL) ok=false; }
+      if(!ok) continue;
+      const spots=[];
+      for(let i=x;i<x+w;i++){
+        if(at(i,y-2)===TT.FLOOR) spots.push({i,j:y-1});
+        if(at(i,y+h+1)===TT.FLOOR) spots.push({i,j:y+h});
+      }
+      for(let j=y;j<y+h;j++){
+        if(at(x-2,j)===TT.FLOOR) spots.push({i:x-1,j});
+        if(at(x+w+1,j)===TT.FLOOR) spots.push({i:x+w,j});
+      }
+      if(!spots.length) continue;
+      const d=spots[Math.floor(R()*spots.length)];
+      for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++) set(i,j,TT.FLOOR);
+      set(d.i,d.j,TT.BDOOR);
+      const b={x,y,w,h,cx:Math.floor(x+w/2),cy:Math.floor(y+h/2),mech:null,building:{door:d}};
+      buildings.push(b);
+      for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++) prot.add(j*W+i);
+      prot.add(d.j*W+d.i);
+    }
+  }
   // --- 环境：雪泥 / 掩体 / 铁丝网 / 门 ---
   const slush=[], cover=[], fences=[], doors=[], fires=[], vents=[];
   for(let k=0;k<Math.floor(18+R()*14);k++){
@@ -673,6 +709,7 @@ function genMap(L){
     const rad=1+Math.floor(R()*2);
     for(let j=-rad;j<=rad;j++)for(let i=-rad;i<=rad;i++){
       const x=cx+i,y=cy+j;
+      if(x<r.x||x>=r.x+r.w||y<r.y||y>=r.y+r.h) continue;
       if(at(x,y)===TT.FLOOR && R()<0.62) set(x,y,TT.SLUSH);
     }
     slush.push({x:cx,y:cy});
@@ -684,6 +721,7 @@ function genMap(L){
     const x=r.x+1+Math.floor(R()*Math.max(1,r.w-3)), y=r.y+1+Math.floor(R()*Math.max(1,r.h-3));
     for(let i=0;i<len;i++){
       const px=x+(horiz?i:0), py=y+(horiz?0:i);
+      if(px<r.x||px>=r.x+r.w||py<r.y||py>=r.y+r.h) continue;
       if(at(px,py)===TT.FLOOR) set(px,py,TT.COVER);
     }
   }
@@ -691,7 +729,7 @@ function genMap(L){
     const r=rlist[Math.floor(R()*rlist.length)]; if(!r) break;
     const len=2+Math.floor(R()*4), horiz=R()<0.5;
     const x=r.x+1+Math.floor(R()*Math.max(1,r.w-3)), y=r.y+1+Math.floor(R()*Math.max(1,r.h-3));
-    for(let i=0;i<len;i++){ const px=x+(horiz?i:0), py=y+(horiz?0:i); if(at(px,py)===TT.FLOOR) set(px,py,TT.FENCE); }
+    for(let i=0;i<len;i++){ const px=x+(horiz?i:0), py=y+(horiz?0:i); if(px<r.x||px>=r.x+r.w||py<r.y||py>=r.y+r.h) continue; if(at(px,py)===TT.FLOOR) set(px,py,TT.FENCE); }
   }
   // 门：走廊窄口
   for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
@@ -702,8 +740,10 @@ function genMap(L){
       if(solidN>=2 && R()<0.30) set(x,y,TT.DOOR);
     }
   }
+  // 建筑进房间表：容器、标签、roomAt 才能认到建筑内部
+  rlist.push(...buildings);
   // --- 容器 ---
-  const contTypes=['crate','locker','medcab','fridge','briefcase','safe','hidden'];
+  const contTypes=['crate','locker','medcab','briefcase','safe','hidden','car','dumpster','supply'];
   const conts=[];
   const nCont=Math.round((8+L.dg*3.0)*(0.85+R()*0.4)*nodeState(L.id).left);
   for(let k=0;k<nCont;k++){
@@ -714,9 +754,10 @@ function genMap(L){
       if(at(x,y)!==TT.FLOOR && at(x,y)!==TT.SLUSH) continue;
       if(conts.some(c=>dist(c.x,c.y,x,y)<2)) continue;
       let type=contTypes[Math.floor(R()*contTypes.length)];
-      if(r.mech==='kitchen') type=['fridge','fridge','crate'][Math.floor(R()*3)];
+      if(r.mech==='kitchen') type=r.building?['fridge','fridge','crate'][Math.floor(R()*3)]:['supply','supply','dumpster'][Math.floor(R()*3)];
       else if(r.mech==='clinic') type=['medcab','medcab','briefcase'][Math.floor(R()*3)];
       else if(r.mech==='workshop') type=['briefcase','safe','locker'][Math.floor(R()*3)];
+      else if(r.building) type=['fridge','locker','medcab','briefcase'][Math.floor(R()*4)];
       if(type==='safe'&&R()<0.6) type='locker';
       if(type==='hidden'&&R()<0.75) type='crate';
       conts.push({x:x+0.5,y:y+0.5,type,searched:false,loot:null,prog:0});
@@ -744,8 +785,16 @@ function genMap(L){
   // --- 出入口 ---
   const startRoom=rlist[0]||{cx:4,cy:4};
   const entry={x:startRoom.cx+0.5,y:startRoom.cy+0.5};
-  ensureConnected(W,H,at,set,conts,entry);
-  return {W,H,g,at,set,rooms:rlist,conts,fires,entry,slushCount:slush.length};
+  ensureConnected(W,H,at,set,conts,entry,prot);
+  // --- 边界：建筑段 + 围墙段（不再是一圈光墙） ---
+  {
+    const seg=()=>6+Math.floor(R()*8);
+    let bx=0;
+    while(bx<W){ const len=seg(), bld=R()<0.55; for(let i=bx;i<Math.min(W,bx+len);i++){ g[i]=bld?TT.WALL:TT.FENCE; g[(H-1)*W+i]=bld?TT.WALL:TT.FENCE; } bx+=len; }
+    let by=1;
+    while(by<H-1){ const len=seg(), bld=R()<0.55; for(let j=by;j<Math.min(H-1,by+len);j++){ g[j*W]=bld?TT.WALL:TT.FENCE; g[j*W+(W-1)]=bld?TT.WALL:TT.FENCE; } by+=len; }
+  }
+  return {W,H,g,at,set,rooms:rlist,conts,fires,entry,slushCount:slush.length,buildings};
 }
 
 /* =========================================================================
@@ -760,7 +809,7 @@ const S={
   nightLeft:CFG.NIGHT_SEC, pack:[], packMax:CFG.BAG,
   vis:null,explored:null,poly:[],cam:{x:0,y:0},
   keys:{},mouse:{sx:0,sy:0,wx:0,wy:0},down:false,over:false,ended:false,
-  atk:{t:0,phase:'idle'}, jam:null, search:null, wedge:null, extract:null,
+  atk:{t:0,phase:'idle'}, jam:null, search:null, wedge:null, extract:null, bdoor:null,
   bpm:70, noiseAcc:0, sfx:null, mate:null, mateEnt:null, killed:0, halfSaved:0,
   looted:0, totalCont:0, dawnWarned:false, revived:false, events:[],
 };
@@ -811,7 +860,7 @@ function losClear(x0,y0,x1,y1,opt){
     const tt=i/steps, x=x0+dx*tt, y=y0+dy*tt, fx=Math.floor(x), fy=Math.floor(y);
     if(fx===tx1&&fy===ty1) continue;
     const v=S.map.at(fx,fy);
-    if(v===TT.WALL||v===TT.WEDGED) return false;
+    if(v===TT.WALL||v===TT.WEDGED||v===TT.BDOOR) return false;
     if(v===TT.COVER&&opt&&opt.blockCover) return false;
   }
   return true;
@@ -840,7 +889,7 @@ function startScene(L){
   S.nightMax = S.nightLeft;
   S.pack=[]; S.packMax=CFG.BAG + (G.mate==='anna'?4:0);
   S.over=false; S.ended=false; S.killed=0; S.halfSaved=0; S.looted=0; S.totalCont=S.map.conts.length;
-  S.jam=null; S.search=null; S.wedge=null; S.extract=null; S.dawnWarned=false; S.revived=false; S.clinicDone=false; S.shake=0; S.shakeOX=0; S.shakeOY=0; S.hitStop=0; S.floaters=[]; S.decals=[];
+  S.jam=null; S.search=null; S.wedge=null; S.extract=null; S.bdoor=null; S.dawnWarned=false; S.revived=false; S.clinicDone=false; S.shake=0; S.shakeOX=0; S.shakeOY=0; S.hitStop=0; S.floaters=[]; S.decals=[];
   S.atk={t:0,phase:'idle'};
   const wp=[WEAPONS.find(w=>w.id==='mosin'&&weaponOwned(w))||WEAPONS.find(w=>w.id==='shotgun'&&weaponOwned(w))||WEAPONS.find(w=>w.id==='cleaver'&&weaponOwned(w))||WEAPONS[1]];
   S.player={x:S.map.entry.x,y:S.map.entry.y,face:-Math.PI/2,hp:100,stam:100,warmth:100,
@@ -856,6 +905,8 @@ function startScene(L){
   const R=mulberry32(L.seed*3+G.day);
   const rooms=S.map.rooms.slice(1);
   const farRoom=()=>rooms.length?rooms[Math.floor(R()*rooms.length)]:{cx:S.map.entry.x+6,cy:S.map.entry.y+6};
+  const openRooms=rooms.filter(r=>!r.building);
+  const farRoomOpen=()=>openRooms.length?openRooms[Math.floor(R()*openRooms.length)]:farRoom();
   const nRab=Math.round(2+L.dg*1.3+R()*1.5);
   for(let i=0;i<nRab;i++){
     const r=farRoom();
@@ -872,11 +923,11 @@ function startScene(L){
   }
   const nOskPairs=Math.max(L.dg>=2?1:0,Math.round((L.dg-1)*0.4+R()*0.5));
   for(let i=0;i<nOskPairs;i++){
-    const r=farRoom();
+    const r=farRoomOpen();
     const wp=[{x:r.cx+0.5,y:r.cy+0.5}];
-    const patrolRooms=S.map.rooms.filter(rm=>rm.mech==='patrol');
+    const patrolRooms=S.map.rooms.filter(rm=>rm.mech==='patrol'&&!rm.building);
     for(let k=0;k<3;k++){
-      const rr=patrolRooms.length&&R()<0.6?patrolRooms[Math.floor(R()*patrolRooms.length)]:farRoom();
+      const rr=patrolRooms.length&&R()<0.6?patrolRooms[Math.floor(R()*patrolRooms.length)]:farRoomOpen();
       wp.push({x:rr.cx+0.5,y:rr.cy+0.5});
     }
     for(let j=0;j<2;j++){
@@ -886,18 +937,18 @@ function startScene(L){
   }
   const nHalf=(R()<0.72?1:0)+(R()<0.35?1:0);
   for(let i=0;i<nHalf;i++){
-    const r=farRoom();
+    const r=farRoomOpen();
     const x=r.cx+(R()-0.5)*3, y=r.cy+(R()-0.5)*3;
     if(S.map.at(Math.floor(x),Math.floor(y))!==TT.FLOOR) continue;
     S.ents.push({kind:'half',x,y,hp:40,state:'crouch',dead:false,used:false,ph:R()*6.28});
   }
   // NPC：商人与委托人
-  const traderRoom=farRoom();
+  const traderRoom=farRoomOpen();
   S.ents.push({kind:'npc',role:'trader',name: LANG==='zh'?'黑市贩子老周':'Black-Market Zhou', x:traderRoom.cx+0.5, y:traderRoom.cy+0.5, hp:100, dead:false,
     want:['vodka','watch','tape','glass'][Math.floor(R()*4)],
     offer:['band','asp','rye','can','water'][Math.floor(R()*5)], traded:false});
   if(L.dg>=2){
-    const qRoom=farRoom();
+    const qRoom=farRoomOpen();
     const qType=['fetch','hunt','rescue'][Math.floor(R()*3)];
     S.ents.push({kind:'npc',role:'quest',name: LANG==='zh'?'避难所联络员':'Shelter Liaison', x:qRoom.cx+0.5, y:qRoom.cy+0.5, hp:100, dead:false,
       quest:{type:qType, need:qType==='fetch'?2:(qType==='hunt'?3:1), fromKilled:0, fromSaved:0, done:false, accepted:false,
@@ -989,11 +1040,29 @@ function drawScene(){
     for(let i=i0;i<=i1;i++){
       const v=m.at(i,j), s=project(i,j);
       if(!S.explored[j*m.W+i]) continue;
-      if(v===TT.WALL){ drawBox(s.x,s.y,pw,ph,ht,COL.wallTop,COL.wallFront,COL.wallEdge);
-        const wh=hash2(i,j);
-        if(wh<0.6){ ctx.fillStyle='#e2e8f055'; ctx.fillRect(s.x+1,s.y+1,pw-2,3); }
-        if(wh<0.4){ ctx.strokeStyle='#0a0e1388'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(s.x+4+wh*20,s.y+ph+2); ctx.lineTo(s.x+8+wh*16,s.y+ph+ht*0.5); ctx.lineTo(s.x+5+wh*22,s.y+ph+ht*0.8); ctx.stroke(); }
-        if(wh>0.85){ ctx.fillStyle='#3f4a58'; ctx.fillRect(s.x+pw-7,s.y+ph+2,3,ht*0.7); }
+      if(v===TT.WALL){
+        let bld=false;
+        if(i===0||j===0||i===m.W-1||j===m.H-1) bld=true;
+        else if(j===1) bld=(m.at(i,0)===TT.WALL);
+        else if(j===m.H-2) bld=(m.at(i,m.H-1)===TT.WALL);
+        else if(i===1) bld=(m.at(0,j)===TT.WALL);
+        else if(i===m.W-2) bld=(m.at(m.W-1,j)===TT.WALL);
+        if(bld){ // 边界建筑：屋顶 + 亮窗
+          drawBox(s.x,s.y,pw,ph,ht,'#2a3444','#141a24','#4a5a70');
+          ctx.fillStyle='#e2e8f055'; ctx.fillRect(s.x+1,s.y+1,pw-2,3);
+          ctx.fillStyle='#f59e0b88'; ctx.fillRect(s.x+4,s.y+ph+3,5,5); ctx.fillRect(s.x+pw-9,s.y+ph+3,5,5);
+        } else {
+          drawBox(s.x,s.y,pw,ph,ht,COL.wallTop,COL.wallFront,COL.wallEdge);
+          const wh=hash2(i,j);
+          if(wh<0.6){ ctx.fillStyle='#e2e8f055'; ctx.fillRect(s.x+1,s.y+1,pw-2,3); }
+          if(wh<0.4){ ctx.strokeStyle='#0a0e1388'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(s.x+4+wh*20,s.y+ph+2); ctx.lineTo(s.x+8+wh*16,s.y+ph+ht*0.5); ctx.lineTo(s.x+5+wh*22,s.y+ph+ht*0.8); ctx.stroke(); }
+          if(wh>0.85){ ctx.fillStyle='#3f4a58'; ctx.fillRect(s.x+pw-7,s.y+ph+2,3,ht*0.7); }
+        }
+      }
+      else if(v===TT.BDOOR){ // 建筑的门：锁着，E 打开
+        drawBox(s.x,s.y,pw,ph,ht*0.9,'#6b4a2b','#2a1e12','#8a6a3c');
+        ctx.fillStyle='#1a1208'; ctx.fillRect(s.x+pw*0.45,s.y+ph*0.3,3,ht*0.5);
+        ctx.fillStyle='#f59e0b'; ctx.font='10px JetBrains Mono'; ctx.fillText('🔒',s.x+pw/2-5,s.y+ph+ht*0.4);
       }
       else if(v===TT.DOOR){ // 可通行的门洞：只画门框与门楣
         ctx.fillStyle='#1a212b'; ctx.fillRect(s.x,s.y,pw+1,ph+1);
@@ -1019,12 +1088,22 @@ function drawScene(){
       const w=pw*0.85,h=ph*0.85,hh=ht*0.55;
       const pal={crate:['#6b5232','#2e2314','#8a6a3c'],locker:['#3a4c60','#161d26','#4f6478'],
         medcab:['#2f5a4a','#12241d','#3f7a63'],fridge:['#4c5763','#1b2128','#667585'],
-        briefcase:['#4a3d28','#1e1810','#6b5a3c'],safe:['#2b323b','#12161b','#454f5b'],hidden:['#6b5a2a','#241d0e','#8f7a35']}[c.type]||['#555','#222','#777'];
-      drawBox(s.x,s.y,w,h,hh,pal[0],pal[1],pal[2]);
-      ctx.strokeStyle=pal[2]; ctx.lineWidth=2; ctx.strokeRect(s.x-1,s.y-1,w+2,h+hh+2);
-      ctx.fillStyle='#00000044'; ctx.beginPath(); ctx.ellipse(s.x+w/2,s.y+h+hh+3,w*0.45,4,0,0,6.2832); ctx.fill();
-      const cIcon={crate:'📦',locker:'🗄️',medcab:'✚',fridge:'🧊',briefcase:'💼',safe:'🔒',hidden:'？'}[c.type]||'▦';
-      const cName={crate:'木箱',locker:'储物柜',medcab:'药柜',fridge:'冷柜',briefcase:'公文包',safe:'保险柜',hidden:'暗格'}[c.type]||'容器';
+        briefcase:['#4a3d28','#1e1810','#6b5a3c'],safe:['#2b323b','#12161b','#454f5b'],hidden:['#6b5a2a','#241d0e','#8f7a35'],
+        car:['#3a3f45','#14171a','#5a636d'],dumpster:['#2f3a2e','#131a13','#4a5a48'],supply:['#4a5a2a','#1e2410','#6b7a35'],
+        corpse:['#5a2e2e','#1e1414','#7a3a3a']}[c.type]||['#555','#222','#777'];
+      if(c.type==='corpse'){
+        const cs=project(c.x,c.y);
+        const cc=c.from==='osk'?'#1f2937':c.from==='half'?'#6b7280':'#5a2e2e';
+        ctx.fillStyle=cc; ctx.beginPath(); ctx.ellipse(cs.x,cs.y,15,6.5,0.35,0,6.2832); ctx.fill();
+        ctx.fillStyle='#d6c9b8'; ctx.beginPath(); ctx.arc(cs.x+13,cs.y-4,4.5,0,6.2832); ctx.fill();
+        ctx.fillStyle='#991b1b'; ctx.beginPath(); ctx.ellipse(cs.x-2,cs.y+2,7,3.5,0,0,6.2832); ctx.fill();
+      } else {
+        drawBox(s.x,s.y,w,h,hh,pal[0],pal[1],pal[2]);
+        ctx.strokeStyle=pal[2]; ctx.lineWidth=2; ctx.strokeRect(s.x-1,s.y-1,w+2,h+hh+2);
+        ctx.fillStyle='#00000044'; ctx.beginPath(); ctx.ellipse(s.x+w/2,s.y+h+hh+3,w*0.45,4,0,0,6.2832); ctx.fill();
+      }
+      const cIcon={crate:'📦',locker:'🗄️',medcab:'✚',fridge:'🧊',briefcase:'💼',safe:'🔒',hidden:'？',car:'🚗',dumpster:'🗑️',supply:'🧰',corpse:'☠'}[c.type]||'▦';
+      const cName={crate:'木箱',locker:'储物柜',medcab:'药柜',fridge:'冷柜',briefcase:'公文包',safe:'保险柜',hidden:'暗格',car:'废弃汽车',dumpster:'垃圾堆',supply:'补给箱',corpse:'尸体'}[c.type]||'容器';
       const dc=dist(c.x,c.y,S.player.x,S.player.y);
       if(!c.searched && dc<3.2){ ctx.fillStyle='#f8fafc'; ctx.font='bold 13px JetBrains Mono'; ctx.fillText(cIcon,s.x+w/2-7,s.y-6); ctx.font='11px JetBrains Mono'; ctx.fillText(cName+' [E]',s.x+w/2-22,s.y-20); }
       else if(!c.searched && c.type!=='hidden'){ ctx.fillStyle='#e2e8f0'; ctx.font='11px JetBrains Mono'; ctx.fillText(cIcon,s.x+w/2-5,s.y-4); }
@@ -1102,6 +1181,10 @@ function drawPlayer(){
     ctx.fillStyle='#0b0f14dd'; ctx.fillRect(s.x-22,s.y-52,44,7);
     ctx.fillStyle='#4ade80'; ctx.fillRect(s.x-21,s.y-51,42*S.extract.prog,5);
   }
+  if(S.bdoor){
+    ctx.fillStyle='#0b0f14dd'; ctx.fillRect(s.x-22,s.y-64,44,7);
+    ctx.fillStyle='#f59e0b'; ctx.fillRect(s.x-21,s.y-63,42*S.bdoor.prog,5);
+  }
   if(p.drink>0){ ctx.fillStyle='#7dd3fc'; ctx.font='10px JetBrains Mono'; ctx.fillText('♨',s.x-3,s.y-30); }
 }
 function drawEnt(e){
@@ -1178,6 +1261,23 @@ function drawEnt(e){
     ctx.fillStyle='#0b0f14'; ctx.fillRect(s.x-12,s.y-32,24,4);
     ctx.fillStyle=e.kind==='osk'?'#f59e0b':'#ef4444'; ctx.fillRect(s.x-11,s.y-31,22*(e.hp/mx),2);
   }
+}
+function drawRoofs(){
+  if(!S.map||!S.map.buildings||!S.player) return;
+  const p=S.player;
+  S.map.buildings.forEach(r=>{
+    if(!r.building) return;
+    const d=r.building.door;
+    if(!S.explored[d.j*S.map.W+d.i]) return; // 没见过门就不知道有建筑
+    if(roomAt(p.x,p.y)===r) return; // 在里面：不画屋顶
+    if(Math.floor(p.x)===d.i&&Math.floor(p.y)===d.j) return; // 站在门口：不画
+    for(let j=r.y;j<r.y+r.h;j++)for(let i=r.x;i<r.x+r.w;i++){
+      const s=project(i,j);
+      ctx.fillStyle='#20293a'; ctx.fillRect(s.x,s.y,CFG.PPM+1,CFG.PPM*CFG.SQUASH+1);
+      ctx.fillStyle='#2e3b50'; ctx.fillRect(s.x,s.y+CFG.PPM*CFG.SQUASH*0.5,CFG.PPM+1,1);
+      if(hash2(i,j)<0.3){ ctx.fillStyle='#e2e8f0'; ctx.fillRect(s.x+2,s.y+2,CFG.PPM-4,2); }
+    }
+  });
 }
 function drawFog(){
   if(!VW||!VH||!fogCv.width||!fogCv.height){ resize(); return; } // 尺寸没就绪：先修，本帧不画雾
@@ -1355,6 +1455,11 @@ function shoot(w){
   }
   S.shotsFired=(S.shotsFired||0)+1;
 }
+function spawnCorpse(e){
+  if(!S.map||!e) return;
+  S.map.conts.push({x:e.x,y:e.y,type:'corpse',from:e.kind,searched:false});
+  S.totalCont=(S.totalCont||0)+1;
+}
 function damageEnt(e,dmg,fromX,fromY){
   e.hp-=dmg; e.hitFlash=0.22;
   if(fromX!==undefined&&!e.dead){
@@ -1369,7 +1474,7 @@ function damageEnt(e,dmg,fromX,fromY){
   if(e.kind==='rabid'&&e.state!=='chase'){ e.state='chase'; e.alert=1; }
   if(e.kind==='osk'){ e.state='investigate'; e.tx=S.player.x; e.ty=S.player.y; e.suspect=2; }
   if(e.hp<=0&&!e.dead){
-    e.dead=true;
+    e.dead=true; spawnCorpse(e);
     S.decals=S.decals||[]; S.decals.push({x:e.x,y:e.y,c:e.kind==='osk'?'#7f1d1d':'#991b1b'});
     if(S.decals.length>40) S.decals.shift();
     if(e.kind==='rabid'){ S.killed++; S.events.push({t:'kill',zh:'击杀狂暴感染者 ×1',en:'Killed 1 rabid'}); }
@@ -1477,6 +1582,7 @@ function nearestInteract(){
   const ti=Math.floor(p.x), tj=Math.floor(p.y);
   for(let j=tj-1;j<=tj+1;j++)for(let i=ti-1;i<=ti+1;i++){
     if(S.map.at(i,j)===TT.DOOR){ const d=dist(p.x,p.y,i+0.5,j+0.5); if(d<bd+0.4){bd=d;best={type:'door',i,j};} }
+    if(S.map.at(i,j)===TT.BDOOR){ const d=dist(p.x,p.y,i+0.5,j+0.5); if(d<bd+0.4){bd=d;best={type:'bdoor',i,j};} }
   }
   S.ents.forEach(e=>{ if(e.dead)return; if(e.kind==='half'&&!e.used){ const d=dist(p.x,p.y,e.x,e.y); if(d<bd+0.6){bd=d;best={type:'half',e};} } });
   S.ents.forEach(e=>{ if(e.dead)return; if(e.kind==='npc'){ const d=dist(p.x,p.y,e.x,e.y); if(d<bd+0.6){bd=d;best={type:'npc',e};} } });
@@ -1486,7 +1592,7 @@ function nearestInteract(){
 }
 function genLoot(L,c){
   const R=rnd, out=[];
-  const n = (c.type==='safe'?3:c.type==='hidden'?2:1) + (R()<0.42?1:0);
+  const n = (c.type==='safe'?3:c.type==='hidden'?2:c.type==='corpse'?2:1) + (R()<0.42?1:0);
   const CAT={
     food:['rye','rye','can','water'], med:['asp','band','abx','dial'],
     scrap:['scrap','scrap','wire','elec','wood'], warm:['wood','wood','kero','water'],
@@ -1494,10 +1600,15 @@ function genLoot(L,c){
     weapon:['blade','barrel','stock','pin','scrap','scrap'], val:['vodka','watch','tape','glass'],
   };
   const byType={medcab:['med','med'],fridge:['food','med'],crate:['scrap','food','warm'],
-    locker:['scrap','food','val'],briefcase:['intel','val','med'],safe:['val','part','med'],hidden:['part','med','val','intel']};
+    locker:['scrap','food','val'],briefcase:['intel','val','med'],safe:['val','part','med'],hidden:['part','med','val','intel'],
+    car:['scrap','part','food'],dumpster:['food','scrap','val'],supply:['food','med','warm']};
   for(let i=0;i<n;i++){
     let cat;
-    if(R()<0.62 && byType[c.type]) cat=byType[c.type][Math.floor(R()*byType[c.type].length)];
+    if(c.type==='corpse'){
+      const ct={rabid:['scrap','food','warm'],osk:['part','weapon','med','val'],half:['food','val','med']}[c.from||'rabid'];
+      cat=ct[Math.floor(R()*ct.length)];
+    }
+    else if(R()<0.62 && byType[c.type]) cat=byType[c.type][Math.floor(R()*byType[c.type].length)];
     else cat=L.loot[Math.floor(R()*L.loot.length)];
     if((cat==='part'||cat==='weapon')&&R()<0.62) cat='scrap';
     if(cat==='med'&&R()<0.55) cat='band';
@@ -1598,6 +1709,11 @@ function update(dt){
       S.ents.forEach(e=>{
         if(e.dead||e.kind==='mate'||e.kind==='npc') return;
         const d=dist(p.x,p.y,e.x,e.y); if(d>w2.range+0.4) return;
+        let doorBlocked=false;
+        const msteps=Math.ceil(d/0.4);
+        for(let k=1;k<msteps;k++){ const t=k/msteps, xx=p.x+(e.x-p.x)*t, yy=p.y+(e.y-p.y)*t;
+          if(S.map.at(Math.floor(xx),Math.floor(yy))===TT.BDOOR){ doorBlocked=true; break; } }
+        if(doorBlocked) return;
         const a=Math.atan2(e.y-p.y,e.x-p.x);
         if(Math.abs(angDiff(a,p.face))<=w2.arc*Math.PI/360+Math.atan2(0.5,d)){
           if(w2.id==='cleaver'&&e.kind==='rabid'&&!S.jam&&Math.abs(angDiff(a,p.face))<0.7){
@@ -1632,6 +1748,13 @@ function update(dt){
         S.wedge=null; sfx('wedge'); emitNoise(p.x,p.y,3.5,'#e2e8f055','self');
         toast(LANG==='zh'?'撬棍卡进门轨：这扇门 15 秒内推不开。':'Crowbar wedged in the track: 15 seconds of lock.',2400); }
     } else S.wedge=null;
+    if(tgt&&tgt.type==='bdoor'){
+      S.bdoor=S.bdoor||{i:tgt.i,j:tgt.j,prog:0};
+      S.bdoor.prog+=dt/0.8;
+      if(S.bdoor.prog>=1){ m.set(tgt.i,tgt.j,TT.DOOR);
+        S.bdoor=null; sfx('wedge'); emitNoise(p.x,p.y,3,'#e2e8f055','self');
+        toast(LANG==='zh'?'门开了——里面什么动静都没有。':'The door creaks open. Nothing stirs inside.',2400); }
+    } else S.bdoor=null;
     if(tgt&&tgt.type==='exit'){
       S.extract=S.extract||{prog:0};
       S.extract.prog+=dt/1.5;
@@ -1639,7 +1762,7 @@ function update(dt){
     } else S.extract=null;
     if(tgt&&tgt.type==='half'&&!tgt.e.used){ S.keysE=false; openChoiceA(tgt.e); }
     if(tgt&&tgt.type==='npc'){ S.keysE=false; openNpcTalk(tgt.e); }
-  } else { S.search=null; S.wedge=null; S.extract=null; }
+  } else { S.search=null; S.wedge=null; S.extract=null; S.bdoor=null; }
   // 实体 AI
   S.ents.forEach(e=>{
     if(e.dead) return;
@@ -1684,7 +1807,7 @@ function update(dt){
         const d2=dist(e.x,e.y,o.x,o.y), a2=Math.atan2(o.y-e.y,o.x-e.x);
         if(d2<14&&Math.abs(angDiff(e.face,a2))<22.5*Math.PI/180&&losClear(e.x,e.y,o.x,o.y,{blockCover:false})){
           e.lock=Math.max(e.lock||0,0)+dt; if(e.lock>0.5&&e.cd<=0&&!o.dead){
-            e.cd=0.9; e.lock=0; o.hp=0; o.dead=true; S.decals=S.decals||[]; S.decals.push({x:o.x,y:o.y,c:'#991b1b'}); if(S.decals.length>40) S.decals.shift();
+            e.cd=0.9; e.lock=0; o.hp=0; o.dead=true; spawnCorpse(o); S.decals=S.decals||[]; S.decals.push({x:o.x,y:o.y,c:'#991b1b'}); if(S.decals.length>40) S.decals.shift();
             emitNoise(e.x,e.y,9,'#7dd3fc','osk');
             if(o.kind==='rabid'){ S.killed++; S.events.push({t:'knife',zh:'借刀杀人：清杀队替你清掉 1 只狂暴者',en:'Borrowed knife: O.S.K. dropped 1 rabid for you'}); }
             else { S.events.push({t:'witness',zh:'你看着清杀队射杀了那个正在退烧的人。',en:'You watched the purge squad gun down a recovering person.'}); G.conscience-=3; }
@@ -1770,7 +1893,7 @@ function drawMini(){
   for(let j=0;j<m.H;j++)for(let i=0;i<m.W;i++){
     if(!S.explored[j*m.W+i]) continue;
     const v=m.at(i,j);
-    g.fillStyle=(v===TT.WALL)?'#2b3542':(v===TT.SLUSH?'#24404f':(v===TT.DOOR||v===TT.WEDGED)?'#8a6a3c':'#141b23');
+    g.fillStyle=(v===TT.WALL)?'#2b3542':(v===TT.SLUSH?'#24404f':(v===TT.DOOR||v===TT.WEDGED||v===TT.BDOOR)?'#8a6a3c':'#141b23');
     g.fillRect(i*sc,j*sc,sc,sc);
   }
   const e=m.entry; g.fillStyle='#4ade80'; g.fillRect(e.x*sc-2,e.y*sc-2,5,5);
@@ -2255,7 +2378,7 @@ function frame(now){
     if(S.hitStop>0) S.hitStop-=dt; else update(dt);
     S.shakeOX=(Math.random()-0.5)*(S.shake||0); S.shakeOY=(Math.random()-0.5)*(S.shake||0)*CFG.SQUASH;
     S.shake=Math.max(0,(S.shake||0)-dt*26);
-    drawScene(); drawFog(); drawCones(); drawRipples(); drawCompass(); drawFlakes();
+    drawScene(); drawFog(); drawRoofs(); drawCones(); drawRipples(); drawCompass(); drawFlakes();
     __frameErr=0; clearFatal();
     const p=S.player;
     if(p){
