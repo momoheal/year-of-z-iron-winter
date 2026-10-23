@@ -668,11 +668,13 @@ func _build_map() -> void:
 	h.offset_right = -22
 	h.offset_top = 8
 	h.offset_bottom = -18
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	body.add_child(h)
 
-	# 左侧留白给 Campaign.gd 画的城市地图
+	# 左侧留白给 Campaign.gd 画的城市地图；不拦鼠标，点击要能落到 _unhandled_input
 	var spacer := Control.new()
 	spacer.custom_minimum_size = Vector2(920, 0)
+	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.add_child(spacer)
 
 	var right := _panel()

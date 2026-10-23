@@ -157,6 +157,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT:
 			if sim.phase == "map":
 				_pick_node(get_viewport().get_mouse_position())
+			elif sim.phase == "raid" and sim.raid != null and not sim.raid.over \
+					and not (sim.story_open or sim.abort_confirm or sim.logbook_open or sim.help_open):
+				sim.raid.attack()
 
 func _raid_key(k: int) -> void:
 	if sim.raid.over:
