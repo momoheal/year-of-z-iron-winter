@@ -494,7 +494,7 @@ static func _sector_connected(grid: PackedByteArray, s: Rect2i,
 			var near_street := false
 			for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 				if at(grid, i + d.x, j + d.y) == Data.TT_FLOOR:
-					var outside := i + d.x < s.position.x or i + d.x >= s.position.x + s.size.x \
+					var outside: bool = i + d.x < s.position.x or i + d.x >= s.position.x + s.size.x \
 						or j + d.y < s.position.y or j + d.y >= s.position.y + s.size.y
 					if outside:
 						near_street = true
@@ -510,8 +510,8 @@ static func _sector_connected(grid: PackedByteArray, s: Rect2i,
 		var cur: Vector2i = queue[head]
 		head += 1
 		for d2 in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-			var nx := cur.x + d2.x
-			var ny := cur.y + d2.y
+			var nx: int = cur.x + int(d2.x)
+			var ny: int = cur.y + int(d2.y)
 			if nx < s.position.x or nx >= s.position.x + s.size.x:
 				continue
 			if ny < s.position.y or ny >= s.position.y + s.size.y:
@@ -598,8 +598,8 @@ static func ensure_connected(grid: PackedByteArray, conts: Array[Dictionary],
 		var cur: Vector2i = queue[head]
 		head += 1
 		for d2 in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-			var nx := cur.x + d2.x
-			var ny := cur.y + d2.y
+			var nx: int = cur.x + int(d2.x)
+			var ny: int = cur.y + int(d2.y)
 			if nx < 0 or ny < 0 or nx >= W or ny >= H:
 				continue
 			var key := Vector2i(nx, ny)
@@ -644,8 +644,8 @@ static func _components(grid: PackedByteArray, protected_tiles: Dictionary) -> A
 				head += 1
 				cells.append(cur)
 				for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-					var nx := cur.x + d.x
-					var ny := cur.y + d.y
+					var nx: int = cur.x + int(d.x)
+					var ny: int = cur.y + int(d.y)
 					if nx < 0 or ny < 0 or nx >= W or ny >= H:
 						continue
 					var k2 := Vector2i(nx, ny)

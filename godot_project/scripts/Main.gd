@@ -24,6 +24,7 @@ const COL_FOG := Color("04060a")
 var sim                       # Sim 脚本实例（纯数据/逻辑，不使用静态类型以便动态访问）
 var hud: CanvasLayer
 var font: SystemFont
+var _f2_latch := false        # F2 切换场景的按键锁存，避免长按连切
 
 # 雾层低分辨率 CPU 图（对应 HTML 的 offscreen fogCv + destination-out）
 var fog_img: Image

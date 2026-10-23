@@ -259,7 +259,7 @@ func _refresh(force: bool) -> void:
 	if force or sig != _sig:
 		_sig = sig
 		_rebuild_body()
-		_rebuild_modal()
+		_build_modal()
 	else:
 		_update_live()
 
@@ -556,7 +556,7 @@ func _build_base() -> void:
 		var st: Dictionary = sim.node_state(String(L["id"]))
 		var line2 := _hbox(8)
 		var col := Color("#cbd5e1") if ok2 else Color("#475569")
-		var txt := ("◼ " if ok2 else "◻ ") + sim.node_title(L)
+		var txt: String = ("◼ " if ok2 else "◻ ") + String(sim.node_title(L))
 		if String(L.get("story", "")) != "":
 			txt += "  ▲"
 		var nm2 := _label(txt, FONT_SIZES["body"], col)

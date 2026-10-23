@@ -55,8 +55,8 @@ func _run_tests() -> void:
 	print("==== Greybox Gym headless smoke test (5-in-1) ====")
 
 	# --- 1. 工程装配 -------------------------------------------------------
-	_assert(ProjectSettings.get_setting("application/run/main_scene", "") == "res://scenes/gym.tscn",
-		"1. main scene = res://scenes/gym.tscn")
+	_assert(ProjectSettings.get_setting("application/run/main_scene", "") == "res://scenes/campaign.tscn",
+		"1. main scene = res://scenes/campaign.tscn")
 
 	var required := ["move_up", "move_down", "move_left", "move_right", "sprint", "crouch",
 		"attack_primary", "interact", "throw_can", "drink", "bandage", "reload",

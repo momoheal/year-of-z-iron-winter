@@ -51,6 +51,8 @@ func _fresh_raid(sim, loc_id: String = "boiler") -> void:
 	var L: Dictionary = Data.loc(loc_id)
 	sim.selected_loc = loc_id
 	sim.load = {"can": 0, "water": 1, "asp": 1, "band": 2}
+	# 测试辅助：重置目标节点余量，确保连续多次出发不被「资源耗尽」门槛挡住
+	sim.nodes[loc_id]["left"] = 1.0
 	sim.depart(L)
 
 func _clear_hostiles(R) -> void:
@@ -65,7 +67,7 @@ func _reachable(R) -> Dictionary:
 	while not q.is_empty():
 		var c: Vector2i = q.pop_back()
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-			var n := c + d
+			var n: Vector2i = c + d
 			if n.x < 0 or n.y < 0 or n.x >= R.W or n.y >= R.H:
 				continue
 			if seen.has(n):
@@ -211,7 +213,7 @@ func _run_tests() -> void:
 		break
 	if idx2 >= 0:
 		var c2: Dictionary = R.conts[idx2]
-		var looted_before := R.looted
+		var looted_before: int = int(R.looted)
 		_hold(sim, 2.0, Vector2(float(c2["x"]), float(c2["y"]) + 0.4))
 		_assert(R.pack.size() == 12, "41. pack hard-caps at 12", str(R.pack.size()))
 		_assert(R.looted > looted_before, "42. overflowing container is still marked searched")
@@ -339,10 +341,12 @@ func _run_tests() -> void:
 	sim.new_game()
 	_assert(sim.ending_key() == "ENDING_C_NUMBNESS", "74. no truth → ending C")
 	sim.flags["truth"] = true
+	sim.mother_alive = false
 	_assert(sim.ending_key() == "TRUE_BETA_OUTLAND_FIRE", "75. truth without mother → TRUE β")
 	sim.flags["betrayed"] = true
 	_assert(sim.ending_key() == "TRUE_BETA_OUTLAND_FIRE", "76. betrayal alone keeps β")
 	sim.flags.erase("betrayed")
+	sim.mother_alive = true
 	_assert(sim.ending_key() == "TRUE_ALPHA_HELLO_LANA", "77. truth + clean hands → TRUE α")
 	sim.tally = 1
 	_assert(sim.ending_key() == "ENDING_B_FLAWED_LIBERATION", "78. strokes → ending B")
@@ -420,7 +424,7 @@ func _run_tests() -> void:
 	_assert(hud.body.get_child_count() > 0, "94. raid HUD builds")
 	_assert(scene.get("sim") != null and scene.get("hud") != null,
 		"95. campaign scene still holds sim + hud after phase switching")
-	sim.raid.abort_confirm = false
+	sim.abort_confirm = false
 	if sim.raid != null:
 		sim.raid.finish("abort")
 		sim.finish_raid("abort")

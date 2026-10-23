@@ -89,7 +89,7 @@ func new_game() -> void:
 # ============================================================================
 # 文本 / 物品
 # ============================================================================
-func tr(key: String, args: Array = []) -> String:
+func _tr(key: String, args: Array = []) -> String:
 	var table: Dictionary = Data.TEXT.get(lang, Data.TEXT["zh"])
 	var s: String = String(table.get(key, key))
 	for a in args:
@@ -126,9 +126,11 @@ func add_item(id: String, n: int) -> void:
 		stash.erase(id)
 
 func take_item(id: String, n: int) -> bool:
+	if n == 0:
+		return true
 	if int(stash.get(id, 0)) < n:
 		return false
-	stash[id] = int(stash[id]) - n
+	stash[id] = int(stash.get(id, 0)) - n
 	if int(stash[id]) <= 0:
 		stash.erase(id)
 	return true

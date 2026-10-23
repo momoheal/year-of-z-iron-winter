@@ -211,7 +211,7 @@ func drain_sfx() -> Array[String]:
 	sfx_events.clear()
 	return out
 
-func tr(zh: String, en: String) -> String:
+func _tr(zh: String, en: String) -> String:
 	return zh if camp != null and camp.lang == "zh" else en
 
 func add_event(kind: String, zh: String, en: String) -> void:
@@ -840,8 +840,8 @@ func _sep(a, b, min_d: float) -> void:
 	var d := _dist(a.x, a.y, b.x, b.y)
 	if d >= min_d:
 		return
-	var ux := 1.0 if d < 0.001 else (b.x - a.x) / d
-	var uy := 0.0 if d < 0.001 else (b.y - a.y) / d
+	var ux: float = 1.0 if d < 0.001 else float((b.x - a.x) / d)
+	var uy: float = 0.0 if d < 0.001 else float((b.y - a.y) / d)
 	var push := (min_d - d) * 0.5
 	move_ent(a, a.x - ux * push, a.y - uy * push, 0.35)
 	move_ent(b, b.x + ux * push, b.y + uy * push, 0.32)
@@ -1072,7 +1072,7 @@ func _update_osk(e, dt: float, p) -> void:
 	var ang := atan2(p.y - e.y, p.x - e.x)
 	var in_cone := absf(wrapf(e.face - ang, -PI, PI)) < 22.5 * PI / 180.0
 	var clear := los_clear(e.x, e.y, p.x, p.y)
-	var hidden := p.sneak and cover_hides(p.x, p.y, e.x, e.y)
+	var hidden: bool = bool(p.sneak) and bool(cover_hides(p.x, p.y, e.x, e.y))
 	var d := _dist(e.x, e.y, p.x, p.y)
 	if in_cone and d < 14.0 and clear and not hidden:
 		e.suspect = clampf(e.suspect + dt * 2.4, 0.0, 2.0)
@@ -1126,8 +1126,8 @@ func _update_osk(e, dt: float, p) -> void:
 			"IR lock — suppressed AKM burst!", "#fca5a5")
 
 	# 移动
-	var tx := e.x
-	var ty := e.y
+	var tx: float = float(e.x)
+	var ty: float = float(e.y)
 	if e.suspect >= 1.2:
 		tx = p.x
 		ty = p.y
@@ -1153,8 +1153,8 @@ func _update_osk(e, dt: float, p) -> void:
 		emit_noise(e.x, e.y, 5.5, "#7dd3fc", "osk")
 
 func _update_mate(e, dt: float, p) -> void:
-	var tx := p.x - cos(p.face) * 1.4
-	var ty := p.y - sin(p.face) * 1.4
+	var tx: float = float(p.x) - cos(float(p.face)) * 1.4
+	var ty: float = float(p.y) - sin(float(p.face)) * 1.4
 	var dd := _dist(e.x, e.y, tx, ty)
 	if dd > 0.6:
 		var a := atan2(ty - e.y, tx - e.x)

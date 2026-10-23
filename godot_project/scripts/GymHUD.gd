@@ -532,7 +532,7 @@ func refresh() -> void:
 	_tally_side.text = ("卌 划痕 %d/5   ·   罐头 %d" if zh else "卌 TALLY %d/5   ·   CANS %d") \
 		% [sim.tally_stroke_marks(), sim.player.cans]
 
-	var done := sim.tasks_done_count()
+	var done: int = int(sim.tasks_done_count())
 	_task_progress.text = ("%d / 5 已验证" if zh else "%d / 5 Verified") % done
 	for i in _task_rows.size():
 		var row: Dictionary = _task_rows[i]

@@ -318,7 +318,7 @@ func _draw_city_map() -> void:
 	for L in Data.LOCS:
 		var p2 := MAP_RECT.position + Vector2(float(L["x"]), float(L["y"]))
 		var ok2: bool = sim.loc_unlocked(L)
-		var sel := String(L["id"]) == sim.selected_loc
+		var sel: bool = String(L["id"]) == sim.selected_loc
 		var st: Dictionary = sim.node_state(String(L["id"]))
 		var rad := 9.0 if ok2 else 6.0
 		var col := Color("#8aa0b4") if ok2 else Color("#2f3a46")
@@ -498,7 +498,7 @@ func _draw_raid() -> void:
 			"mate":
 				draw_circle(es, 8.0, COL["mate"])
 				draw_circle(es + Vector2(0, -14), 5.0, Color("#bbf7d0"))
-				_draw_name(es + Vector2(0, -26), _mate_name(e.id), COL["mate"])
+				_draw_name(es + Vector2(0, -26), _mate_name(e.id), "#4ade80")
 			"survivor":
 				draw_circle(es, 8.0, COL["mate"])
 	# 容器上的「暗格」提示（伊万）
