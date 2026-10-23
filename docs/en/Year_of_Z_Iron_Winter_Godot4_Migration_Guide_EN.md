@@ -7,6 +7,26 @@
 
 ---
 
+## 0. Current Port Status (October 2026 update)
+
+`godot_project/` is at the **playable greybox** stage: **native art and node-based physics are not wired up yet**, but both HTML prototypes are playable (exploration loop + gym + Room A slice):
+
+| Scene | Status | Notes |
+| :--- | :--- | :--- |
+| `scenes/campaign.tscn` (**main scene**) | ✅ Done | **The "one night" exploration loop**: Room 602 base (mother's dialysis bags) → 13-node city map → procedural 64×48 block (90° fog-of-war, rabid / O.S.K. / half-human AI, looting, door wedges, extraction, warmth & BPM) → four report outcomes → next-day dialysis → ending resolver. 97 headless assertions. |
+| `scenes/gym.tscn` | ✅ Done | **5-in-1 Greybox Gym**: Room A searchlight *Borrowing the Knife* + slush / Room B 15 s crowbar wedge + 12 cm lunchbox / Room C paper-dead teletype + Choice A + 卌 tally / Room D Ash's tri-state olfaction + Anna 0419 / Room E cleaver + Vasily's breach + 6-press collarbone blade-jam QTE + PTSD thirst. 61 headless assertions. |
+| `scenes/main.tscn` | ✅ Done | **Room A night-stalk slice**: 30×20 m grid, CPU fog-of-war hole cutting, oblique extruded walls, acoustic ripples, extraction. 20 headless assertions. |
+| Native node migration (`CharacterBody2D`, `PointLight2D`, `LightOccluder2D`, `.gdshader`) | ⏳ Planned | Sections II–III below describe the target architecture. Both shipped scenes use `RefCounted` + manual collision + `_draw()` as the behavioural *reference implementation*. |
+| `shaders/` | ⏳ Planned | Vision fog and CRT terminal shaders are not shipped yet (CPU-drawn equivalents are used instead). |
+
+**Added / changed files (exploration loop)**: `scripts/CampaignData.gd`, `scripts/CampaignSim.gd`, `scripts/RaidGen.gd`, `scripts/RaidSim.gd`, `scripts/Campaign.gd`, `scripts/CampaignHUD.gd`, `scenes/campaign.tscn`, `tests/campaign_smoke.gd`; `run/main_scene` is now `res://scenes/campaign.tscn`. See `Year_of_Z_Iron_Winter_Godot_Exploration_Loop_EN.md`.
+
+**Added / changed files (gym)**: `scripts/GymSim.gd`, `scripts/Gym.gd`, `scripts/GymHUD.gd`, `scripts/Sfx.gd`, `scenes/gym.tscn`, `tests/gym_smoke.gd`; `scripts/Main.gd` gained `F1` to return to the gym. The input map grew from 14 to 24 actions (`gym_room_1..5`, `gym_toggle_lang/glasses/mute`, `gym_reset`, `gym_switch_scene`). See `Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md` for the mechanic-by-mechanic mapping and the deliberate deviations.
+
+**Scene swapping**: in `campaign.tscn`, `F1` opens `gym.tscn`; in the gym, `F1` returns to the campaign and `F2` opens `main.tscn`; in Room A, `F1` returns to the gym and `F2` to the campaign. All three scenes share the `LogbookManager` and `AcousticRippleBus` autoloads, so real names, the 卌 tally and PTSD persist across scenes.
+
+---
+
 ## I. Godot 4 Project Settings & Physics Layer Specification
 
 ### 1. Display & 2D Lighting Setup

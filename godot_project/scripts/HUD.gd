@@ -113,14 +113,14 @@ func _ready() -> void:
 	help.position = Vector2(16, 1000)
 	help.custom_minimum_size = Vector2(1400, 50)
 	help.add_theme_font_size_override("font_size", 13)
-	help.text = "WASD 移动 · Ctrl 蹲伏（掩体/蒸汽管阴影内隐匿）· Shift 冲刺 · 鼠标定朝向\nG 扔空罐头（借刀杀人）· Q 喝水 · E 撤离 · Enter 重开"
+	help.text = "WASD 移动 · Ctrl 蹲伏（掩体/蒸汽管阴影内隐匿）· Shift 冲刺 · 鼠标定朝向\nG 扔空罐头（借刀杀人）· Q 喝水 · E 撤离 · Enter 重开 · F1 返回 5 合 1 灰盒测试场"
 	root.add_child(help)
 	var help_en := Label.new()
 	help_en.position = Vector2(16, 1052)
 	help_en.custom_minimum_size = Vector2(1400, 24)
 	help_en.add_theme_font_size_override("font_size", 11)
 	help_en.modulate = Color(0.6, 0.66, 0.72)
-	help_en.text = "WASD move · Ctrl crouch (hide behind cover / pipe shadow) · Shift sprint · mouse aim | G throw tin (borrow the knife) · Q drink · E extract · Enter restart"
+	help_en.text = "WASD move · Ctrl crouch (hide behind cover / pipe shadow) · Shift sprint · mouse aim | G throw tin (borrow the knife) · Q drink · E extract · Enter restart · F1 greybox gym"
 	root.add_child(help_en)
 
 func _add_bar(parent: Node, key: String, label: String, c: Color) -> void:

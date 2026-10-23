@@ -19,6 +19,20 @@ var verified_names: Array[Dictionary] = [
 	}
 ]
 
+func reset_logbook() -> void:
+	# 灰盒测试场 Reset 时把全局日志恢复到初始态（仅卡佳妈妈 / 0 划痕 / 无 PTSD）
+	tally_strokes = 0
+	ptsd_thirst_unlocked = false
+	truth_alive = true
+	mother_alive = true
+	verified_names = [
+		{
+			"id": "katya_602",
+			"zh": "卡佳妈妈 (第3居住区602室 · 尿毒症腹透锚点)",
+			"en": "Mama Katya (District 3 Apt 602 · Peritoneal Dialysis Anchor)"
+		}
+	]
+
 func add_tally_strokes(amount: int, reason_zh: String, reason_en: String) -> void:
 	tally_strokes = clampi(tally_strokes + amount, 0, 5)
 	emit_signal("tally_updated", tally_strokes, reason_zh, reason_en)
