@@ -17,7 +17,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Year of Z: Iron Winter (v4.0 Novorsk-17)"
 config/description="2.5D Oblique Top-Down Three-Way Stealth Survival & Bureaucratic Realism RPG"
 config/version="4.0.0"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/campaign.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
@@ -76,7 +76,7 @@ drink={
 }
 bandage={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"physical_keycode":70,"keycode":0)]
+"events": [Object(InputEventKey,"physical_keycode":72,"keycode":0)]
 }
 reload={
 "deadzone": 0.5,
@@ -89,6 +89,46 @@ toggle_logbook={
 restart={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"physical_keycode":4194309,"keycode":0)]
+}
+gym_room_1={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":49,"keycode":0)]
+}
+gym_room_2={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":50,"keycode":0)]
+}
+gym_room_3={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":51,"keycode":0)]
+}
+gym_room_4={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":52,"keycode":0)]
+}
+gym_room_5={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":53,"keycode":0)]
+}
+gym_toggle_lang={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":76,"keycode":0)]
+}
+gym_toggle_glasses={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":70,"keycode":0)]
+}
+gym_toggle_mute={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":77,"keycode":0)]
+}
+gym_reset={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":4194336,"keycode":0)]
+}
+gym_switch_scene={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":4194332,"keycode":0)]
 }
 
 [layer_names]

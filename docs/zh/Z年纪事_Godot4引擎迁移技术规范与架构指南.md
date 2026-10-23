@@ -7,6 +7,26 @@
 
 ---
 
+## 〇、当前仓库移植进度（2026-10 更新）
+
+`godot_project/` 目前处于「灰盒可玩」阶段，**真实美术与原生物理节点尚未接入**，但两个 HTML 原型已全部可运行（探索循环 + 灰盒场 + Room A 切片）：
+
+| 场景 | 状态 | 说明 |
+| :--- | :--- | :--- |
+| `scenes/campaign.tscn`（**主场景**） | ✅ 已实现 | **「一夜」探索循环**：602 室基地（母亲腹透液）→ 13 节点城市地图 → 程序化 64×48 街区夜潜（90° 视野雾 / 狂暴者·清杀兵·半人 AI / 搜刮 / 卡门 / 撤离 / 体温心率）→ 四种收场结算 → 次日透析 → 结局判定；97 项 headless 测试 |
+| `scenes/gym.tscn` | ✅ 已实现 | **5 合 1 灰盒测试场**：Room A 探照灯借刀 + 冻雪泥 / Room B 撬棍卡门 15s + 12cm 推饭盒 / Room C 电传「账面 0 人」+ 抉择 A + 卌 划痕 / Room D 灰烬三态嗅觉 + 安娜 0419 / Room E 砍骨刀 + 瓦西里破门 + 锁骨卡刀 6 连按 QTE + PTSD 干渴耳鸣；61 项 headless 测试 |
+| `scenes/main.tscn` | ✅ 已实现 | **Room A 夜潜垂直切片**：30×20 米网格、CPU 雾层挖洞、斜俯视挤出墙体、声波波纹、撤离判定；20 项 headless 测试 |
+| 原生节点化（`CharacterBody2D` / `PointLight2D` / `LightOccluder2D` / `.gdshader`） | ⏳ 计划中 | 本文档第二、三节即目标架构；当前三个场景均以 `RefCounted` + 手动碰撞 + `_draw()` 实现，作为行为基准（reference implementation） |
+| `shaders/` 目录 | ⏳ 计划中 | 视野迷雾、CRT 终端着色器尚未落地（当前用 CPU 绘制等价效果） |
+
+**新增 / 变更文件（探索循环）**：`scripts/CampaignData.gd`、`scripts/CampaignSim.gd`、`scripts/RaidGen.gd`、`scripts/RaidSim.gd`、`scripts/Campaign.gd`、`scripts/CampaignHUD.gd`、`scenes/campaign.tscn`、`tests/campaign_smoke.gd`；`project.godot` 的 `run/main_scene` 改为 `res://scenes/campaign.tscn`。逐机制对照见 `Z年纪事_Godot探索循环移植对照表.md`。
+
+**新增 / 变更文件（灰盒场）**：`scripts/GymSim.gd`、`scripts/Gym.gd`、`scripts/GymHUD.gd`、`scripts/Sfx.gd`、`scenes/gym.tscn`、`tests/gym_smoke.gd`；`scripts/Main.gd` 增加 `F1` 返回灰盒场。输入映射由 14 个扩展为 24 个（新增 `gym_room_1..5`、`gym_toggle_lang/glasses/mute`、`gym_reset`、`gym_switch_scene`）。逐机制对照与刻意偏差见 `Z年纪事_Godot灰盒5合1移植对照表.md`。
+
+**三场景互切**：`campaign.tscn` 中 `F1` 进 `gym.tscn`；灰盒场中 `F1` 回 `campaign.tscn`、`F2` 进 `main.tscn`；Room A 中 `F1` 回灰盒场、`F2` 回探索循环。三场景共享 `LogbookManager` 与 `AcousticRippleBus` 两个 autoload，日志真名、卌 划痕与 PTSD 状态可跨场景累积。
+
+---
+
 ## 一、Godot 4 项目基础配置要求（`project.godot` 核心参数）
 
 ### 1. 渲染与窗口设置（Display & Rendering）

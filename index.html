@@ -221,17 +221,24 @@
       <div class="lg:col-span-7 terminal-card border border-slate-800 rounded-xl p-5 shadow-xl">
         <div class="mono text-xs text-emerald-400 font-bold mb-1">GODOT_4_STARTER_ARCHITECTURE // 引擎工程包结构</div>
         <h3 class="text-base font-bold text-white mb-3" id="gdTitle">
-          已内置可直接导入 Godot 4.3+ 的核心脚本、Shader 与配置 (`godot_project/`)
+          已内置可直接导入 Godot 4.7+ 的三场景灰盒工程 (`godot_project/`)
         </h3>
         <div class="bg-[#090c10] border border-slate-800 rounded-lg p-3.5 mono text-xs text-slate-300 space-y-1.5">
-          <div><span class="text-amber-400">godot_project/project.godot</span> — 8层物理碰撞掩码 (1m=64px, Forward+)</div>
-          <div><span class="text-emerald-400">godot_project/autoload/LogbookManager.gd</span> — 双面工作日志、俄式“卌”划痕与5结局状态机</div>
-          <div><span class="text-emerald-400">godot_project/autoload/AcousticRippleBus.gd</span> — 声波半径广播总线 (空罐头借刀/脚步/消音枪)</div>
-          <div><span class="text-cyan-400">godot_project/scripts/PlayerAleksei.gd</span> — 3C移动、蒸汽管阴影隐匿、锁骨卡刀6连按QTE</div>
-          <div><span class="text-cyan-400">godot_project/scripts/WolfdogAsh.gd</span> — 灰狼犬“灰烬”1.5m跟随与三态嗅觉AI</div>
-          <div><span class="text-cyan-400">godot_project/scripts/OSKPurgeSoldier.gd</span> — 清杀兵45°探照灯视野与无条件开火借刀逻辑</div>
-          <div><span class="text-cyan-400">godot_project/scripts/DoorWedgeInteractable.gd</span> — 道钉撬棍15s物理卡门与12cm门底推饭盒</div>
-          <div><span class="text-purple-400">godot_project/shaders/vision_fog_90deg.gdshader</span> — 90°扇形主视野 + 破眼镜折光 + 苏联旧报纸迷雾</div>
+          <div><span class="text-amber-400">godot_project/project.godot</span> — 8 层物理碰撞掩码 · 24 个输入 action · 1920×1080 · 主场景 campaign.tscn</div>
+          <div><span class="text-emerald-400">godot_project/scenes/campaign.tscn</span> — ★ 「一夜」探索循环（602 室 → 城市地图 → 夜潜 → 结算 → 次日透析）</div>
+          <div><span class="text-emerald-400">godot_project/scripts/CampaignSim.gd</span> — 战役状态机：库存 / 良知 / 卌 / 真名 / 13 节点余量 / 剧情 ops / 结局判定</div>
+          <div><span class="text-cyan-400">godot_project/scripts/RaidGen.gd</span> — 程序化街区（街道→扇区→可进建筑→容器→连通性修复）+ 战利品抽取</div>
+          <div><span class="text-cyan-400">godot_project/scripts/RaidSim.gd</span> — 90° 视野雾 / 狂暴者·清杀兵·半人 AI / 搜刮 / 卡门 / 撤离 / 体温心率</div>
+          <div><span class="text-cyan-400">godot_project/scripts/CampaignHUD.gd</span> — 基地三栏 / 地图节点卡 / 夜潜 HUD / 结算页 / 剧情·抉择A·日志·帮助·放弃 模态框</div>
+          <div><span class="text-emerald-400">godot_project/scenes/gym.tscn</span> — 5 合 1 灰盒测试场（Rooms A–E，自由走动 / 1~5 传送）</div>
+          <div><span class="text-emerald-400">godot_project/scripts/GymSim.gd</span> — 借刀杀人 / 撬棍卡门 / 抉择 A 与卌 / 三态嗅觉 / 锁骨卡刀 QTE 纯逻辑</div>
+          <div><span class="text-cyan-400">godot_project/scripts/Gym.gd</span> — 等比视口 + _draw() 全画面立即模式渲染（房间/探照锥/视野扇形/波纹）</div>
+          <div><span class="text-cyan-400">godot_project/scripts/GymHUD.gd</span> — 顶栏侧栏清单 + 《双面工作日志》/抉择 A/QTE 模态框（中英双语）</div>
+          <div><span class="text-cyan-400">godot_project/scripts/Sfx.gd</span> — 6 种程序化音效（启动时烘焙 AudioStreamWAV，零音频资产）</div>
+          <div><span class="text-amber-300">godot_project/scenes/main.tscn</span> — Room A 夜潜垂直切片（F1 回灰盒场 / F2 回探索循环）</div>
+          <div><span class="text-emerald-400">godot_project/autoload/LogbookManager.gd</span> — 双面工作日志、俄式“卌”划痕与 5 结局状态机</div>
+          <div><span class="text-purple-400">godot_project/tests/campaign_smoke.gd</span> — 97 项 headless 探索循环测试</div>
+          <div><span class="text-purple-400">godot_project/tests/gym_smoke.gd</span> — 61 项 headless 机制冒烟测试（room_a_smoke.gd 另有 20 项）</div>
         </div>
       </div>
 
@@ -241,6 +248,14 @@
           <div class="mono text-xs text-blue-400 font-bold mb-1">BILINGUAL_DOCS_INDEX // 中英双语文档库</div>
           <h3 class="text-base font-bold text-white mb-3">核心剧本、GDD、灰盒规格书与 Godot 迁移指南</h3>
           <ul class="space-y-2 text-xs">
+            <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
+              <span>🕯 Godot 探索循环移植对照表 · 97 项测试清单 (ZH/EN)</span>
+              <span class="mono text-emerald-400">NEW · LOOP</span>
+            </li>
+            <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
+              <span>🎮 Godot 灰盒 5 合 1 移植对照表 · 61 项测试清单 (ZH/EN)</span>
+              <span class="mono text-slate-400">GYM</span>
+            </li>
             <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
               <span>📘 Godot 4 引擎迁移技术规范与架构指南 (ZH/EN)</span>
               <span class="mono text-emerald-400">NEW v4.0</span>
