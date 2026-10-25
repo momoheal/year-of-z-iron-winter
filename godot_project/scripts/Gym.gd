@@ -19,6 +19,14 @@ var sim
 var hud
 var sfx
 var _f2_latch := false
+# 手机触屏：左半屏虚拟摇杆移动，右半屏拖动瞄准、轻点挥刀。
+var _touch_move_id := -1
+var _touch_move_origin := Vector2.ZERO
+var _touch_move_vec := Vector2.ZERO
+var _touch_aim_id := -1
+var _touch_aim_pos := Vector2.ZERO
+var _touch_aim_start := Vector2.ZERO
+var _touch_aim_press_ms := 0
 var font: SystemFont
 
 var view_scale: float = 1.0
@@ -47,9 +55,15 @@ func _process(delta: float) -> void:
 		return
 	_recalc_view()
 	_handle_keys()
-	var mouse_world := screen_to_world(get_viewport().get_mouse_position())
+	var mouse_pos := get_viewport().get_mouse_position()
+	if _touch_aim_id >= 0:
+		mouse_pos = _touch_aim_pos
+	var mouse_world := screen_to_world(mouse_pos)
 	var move := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	sim.update(delta, move, Input.is_action_pressed("sprint"), mouse_world)
+	if _touch_move_id >= 0:
+		move = _touch_move_vec
+	var sprinting := Input.is_action_pressed("sprint") or (_touch_move_id >= 0 and _touch_move_vec.length() > 0.95)
+	sim.update(delta, move, sprinting, mouse_world)
 	_drain_sfx()
 	hud.refresh()
 	queue_redraw()
@@ -98,6 +112,46 @@ func _unhandled_input(event: InputEvent) -> void:
 	if sim == null:
 		return
 	if sim.logbook_open or sim.choice_modal_open:
+		return
+	if event is InputEventScreenTouch:
+		var touch := event as InputEventScreenTouch
+		if not VIEW_AREA.has_point(touch.position):
+			return
+		if touch.pressed:
+			if touch.position.x < VIEW_AREA.position.x + VIEW_AREA.size.x * 0.35 and _touch_move_id < 0:
+				_touch_move_id = touch.index
+				_touch_move_origin = touch.position
+				_touch_move_vec = Vector2.ZERO
+				get_viewport().set_input_as_handled()
+			elif _touch_aim_id < 0:
+				_touch_aim_id = touch.index
+				_touch_aim_pos = touch.position
+				_touch_aim_start = touch.position
+				_touch_aim_press_ms = Time.get_ticks_msec()
+				get_viewport().set_input_as_handled()
+		else:
+			if touch.index == _touch_move_id:
+				_touch_move_id = -1
+				_touch_move_vec = Vector2.ZERO
+				get_viewport().set_input_as_handled()
+			elif touch.index == _touch_aim_id:
+				var tapped := touch.position.distance_to(_touch_aim_start) < 24.0 and Time.get_ticks_msec() - _touch_aim_press_ms < 400
+				_touch_aim_id = -1
+				if tapped:
+					sim.swing()
+				get_viewport().set_input_as_handled()
+		return
+	if event is InputEventScreenDrag:
+		var drag := event as InputEventScreenDrag
+		if drag.index == _touch_move_id:
+			var d := drag.position - _touch_move_origin
+			if d.length() > 60.0:
+				d = d.normalized() * 60.0
+			_touch_move_vec = d / 60.0
+			get_viewport().set_input_as_handled()
+		elif drag.index == _touch_aim_id:
+			_touch_aim_pos = drag.position
+			get_viewport().set_input_as_handled()
 		return
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
@@ -167,6 +221,7 @@ func _draw() -> void:
 	_draw_overlays()
 
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	_draw_touch_controls()
 
 # ----------------------------------------------------------------------------
 # 房间底板 / 网格 / 标题
@@ -595,6 +650,23 @@ func _draw_overlays() -> void:
 		draw_line(Vector2(430, 0), Vector2(520, 250), Color(0.98, 0.55, 0.6, 0.30), 1.4)
 		draw_line(Vector2(520, 250), Vector2(470, 430), Color(0.98, 0.55, 0.6, 0.30), 1.2)
 		draw_line(Vector2(735, 90), Vector2(690, 300), Color(0.98, 0.55, 0.6, 0.22), 1.2)
+
+# ----------------------------------------------------------------------------
+# 手机触屏指示：只在触屏按下时画，桌面键盘鼠标不受影响。
+# ----------------------------------------------------------------------------
+func _draw_touch_controls() -> void:
+	if _touch_move_id < 0 and _touch_aim_id < 0:
+		return
+	if _touch_move_id >= 0:
+		draw_circle(_touch_move_origin, 60.0, Color(0.2, 0.3, 0.4, 0.25))
+		draw_arc(_touch_move_origin, 60.0, 0, TAU, 32, Color(0.8, 0.9, 1.0, 0.5), 2.0, true)
+		draw_circle(_touch_move_origin + _touch_move_vec * 50.0, 24.0, Color(0.9, 0.95, 1.0, 0.8))
+	if _touch_aim_id >= 0:
+		draw_arc(_touch_aim_pos, 14.0, 0, TAU, 24, Color(1.0, 0.8, 0.2, 0.7), 2.0, true)
+		draw_line(_touch_aim_pos + Vector2(-20, 0), _touch_aim_pos + Vector2(-6, 0), Color(1.0, 0.8, 0.2, 0.7), 2.0)
+		draw_line(_touch_aim_pos + Vector2(6, 0), _touch_aim_pos + Vector2(20, 0), Color(1.0, 0.8, 0.2, 0.7), 2.0)
+		draw_line(_touch_aim_pos + Vector2(0, -20), _touch_aim_pos + Vector2(0, -6), Color(1.0, 0.8, 0.2, 0.7), 2.0)
+		draw_line(_touch_aim_pos + Vector2(0, 6), _touch_aim_pos + Vector2(0, 20), Color(1.0, 0.8, 0.2, 0.7), 2.0)
 
 # ----------------------------------------------------------------------------
 # 文本工具

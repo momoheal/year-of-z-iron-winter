@@ -572,9 +572,9 @@ func refresh() -> void:
 	_update_choice(zh)
 	_update_buttons(zh)
 
-	_hint.text = ("WASD 移动 · 鼠标定朝向 · Ctrl 蹲伏 · Shift 冲刺 · G 投掷空罐头 · E 交互/卡门/推饭盒 · Space 挥刀 · Q 喝水 · Tab 日志 · 1~5 传送 · L 语言 · F 眼镜 · M 音效 · F5 重置 · F1 战役主循环 · F2 Room A 夜潜切片"
+	_hint.text = ("WASD 移动 · 鼠标定朝向 · Ctrl 蹲伏 · Shift 冲刺 · G 投掷空罐头 · E 交互/卡门/推饭盒 · Space 挥刀 · Q 喝水 · Tab 日志 · 1~5 传送 · L 语言 · F 眼镜 · M 音效 · F5 重置 · F1 战役主循环 · F2 Room A 夜潜切片 · 触屏：左半屏摇杆移动（推满冲刺）· 右半屏拖动瞄准 · 轻点挥刀"
 		if zh else
-		"WASD Move · Mouse Aim · Ctrl Crouch · Shift Sprint · G Throw Can · E Interact/Wedge · Space Swing · Q Drink · Tab Logbook · 1–5 Teleport · L Language · F Glasses · M Mute · F5 Reset · F1 Campaign · F2 Room A Slice")
+		"WASD Move · Mouse Aim · Ctrl Crouch · Shift Sprint · G Throw Can · E Interact/Wedge · Space Swing · Q Drink · Tab Logbook · 1–5 Teleport · L Language · F Glasses · M Mute · F5 Reset · F1 Campaign · F2 Room A Slice · Touch: left joystick move (full push = sprint) · right drag aim · tap swing")
 
 	_banner.visible = done >= 5
 	_banner.text = ("✅ 5 / 5 灰盒验证全部通过 · 按 F2 进入 Room A 夜潜垂直切片" if zh
