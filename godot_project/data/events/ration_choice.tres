@@ -1,0 +1,63 @@
+[gd_resource type="Resource" script_class="EventData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/EventOptionData.gd" id="1_05q88"]
+[ext_resource type="Script" path="res://scripts/data/DeltaData.gd" id="2_mc7kn"]
+[ext_resource type="Script" path="res://scripts/data/EventData.gd" id="3_s3tcm"]
+
+[sub_resource type="Resource" id="Resource_jbtl2"]
+script = ExtResource("2_mc7kn")
+key = "intel"
+amount = 1
+label_zh = "调度单"
+label_en = "Intel"
+
+[sub_resource type="Resource" id="Resource_w8ki2"]
+script = ExtResource("2_mc7kn")
+target = "stat"
+key = "progress"
+amount = 10
+label_zh = "推进进度"
+label_en = "Progress"
+
+[sub_resource type="Resource" id="Resource_6wgco"]
+script = ExtResource("1_05q88")
+id = "take_parts"
+label_zh = "拿走焚化炉零件清单"
+label_en = "Take the furnace parts list"
+on_success = Array[ExtResource("2_mc7kn")]([SubResource("Resource_jbtl2"), SubResource("Resource_w8ki2")])
+result_text_zh = "清单上标着几个还没被拆走的部件。"
+result_text_en = "It lists parts still unclaimed."
+
+[sub_resource type="Resource" id="Resource_pjt1d"]
+script = ExtResource("2_mc7kn")
+key = "abx"
+amount = 1
+label_zh = "抗生素"
+label_en = "Antibiotics"
+
+[sub_resource type="Resource" id="Resource_63ewi"]
+script = ExtResource("2_mc7kn")
+key = "band"
+amount = 1
+label_zh = "绷带"
+label_en = "Bandage"
+
+[sub_resource type="Resource" id="Resource_p5cm0"]
+script = ExtResource("1_05q88")
+id = "take_meds"
+label_zh = "拿走药品调拨单"
+label_en = "Take the medical chit"
+on_success = Array[ExtResource("2_mc7kn")]([SubResource("Resource_pjt1d"), SubResource("Resource_63ewi")])
+result_text_zh = "调拨单能在医务站换出一批药。"
+result_text_en = "The chit trades for medicine."
+
+[resource]
+script = ExtResource("3_s3tcm")
+id = "ration_choice"
+title_zh = "调度室的两难"
+title_en = "The Dispatch Dilemma"
+desc_zh = "调度室桌上摊着两份底单，时间只够你带走一份。"
+desc_en = "Two slips lie on the desk; you have time to take only one."
+phase = "night"
+art_tag = "zero_sum"
+options = Array[ExtResource("1_05q88")]([SubResource("Resource_6wgco"), SubResource("Resource_p5cm0")])

@@ -1,0 +1,122 @@
+[gd_resource type="Resource" script_class="EventData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/EventOptionData.gd" id="1_1tgwa"]
+[ext_resource type="Script" path="res://scripts/data/DeltaData.gd" id="2_ganms"]
+[ext_resource type="Script" path="res://scripts/data/EventData.gd" id="3_jdsjv"]
+
+[sub_resource type="Resource" id="Resource_isq4t"]
+script = ExtResource("2_ganms")
+key = "can"
+amount = -1
+label_zh = "空罐"
+label_en = "Can"
+
+[sub_resource type="Resource" id="Resource_o51l2"]
+script = ExtResource("2_ganms")
+target = "stat"
+key = "hp"
+amount = -15
+label_zh = "它没被引开"
+label_en = "It stays"
+
+[sub_resource type="Resource" id="Resource_2hni1"]
+script = ExtResource("2_ganms")
+target = "flag"
+key = "bypassed"
+amount = 1
+label_zh = "成功引开"
+label_en = "Lured away"
+
+[sub_resource type="Resource" id="Resource_ugsnv"]
+script = ExtResource("1_1tgwa")
+id = "lure_can"
+label_zh = "扔空罐把它引开"
+label_en = "Throw a can to lure it away"
+success_chance = 0.9
+costs = Array[ExtResource("2_ganms")]([SubResource("Resource_isq4t")])
+on_success = Array[ExtResource("2_ganms")]([SubResource("Resource_2hni1")])
+on_failure = Array[ExtResource("2_ganms")]([SubResource("Resource_o51l2")])
+result_text_zh = "罐头砸向远处，它循着声音摸了过去。"
+result_text_en = "It follows the sound away."
+
+[sub_resource type="Resource" id="Resource_hjqkg"]
+script = ExtResource("2_ganms")
+target = "stat"
+key = "hp"
+amount = -30
+label_zh = "被它扑中"
+label_en = "It pounces"
+
+[sub_resource type="Resource" id="Resource_1cjn1"]
+script = ExtResource("2_ganms")
+target = "flag"
+key = "bypassed"
+amount = 1
+label_zh = "潜行成功"
+label_en = "Sneaked past"
+
+[sub_resource type="Resource" id="Resource_o44x7"]
+script = ExtResource("1_1tgwa")
+id = "sneak_past"
+label_zh = "屏息贴墙摸过去"
+label_en = "Hold your breath and slip past"
+success_chance = 0.5
+on_success = Array[ExtResource("2_ganms")]([SubResource("Resource_1cjn1")])
+on_failure = Array[ExtResource("2_ganms")]([SubResource("Resource_hjqkg")])
+result_text_zh = "你贴着墙根，一寸寸挪了过去。"
+result_text_en = "You inch along the wall."
+
+[sub_resource type="Resource" id="Resource_02c6f"]
+script = ExtResource("2_ganms")
+target = "stat"
+key = "hp"
+amount = -25
+label_zh = "反扑"
+label_en = "It counterattacks"
+
+[sub_resource type="Resource" id="Resource_jj5n1"]
+script = ExtResource("2_ganms")
+target = "stat"
+key = "sanity"
+amount = -10
+label_zh = "慌乱"
+label_en = "Panic"
+
+[sub_resource type="Resource" id="Resource_035ay"]
+script = ExtResource("2_ganms")
+target = "flag"
+key = "half_killed"
+amount = 1
+label_zh = "放倒半人"
+label_en = "Cut down"
+
+[sub_resource type="Resource" id="Resource_kbnlx"]
+script = ExtResource("2_ganms")
+target = "stat"
+key = "sanity"
+amount = -5
+label_zh = "下手的余悸"
+label_en = "Aftershock"
+
+[sub_resource type="Resource" id="Resource_w5h6g"]
+script = ExtResource("1_1tgwa")
+id = "strike_first"
+label_zh = "挥刀先发制人"
+label_en = "Strike first"
+success_chance = 0.75
+on_success = Array[ExtResource("2_ganms")]([SubResource("Resource_035ay"), SubResource("Resource_kbnlx")])
+on_failure = Array[ExtResource("2_ganms")]([SubResource("Resource_02c6f"), SubResource("Resource_jj5n1")])
+result_text_zh = "刀落下去，哭声戛然而止。"
+result_text_en = "The blade falls; the crying stops."
+
+[resource]
+script = ExtResource("3_jdsjv")
+id = "half_human_cry"
+title_zh = "黑暗里的半人"
+title_en = "The Half-Human in the Dark"
+desc_zh = "黑暗中传来退化半人的呜咽，它还没有发现你。"
+desc_en = "A regressed half-human whimpers in the dark; it has not seen you."
+phase = "night"
+trigger_chance = 0.85
+art_tag = "crisis"
+options = Array[ExtResource("1_1tgwa")]([SubResource("Resource_ugsnv"), SubResource("Resource_o44x7"), SubResource("Resource_w5h6g")])

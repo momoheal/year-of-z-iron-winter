@@ -1,0 +1,108 @@
+[gd_resource type="Resource" script_class="EventData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/EventOptionData.gd" id="1_dhn6a"]
+[ext_resource type="Script" path="res://scripts/data/DeltaData.gd" id="2_e6imk"]
+[ext_resource type="Script" path="res://scripts/data/EventData.gd" id="3_ncbh2"]
+
+[sub_resource type="Resource" id="Resource_mo0g1"]
+script = ExtResource("2_e6imk")
+key = "water"
+amount = -1
+label_zh = "热水壶"
+label_en = "Hot water"
+
+[sub_resource type="Resource" id="Resource_t1tnw"]
+script = ExtResource("2_e6imk")
+target = "stat"
+key = "sanity"
+amount = 15
+label_zh = "心里一暖"
+label_en = "A flicker of warmth"
+
+[sub_resource type="Resource" id="Resource_3g68o"]
+script = ExtResource("2_e6imk")
+target = "flag"
+key = "child_saved"
+amount = 1
+label_zh = "救下孩子"
+label_en = "Child saved"
+
+[sub_resource type="Resource" id="Resource_d1po5"]
+script = ExtResource("1_dhn6a")
+id = "give_water"
+label_zh = "把热水壶留给她"
+label_en = "Leave her the hot water"
+costs = Array[ExtResource("2_e6imk")]([SubResource("Resource_mo0g1")])
+on_success = Array[ExtResource("2_e6imk")]([SubResource("Resource_t1tnw"), SubResource("Resource_3g68o")])
+result_text_zh = "她捧着水壶，嘴唇终于有了一点颜色。"
+result_text_en = "Colour returns to her lips."
+
+[sub_resource type="Resource" id="Resource_3tu4c"]
+script = ExtResource("2_e6imk")
+key = "rye"
+amount = -1
+label_zh = "黑麦碎粒"
+label_en = "Grits"
+
+[sub_resource type="Resource" id="Resource_s06aw"]
+script = ExtResource("2_e6imk")
+target = "stat"
+key = "sanity"
+amount = 8
+label_zh = "稍感心安"
+label_en = "Some relief"
+
+[sub_resource type="Resource" id="Resource_83fxb"]
+script = ExtResource("2_e6imk")
+target = "flag"
+key = "child_fed"
+amount = 1
+label_zh = "喂了孩子"
+label_en = "Child fed"
+
+[sub_resource type="Resource" id="Resource_1mqvj"]
+script = ExtResource("1_dhn6a")
+id = "give_rye"
+label_zh = "分她半把黑麦"
+label_en = "Share some grits"
+costs = Array[ExtResource("2_e6imk")]([SubResource("Resource_3tu4c")])
+on_success = Array[ExtResource("2_e6imk")]([SubResource("Resource_s06aw"), SubResource("Resource_83fxb")])
+result_text_zh = "你把碎粒塞进她冻僵的手心。"
+result_text_en = "You press the grits into her hand."
+
+[sub_resource type="Resource" id="Resource_mtc7x"]
+script = ExtResource("2_e6imk")
+target = "stat"
+key = "sanity"
+amount = -20
+label_zh = "愧疚"
+label_en = "Guilt"
+
+[sub_resource type="Resource" id="Resource_jmlnj"]
+script = ExtResource("2_e6imk")
+target = "flag"
+key = "child_abandoned"
+amount = 1
+label_zh = "抛下孩子"
+label_en = "Child abandoned"
+
+[sub_resource type="Resource" id="Resource_rtt0s"]
+script = ExtResource("1_dhn6a")
+id = "leave"
+label_zh = "什么都不留，走开"
+label_en = "Leave her nothing"
+on_success = Array[ExtResource("2_e6imk")]([SubResource("Resource_mtc7x"), SubResource("Resource_jmlnj")])
+result_text_zh = "你听见身后的哭声一点点弱下去。"
+result_text_en = "The crying behind you fades."
+
+[resource]
+script = ExtResource("3_ncbh2")
+id = "frozen_child"
+title_zh = "冻僵的孩子"
+title_en = "The Frozen Child"
+desc_zh = "楼梯间里，一个孩子蜷在墙角，冻得只剩一口气。"
+desc_en = "A child huddles in the stairwell, barely breathing from the cold."
+phase = "night"
+trigger_chance = 0.9
+art_tag = "moral"
+options = Array[ExtResource("1_dhn6a")]([SubResource("Resource_d1po5"), SubResource("Resource_1mqvj"), SubResource("Resource_rtt0s")])

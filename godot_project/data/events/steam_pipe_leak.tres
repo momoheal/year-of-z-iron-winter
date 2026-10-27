@@ -1,0 +1,128 @@
+[gd_resource type="Resource" script_class="EventData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/EventOptionData.gd" id="1_cxfgl"]
+[ext_resource type="Script" path="res://scripts/data/DeltaData.gd" id="2_npq7h"]
+[ext_resource type="Script" path="res://scripts/data/EventData.gd" id="3_7kfvi"]
+
+[sub_resource type="Resource" id="Resource_beoev"]
+script = ExtResource("2_npq7h")
+key = "scrap"
+amount = -1
+label_zh = "废钢件"
+label_en = "Scrap"
+
+[sub_resource type="Resource" id="Resource_2kgcf"]
+script = ExtResource("2_npq7h")
+target = "stat"
+key = "hp"
+amount = -15
+label_zh = "蒸汽烫伤"
+label_en = "Scalded"
+
+[sub_resource type="Resource" id="Resource_3xv81"]
+script = ExtResource("2_npq7h")
+target = "crisis"
+key = "steam_leak"
+amount = 1
+label_zh = "泄漏加剧"
+label_en = "Leak worsens"
+
+[sub_resource type="Resource" id="Resource_1nmxp"]
+script = ExtResource("2_npq7h")
+target = "crisis"
+key = "steam_leak"
+amount = -1
+label_zh = "解除蒸汽泄漏"
+label_en = "Leak sealed"
+
+[sub_resource type="Resource" id="Resource_d6g5g"]
+script = ExtResource("2_npq7h")
+target = "stat"
+key = "warmth"
+amount = 10
+label_zh = "蒸汽暖意"
+label_en = "Warmth from steam"
+
+[sub_resource type="Resource" id="Resource_yu0d2"]
+script = ExtResource("1_cxfgl")
+id = "patch_scrap"
+label_zh = "用废钢件临时封堵"
+label_en = "Patch with scrap steel"
+success_chance = 0.8
+costs = Array[ExtResource("2_npq7h")]([SubResource("Resource_beoev")])
+on_success = Array[ExtResource("2_npq7h")]([SubResource("Resource_1nmxp"), SubResource("Resource_d6g5g")])
+on_failure = Array[ExtResource("2_npq7h")]([SubResource("Resource_2kgcf"), SubResource("Resource_3xv81")])
+result_text_zh = "你把裂口砸扁，白雾慢慢止住。"
+result_text_en = "You hammer the crack shut."
+
+[sub_resource type="Resource" id="Resource_0wunk"]
+script = ExtResource("2_npq7h")
+target = "stat"
+key = "hp"
+amount = -10
+label_zh = "冻伤"
+label_en = "Frostbite"
+
+[sub_resource type="Resource" id="Resource_yunvr"]
+script = ExtResource("2_npq7h")
+target = "stat"
+key = "hp"
+amount = -25
+label_zh = "严重烫伤"
+label_en = "Badly scalded"
+
+[sub_resource type="Resource" id="Resource_e1dk6"]
+script = ExtResource("2_npq7h")
+target = "crisis"
+key = "steam_leak"
+amount = -1
+label_zh = "解除蒸汽泄漏"
+label_en = "Leak sealed"
+
+[sub_resource type="Resource" id="Resource_y1le2"]
+script = ExtResource("1_cxfgl")
+id = "patch_cloth"
+label_zh = "撕下衣袖硬堵"
+label_en = "Tear your sleeve and plug"
+success_chance = 0.6
+costs = Array[ExtResource("2_npq7h")]([SubResource("Resource_0wunk")])
+on_success = Array[ExtResource("2_npq7h")]([SubResource("Resource_e1dk6")])
+on_failure = Array[ExtResource("2_npq7h")]([SubResource("Resource_yunvr")])
+result_text_zh = "破布被蒸汽顶开，又被你死命按了回去。"
+result_text_en = "The rag holds, barely."
+
+[sub_resource type="Resource" id="Resource_821kx"]
+script = ExtResource("2_npq7h")
+target = "crisis"
+key = "steam_leak"
+amount = 1
+label_zh = "泄漏升级"
+label_en = "Leak escalates"
+
+[sub_resource type="Resource" id="Resource_hngvu"]
+script = ExtResource("2_npq7h")
+target = "stat"
+key = "warmth"
+amount = -8
+label_zh = "湿冷透骨"
+label_en = "Soaked and cold"
+
+[sub_resource type="Resource" id="Resource_u5yri"]
+script = ExtResource("1_cxfgl")
+id = "ignore"
+label_zh = "放任不管，继续走"
+label_en = "Leave it and move on"
+on_success = Array[ExtResource("2_npq7h")]([SubResource("Resource_821kx"), SubResource("Resource_hngvu")])
+result_text_zh = "白雾在身后继续喷涌。"
+result_text_en = "The white cloud keeps billowing."
+
+[resource]
+script = ExtResource("3_7kfvi")
+id = "steam_pipe_leak"
+title_zh = "蒸汽管破裂"
+title_en = "Burst Steam Pipe"
+desc_zh = "身旁一截蒸汽管突然爆裂，滚烫的白雾喷涌而出，必须立刻处理。"
+desc_en = "A steam pipe bursts beside you, scalding white fog pouring out."
+phase = "night"
+art_tag = "interrupt"
+options = Array[ExtResource("1_cxfgl")]([SubResource("Resource_yu0d2"), SubResource("Resource_y1le2"), SubResource("Resource_u5yri")])
