@@ -553,7 +553,7 @@ func _refresh_hud() -> void:
 	if has_dial:
 		_lbl_hint.text = "透析液到手 —— 回锅炉房通风口长按 E 撤离   ·   R 重来  Esc 返回战役"
 	else:
-		_lbl_hint.text = "目标：在三号闷罐车厢找到妈妈的透析液   ·   WASD 移动  Ctrl 蹲  Shift 跑  E 搜刮  G 罐头  F 手电"
+		_lbl_hint.text = "目标：三号车厢的透析液（门口有狂暴者）· 用 G 罐头把它引进清杀队的光锥   ·   Ctrl 蹲  Shift 跑  E 搜刮  F 手电"
 	match state:
 		"play":
 			_lbl_center.text = ""

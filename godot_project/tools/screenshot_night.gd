@@ -7,6 +7,7 @@ const SHOTS := [
 	{"name": "night_yard_courtyard", "pos": Vector2(20.5, 11.0), "face": -0.4, "flash": true},
 	{"name": "night_yard_railyard", "pos": Vector2(29.0, 29.2), "face": 0.2, "flash": true},
 	{"name": "night_yard_vent_dark", "pos": Vector2(9.0, 5.2), "face": 2.6, "flash": false},
+	{"name": "night_yard_rabid_boxcar", "pos": Vector2(31.2, 37.4), "face": 0.05, "flash": true},
 ]
 
 func _init() -> void:
@@ -28,7 +29,9 @@ func _run() -> void:
 		s.cam.global_position = p.global_position
 		s.cam.reset_smoothing()
 		for so in s.soldiers:
-			so.ctl = null          # 截图时让清杀兵停在原地
+			so.ctl = null          # 截图时让清杀兵 / 狂暴者停在原地
+		for r in s.rabids:
+			r.ctl = null
 		for i in 50:
 			p.facing = shot.face
 			p.get_node("Flashlight/Pivot").rotation = shot.face
