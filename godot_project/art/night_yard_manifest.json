@@ -1,0 +1,406 @@
+{
+ "VFX_Light_Radial": {
+  "path": "res://art/50_vfx/VFX_Light_Radial.png",
+  "size": [
+   512,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Light_Radial_Soft": {
+  "path": "res://art/50_vfx/VFX_Light_Radial_Soft.png",
+  "size": [
+   512,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Light_Cone_Flashlight": {
+  "path": "res://art/50_vfx/VFX_Light_Cone_Flashlight.png",
+  "size": [
+   1024,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Light_Cone_OSK": {
+  "path": "res://art/50_vfx/VFX_Light_Cone_OSK.png",
+  "size": [
+   1024,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Searchlight_Cone": {
+  "path": "res://art/50_vfx/VFX_Searchlight_Cone.png",
+  "size": [
+   1024,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Snow_Particle": {
+  "path": "res://art/50_vfx/VFX_Snow_Particle.png",
+  "size": [
+   16,
+   16
+  ],
+  "pivot": null
+ },
+ "VFX_Ember": {
+  "path": "res://art/50_vfx/VFX_Ember.png",
+  "size": [
+   8,
+   8
+  ],
+  "pivot": null
+ },
+ "VFX_Glow_Halo": {
+  "path": "res://art/50_vfx/VFX_Glow_Halo.png",
+  "size": [
+   128,
+   128
+  ],
+  "pivot": null
+ },
+ "VFX_Steam_Puff": {
+  "path": "res://art/50_vfx/VFX_Steam_Puff.png",
+  "size": [
+   64,
+   64
+  ],
+  "pivot": null
+ },
+ "VFX_FogNoise": {
+  "path": "res://art/50_vfx/VFX_FogNoise.png",
+  "size": [
+   512,
+   512
+  ],
+  "pivot": null
+ },
+ "AMB_Wind_Blizzard_Loop": {
+  "path": "res://art/70_audio/AMB_Wind_Blizzard_Loop.wav"
+ },
+ "AMB_Fire_Crackle_Loop": {
+  "path": "res://art/70_audio/AMB_Fire_Crackle_Loop.wav"
+ },
+ "AMB_Steam_Hiss_Loop": {
+  "path": "res://art/70_audio/AMB_Steam_Hiss_Loop.wav"
+ },
+ "AMB_Sodium_Buzz_Loop": {
+  "path": "res://art/70_audio/AMB_Sodium_Buzz_Loop.wav"
+ },
+ "CHR_01_Aleksei_Sheet": {
+  "path": "res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png",
+  "size": [
+   576,
+   336
+  ],
+  "pivot": [
+   36,
+   108
+  ],
+  "hframes": 8,
+  "vframes": 3
+ },
+ "CHR_05_OSK_Sheet": {
+  "path": "res://art/10_characters/CHR_05_OSK/CHR_05_OSK_Sheet.png",
+  "size": [
+   576,
+   336
+  ],
+  "pivot": [
+   36,
+   108
+  ],
+  "hframes": 8,
+  "vframes": 3
+ },
+ "PRP_Crate_Wood_Stack": {
+  "path": "res://art/30_props/PRP_Crate_Wood_Stack.png",
+  "size": [
+   132,
+   156
+  ],
+  "pivot": [
+   66.0,
+   148
+  ]
+ },
+ "PRP_SupplyCrates_Military": {
+  "path": "res://art/30_props/PRP_SupplyCrates_Military.png",
+  "size": [
+   150,
+   116
+  ],
+  "pivot": [
+   75.0,
+   108
+  ]
+ },
+ "PRP_Dumpster_Steel": {
+  "path": "res://art/30_props/PRP_Dumpster_Steel.png",
+  "size": [
+   156,
+   156
+  ],
+  "pivot": [
+   78.0,
+   146
+  ]
+ },
+ "PRP_Locker_ElectricCabinet": {
+  "path": "res://art/30_props/PRP_Locker_ElectricCabinet.png",
+  "size": [
+   84,
+   146
+  ],
+  "pivot": [
+   42.0,
+   138
+  ]
+ },
+ "PRP_Car_Moskvich_Wreck": {
+  "path": "res://art/30_props/PRP_Car_Moskvich_Wreck.png",
+  "size": [
+   316,
+   196
+  ],
+  "pivot": [
+   158.0,
+   186
+  ]
+ },
+ "PRP_SteamPipe_Long": {
+  "path": "res://art/30_props/PRP_SteamPipe_Long.png",
+  "size": [
+   1180,
+   128
+  ],
+  "pivot": [
+   590.0,
+   120
+  ]
+ },
+ "PRP_Brazier_OilDrum": {
+  "path": "res://art/30_props/PRP_Brazier_OilDrum.png",
+  "size": [
+   68,
+   92
+  ],
+  "pivot": [
+   34,
+   86
+  ]
+ },
+ "PRP_StreetLamp_Sodium": {
+  "path": "res://art/30_props/PRP_StreetLamp_Sodium.png",
+  "size": [
+   116,
+   384
+  ],
+  "pivot": [
+   24,
+   376
+  ]
+ },
+ "PRP_Bench_Snowy": {
+  "path": "res://art/30_props/PRP_Bench_Snowy.png",
+  "size": [
+   134,
+   92
+  ],
+  "pivot": [
+   67.0,
+   84
+  ]
+ },
+ "PRP_Playground_Dome": {
+  "path": "res://art/30_props/PRP_Playground_Dome.png",
+  "size": [
+   209,
+   180
+  ],
+  "pivot": [
+   104.5,
+   172
+  ]
+ },
+ "PRP_Corpse_Tarp": {
+  "path": "res://art/30_props/PRP_Corpse_Tarp.png",
+  "size": [
+   134,
+   70
+  ],
+  "pivot": [
+   67.0,
+   62
+  ]
+ },
+ "PRP_Buran_Boxcar03": {
+  "path": "res://art/30_props/PRP_Buran_Boxcar03.png",
+  "size": [
+   936,
+   420
+  ],
+  "pivot": [
+   468.0,
+   410
+  ]
+ },
+ "PRP_WaterTower": {
+  "path": "res://art/30_props/PRP_WaterTower.png",
+  "size": [
+   340,
+   560
+  ],
+  "pivot": [
+   170,
+   548
+  ]
+ },
+ "PRP_Watchtower_Searchlight": {
+  "path": "res://art/30_props/PRP_Watchtower_Searchlight.png",
+  "size": [
+   236,
+   480
+  ],
+  "pivot": [
+   118,
+   470
+  ]
+ },
+ "PRP_SignalPost_Red": {
+  "path": "res://art/30_props/PRP_SignalPost_Red.png",
+  "size": [
+   54,
+   252
+  ],
+  "pivot": [
+   27,
+   246
+  ]
+ },
+ "PRP_TinCan": {
+  "path": "res://art/30_props/PRP_TinCan.png",
+  "size": [
+   16,
+   16
+  ],
+  "pivot": [
+   8,
+   13
+  ]
+ },
+ "PRP_Fence_ChainLink_A": {
+  "path": "res://art/30_props/PRP_Fence_ChainLink_A.png",
+  "size": [
+   266,
+   156
+  ],
+  "pivot": [
+   5,
+   148
+  ]
+ },
+ "PRP_Fence_ChainLink_B": {
+  "path": "res://art/30_props/PRP_Fence_ChainLink_B.png",
+  "size": [
+   266,
+   156
+  ],
+  "pivot": [
+   5,
+   148
+  ]
+ },
+ "PRP_Fence_ChainLink_Torn": {
+  "path": "res://art/30_props/PRP_Fence_ChainLink_Torn.png",
+  "size": [
+   266,
+   156
+  ],
+  "pivot": [
+   5,
+   148
+  ]
+ },
+ "PRP_Fence_ChainLink_TornL": {
+  "path": "res://art/30_props/PRP_Fence_ChainLink_TornL.png",
+  "size": [
+   266,
+   156
+  ],
+  "pivot": [
+   5,
+   148
+  ]
+ },
+ "VFX_Fire_Brazier_Sheet": {
+  "path": "res://art/50_vfx/VFX_Fire_Brazier_Sheet.png",
+  "size": [
+   336,
+   84
+  ],
+  "pivot": [
+   28.0,
+   80
+  ],
+  "hframes": 6
+ },
+ "TIL_Ground_NightYard_Baked": {
+  "path": "res://art/20_tileset/TIL_Ground_NightYard_Baked.png",
+  "size": [
+   3072,
+   1587
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "TIL_Facade_Khrushchyovka_A": {
+  "path": "res://art/20_tileset/TIL_Facade_Khrushchyovka_A.png",
+  "size": [
+   3072,
+   600
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Facade_WindowGlow": {
+  "path": "res://art/50_vfx/VFX_Facade_WindowGlow.png",
+  "size": [
+   3072,
+   770
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "CHR_03_Rabid_Sheet": {
+  "path": "res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png",
+  "size": [
+   576,
+   336
+  ],
+  "pivot": [
+   36,
+   108
+  ],
+  "hframes": 8,
+  "vframes": 3
+ },
+ "VFX_Blood_Splat": {
+  "path": "res://art/50_vfx/VFX_Blood_Splat.png",
+  "size": [
+   96,
+   96
+  ],
+  "pivot": null
+ }
+}

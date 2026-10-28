@@ -85,6 +85,35 @@ year-of-z-iron-winter/
 
 ---
 
+## 🌙 Godot 夜潜美术切片 · 夜间广轨货场（`scenes/night_explore.tscn`）
+
+第一个带美术资产的 Godot 场景：L03「夜间广轨货场」，赫鲁晓夫楼院子 + 铁丝网 + 双线宽轨货场。和其它 `_draw()` 灰盒场景不同，这里是完整的节点化 2.5D 场景，可以直接在编辑器里打开、拖动、调灯。
+
+![courtyard](godot_project/screenshots/night_yard_courtyard.png)
+
+| 层 | 实现 |
+| :--- | :--- |
+| **地面** | 一张 3072×1587 烘焙大图（雪 / 预制板 / 雪径脚印 / 道砟枕木钢轨 / 冻雪泥黑冰 / 焦油黑雪 / 接触阴影），`light_mask=2` |
+| **立面与道具** | 赫鲁晓夫楼立面（窗、阳台、焊死的入口、电传终端、公告栏、锅炉房通风口）+ 17 件道具（三号闷罐车厢、煤水塔、探照灯塔、报废莫斯科人、蒸汽管、油桶火堆…），全部 Y-sort，pivot 在底部中心 |
+| **角色** | 阿列克谢 / ОСК 清杀兵精灵表：S/E/N 三朝向 × 待机/走路 4 帧/蹲伏 3 帧（W 用翻转） |
+| **灯光** | `CanvasModulate` 夜色 + 成对 `PointLight2D`：Ground 灯只照地面并投影，Objects 灯只照立起的精灵不投影（避免 2.5D 立面被自己的遮挡体压黑）；手电/探照灯是按 0.62 压缩的锥形灯；窗光是一张整面墙的灯光贴图 |
+| **氛围** | GPU 雪粒子（世界层 + 屏幕前景层）、火星、蒸汽、后处理（冷调分级 / 世界锚定的雪雾 / 暗角 / 颗粒 / 失温霜边 / 警报红边）、4 段环境音循环 |
+| **玩法** | 潜行、手电开关（亮=好找路也好被发现）、脚步噪声、`G` 扔罐头引开清杀兵、探照灯扫描锁定（车厢/煤水塔挡光）、长按 E 搜刮（掉落表读 `CampaignData`）、火堆回温、锅炉房通风口撤离；目标是在三号车厢找到透析液 |
+
+**运行**：`launch_night_scene.bat`，或在战役里按 `F2`。操作：`WASD` 移动 · 鼠标朝向 · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离 · `G` 罐头 · `F` 手电 · `M` 静音 · `R` 重来 · `Esc` 返回战役。测试：`tests/night_explore_smoke.gd`（29 项，已加进 `run_smoke_tests.bat`）。
+
+**美术管线**（`godot_project/tools/art_gen/`，Python 3 + numpy + Pillow，无需外部服务）：
+
+```text
+layout.py        关卡布局（米）—— 地面烘焙和场景生成共用的唯一数据源
+gen_assets.py    生成全部 PNG/WAV 到 godot_project/art/ 并写 night_yard_manifest.json（尺寸 + pivot）
+build_scene.py   由布局 + manifest 生成 scenes/night_explore.tscn（会覆盖场景，之后建议直接在编辑器里维护）
+```
+
+资产目录与命名遵循 `docs/zh/Z年纪事_美术资源生成Prompt规格书.md` §3（`10_characters / 20_tileset / 30_props / 50_vfx / 70_audio`，64px/m，地面 y×0.62）。现在这批是程序化手绘风占位图；用 AI 出图替换时，**文件名、画布尺寸、pivot 保持不变**，覆盖 PNG 即可，场景不用改。
+
+---
+
 ## 🗺 Exploration Loop Demo (探索循环 DEMO · `Year_of_Z_Iron_Winter_Exploration_Demo.html`)
 
 **Single-file HTML5 · Canvas · zero art assets · zero build step.** Open it directly in any modern browser (or serve the `prototypes/` folder). Instant **中文 / EN** switching, procedurally synthesized Web Audio SFX, and a full one-day loop:

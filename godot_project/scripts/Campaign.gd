@@ -132,6 +132,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if k == KEY_F1:
 			get_tree().change_scene_to_file("res://scenes/gym.tscn")
 			return
+		if k == KEY_F2:
+			get_tree().change_scene_to_file("res://scenes/night_explore.tscn")
+			return
 		if k == KEY_L and sim.phase != "raid":
 			sim.toggle_lang()
 			return
