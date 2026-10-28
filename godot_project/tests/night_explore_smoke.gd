@@ -47,6 +47,17 @@ func _freeze_soldiers(s: Node) -> void:
 		o.process_mode = Node.PROCESS_MODE_DISABLED
 	for n in s.get_tree().get_nodes_in_group("night_searchlight"):
 		n.process_mode = Node.PROCESS_MODE_DISABLED
+	_freeze_rabids(s)
+
+func _freeze_rabids(s: Node) -> void:
+	for r in s.rabids:
+		r.process_mode = Node.PROCESS_MODE_DISABLED
+
+func _find(arr: Array, nm: String):
+	for o in arr:
+		if String(o.name) == nm:
+			return o
+	return null
 
 func _run() -> void:
 	print("== night_explore smoke ==")
@@ -167,6 +178,7 @@ func _run() -> void:
 	# --- 10. 被发现 ---
 	s = _scene()
 	await _physics(3)
+	_freeze_rabids(s)
 	var rail = s.soldiers[0]
 	for o in s.soldiers:
 		if String(o.name) == "OSK_Rail":
@@ -176,6 +188,73 @@ func _run() -> void:
 	s.player.global_position = rail.global_position + Vector2(4.0 * PPM, 0)
 	await _physics(240)
 	_assert(s.state == "caught", "OSK flashlight catches a standing player", s.state)
+
+	# --- 11. 三方潜行：狂暴者 ---
+	s = _scene()
+	await _physics(3)
+	_assert(s.rabids.size() == 4, "four rabids wired", str(s.rabids.size()))
+	var brute = _find(s.rabids, "Rabid_Brute")
+	_assert(brute != null and brute.brute and brute.hp > 150.0, "brute variant is tougher")
+	_freeze_soldiers(s)
+	for r in s.rabids:
+		r.process_mode = Node.PROCESS_MODE_INHERIT
+	p = s.player
+	p.global_position = s.exit_px + Vector2(0, 20)
+	var rw = _find(s.rabids, "Rabid_West")
+	s.emit_noise(rw.global_position + Vector2(160, 0), 9.0, "can")
+	_assert(rw.state == "investigate", "rabid follows the can noise", rw.state)
+	var rc = _find(s.rabids, "Rabid_Car")
+	p.global_position = rc.global_position + Vector2(-4.0 * PPM, 0)
+	p.crouching = false
+	_assert(s.rabid_sees_player(rc), "rabid sees a player 4m away in the open")
+	rc.global_position = _m(18.0, 19.0)
+	p.global_position = _m(18.0, 16.6)
+	p.crouching = true
+	_assert(not s.rabid_sees_player(rc), "crouching behind the steam pipe hides from rabids")
+	p.crouching = false
+	_assert(s.rabid_sees_player(rc), "standing behind the steam pipe is seen by rabids")
+	# 扑咬：0.45s 预警后掉血
+	p.global_position = _m(30.0, 11.0)
+	rc.global_position = p.global_position + Vector2(0.9 * PPM, 0)
+	rc.state = "chase"
+	var saw_windup := false
+	for i in 90:
+		await physics_frame
+		if rc.state == "windup":
+			saw_windup = true
+	_assert(saw_windup, "rabid telegraphs a 0.45s windup before biting")
+	_assert(s.hp < 100.0, "rabid bite damages the player", str(s.hp))
+
+	# 借刀杀人：清杀兵光锥里的狂暴者会被击毙，枪声引来下一只
+	s = _scene()
+	await _physics(3)
+	for n in s.get_tree().get_nodes_in_group("night_searchlight"):
+		n.process_mode = Node.PROCESS_MODE_DISABLED
+	var yard = _find(s.soldiers, "OSK_Yard")
+	yard.process_mode = Node.PROCESS_MODE_DISABLED
+	s.player.global_position = s.exit_px + Vector2(0, 20)
+	var rs = _find(s.soldiers, "OSK_Rail")
+	rs.global_position = _m(4.0, 29.6)
+	rs.state = "pause"
+	rs.set("_timer", 99.0)
+	rs.set("_look_base", 0.0)
+	rs.facing = 0.0
+	var bait = _find(s.rabids, "Rabid_West")
+	bait.global_position = rs.global_position + Vector2(6.0 * PPM, 0)
+	bait.home = bait.global_position
+	var tower = _find(s.rabids, "Rabid_Tower")
+	for i in 200:
+		await physics_frame
+		if not bait.is_alive():
+			break
+	_assert(not bait.is_alive(), "OSK shoots a rabid in its flashlight cone")
+	_assert(s.borrowed == 1, "borrowed-knife kill is counted", str(s.borrowed))
+	_assert(s.get_node("Decals").get_child_count() >= 1, "blood decal left on the snow")
+	_assert(tower.state in ["investigate", "chase"], "gunshot draws the next rabid", tower.state)
+
+	# 被扑倒
+	s.damage_player(200.0, null)
+	_assert(s.state == "downed", "player downed at 0 HP", s.state)
 
 	print("==== RESULT: %d passed, %d failed ====" % [passes, failures.size()])
 	if failures.is_empty():

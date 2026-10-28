@@ -140,6 +140,8 @@ S.node("NightExplore", "Node2D", None, texture_filter="2", script=SCRIPT("NightE
 S.node("CanvasModulate", "CanvasModulate", ".", color=col(0.27, 0.32, 0.45))
 S.node("Ground", "Sprite2D", ".", z_index="-1", light_mask="2", centered="false",
        texture=S.tex("TIL_Ground_NightYard_Baked"))
+# 血迹等地面贴花（运行时往里加），画在地面之上、所有立起的精灵之下
+S.node("Decals", "Node2D", ".", z_index="-1")
 S.node("World", "Node2D", ".", y_sort_enabled="true")
 
 # ---- 立面（北侧赫鲁晓夫楼）----
@@ -226,6 +228,10 @@ for pat in LY.PATROLS:
     S.node("Muzzle", "PointLight2D", so, texture=S.tex("VFX_Light_Radial"),
            color=col(1, 0.82, 0.55), position=v2((0, -6)), texture_scale="0.18",
            energy="0.0", range_item_cull_mask="3")
+for rb in LY.RABIDS:
+    character("World", rb["id"], "CHR_03_Rabid_Sheet", "NightRabid", 32, 7, groups=["night_rabid"],
+              position=v2(px(*rb["home"])), brute="true" if rb["brute"] else "false",
+              home_radius=f'{rb["radius"]:g}')
 
 # ===========================================================================
 # 灯光

@@ -47,6 +47,21 @@ func _draw() -> void:
 		elif su > 0.05 or s.state in ["investigate", "search"]:
 			_text(sp, "?", Color(0.99, 0.75, 0.2, 0.5 + su * 0.5), 26)
 			_arc(sp + Vector2(0, -8), 18.0, su, Color(0.99, 0.75, 0.2, 0.85), 3.0)
+		if s.aim_target != null:
+			_text(sp + Vector2(0, -26), "瞄准", Color(0.49, 0.83, 0.99, 0.9), 14)
+	# 狂暴者读数：追击 ! / 起跳预警红圈（0.45s）/ 循声 ?
+	for r in ctl.rabids:
+		if not r.is_alive():
+			continue
+		var rp: Vector2 = r.global_position
+		if r.state == "windup":
+			var k: float = clampf(r.windup / r.WINDUP, 0.0, 1.0)
+			_ellipse(rp, 30.0 + 26.0 * (1.0 - k), (30.0 + 26.0 * (1.0 - k)) * SQ, Color(0.94, 0.27, 0.27, 0.5 + 0.5 * k), 3.0)
+			_text(rp + Vector2(0, -124), "!!", Color("#ef4444"), 30)
+		elif r.state in ["chase", "lunge"]:
+			_text(rp + Vector2(0, -124), "!", Color("#ef4444"), 28)
+		elif r.state == "investigate":
+			_text(rp + Vector2(0, -124), "?", Color(0.73, 0.11, 0.11, 0.8), 22)
 	# 飞罐（抛物线）
 	for c3 in ctl.thrown:
 		var k: float = clampf(float(c3["t"]), 0.0, 1.0)
