@@ -32,6 +32,7 @@ var last_report: Dictionary = {}
 
 # ---------------- 阶段 / UI 状态 ----------------
 var lang: String = "zh"
+var sound_on := true             # 音效开关：跟着人走进节点化夜潜场景（cfg.sound_on），回来时写回
 var phase: String = "title"      # title | base | map | raid | report | ending
 var selected_loc: String = ""
 var raid = null                  # RaidSim 实例（仅 raid 阶段非空）
@@ -68,6 +69,7 @@ func new_game() -> void:
 	mate = "none"
 	load = {"can": 0, "water": 0, "asp": 0, "band": 0}
 	last_report = {}
+	sound_on = true
 	phase = "title"
 	selected_loc = ""
 	raid = null
@@ -337,6 +339,7 @@ func depart(L: Dictionary) -> bool:
 		"time": travel_minutes(L),
 		"glasses": bool(flags.get("glasses", false)),
 		"night": maxf(90.0, travel_minutes(L) * 2.4),
+		"sound_on": sound_on,        # P2.5：战役里关过音效，节点化场景也别突然响起来
 	}
 	raid = RaidSimScript.new(self, cfg)
 	phase = "raid"

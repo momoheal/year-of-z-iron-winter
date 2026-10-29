@@ -4,7 +4,9 @@ extends SceneTree
 ##
 ## 覆盖：资产装配 / 节点接线 / 移动与碰撞 / 冻雪泥 / 噪声→调查 / 视线遮挡（车厢挡探照灯）/
 ##       搜刮掉落 / 车厢必出透析液 / 被清杀兵发现 / 撤离 / 体温 / 三方潜行（狂暴者、借刀杀人）/
-##       回退半人的道德抉择（缺药 / 喂药 / 绕开 / 撬棍 / 清杀队误杀，良知与卌的口径）。
+##       回退半人的道德抉择（缺药 / 喂药 / 绕开 / 撬棍 / 清杀队误杀，良知与卌的口径）/
+##       天亮最后 20% 的天色渐变（P1.5）/ 程序化音效与定位（P2.5）/ 镜头震动 /
+##       战役 cfg 口径（pack_max · load · night · cold · sound_on）。
 
 var passes: int = 0
 var failures: Array[String] = []
@@ -335,6 +337,136 @@ func _run() -> void:
 	var st5: String = r5.state
 	s.emit_noise(r5.global_position + Vector2(30, 0), 3.0, "half")
 	_assert(r5.state == st5, "rabids ignore half-human moans", r5.state)
+
+	# --- 13. 天亮：夜长最后 20% 的天色渐变（P1.5）---
+	s = _scene()
+	await _physics(3)
+	_freeze_soldiers(s)
+	_assert(is_zero_approx(s.dawn_progress()), "no dawn clock when running the slice alone",
+		str(s.dawn_progress()))
+	s.in_campaign = true
+	s.night_max = 100.0
+	s.night_left = 100.0
+	_assert(is_zero_approx(s.dawn_progress()), "the first 80% of the night stays dark")
+	s.night_left = 21.0
+	_assert(is_zero_approx(s.dawn_progress()), "still dark just above the 20% window")
+	s.night_left = 10.0
+	_assert(is_equal_approx(s.dawn_progress(), 0.5), "halfway through the last 20%",
+		str(s.dawn_progress()))
+	await _physics(2)
+	_assert(s.dawn_cued, "the dawn cue (horn + hint) fires once")
+	var mat: ShaderMaterial = s.post.material
+	_assert(mat != null and float(mat.get_shader_parameter("dawn")) > 0.4,
+		"post shader receives the dawn factor", str(mat.get_shader_parameter("dawn")))
+	var cm: CanvasModulate = s.get_node("CanvasModulate")
+	_assert(cm.color.r > 0.4, "CanvasModulate lifts from night blue toward dawn grey", str(cm.color))
+	var snowp: GPUParticles2D = s.get_node("Camera2D/Snow")
+	_assert(snowp.modulate.a < 1.0, "the blizzard thins out at dawn", str(snowp.modulate.a))
+	_assert(is_equal_approx(float(mat.get_shader_parameter("frost")),
+		clampf((35.0 - s.warmth) / 35.0, 0.0, 1.0)), "frost still follows body warmth")
+	s.night_left = 0.05
+	await _physics(8)
+	_assert(s.state == "dawn", "the night ends on dawn", s.state)
+	_assert(is_equal_approx(s.dawn_t, 1.0), "the sky is fully lit when dawn breaks", str(s.dawn_t))
+
+	# --- 14. 声音（P2.5）：程序化音色库 / 定位 / 面具呼吸 / 环境层 / 心跳 ---
+	s = _scene()
+	await _physics(3)
+	_assert(s.sfx != null and s.sfx.has_method("play_at") and s.sfx.has_method("attach_loop"),
+		"NightSfx drives the scene audio")
+	for nm in ["step_snow", "step_ice", "step_rail", "growl", "snarl", "bite", "moan",
+			"mask_breath", "radio", "klaxon", "gunshot", "swing", "crowbar_hit", "rummage",
+			"can_throw", "dawn_horn", "freeze", "chill", "heartbeat",
+			"beep", "can", "wedge", "akm", "bonejam", "thirst"]:
+		_assert(s.sfx.has_stream(nm), "synth bank has " + nm)
+	_assert(s.sfx.stream_count() >= 25, "synth bank baked at startup", str(s.sfx.stream_count()))
+	_assert(s.sfx.ambient_count() >= 3, "AMB_* layers handed to NightSfx", str(s.sfx.ambient_count()))
+	var breath: Array = s.soldiers[0].find_children("*", "AudioStreamPlayer2D", true, false)
+	_assert(breath.size() == 1, "every OSK trooper carries one breathing loop", str(breath.size()))
+	_assert(breath[0].stream != null and is_equal_approx(breath[0].max_distance, 4.0 * 64.0),
+		"mask breathing is audible inside 4 m", str(breath[0].max_distance))
+	_assert(s.step_sound(_m(20.0, 8.0), false) == "step_snow", "packed snow in the yard")
+	_assert(s.step_sound(_m(20.0, 26.4), false) == "step_rail", "sleepers and steel near the rail centre")
+	_assert(s.step_sound(_m(17.0, 29.6), true) == "step_ice", "black ice cracks underfoot")
+	var rip0: int = s.ripples.size()
+	s.emit_noise(_m(20.0, 10.0), 9.0, "can")
+	s.emit_noise(_m(20.0, 10.0), 3.0, "gun", true)
+	_assert(s.ripples.size() == rip0 + 2, "quiet=true still draws the ripple (no double gunshot)",
+		str(s.ripples.size()))
+	_freeze_soldiers(s)
+	var osk0 = s.soldiers[0]
+	osk0.process_mode = Node.PROCESS_MODE_INHERIT
+	osk0.state = "alert"
+	osk0.suspicion = 1.0
+	await _physics(2)
+	_assert(s.sfx.tension > 0.9, "an alerted trooper drives the heartbeat", str(s.sfx.tension))
+	osk0.state = "patrol"
+	osk0.suspicion = 0.0
+	await _physics(2)
+	_assert(s.sfx.tension < 0.2, "the heartbeat stops when the yard is quiet again", str(s.sfx.tension))
+
+	# --- 15. 镜头震动 ---
+	s = _scene()
+	await _physics(3)
+	_freeze_soldiers(s)
+	_assert(is_zero_approx(s.shake) and s.cam.offset == Vector2.ZERO, "the camera is still at rest")
+	s.damage_player(9.0, null)
+	_assert(s.shake > 0.4, "a bite kicks the camera", str(s.shake))
+	_assert(s.punch > 0.5, "damage also punches the zoom in", str(s.punch))
+	await _physics(2)
+	_assert(s.cam.offset.length() > 0.5, "shake lands on Camera2D.offset", str(s.cam.offset))
+	_assert(s.cam.zoom.x > 1.0, "the punch-in zooms slightly", str(s.cam.zoom))
+	var k0: float = s.shake
+	await _physics(90)
+	_assert(s.shake < k0 * 0.2, "trauma decays", str(s.shake))
+	_assert(s.cam.offset == Vector2.ZERO and is_zero_approx(s.cam.rotation)
+		and is_equal_approx(s.cam.zoom.x, 1.0), "the camera recentres once the shake is gone",
+		"%s %f" % [str(s.cam.offset), s.cam.zoom.x])
+	var gs = s.soldiers[0]
+	s.player.global_position = gs.global_position + Vector2(2.0 * PPM, 0)
+	s.on_soldier_fired(gs, s.player.global_position)
+	var near_shake: float = s.shake
+	s.shake = 0.0
+	s.player.global_position = gs.global_position + Vector2(24.0 * PPM, 0)
+	s.on_soldier_fired(gs, s.player.global_position)
+	_assert(near_shake > 0.3 and s.shake < near_shake * 0.5, "distant gunfire shakes less",
+		"%f vs %f" % [s.shake, near_shake])
+
+	# --- 16. 战役口径：cfg 读取 / cold / 静音跟随（P1.4 · P1.5 · P2.5）---
+	RaidBridge.begin(null, {"pack_max": 11, "day": 3, "cold": 1.5, "night": 216.0,
+		"sound_on": false, "load": {"water": 1, "asp": 2, "band": 1, "can": 2}})
+	s = _scene()
+	await _physics(3)
+	_assert(s.in_campaign, "RaidBridge.active puts the slice into campaign mode")
+	_assert(s.bag_max == 11, "pack cap from cfg.pack_max", str(s.bag_max))
+	_assert(s.day_n == 3, "HUD night counter from cfg.day", str(s.day_n))
+	_assert(s.cans == 2, "tin cans from cfg.load.can", str(s.cans))
+	_assert(s.pack.count("asp") == 2 and s.pack.count("water") == 1 and s.pack.count("band") == 1,
+		"the loadout enters the pack", str(s.pack))
+	_assert(is_equal_approx(s.night_max, 216.0) and is_equal_approx(s.night_left, 216.0),
+		"night budget from cfg.night", "%f/%f" % [s.night_max, s.night_left])
+	_assert(is_equal_approx(s.cold, 1.5), "cold factor from cfg.cold", str(s.cold))
+	_assert(is_equal_approx(s.sfx.cold, 1.5), "NightSfx gets the same cold factor (wind gain)")
+	_assert(s.muted and AudioServer.is_bus_mute(0), "the campaign's mute follows you into the yard")
+	_freeze_soldiers(s)
+	s.player.global_position = _m(30.0, 12.0)
+	var wc: float = s.warmth
+	await _physics(60)
+	var cold_loss: float = wc - s.warmth
+	RaidBridge.clear()
+	AudioServer.set_bus_mute(0, false)
+	s = _scene()
+	await _physics(3)
+	_freeze_soldiers(s)
+	_assert(not s.in_campaign and is_zero_approx(s.dawn_progress()), "F2 alone has no dawn clock")
+	_assert(s.pack.has("water") and s.cans == 3 and s.bag_max == 8,
+		"F2 alone keeps the greybox defaults", str(s.pack))
+	s.player.global_position = _m(30.0, 12.0)
+	var wb: float = s.warmth
+	await _physics(60)
+	var base_loss: float = wb - s.warmth
+	_assert(cold_loss > base_loss * 1.3, "cfg.cold=1.5 burns body heat faster",
+		"%f vs %f" % [cold_loss, base_loss])
 
 	print("==== RESULT: %d passed, %d failed ====" % [passes, failures.size()])
 	if failures.is_empty():

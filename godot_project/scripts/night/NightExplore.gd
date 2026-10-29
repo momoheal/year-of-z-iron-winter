@@ -11,9 +11,16 @@ extends Node2D
 ## 操作：WASD 移动 · 鼠标朝向 · Ctrl 蹲伏 · Shift 冲刺 · 长按 E 搜刮/撤离 · G 扔罐头
 ##       F 手电 · M 静音 · R 重来 · Esc 返回战役
 ##       靠近半人按 E → 抉择面板：1 喂药退烧 / 2 绕开 / 3 撬棍灭口 / Esc 先不决定
+##
+## P1.5 天亮：战役里 cfg.night 是这一夜的秒数，最后 DAWN_WINDOW（20%）开始「天色渐变」——
+##      后处理 dawn 参数抬曝光 / 退冷调 / 化霜，CanvasModulate 由夜青转黎明清灰，风雪变薄，
+##      远处一声调车汽笛；到点按 dawn 结束（背包保留一半、生命 −22，由 CampaignSim.finish_raid 结）。
+## P2.5 声音：NightSfx 程序化合成 + AudioStreamPlayer2D 定位；emit_noise() 的声纹同时是真声音，
+##      清杀兵的面具呼吸挂在兵身上（4 米内可闻），紧张度驱动心跳。
+## 手感：受伤 / 枪声 / 扑咬 / 警报 / 结局都往 shake 里加创伤量，镜头按 shake² 抖动并轻微推镜。
 
 const Data := preload("res://scripts/CampaignData.gd")
-const SfxScript := preload("res://scripts/Sfx.gd")
+const SfxScript := preload("res://scripts/night/NightSfx.gd")
 
 const PPM := 64.0
 const SQ := 0.62
@@ -25,6 +32,19 @@ const WARMTH_FIRE := 7.0
 const CAN_RANGE := 9.0
 const CAN_NOISE := 9.0
 const CORPSE_CATS := ["med", "val", "intel"]
+# ---- 天亮（P1.5）----
+const DAWN_WINDOW := 0.2                                  # 夜长最后 20% 开始天亮
+const NIGHT_MOD := Color(0.27, 0.32, 0.45)                # 与场景里 CanvasModulate 的初值一致
+const DAWN_MOD := Color(0.60, 0.575, 0.565)               # 黎明前的清灰（比夜色亮、比白天冷）
+const DAWN_SNOW_A := 0.5                                  # 天亮时雪粒子留多少
+# ---- 声音（P2.5）----
+const MASK_BREATH_M := 4.0                                # 面具呼吸的可闻半径（规划 P2.5：4 米）
+const WARMTH_CHILL_AT := [35.0, 20.0, 8.0]                # 失温提示音的三个档
+# ---- 镜头震动 ----
+const SHAKE_PX := 16.0                                    # shake=1 时的最大位移（像素）
+const SHAKE_DECAY := 0.85                                 # 每秒衰减（外加 0.9×shake 的自衰减）
+const STEP_RAIL_BAND := 0.95                              # 距轨心这么近就算踩在枕木 / 钢轨上
+const DEFAULT_RAIL_Y := [26.0, 33.0]                      # 关卡没给 rail_y 元数据时的兜底（yard）
 
 # P1: 是否从战役出发（RaidBridge 持有 sim/cfg）。false = F2 独立灰盒跑。
 var in_campaign := false
@@ -33,6 +53,27 @@ var night_left := 0.0
 var night_max := 0.0
 var abort_pending := false
 var abort_timer := 0.0
+var cold := 1.0                # cfg.cold：体温下降倍率，同时决定风雪音量（P1.4 / P2.5）
+var day_n := 1                 # cfg.day：HUD 标题里的「第 N 夜」
+
+# 关卡身份：由 build_scene.py 写在根节点的 metadata 上（没有就用 yard 的口径，兼容旧场景 / F2）
+var level_id := "yard"
+var level_zh := "夜间广轨货场"
+var level_en := "Broad-Gauge Freight Yard"
+var objective_zh := "目标：三号车厢的透析液（门口有狂暴者）· 用 G 罐头把它引进清杀队的光锥"
+var extract_zh := "回锅炉房通风口撤离"     # 提示里会补「（长按 E）」，别自己再写一遍
+var prize := "dial"            # 本关的关键物资（yard = 妈妈的透析液）
+var rail_y: Array = []         # 铁轨中心线（米）→ 脚步材质
+
+# 天亮（P1.5）
+var dawn_t := 0.0              # 夜长最后 20% 的进度 0..1（未缓动）
+var dawn_cued := false         # 「天边发白」的提示 / 汽笛只放一次
+var chill_step := 0            # 失温提示音打到第几档
+
+# 镜头震动 / 推镜
+var shake := 0.0               # 创伤量 0..1（实际位移按 shake²）
+var punch := 0.0               # 受伤时的推镜量
+var _shake_t := 0.0
 
 var state := "play"            # play | choice | caught | frozen | downed | extracted | dawn | abort
 var pack: Array[String] = []
@@ -75,6 +116,9 @@ var _search_noise := 0.0
 @onready var cam: Camera2D = $Camera2D
 @onready var post: ColorRect = $Post/Grade
 @onready var hud_root: Control = $HUD/Root
+@onready var night_mod: CanvasModulate = get_node_or_null("CanvasModulate")
+@onready var snow_back: GPUParticles2D = get_node_or_null("Camera2D/Snow")
+@onready var snow_front: GPUParticles2D = get_node_or_null("FrontSnow/Flakes")
 
 var _lbl_status: Label
 var _lbl_bag: Label
@@ -97,7 +141,9 @@ func _ready() -> void:
 	font.font_names = PackedStringArray(["Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "SimHei",
 		"PingFang SC", "Segoe UI", "Arial"])
 	sfx = SfxScript.new()
+	sfx.name = "NightSfx"
 	add_child(sfx)
+	_read_level_meta()
 	# P1: 战役出发 → 读 cfg 初始化背包 / 携带物 / 天亮倒计时；F2 独立跑用灰盒默认。
 	in_campaign = RaidBridge.active
 	var cfg: Dictionary = RaidBridge.cfg if in_campaign else {}
@@ -113,6 +159,9 @@ func _ready() -> void:
 		cans = int(ld.get("can", 0))
 		night_max = float(cfg.get("night", 120.0))
 		night_left = night_max
+		cold = clampf(float(cfg.get("cold", 1.0)), 0.2, 2.0)     # P1.4：体温下降速度 × cold
+		day_n = maxi(1, int(cfg.get("day", 1)))
+		muted = not bool(cfg.get("sound_on", true))               # 战役里关过音效就别在这儿突然响
 	else:
 		pack.append("water")       # F2 出门前灌的热水壶 —— 喂半人退烧要用
 		cans = 3
@@ -139,9 +188,53 @@ func _ready() -> void:
 	player.global_position = $Markers/Spawn.global_position
 	cam.global_position = player.global_position
 	cam.reset_smoothing()
-	for a in find_children("*", "AudioStreamPlayer*", true, false):
-		_loop_audio(a)
+	_wire_audio()
 	_build_hud()
+
+
+## 关卡身份：build_scene.py 把这些写在根节点的 metadata 上，多张图共用同一个脚本。
+## 旧场景 / 手工场景没有元数据时退回 yard 的口径（F2 独立跑也是这套）。
+func _read_level_meta() -> void:
+	level_id = String(get_meta("level_id", level_id))
+	level_zh = String(get_meta("level_zh", level_zh))
+	level_en = String(get_meta("level_en", level_en))
+	objective_zh = String(get_meta("objective_zh", objective_zh))
+	extract_zh = String(get_meta("extract_zh", extract_zh))
+	prize = String(get_meta("prize", prize))
+	var raw := String(get_meta("rail_y", ""))
+	rail_y = []
+	if raw.strip_edges() == "":
+		rail_y = DEFAULT_RAIL_Y.duplicate()
+	else:
+		for part in raw.split(","):
+			var v := part.strip_edges()
+			if v != "":
+				rail_y.append(float(v))
+
+
+## P2.5：环境层交给 NightSfx（风雪随 cfg.cold 变强、天亮退去），清杀兵挂上面具呼吸循环。
+func _wire_audio() -> void:
+	for a in get_tree().get_nodes_in_group("night_ambient"):
+		_loop_audio(a)
+	if sfx.ambient_count() == 0:
+		# 兼容没有 night_ambient 分组的场景：扫全树，跳过 NightSfx 自己的声部
+		var found: Array = find_children("*", "AudioStreamPlayer", true, false)
+		found.append_array(find_children("*", "AudioStreamPlayer2D", true, false))
+		for a in found:
+			if a == sfx or sfx.is_ancestor_of(a):
+				continue
+			_loop_audio(a)
+	sfx.set_cold(cold)
+	sfx.set_muted(muted)
+	if muted:
+		AudioServer.set_bus_mute(0, true)
+	for sd in soldiers:
+		sfx.attach_loop(sd, "mask_breath", MASK_BREATH_M, -7.0)
+
+
+func _exit_tree() -> void:
+	# M 键 / 战役带过来的静音是按主总线做的，别把它留给下一个场景
+	AudioServer.set_bus_mute(0, false)
 
 func _loop_audio(p: Node) -> void:
 	var s = p.get("stream")
@@ -152,6 +245,21 @@ func _loop_audio(p: Node) -> void:
 		w.loop_end = int(w.get_length() * w.mix_rate)
 		p.set("stream", w)
 		p.call("play")
+	sfx.register_ambient(p, _ambient_role(String(p.name)))
+
+
+## 环境层的角色（按节点名认）：wind 随 cfg.cold / 天亮变化，其余只做基准音量。
+func _ambient_role(node_name: String) -> String:
+	var n := node_name.to_lower()
+	if n.begins_with("wind"):
+		return "wind"
+	if n.begins_with("fire"):
+		return "fire"
+	if n.begins_with("steam"):
+		return "steam"
+	if n.begins_with("lamp"):
+		return "lamp"
+	return ""
 
 # ============================================================================
 # 主循环
@@ -160,6 +268,7 @@ func _process(delta: float) -> void:
 	t += delta
 	hurt = maxf(0.0, hurt - delta)
 	cam.global_position = player.global_position + Vector2(0, -40)
+	_apply_shake(delta)
 	if abort_pending:
 		abort_timer -= delta
 		if abort_timer <= 0.0:
@@ -168,15 +277,42 @@ func _process(delta: float) -> void:
 		_update_interact(delta)
 		_update_warmth(delta)
 		if in_campaign:
-			night_left -= delta
+			night_left = maxf(0.0, night_left - delta)
+			update_dawn()
 			if night_left <= 0.0:
-				night_left = 0.0
 				_end("dawn")
 	_update_fx(delta)
 	_update_fade()
 	_update_post()
 	_refresh_hud()
 	$OverlayLayer/Overlay.queue_redraw()
+
+# ============================================================================
+# 天亮（P1.5）：夜长最后 DAWN_WINDOW 里的天色渐变
+# ============================================================================
+## 天亮进度 0..1：只在战役模式（有 cfg.night）里推进；F2 独立跑恒为 0。
+func dawn_progress() -> float:
+	if not in_campaign or night_max <= 0.0:
+		return 0.0
+	var win := night_max * DAWN_WINDOW
+	if night_left >= win:
+		return 0.0
+	return clampf(1.0 - night_left / win, 0.0, 1.0)
+
+
+## 送进后处理 / CanvasModulate 的缓动值（smoothstep，别让天色线性发白）。
+func dawn_grade() -> float:
+	return smoothstep(0.0, 1.0, dawn_t)
+
+
+func update_dawn() -> void:
+	dawn_t = dawn_progress()
+	if dawn_t > 0.0 and not dawn_cued:
+		dawn_cued = true
+		sfx.play("dawn_horn", -3.0)          # 远处调车机车的汽笛：诺沃斯克-17 的黎明是工业的
+		add_shake(0.12)
+		spawn_float(player.global_position + Vector2(0, -150),
+			"天边发白了 —— %s" % extract_zh, Color("#fcd34d"))
 
 func _update_interact(delta: float) -> void:
 	var h = nearest_half()
@@ -288,7 +424,9 @@ func choose(idx: int) -> bool:
 			conscience -= 10.0
 			tally += 1
 			h.resolved = "mercy"
-			sfx.play("wedge")
+			sfx.play("swing", -6.0)
+			sfx.play_at("crowbar_hit", h.global_position, -2.0)
+			add_shake(0.2)
 			h.die("player")
 	close_choice()
 	return true
@@ -331,8 +469,11 @@ func _finish_search(c: Node2D) -> void:
 		names.append(item_name(id))
 	if not names.is_empty():
 		spawn_float(c.global_position + Vector2(0, -90), "+ " + "、".join(names), Color("#fde68a"))
-	if g == "dial":
-		spawn_float(c.global_position + Vector2(0, -122), "找到了妈妈的透析液", Color("#7dd3fc"))
+	if g != "":
+		var note := "拿到了 %s" % item_name(g)
+		if g == "dial":
+			note = "找到了妈妈的透析液"
+		spawn_float(c.global_position + Vector2(0, -122), note, Color("#7dd3fc"))
 	sfx.play("beep")
 	search_target = null
 	search_prog = 0.0
@@ -349,7 +490,18 @@ func _update_warmth(delta: float) -> void:
 	if near_fire:
 		warmth = minf(100.0, warmth + WARMTH_FIRE * delta)
 	else:
-		warmth -= WARMTH_DECAY * delta * (1.25 if player.on_slush else 1.0)
+		# P1.4：战役 cfg.cold 越大掉得越快（yard 1.0 / 下穿道 1.3 / 白桦林 1.5）
+		warmth -= WARMTH_DECAY * cold * delta * (1.25 if player.on_slush else 1.0)
+	# 失温分档提示（声音 + 浮字），别让玩家只盯着体温条
+	var step := 0
+	for thr in WARMTH_CHILL_AT:
+		if warmth <= float(thr):
+			step += 1
+	if step > chill_step:
+		chill_step = step
+		sfx.play("chill", -8.0)
+		spawn_float(player.global_position + Vector2(0, -146),
+			"你在失温 —— 找火堆，或者回 602 室", Color("#bae6fd"))
 	if warmth <= 0.0:
 		warmth = 0.0
 		_end("frozen")
@@ -419,7 +571,8 @@ func rabid_sees_player(r: Node2D) -> bool:
 ## 三色声纹：灰白=玩家 / 暗红=狂暴者 / 冷蓝=清杀队；琥珀=罐头。
 ## 谁听得见：清杀兵听玩家与罐头；狂暴者听一切人造声音（含枪声），不理同类的低吼和半人的呻吟；
 ## 半人被罐头 / 搜刮声吸引，听见枪声就逃。
-func emit_noise(pos: Vector2, radius_m: float, kind: String) -> void:
+## P2.5：声纹同时是真声音 —— quiet=true 表示只画波纹（例：子弹落点的二次标记，别重复响一枪）。
+func emit_noise(pos: Vector2, radius_m: float, kind: String, quiet := false) -> void:
 	var col := Color("#cbd5e1")
 	match kind:
 		"can":
@@ -433,6 +586,8 @@ func emit_noise(pos: Vector2, radius_m: float, kind: String) -> void:
 		"half":
 			col = Color("#fcd9a0")
 	ripples.append({"pos": pos, "r": 0.0, "max": radius_m, "col": col, "life": 1.0})
+	if not quiet:
+		_voice_noise(pos, radius_m, kind)
 	if kind not in ["rabid", "gun", "half"]:
 		for s in soldiers:
 			if dist_m(s.global_position, pos) <= radius_m:
@@ -445,21 +600,70 @@ func emit_noise(pos: Vector2, radius_m: float, kind: String) -> void:
 			if h.is_alive() and dist_m(h.global_position, pos) <= radius_m:
 				h.hear(pos, kind)
 
+
+## 噪声 → 世界里的声音（AudioStreamPlayer2D，按 RADIUS_M 衰减，闭眼也能定位）。
+func _voice_noise(pos: Vector2, radius_m: float, kind: String) -> void:
+	match kind:
+		"step":
+			sfx.play_at(step_sound(pos, is_slush(pos)), pos, -7.0, 0.09)
+		"can":
+			sfx.play_at("can", pos, -2.0)
+		"search":
+			sfx.play_at("rummage", pos, -9.0)
+		"gun":
+			sfx.play_at("gunshot", pos, 0.0, 0.03)
+		"rabid":
+			# 半径大的那声是追击时的嘶吼，小的是游荡时的低吼（NightRabid 用 4.5 / 3.2 区分）
+			sfx.play_at("snarl" if radius_m > 4.0 else "growl", pos, -3.0)
+		"half":
+			sfx.play_at("moan", pos, -5.0)
+		"hit":
+			sfx.play_at("bite", pos, -2.0)
+
+
+## 脚下是什么：冻雪泥 / 黑冰 → 冰面脆响；轨心 ±0.95m → 枕木与钢轨；其余 → 踩实的雪。
+func step_sound(pos: Vector2, on_slush: bool) -> String:
+	if on_slush:
+		return "step_ice"
+	var y := to_m(pos).y
+	for band in rail_y:
+		if absf(y - float(band)) <= STEP_RAIL_BAND:
+			return "step_rail"
+	return "step_snow"
+
 func damage_player(amount: float, _by: Node) -> void:
 	if state != "play":
 		return
 	hp = maxf(0.0, hp - amount)
 	hurt = 0.35
-	sfx.play("bonejam")
+	# 被咬：颅内的闷响 + 定位在伤口上的撕咬声 + 一脚踹在镜头上
+	sfx.play("bonejam", -8.0)
+	add_shake(0.55)
+	punch = 1.0
 	emit_noise(player.global_position, 6.0, "hit")
 	spawn_float(player.global_position + Vector2(0, -120), "-%d 被咬了！" % int(amount), Color("#f87171"))
 	if hp <= 0.0:
 		_end("downed")
 
 func on_soldier_fired(s: Node2D, at: Vector2) -> void:
-	sfx.play("akm")
+	# 枪声的震动按距离衰减：贴脸 0.5，26 米外只剩 0.06 的闷响
+	var d := dist_m(player.global_position, s.global_position)
+	add_shake(clampf(0.5 * (1.0 - d / 26.0), 0.06, 0.5))
 	emit_noise(s.global_position, 10.0, "gun")
-	emit_noise(at, 3.0, "gun")
+	emit_noise(at, 3.0, "gun", true)      # 落点只画波纹
+
+## 狂暴者起跳（NightRabid 从 windup 切到 lunge 时调）：嘶吼 + 近距离的一震。
+func on_rabid_lunge(r: Node2D) -> void:
+	sfx.play_at("snarl", r.global_position, -2.0)
+	var d := dist_m(player.global_position, r.global_position)
+	if d <= 9.0:
+		add_shake(clampf(0.34 * (1.0 - d / 9.0), 0.05, 0.34))
+
+## 狂暴者第一次看见你（NightRabid 从游荡切到 chase 时调）。
+func on_rabid_spotted(r: Node2D) -> void:
+	sfx.play_at("snarl", r.global_position, -1.0)
+	if dist_m(player.global_position, r.global_position) <= 7.0:
+		add_shake(0.18)
 
 func _splat(pos: Vector2) -> void:
 	var splat := Sprite2D.new()
@@ -471,39 +675,55 @@ func _splat(pos: Vector2) -> void:
 
 func on_rabid_killed(r: Node2D, by: String) -> void:
 	_splat(r.global_position)
+	sfx.play_at("bonejam", r.global_position, -6.0)      # 一百公斤的东西倒在雪里
 	if by != "":
 		borrowed += 1
 		spawn_float(r.global_position + Vector2(0, -130), "借刀杀人：清杀队替你清掉 1 只狂暴者", Color("#7dd3fc"))
 
 func raise_alarm(pos: Vector2, _by: Node) -> void:
-	sfx.play("thirst")
+	sfx.play("radio", -4.0)
+	sfx.play_at("klaxon", pos, -6.0)
+	add_shake(0.3)
 	spawn_float(pos + Vector2(0, -120), "探照灯锁定！", Color("#f43f5e"))
 	for s in soldiers:
 		if dist_m(s.global_position, pos) <= 30.0:
 			s.alert_to(pos)
 
 func on_soldier_alert(_s: Node) -> void:
-	sfx.play("thirst")
+	sfx.play("radio", -3.0)          # 面具里的电台叫了一声：他们开始喊人了
+	add_shake(0.16)
 
 func caught(by: Node) -> void:
 	if state != "play":
 		return
 	caught_by = String(by.name)
-	sfx.play("akm")
+	if by is Node2D:
+		sfx.play_at("gunshot", (by as Node2D).global_position, 0.0, 0.02)
+	add_shake(0.95)
 	_end("caught")
 
 func _end(reason: String) -> void:
 	state = reason
 	player.frozen = true
+	sfx.set_tension(0.0)             # 心跳停下：这一夜已经结束了
 	match reason:
 		"extracted":
 			sfx.play("beep")
+			add_shake(0.12)
 		"dawn":
-			sfx.play("thirst")
+			sfx.play("dawn_horn", -2.0)
+			add_shake(0.18)
 		"abort":
 			sfx.play("thirst")
-		"frozen", "downed", "caught":
-			sfx.play("thirst")
+		"frozen":
+			sfx.play("freeze", -2.0)
+			add_shake(0.25)
+		"downed":
+			sfx.play("bonejam", -2.0)
+			add_shake(0.7)
+		"caught":
+			sfx.play("klaxon", -5.0)
+			add_shake(0.9)
 
 # P1: 把夜潜结果填进 RaidSim 数据容器，走 CampaignSim.finish_raid 统一结算，
 #     再切回 campaign.tscn（_ready 会 take_sim 取回原 sim）。
@@ -539,7 +759,8 @@ func _return_to_campaign(reason: String) -> void:
 	if conscience != 0.0:
 		sim.raid_add_conscience(conscience)
 	if tally > 0:
-		sim.raid_add_tally(tally, "夜潜货场：亲手灭口", "Yard: mercy kill")
+		sim.raid_add_tally(tally, "夜潜%s：亲手灭口" % level_zh, "%s: mercy kill" % level_en)
+	sim.sound_on = not muted        # 战役里的音效开关跟着人走
 	sim.finish_raid(reason)
 	get_tree().change_scene_to_file("res://scenes/campaign.tscn")
 
@@ -618,6 +839,7 @@ func _throw_can(target: Vector2) -> void:
 		d = d.normalized() * CAN_RANGE
 		target = from + Vector2(d.x * PPM, d.y * PPM * SQ)
 	cans -= 1
+	sfx.play_at("can_throw", from, -8.0)
 	thrown.append({"from": from, "to": target, "t": 0.0, "dur": 0.25 + d.length() / CAN_RANGE * 0.5})
 
 # ============================================================================
@@ -642,8 +864,7 @@ func _update_fx(delta: float) -> void:
 			landed.append(c)
 	for c in landed:
 		thrown.erase(c)
-		emit_noise(c["to"], CAN_NOISE, "can")
-		sfx.play("can")
+		emit_noise(c["to"], CAN_NOISE, "can")   # 波纹 + 落在世界里的哐啷声（_voice_noise）
 
 func _update_fade() -> void:
 	var p: Vector2 = player.global_position
@@ -659,21 +880,79 @@ func _update_fade() -> void:
 		spr.modulate.a = move_toward(spr.modulate.a, target, get_process_delta_time() * 3.0)
 
 func _update_post() -> void:
+	var g := dawn_grade()
 	var mat := post.material as ShaderMaterial
-	if mat == null:
-		return
-	var alarm := 0.0
+	if mat != null:
+		var alarm := 0.0
+		for s in soldiers:
+			alarm = maxf(alarm, clampf(float(s.suspicion), 0.0, 1.0) if s.state == "alert" else 0.0)
+		for r in rabids:
+			if r.state in ["windup", "lunge"]:
+				alarm = maxf(alarm, 0.6)
+		if state == "caught" or state == "downed":
+			alarm = 1.0
+		alarm = maxf(alarm, hurt / 0.35)
+		mat.set_shader_parameter("frost", clampf((35.0 - warmth) / 35.0, 0.0, 1.0))
+		mat.set_shader_parameter("alarm", alarm)
+		mat.set_shader_parameter("dawn", g)
+		mat.set_shader_parameter("cam_offset", cam.get_screen_center_position())
+	# 天亮：夜色（CanvasModulate）由夜青转黎明清灰，暴风雪变薄
+	if night_mod != null:
+		night_mod.color = NIGHT_MOD.lerp(DAWN_MOD, g)
+	var snow_a := lerpf(1.0, DAWN_SNOW_A, g)
+	if snow_back != null:
+		snow_back.modulate.a = snow_a
+	if snow_front != null:
+		snow_front.modulate.a = snow_a
+	# P2.5：风声随天亮退去；紧张度驱动心跳
+	sfx.set_dawn(g)
+	sfx.set_tension(tension_level())
+
+
+## 紧张度 0..1：清杀兵的怀疑 / 警戒、狂暴者的追击与起跳、结局。喂给 NightSfx 的心跳。
+func tension_level() -> float:
+	var k := 0.0
 	for s in soldiers:
-		alarm = maxf(alarm, clampf(float(s.suspicion), 0.0, 1.0) if s.state == "alert" else 0.0)
+		if s.state == "alert":
+			k = maxf(k, clampf(float(s.suspicion), 0.0, 1.0))
+		elif s.state in ["investigate", "search"]:
+			k = maxf(k, 0.2 + 0.35 * clampf(float(s.suspicion), 0.0, 1.0))
 	for r in rabids:
+		if not r.is_alive():
+			continue
 		if r.state in ["windup", "lunge"]:
-			alarm = maxf(alarm, 0.6)
-	if state == "caught" or state == "downed":
-		alarm = 1.0
-	alarm = maxf(alarm, hurt / 0.35)
-	mat.set_shader_parameter("frost", clampf((35.0 - warmth) / 35.0, 0.0, 1.0))
-	mat.set_shader_parameter("alarm", alarm)
-	mat.set_shader_parameter("cam_offset", cam.get_screen_center_position())
+			k = 1.0
+		elif r.state == "chase":
+			k = maxf(k, clampf(1.0 - dist_m(player.global_position, r.global_position) / 14.0, 0.35, 1.0))
+	if state in ["caught", "downed"]:
+		k = 1.0
+	return clampf(k, 0.0, 1.0)
+
+
+## 镜头震动：trauma 模型（shake² 决定幅度），受伤 / 枪声 / 扑咬 / 警报 / 结局都往里加。
+func add_shake(amount: float) -> void:
+	shake = clampf(shake + amount, 0.0, 1.0)
+
+
+func _apply_shake(delta: float) -> void:
+	punch = maxf(0.0, punch - delta * 3.2)
+	var z := 1.0 + punch * 0.06
+	if not is_equal_approx(cam.zoom.x, z):
+		cam.zoom = Vector2(z, z)
+	if shake <= 0.0:
+		if cam.offset != Vector2.ZERO:
+			cam.offset = Vector2.ZERO
+		if not is_zero_approx(cam.rotation):
+			cam.rotation = 0.0
+		return
+	_shake_t += delta * (16.0 + 30.0 * shake)
+	shake = maxf(0.0, shake - delta * (SHAKE_DECAY + 0.9 * shake))
+	var k := shake * shake
+	var amp := SHAKE_PX * k
+	cam.offset = Vector2(
+		sin(_shake_t * 1.7) + 0.4 * sin(_shake_t * 4.3),
+		cos(_shake_t * 2.1) + 0.35 * cos(_shake_t * 5.1)) * amp * 0.72
+	cam.rotation = sin(_shake_t * 1.3) * 0.014 * k
 
 # ============================================================================
 # HUD
@@ -691,7 +970,7 @@ func _build_hud() -> void:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 6)
 	panel.add_child(v)
-	var title := _label("夜间广轨货场 · 第 1 夜   BROAD-GAUGE FREIGHT YARD", 17, Color("#cbd5e1"))
+	var title := _label("%s · 第 %d 夜   %s" % [level_zh, day_n, level_en.to_upper()], 17, Color("#cbd5e1"))
 	v.add_child(title)
 	var row := HBoxContainer.new()
 	row.add_child(_label("体温 WARMTH ", 14, Color("#94a3b8")))
@@ -810,20 +1089,23 @@ func _refresh_hud() -> void:
 	var threat := (" · 被 %d 只狂暴者盯上" % chasing) if chasing > 0 else ""
 	var dawn_str := ""
 	if in_campaign and state == "play":
-		dawn_str = " · 天亮 %ds" % maxi(0, int(ceil(night_left)))
+		dawn_str = (" · 天色发白 %ds！" if dawn_t > 0.0 else " · 天亮 %ds") % maxi(0, int(ceil(night_left)))
 	_lbl_status.text = "%s · %s%s · 空罐头 ×%d · 借刀 ×%d · 良知 %+d · 卌 %d%s%s%s" % [
 		stance, light, lit, cans, borrowed, int(conscience), tally, ground, threat, dawn_str]
 	var names: Array[String] = []
 	for id in pack:
 		names.append(item_name(id))
 	_lbl_bag.text = "背包 %d/%d：%s" % [pack.size(), bag_max, "、".join(names) if not names.is_empty() else "—"]
-	var has_dial := pack.has("dial")
+	var has_prize := pack.has(prize)
 	if abort_pending:
 		_lbl_hint.text = "再按 Esc 放弃这次夜潜？（背包清空，活着回 602 室）"
-	elif has_dial:
-		_lbl_hint.text = "透析液到手 —— 回锅炉房通风口长按 E 撤离" + ("   ·   R 重来  Esc 返回战役" if not in_campaign else "")
+	elif dawn_t > 0.0:
+		_lbl_hint.text = "天要亮了 —— %s（长按 E）" % extract_zh
+	elif has_prize:
+		_lbl_hint.text = "%s到手 —— %s（长按 E）" % [item_name(prize), extract_zh] \
+			+ ("   ·   R 重来  Esc 返回战役" if not in_campaign else "")
 	else:
-		_lbl_hint.text = "目标：三号车厢的透析液（门口有狂暴者）· 用 G 罐头把它引进清杀队的光锥   ·   Ctrl 蹲  Shift 跑  E 搜刮  F 手电"
+		_lbl_hint.text = objective_zh + "   ·   Ctrl 蹲  Shift 跑  E 搜刮  F 手电  G 罐头"
 	var again_hint := "R / Enter 重来" if not in_campaign else "Enter 回 602 室"
 	match state:
 		"play", "choice":
@@ -847,7 +1129,12 @@ func _refresh_hud() -> void:
 			var names2: Array[String] = []
 			for id in pack:
 				names2.append(item_name(id))
-			var line := "妈妈今晚有透析液了。" if has_dial else "空着手回去，妈妈还在等透析液。"
+			var line := ""
+			if prize == "dial":
+				line = "妈妈今晚有透析液了。" if has_prize else "空着手回去，妈妈还在等透析液。"
+			else:
+				line = "带回来的东西能换明天的口粮和药。" if not pack.is_empty() \
+					else "空着手回去，602 室还是冷的。"
 			var moral := "良知 %+d · 救下半人 %d · 误杀 %d · 卌 %d" % [int(conscience), half_saved, half_lost, tally]
 			_lbl_center.text = "撤离成功 · %d 件物资 · 借刀 ×%d\n%s\n%s\n%s\n\n%s" % [
 				pack.size(), borrowed, "、".join(names2), line, moral,

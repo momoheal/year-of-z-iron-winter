@@ -71,6 +71,8 @@ func _ready() -> void:
 	hud = HudScript.new()
 	add_child(hud)
 	hud.bind_campaign(sim, self)
+	# P2.5：节点化夜潜场景里按过 M，回来时顶栏按钮要跟着变
+	hud.set_sound_on(bool(sim.sound_on))
 	if hud.has_signal("ui_sfx"):
 		hud.connect("ui_sfx", Callable(self, "_on_ui_sfx"))
 	sfx = SfxScript.new()
@@ -98,6 +100,7 @@ func _process(delta: float) -> void:
 	t += delta
 	if sfx != null:
 		sfx.set_muted(not hud.sound_on)
+	sim.sound_on = hud.sound_on        # depart 时把它塞进 cfg，交给夜潜场景
 	var paused: bool = sim.story_open or sim.abort_confirm or sim.logbook_open or sim.help_open
 	if sim.phase == "raid" and sim.raid != null and not sim.raid.over and not paused:
 		var move := Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -146,6 +149,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if k == KEY_F2:
 			get_tree().change_scene_to_file("res://scenes/night_explore.tscn")
+			return
+		if k == KEY_M:
+			hud.toggle_sound()         # 顶栏那个「音效：开 (M)」按钮终于对得起自己的提示
 			return
 		if k == KEY_L and sim.phase != "raid":
 			sim.toggle_lang()
