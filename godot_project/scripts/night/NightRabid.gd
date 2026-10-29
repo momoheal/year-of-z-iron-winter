@@ -99,7 +99,7 @@ func _physics_process(delta: float) -> void:
 				state = "lunge"
 				_timer = 0.2
 				_lunge_dir = _px2m(p - global_position).normalized()
-				ctl.sfx.play("bonejam")
+				ctl.on_rabid_lunge(self)      # 嘶吼（定位）+ 近距离的一震
 		"lunge":
 			_timer -= delta
 			velocity = Vector2(_lunge_dir.x * PPM, _lunge_dir.y * PPM * SQ) * 7.0
@@ -113,7 +113,7 @@ func _physics_process(delta: float) -> void:
 				cooldown = maxf(cooldown, 0.6)
 	if sees and state in ["idle", "wander", "investigate"]:
 		state = "chase"
-		ctl.sfx.play("thirst")
+		ctl.on_rabid_spotted(self)
 	# 低吼：暗红声纹（只是给玩家的提示，不惊动别人）
 	_growl -= delta
 	if _growl <= 0.0:

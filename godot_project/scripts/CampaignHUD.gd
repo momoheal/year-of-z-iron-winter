@@ -237,6 +237,21 @@ func _build_top_bar() -> void:
 
 func _toggle_sound() -> void:
 	sound_on = not sound_on
+	_sync_sound_button()
+
+
+func toggle_sound() -> void:
+	## M 键 / Campaign.gd 的入口（按钮本身直接调 _toggle_sound）
+	_toggle_sound()
+
+
+func set_sound_on(value: bool) -> void:
+	## 从节点化夜潜场景回来时，把那边的 M 键状态同步回顶栏按钮
+	sound_on = value
+	_sync_sound_button()
+
+
+func _sync_sound_button() -> void:
 	if _btn_sound != null:
 		_btn_sound.text = "音效：开 (M)" if sound_on else "音效：关 (M)"
 

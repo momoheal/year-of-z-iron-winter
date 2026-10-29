@@ -236,6 +236,13 @@ shader_parameter/fog_tex = ExtResource("45_text")
 [node name="NightExplore" type="Node2D"]
 texture_filter = 2
 script = ExtResource("1_scri")
+metadata/level_id = "yard"
+metadata/level_zh = "夜间广轨货场"
+metadata/level_en = "Broad-Gauge Freight Yard"
+metadata/objective_zh = "目标：三号车厢的透析液（门口有狂暴者）· 用 G 罐头把它引进清杀队的光锥"
+metadata/extract_zh = "回锅炉房通风口撤离"
+metadata/prize = "dial"
+metadata/rail_y = "26.0,33.0"
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 color = Color(0.27, 0.32, 0.45, 1)
