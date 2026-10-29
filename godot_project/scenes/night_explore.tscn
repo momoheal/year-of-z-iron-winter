@@ -35,19 +35,21 @@
 [ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Light_Radial.png" id="33_text"]
 [ext_resource type="Script" path="res://scripts/night/NightRabid.gd" id="34_scri"]
 [ext_resource type="Texture2D" path="res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png" id="35_text"]
-[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Facade_WindowGlow.png" id="36_text"]
-[ext_resource type="Script" path="res://scripts/night/NightFlicker.gd" id="37_scri"]
-[ext_resource type="Script" path="res://scripts/night/NightSearchlight.gd" id="38_scri"]
-[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Searchlight_Cone.png" id="39_text"]
-[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Steam_Puff.png" id="40_text"]
-[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Snow_Particle.png" id="41_text"]
-[ext_resource type="Shader" path="res://shaders/night_post.gdshader" id="42_shad"]
-[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_FogNoise.png" id="43_text"]
-[ext_resource type="Script" path="res://scripts/night/NightOverlay.gd" id="44_scri"]
-[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Wind_Blizzard_Loop.wav" id="45_audi"]
-[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Fire_Crackle_Loop.wav" id="46_audi"]
-[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Steam_Hiss_Loop.wav" id="47_audi"]
-[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Sodium_Buzz_Loop.wav" id="48_audi"]
+[ext_resource type="Script" path="res://scripts/night/NightHalf.gd" id="36_scri"]
+[ext_resource type="Texture2D" path="res://art/10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png" id="37_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Facade_WindowGlow.png" id="38_text"]
+[ext_resource type="Script" path="res://scripts/night/NightFlicker.gd" id="39_scri"]
+[ext_resource type="Script" path="res://scripts/night/NightSearchlight.gd" id="40_scri"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Searchlight_Cone.png" id="41_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Steam_Puff.png" id="42_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Snow_Particle.png" id="43_text"]
+[ext_resource type="Shader" path="res://shaders/night_post.gdshader" id="44_shad"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_FogNoise.png" id="45_text"]
+[ext_resource type="Script" path="res://scripts/night/NightOverlay.gd" id="46_scri"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Wind_Blizzard_Loop.wav" id="47_audi"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Fire_Crackle_Loop.wav" id="48_audi"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Steam_Hiss_Loop.wav" id="49_audi"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Sodium_Buzz_Loop.wav" id="50_audi"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(3072, 300)
@@ -179,7 +181,13 @@ radius = 11.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_40"]
 radius = 11.0
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_41"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_41"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_42"]
+radius = 11.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_43"]
 particle_flag_disable_z = true
 direction = Vector3(0.35, -1, 0)
 spread = 18.0
@@ -190,7 +198,7 @@ scale_min = 0.5
 scale_max = 1.6
 color = Color(0.92, 0.95, 1, 0.32)
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_42"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_44"]
 particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(1200, 760, 1)
@@ -208,7 +216,7 @@ turbulence_noise_scale = 5.0
 turbulence_influence_min = 0.04
 turbulence_influence_max = 0.12
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_43"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_45"]
 particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(1150, 640, 1)
@@ -221,9 +229,9 @@ scale_min = 1.2
 scale_max = 2.6
 color = Color(0.85, 0.9, 1, 0.3)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_44"]
-shader = ExtResource("42_shad")
-shader_parameter/fog_tex = ExtResource("43_text")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_46"]
+shader = ExtResource("44_shad")
+shader_parameter/fog_tex = ExtResource("45_text")
 
 [node name="NightExplore" type="Node2D"]
 texture_filter = 2
@@ -365,6 +373,7 @@ position = Vector2(230.4, 626.94)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "crate"
+metadata/guaranteed = "asp"
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/CrateStack"]
 texture = ExtResource("12_text")
@@ -761,10 +770,10 @@ energy = 0.95
 range_item_cull_mask = 1
 
 [node name="Muzzle" type="PointLight2D" parent="World/OSK_Rail"]
-position = Vector2(0, -6)
 texture = ExtResource("33_text")
-texture_scale = 0.18
 color = Color(1, 0.82, 0.55, 1)
+position = Vector2(0, -6)
+texture_scale = 0.18
 energy = 0.0
 range_item_cull_mask = 3
 
@@ -817,6 +826,14 @@ offset = Vector2(448, 0)
 energy = 0.95
 range_item_cull_mask = 1
 
+[node name="Muzzle" type="PointLight2D" parent="World/OSK_Yard"]
+texture = ExtResource("33_text")
+color = Color(1, 0.82, 0.55, 1)
+position = Vector2(0, -6)
+texture_scale = 0.18
+energy = 0.0
+range_item_cull_mask = 3
+
 [node name="Rabid_Car" type="CharacterBody2D" parent="World" groups=["night_rabid"]]
 collision_layer = 32
 collision_mask = 7
@@ -839,14 +856,6 @@ offset = Vector2(0, -52)
 [node name="Shape" type="CollisionShape2D" parent="World/Rabid_Car"]
 position = Vector2(0, -2)
 shape = SubResource("CircleShape2D_37")
-
-[node name="Muzzle" type="PointLight2D" parent="World/OSK_Yard"]
-texture = ExtResource("33_text")
-color = Color(1, 0.82, 0.55, 1)
-position = Vector2(0, -6)
-texture_scale = 0.18
-energy = 0.0
-range_item_cull_mask = 3
 
 [node name="Rabid_West" type="CharacterBody2D" parent="World" groups=["night_rabid"]]
 collision_layer = 32
@@ -917,17 +926,61 @@ offset = Vector2(0, -52)
 position = Vector2(0, -2)
 shape = SubResource("CircleShape2D_40")
 
+[node name="Half_0388" type="CharacterBody2D" parent="World" groups=["night_half"]]
+collision_layer = 32
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("36_scri")
+position = Vector2(928, 769.79)
+tag = "0388"
+
+[node name="Shadow" type="Polygon2D" parent="World/Half_0388"]
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, -0.00, 6.00, -6.12, 5.54, -11.31, 4.24, -14.78, 2.30, -16.00, -0.00, -14.78, -2.30, -11.31, -4.24, -6.12, -5.54, 0.00, -6.00, 6.12, -5.54, 11.31, -4.24, 14.78, -2.30)
+
+[node name="Sprite" type="Sprite2D" parent="World/Half_0388"]
+texture = ExtResource("37_text")
+hframes = 8
+vframes = 3
+offset = Vector2(0, -52)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Half_0388"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_41")
+
+[node name="Half_0507" type="CharacterBody2D" parent="World" groups=["night_half"]]
+collision_layer = 32
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("36_scri")
+position = Vector2(1190.4, 1476.1)
+tag = "0507"
+
+[node name="Shadow" type="Polygon2D" parent="World/Half_0507"]
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, -0.00, 6.00, -6.12, 5.54, -11.31, 4.24, -14.78, 2.30, -16.00, -0.00, -14.78, -2.30, -11.31, -4.24, -6.12, -5.54, 0.00, -6.00, 6.12, -5.54, 11.31, -4.24, 14.78, -2.30)
+
+[node name="Sprite" type="Sprite2D" parent="World/Half_0507"]
+texture = ExtResource("37_text")
+hframes = 8
+vframes = 3
+offset = Vector2(0, -52)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Half_0507"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_42")
+
 [node name="Lights" type="Node2D" parent="."]
 
 [node name="FacadeGlow" type="PointLight2D" parent="Lights"]
-texture = ExtResource("36_text")
+texture = ExtResource("38_text")
 position = Vector2(1536, -95.96)
 energy = 1.15
 range_item_cull_mask = 3
 
 [node name="Brazier" type="Node2D" parent="Lights" groups=["night_warm"]]
 position = Vector2(1536, 398.74)
-script = ExtResource("37_scri")
+script = ExtResource("39_scri")
 mode = "fire"
 metadata/radius = 2.6
 
@@ -951,7 +1004,7 @@ range_item_cull_mask = 1
 
 [node name="LampWest" type="Node2D" parent="Lights"]
 position = Vector2(281.6, 396.8)
-script = ExtResource("37_scri")
+script = ExtResource("39_scri")
 mode = "sodium"
 flicker_seed = 3
 
@@ -983,7 +1036,7 @@ range_item_cull_mask = 1
 
 [node name="LampEast" type="Node2D" parent="Lights"]
 position = Vector2(2720, 444.42)
-script = ExtResource("37_scri")
+script = ExtResource("39_scri")
 mode = "sodium"
 flicker_seed = 7
 
@@ -1015,7 +1068,7 @@ range_item_cull_mask = 1
 
 [node name="Terminal" type="Node2D" parent="Lights"]
 position = Vector2(1254.4, 9.04)
-script = ExtResource("37_scri")
+script = ExtResource("39_scri")
 mode = "crt"
 
 [node name="Light" type="PointLight2D" parent="Lights/Terminal"]
@@ -1027,7 +1080,7 @@ range_item_cull_mask = 3
 
 [node name="BoilerVent" type="Node2D" parent="Lights"]
 position = Vector2(448, 101.04)
-script = ExtResource("37_scri")
+script = ExtResource("39_scri")
 mode = "fire"
 strength = 0.6
 
@@ -1040,7 +1093,7 @@ range_item_cull_mask = 3
 
 [node name="Signal" type="Node2D" parent="Lights"]
 position = Vector2(1446.4, 1111.04)
-script = ExtResource("37_scri")
+script = ExtResource("39_scri")
 mode = "steady"
 
 [node name="Lens" type="PointLight2D" parent="Lights/Signal"]
@@ -1060,7 +1113,7 @@ range_item_cull_mask = 2
 
 [node name="Searchlight" type="Node2D" parent="." groups=["night_searchlight"]]
 position = Vector2(2892.8, 960.26)
-script = ExtResource("38_scri")
+script = ExtResource("40_scri")
 sweep_min_deg = 146
 sweep_max_deg = 188
 period = 11
@@ -1073,7 +1126,7 @@ scale = Vector2(1, 0.62)
 [node name="Pivot" type="Node2D" parent="Searchlight/Rig"]
 
 [node name="Ground" type="PointLight2D" parent="Searchlight/Rig/Pivot"]
-texture = ExtResource("39_text")
+texture = ExtResource("41_text")
 color = Color(1, 0.94, 0.74, 1)
 texture_scale = 1.625
 offset = Vector2(832, 0)
@@ -1085,7 +1138,7 @@ shadow_filter_smooth = 1.5
 shadow_item_cull_mask = 1
 
 [node name="Objects" type="PointLight2D" parent="Searchlight/Rig/Pivot"]
-texture = ExtResource("39_text")
+texture = ExtResource("41_text")
 color = Color(1, 0.94, 0.74, 1)
 texture_scale = 1.625
 offset = Vector2(832, 0)
@@ -1105,9 +1158,9 @@ position = Vector2(896, 606.3)
 amount = 22
 lifetime = 2.6
 preprocess = 3.0
-texture = ExtResource("40_text")
+texture = ExtResource("42_text")
 visibility_rect = Rect2(-300, -400, 600, 500)
-process_material = SubResource("ParticleProcessMaterial_41")
+process_material = SubResource("ParticleProcessMaterial_43")
 
 [node name="Markers" type="Node2D" parent="."]
 
@@ -1155,10 +1208,10 @@ position_smoothing_speed = 6.0
 amount = 900
 lifetime = 8.0
 preprocess = 8.0
-texture = ExtResource("41_text")
+texture = ExtResource("43_text")
 local_coords = false
 visibility_rect = Rect2(-1300, -900, 2600, 1800)
-process_material = SubResource("ParticleProcessMaterial_42")
+process_material = SubResource("ParticleProcessMaterial_44")
 
 [node name="FrontSnow" type="CanvasLayer" parent="."]
 layer = 3
@@ -1168,9 +1221,9 @@ position = Vector2(960, 540)
 amount = 110
 lifetime = 3.0
 preprocess = 3.0
-texture = ExtResource("41_text")
+texture = ExtResource("43_text")
 visibility_rect = Rect2(-1200, -800, 2400, 1600)
-process_material = SubResource("ParticleProcessMaterial_43")
+process_material = SubResource("ParticleProcessMaterial_45")
 
 [node name="Post" type="CanvasLayer" parent="."]
 layer = 5
@@ -1182,7 +1235,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-material = SubResource("ShaderMaterial_44")
+material = SubResource("ShaderMaterial_46")
 
 [node name="OverlayLayer" type="CanvasLayer" parent="."]
 layer = 6
@@ -1190,7 +1243,7 @@ follow_viewport_enabled = true
 
 [node name="Overlay" type="Node2D" parent="OverlayLayer"]
 texture_filter = 2
-script = ExtResource("44_scri")
+script = ExtResource("46_scri")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 10
@@ -1204,23 +1257,23 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Wind" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("45_audi")
+stream = ExtResource("47_audi")
 volume_db = -9.0
 
 [node name="FireAudio" type="AudioStreamPlayer2D" parent="."]
 position = Vector2(1536, 404.74)
-stream = ExtResource("46_audi")
+stream = ExtResource("48_audi")
 max_distance = 900.0
 volume_db = -2.0
 
 [node name="SteamAudio" type="AudioStreamPlayer2D" parent="."]
 position = Vector2(896, 686.3)
-stream = ExtResource("47_audi")
+stream = ExtResource("49_audi")
 max_distance = 700.0
 volume_db = -8.0
 
 [node name="LampBuzz" type="AudioStreamPlayer2D" parent="."]
 position = Vector2(217.6, 396.8)
-stream = ExtResource("48_audi")
+stream = ExtResource("50_audi")
 max_distance = 500.0
 volume_db = -14.0

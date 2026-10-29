@@ -26,7 +26,7 @@ PROPS = [
     dict(id="Playground", art="PRP_Playground_Dome", pos=(12.5, 14.6), fp=(2.8, 2.6), layer=1),
     dict(id="Brazier", art="PRP_Brazier_OilDrum", pos=(24.0, 10.2), fp=(0.6, 0.45), layer=2),
     dict(id="CrateStack", art="PRP_Crate_Wood_Stack", pos=(3.6, 15.8), fp=(1.7, 0.85), layer=1,
-         cont="crate"),
+         cont="crate", guaranteed="asp"),     # 必出阿司匹林：喂半人退烧要用（旁边就是 Rabid_West）
     dict(id="CarWreck", art="PRP_Car_Moskvich_Wreck", pos=(38.0, 16.0), fp=(4.4, 1.7), layer=1,
          cont="car"),
     dict(id="SteamPipe", art="PRP_SteamPipe_Long", pos=(18.0, 17.8), fp=(18.0, 0.55), layer=2),
@@ -91,6 +91,13 @@ RABIDS = [
     dict(id="Rabid_West", home=(5.5, 18.6), radius=2.8, brute=False),      # 西院木箱堆旁，挡在去豁口的路上
     dict(id="Rabid_Tower", home=(10.5, 36.8), radius=2.5, brute=False),    # 煤水塔西侧
     dict(id="Rabid_Brute", home=(36.5, 36.7), radius=1.8, brute=True),     # 守在三号车厢门口
+]
+
+# 回退半人（CHR_04）：高烧正在退、还有瞳孔。清杀队分不清他和狂暴者。
+# 摆位思路：静态时都不在光锥里；但他们会被罐头声吸引 —— 借刀杀人时可能把他们一起引进光锥。
+HALFS = [
+    dict(id="Half_0388", pos=(14.5, 19.4), tag="0388"),   # 缩在蒸汽管下取暖，离铁丝网豁口不远
+    dict(id="Half_0507", pos=(18.6, 37.2), tag="0507"),   # 煤水塔东侧，离 Rabid_Tower 8m
 ]
 
 # 探照灯塔：灯头世界位置 + 扫描角（度，0=东，90=南）

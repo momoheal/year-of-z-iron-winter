@@ -126,12 +126,13 @@ func _perceive(delta: float) -> void:
 				_look_base = facing
 				suspicion = 0.6
 
-## 光锥里的狂暴者：返回 true 表示本帧在瞄准 / 射击（停止移动）。
+## 光锥里的狂暴者 / 半人：返回 true 表示本帧在瞄准 / 射击（停止移动）。
 func _engage_rabids(delta: float) -> bool:
 	var best: Node2D = null
 	var bd := INF
-	for r in ctl.rabids:
-		if not r.is_alive():
+	# 清杀队分不清狂暴者和回退半人：光锥里的「感染者」一律开枪（半人喂过药、睡着了就认不出来）
+	for r in ctl.rabids + ctl.halfs:
+		if not r.is_alive() or (r.has_method("is_target") and not r.is_target()):
 			continue
 		var dm := Vector2((r.global_position.x - global_position.x) / PPM,
 			(r.global_position.y - global_position.y) / (PPM * SQ))

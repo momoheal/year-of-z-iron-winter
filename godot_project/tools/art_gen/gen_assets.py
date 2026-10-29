@@ -82,6 +82,8 @@ def build_chars(man):
                            ("CHR_05_OSK_Sheet", "CHR_05_OSK", gen_chars.OSK)):
         _put(man, key, _path("10_characters", folder, key + ".png"), gen_chars.sheet(P),
              (gen_chars.CX, gen_chars.GY_), hframes=8, vframes=3)
+    _put(man, "CHR_04_HalfHuman_Sheet", _path("10_characters", "CHR_04_HalfHuman", "CHR_04_HalfHuman_Sheet.png"),
+         gen_chars.half_sheet(), (gen_chars.CX, gen_chars.GY_), hframes=8, vframes=3)
     _put(man, "CHR_03_Rabid_Sheet", _path("10_characters", "CHR_03_Rabid", "CHR_03_Rabid_Sheet.png"),
          gen_rabid.sheet(), (gen_chars.CX, gen_chars.GY_), hframes=8, vframes=3)
 

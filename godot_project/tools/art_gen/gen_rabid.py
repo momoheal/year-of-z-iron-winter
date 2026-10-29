@@ -138,7 +138,7 @@ def frame(view, col):
     # 腿（奔跑时步幅更大，用 crouch=False 的步态）
     _legs(L, P, view, s * 1.25 if not lunge else 0.9, c, hip, False)
     if view == "E":
-        back = [(CX + 4 + lean * 0.5, sh + 3), (CX + 10 - s * 4, sh + 15), (CX + 14 - s * 7, sh + 25)]
+        back = [(CX + 4 + lean * 0.5, sh + 3), (CX + 10 + s * 4, sh + 15), (CX + 14 + s * 7, sh + 25)]  # 与同侧腿反相
         if lunge:
             back = [(CX + 4 + lean * 0.5, sh + 3), (CX + 18, sh + 2), (CX + 28, sh + 4)]
         _skin_limb(L, back, 6.5, seed + 1, 0.72)
@@ -146,13 +146,13 @@ def frame(view, col):
         _torso(L, view, sh, hip, lean, seed)
         hx, hy = CX + 8 + lean, sh - 4 + twitch
         _head(L, view, hx, hy, lunge or col == 7, seed + 2)
-        front = [(CX + 6 + lean * 0.5, sh + 4), (CX + 14 + s * 4, sh + 16), (CX + 19 + s * 7, sh + 27)]
+        front = [(CX + 6 + lean * 0.5, sh + 4), (CX + 14 - s * 4, sh + 16), (CX + 19 - s * 7, sh + 27)]
         if lunge:
             front = [(CX + 6 + lean * 0.5, sh + 4), (CX + 20, sh + 6), (CX + 31, sh + 9)]
         _skin_limb(L, front, 7, seed + 3)
         _claw(L, front[-1][0], front[-1][1], 1)
     else:
-        sw = s * 3.5
+        sw = s * 3.5 * (1 if view == "S" else -1)
         for side, k in ((-1, 1), (1, -1)):
             pts = [(CX + side * 13, sh + 4), (CX + side * 17, sh + 18 + k * sw), (CX + side * 14, sh + 33 + k * sw)]
             if lunge:

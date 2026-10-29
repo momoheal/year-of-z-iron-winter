@@ -8,6 +8,8 @@ const SHOTS := [
 	{"name": "night_yard_railyard", "pos": Vector2(29.0, 29.2), "face": 0.2, "flash": true},
 	{"name": "night_yard_vent_dark", "pos": Vector2(9.0, 5.2), "face": 2.6, "flash": false},
 	{"name": "night_yard_rabid_boxcar", "pos": Vector2(31.2, 37.4), "face": 0.05, "flash": true},
+	{"name": "night_yard_halfhuman", "pos": Vector2(15.4, 19.7), "face": 3.0, "flash": true},
+	{"name": "night_yard_lineup", "pos": Vector2(22.6, 11.6), "face": 0.0, "flash": false, "zoom": 2.6, "lineup": true},
 ]
 
 func _init() -> void:
@@ -26,8 +28,16 @@ func _run() -> void:
 		p.flashlight_on = shot.flash
 		p.set_physics_process(false)
 		p.get_node("Flashlight").visible = shot.flash
+		s.cam.zoom = Vector2.ONE * float(shot.get("zoom", 1.0))
 		s.cam.global_position = p.global_position
 		s.cam.reset_smoothing()
+		if shot.get("lineup", false):
+			# 定妆对照：火堆光里一字排开 —— 阿列克谢 / 清杀兵 / 回退半人 / 狂暴者
+			var row := [s.soldiers[1], s.halfs[0], s.rabids[0]]
+			for k in row.size():
+				row[k].global_position = p.global_position + Vector2((k + 1) * 1.5 * 64.0, 0)
+			s.soldiers[1].facing = PI
+			s.soldiers[1].get_node("Flashlight/Pivot").rotation = PI
 		for so in s.soldiers:
 			so.ctl = null          # 截图时让清杀兵 / 狂暴者停在原地
 		for r in s.rabids:

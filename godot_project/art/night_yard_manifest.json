@@ -402,5 +402,18 @@
    96
   ],
   "pivot": null
+ },
+ "CHR_04_HalfHuman_Sheet": {
+  "path": "res://art/10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png",
+  "size": [
+   576,
+   336
+  ],
+  "pivot": [
+   36,
+   108
+  ],
+  "hframes": 8,
+  "vframes": 3
  }
 }

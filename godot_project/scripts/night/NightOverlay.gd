@@ -1,5 +1,5 @@
 extends Node2D
-## NightOverlay.gd — 世界空间的玩法读数：噪声波纹、清杀兵的 ?/! 、可搜刮提示、飞罐、撤离点、浮字。
+## NightOverlay.gd — 世界空间的玩法读数：噪声波纹、清杀兵的 ?/! 、狂暴者 / 半人辨识、可搜刮提示、飞罐、撤离点、浮字。
 ## 挂在 follow_viewport 的 CanvasLayer 下：坐标与世界一致，但不受 CanvasModulate 夜色压暗。
 
 const SQ := 0.62
@@ -29,7 +29,11 @@ func _draw() -> void:
 	# 可搜刮提示
 	if ctl.state == "play":
 		var c2: Node2D = ctl.nearest_container()
-		if c2 != null:
+		var hf = ctl.nearest_half()
+		if hf != null:
+			_ellipse(hf.global_position, 34.0, 34.0 * SQ, Color(0.96, 0.62, 0.04, 0.6), 1.5)
+			_text(p + Vector2(0, -132), "按 E · 他在发烧（半人 %s）" % hf.tag, Color("#fcd34d"), 15)
+		elif c2 != null:
 			var ip: Vector2 = ctl.interact_point(c2)
 			_ellipse(ip, 34.0, 34.0 * SQ, Color(0.99, 0.85, 0.45, 0.5), 1.5)
 			var nm := _cont_name(c2)
@@ -48,7 +52,10 @@ func _draw() -> void:
 			_text(sp, "?", Color(0.99, 0.75, 0.2, 0.5 + su * 0.5), 26)
 			_arc(sp + Vector2(0, -8), 18.0, su, Color(0.99, 0.75, 0.2, 0.85), 3.0)
 		if s.aim_target != null:
-			_text(sp + Vector2(0, -26), "瞄准", Color(0.49, 0.83, 0.99, 0.9), 14)
+			if s.aim_target in ctl.halfs:
+				_text(sp + Vector2(0, -26), "瞄准 —— 那是半人！", Color("#f87171"), 15)
+			else:
+				_text(sp + Vector2(0, -26), "瞄准", Color(0.49, 0.83, 0.99, 0.9), 14)
 	# 狂暴者读数：追击 ! / 起跳预警红圈（0.45s）/ 循声 ?
 	for r in ctl.rabids:
 		if not r.is_alive():
@@ -62,6 +69,24 @@ func _draw() -> void:
 			_text(rp + Vector2(0, -124), "!", Color("#ef4444"), 28)
 		elif r.state == "investigate":
 			_text(rp + Vector2(0, -124), "?", Color(0.73, 0.11, 0.11, 0.8), 22)
+	# 回退半人：嗅觉辨识（7m 内标注「半人」，和狂暴者区分开）
+	for h in ctl.halfs:
+		if not h.is_alive():
+			continue
+		var hp: Vector2 = h.global_position
+		var d: float = ctl.dist_m(p, hp)
+		if h.state == "saved":
+			if d <= 4.0:
+				_text(hp + Vector2(0, -70), "退烧了 · 睡着", Color(0.53, 0.94, 0.67, 0.8), 13)
+			continue
+		var top := -84.0 if h.state == "huddle" else -118.0      # 蜷坐时矮一截
+		if d <= 7.0 and h != ctl.nearest_half():                  # 可交互时由「按 E」提示代替
+			var a := clampf((7.0 - d) / 2.0, 0.0, 1.0)
+			_text(hp + Vector2(0, top), "半人 %s" % h.tag, Color(0.99, 0.83, 0.3, 0.9 * a), 15)
+		if h.state == "flinch":
+			_text(hp + Vector2(0, top - 20.0), "!", Color(0.99, 0.85, 0.5, 0.9), 22)
+		elif h.state == "drift":
+			_text(hp + Vector2(0, top - 20.0), "…", Color(0.99, 0.85, 0.5, 0.8), 22)
 	# 飞罐（抛物线）
 	for c3 in ctl.thrown:
 		var k: float = clampf(float(c3["t"]), 0.0, 1.0)

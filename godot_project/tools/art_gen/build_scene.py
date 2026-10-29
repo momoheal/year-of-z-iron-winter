@@ -233,6 +233,10 @@ for rb in LY.RABIDS:
               position=v2(px(*rb["home"])), brute="true" if rb["brute"] else "false",
               home_radius=f'{rb["radius"]:g}')
 
+for hf in LY.HALFS:
+    character("World", hf["id"], "CHR_04_HalfHuman_Sheet", "NightHalf", 32, 7, groups=["night_half"],
+              position=v2(px(*hf["pos"])), tag=f'"{hf["tag"]}"')
+
 # ===========================================================================
 # 灯光
 # ===========================================================================

@@ -5,11 +5,12 @@ extends Node2D
 ##   Ground（烘焙地面，light_mask=2）+ World（Y-sort 的道具 / 角色精灵）
 ##   + 2D 灯光（Ground 灯投影 / Objects 灯不投影）+ CanvasModulate 夜色 + 雪粒子 + 后处理。
 ## 玩法是 Exploration Demo 的子集：三方潜行（玩家 / 灰鳞狂暴者 / ОСК 清杀队）、手电、噪声、
-## 扔罐头借刀杀人、搜刮、体温、撤离。
+## 扔罐头借刀杀人、搜刮、体温、撤离；外加回退半人的道德抉择（良知 / 卌 划痕，口径与 RaidSim 抉择 A 一致）。
 ## 物品与容器掉落表直接读 CampaignData，后续可以把本场景接进 CampaignSim 的夜潜阶段。
 ##
 ## 操作：WASD 移动 · 鼠标朝向 · Ctrl 蹲伏 · Shift 冲刺 · 长按 E 搜刮/撤离 · G 扔罐头
 ##       F 手电 · M 静音 · R 重来 · Esc 返回战役
+##       靠近半人按 E → 抉择面板：1 喂药退烧 / 2 绕开 / 3 撬棍灭口 / Esc 先不决定
 
 const Data := preload("res://scripts/CampaignData.gd")
 const SfxScript := preload("res://scripts/Sfx.gd")
@@ -26,13 +27,21 @@ const CAN_NOISE := 9.0
 const BAG_MAX := 8
 const CORPSE_CATS := ["med", "val", "intel"]
 
-var state := "play"            # play | caught | frozen | downed | extracted
+var state := "play"            # play | choice | caught | frozen | downed | extracted
 var pack: Array[String] = []
 var warmth := 100.0
 var hp := 100.0
 var hurt := 0.0                # 受伤闪红计时
 var borrowed := 0              # 借刀杀人：清杀队替你清掉的狂暴者
 var rabids: Array = []
+var halfs: Array = []
+# 道德账（接进战役时按同样口径回写 CampaignSim：raid_add_conscience / raid_add_tally）
+var conscience := 0.0          # 本夜良知变化
+var tally := 0                 # 卌 划痕（亲手灭口才划）
+var half_saved := 0
+var half_lost := 0             # 被清杀队误杀的半人
+var choice_half = null       # NightHalf
+var choice_msg := ""
 var cans := 3
 var search_target: Node2D = null
 var search_prog := 0.0
@@ -66,6 +75,8 @@ var _lbl_hint: Label
 var _lbl_center: Label
 var _bar_warm: ProgressBar
 var _bar_hp: ProgressBar
+var _choice_panel: PanelContainer
+var _choice_lbl: Label
 
 static func to_m(p: Vector2) -> Vector2:
 	return Vector2(p.x / PPM, p.y / (PPM * SQ))
@@ -90,6 +101,10 @@ func _ready() -> void:
 	for r in get_tree().get_nodes_in_group("night_rabid"):
 		r.ctl = self
 		rabids.append(r)
+	for h in get_tree().get_nodes_in_group("night_half"):
+		h.ctl = self
+		halfs.append(h)
+	pack.append("water")       # 出门前灌的热水壶 —— 喂半人退烧要用
 	containers = get_tree().get_nodes_in_group("night_container")
 	fade_props = get_tree().get_nodes_in_group("night_fade")
 	for z in get_tree().get_nodes_in_group("night_slush"):
@@ -131,6 +146,10 @@ func _process(delta: float) -> void:
 	$OverlayLayer/Overlay.queue_redraw()
 
 func _update_interact(delta: float) -> void:
+	var h = nearest_half()
+	if h != null and Input.is_action_just_pressed("interact"):
+		open_choice(h)
+		return
 	var holding := Input.is_action_pressed("interact")
 	var near_exit := dist_m(player.global_position, exit_px) <= REACH
 	var c := nearest_container()
@@ -169,6 +188,88 @@ func nearest_container() -> Node2D:
 			bd = d
 			best = c
 	return best
+
+func nearest_half():
+	var best = null
+	var bd := REACH * 1.2
+	for h in halfs:
+		if not h.is_alive() or h.resolved != "":
+			continue
+		var d := dist_m(player.global_position, h.global_position)
+		if d < bd:
+			bd = d
+			best = h
+	return best
+
+# ============================================================================
+# 道德抉择：回退半人（与 RaidSim.set_choice 抉择 A 同口径：A1 +7 / A2 −2 / A3 −10 且卌 +1）
+# ============================================================================
+func open_choice(h) -> void:
+	if state != "play" or h == null or h.resolved != "" or not h.is_alive():
+		return
+	choice_half = h
+	choice_msg = ""
+	state = "choice"           # 世界暂停：清杀兵 / 狂暴者 / 半人都看 ctl.state
+	player.frozen = true
+	search_target = null
+	search_prog = 0.0
+	_show_choice()
+
+func close_choice() -> void:
+	if state != "choice":
+		return
+	state = "play"
+	choice_half = null
+	player.frozen = false
+	_choice_panel.visible = false
+
+func has_medicine() -> bool:
+	return pack.has("asp") and pack.has("water")
+
+## idx: 0 喂药退烧 · 1 绕开 · 2 撬棍灭口。返回 false = 没执行（缺药），面板保持打开。
+func choose(idx: int) -> bool:
+	if state != "choice" or choice_half == null:
+		return false
+	var h = choice_half
+	var top: Vector2 = h.global_position + Vector2(0, -124)
+	match idx:
+		0:
+			if not has_medicine():
+				choice_msg = "你翻遍口袋：没有阿司匹林，或者热水壶已经空了。"
+				_show_choice()
+				return false
+			pack.erase("asp")
+			pack.erase("water")
+			conscience += 7.0
+			half_saved += 1
+			h.save()
+			if pack.size() < BAG_MAX:
+				pack.append("intel")
+			spawn_float(top, "他的瞳孔回色了：「……水塔下面，找戴蓝毛线帽的老头……」", Color("#34d399"))
+			sfx.play("beep")
+		1:
+			conscience -= 2.0
+			h.resolved = "left"
+			spawn_float(top, "你绕开了他。他还在烧。", Color("#94a3b8"))
+		_:
+			conscience -= 10.0
+			tally += 1
+			h.resolved = "mercy"
+			sfx.play("wedge")
+			h.die("player")
+	close_choice()
+	return true
+
+func on_half_killed(h, by: String) -> void:
+	_splat(h.global_position)
+	if by == "player":
+		spawn_float(h.global_position + Vector2(0, -124), "撬棍落下。日志背面多了一道卌。", Color("#fbbf24"))
+		return
+	h.resolved = "osk"
+	half_lost += 1
+	conscience -= 4.0
+	spawn_float(h.global_position + Vector2(0, -124), "清杀队打死了半人 %s —— 他还有瞳孔。" % h.tag,
+		Color("#fca5a5"))
 
 func interact_point(c: Node2D) -> Vector2:
 	return c.global_position + Vector2(c.get_meta("interact_offset", Vector2.ZERO))
@@ -283,7 +384,8 @@ func rabid_sees_player(r: Node2D) -> bool:
 	return los_clear(r.global_position, p, 1 | (2 if player.crouching else 0))
 
 ## 三色声纹：灰白=玩家 / 暗红=狂暴者 / 冷蓝=清杀队；琥珀=罐头。
-## 谁听得见：清杀兵听玩家与罐头；狂暴者听一切人造声音（含枪声），不理同类的低吼。
+## 谁听得见：清杀兵听玩家与罐头；狂暴者听一切人造声音（含枪声），不理同类的低吼和半人的呻吟；
+## 半人被罐头 / 搜刮声吸引，听见枪声就逃。
 func emit_noise(pos: Vector2, radius_m: float, kind: String) -> void:
 	var col := Color("#cbd5e1")
 	match kind:
@@ -295,15 +397,20 @@ func emit_noise(pos: Vector2, radius_m: float, kind: String) -> void:
 			col = Color("#b91c1c")
 		"gun":
 			col = Color("#7dd3fc")
+		"half":
+			col = Color("#fcd9a0")
 	ripples.append({"pos": pos, "r": 0.0, "max": radius_m, "col": col, "life": 1.0})
-	if kind != "rabid" and kind != "gun":
+	if kind not in ["rabid", "gun", "half"]:
 		for s in soldiers:
 			if dist_m(s.global_position, pos) <= radius_m:
 				s.hear(pos, kind)
-	if kind != "rabid":
+	if kind not in ["rabid", "half"]:
 		for r in rabids:
 			if r.is_alive() and dist_m(r.global_position, pos) <= radius_m:
 				r.hear(pos, kind)
+		for h in halfs:
+			if h.is_alive() and dist_m(h.global_position, pos) <= radius_m:
+				h.hear(pos, kind)
 
 func damage_player(amount: float, _by: Node) -> void:
 	if state != "play":
@@ -321,13 +428,16 @@ func on_soldier_fired(s: Node2D, at: Vector2) -> void:
 	emit_noise(s.global_position, 10.0, "gun")
 	emit_noise(at, 3.0, "gun")
 
-func on_rabid_killed(r: Node2D, by: String) -> void:
+func _splat(pos: Vector2) -> void:
 	var splat := Sprite2D.new()
 	splat.texture = load("res://art/50_vfx/VFX_Blood_Splat.png")
 	splat.light_mask = 2
-	splat.position = r.global_position + Vector2(0, -4)
+	splat.position = pos + Vector2(0, -4)
 	splat.rotation = rng.randf() * 0.4 - 0.2
 	$Decals.add_child(splat)
+
+func on_rabid_killed(r: Node2D, by: String) -> void:
+	_splat(r.global_position)
 	if by != "":
 		borrowed += 1
 		spawn_float(r.global_position + Vector2(0, -130), "借刀杀人：清杀队替你清掉 1 只狂暴者", Color("#7dd3fc"))
@@ -364,6 +474,18 @@ func _end(reason: String) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		var k := (event as InputEventKey).keycode
+		if state == "choice":
+			match k:
+				KEY_1, KEY_KP_1:
+					choose(0)
+				KEY_2, KEY_KP_2:
+					choose(1)
+				KEY_3, KEY_KP_3:
+					choose(2)
+				KEY_ESCAPE:
+					close_choice()
+			get_viewport().set_input_as_handled()
+			return
 		match k:
 			KEY_F:
 				if state == "play":
@@ -509,6 +631,24 @@ func _build_hud() -> void:
 	_lbl_hint.offset_bottom = -30
 	hud_root.add_child(_lbl_hint)
 
+	_choice_panel = PanelContainer.new()
+	var csb := StyleBoxFlat.new()
+	csb.bg_color = Color(0.04, 0.03, 0.02, 0.9)
+	csb.border_color = Color("#b45309")
+	csb.set_border_width_all(2)
+	csb.set_content_margin_all(22)
+	_choice_panel.add_theme_stylebox_override("panel", csb)
+	_choice_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_choice_panel.offset_left = -430
+	_choice_panel.offset_right = 430
+	_choice_panel.offset_top = -170
+	_choice_panel.offset_bottom = 170
+	_choice_panel.visible = false
+	hud_root.add_child(_choice_panel)
+	_choice_lbl = _label("", 17, Color("#e2e8f0"))
+	_choice_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_choice_panel.add_child(_choice_lbl)
+
 	_lbl_center = _label("", 30, Color("#f1f5f9"))
 	_lbl_center.set_anchors_preset(Control.PRESET_CENTER)
 	_lbl_center.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -520,6 +660,28 @@ func _build_hud() -> void:
 	_lbl_center.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
 	_lbl_center.add_theme_constant_override("outline_size", 8)
 	hud_root.add_child(_lbl_center)
+
+func _show_choice() -> void:
+	var h = choice_half
+	if h == null or _choice_lbl == null:
+		return
+	var med := has_medicine()
+	var lines: Array[String] = [
+		"抉择 · 他在发烧（半人 %s）" % h.tag,
+		"",
+		"一个半人缩在雪里发抖。瞳孔还在，但烫得吓人。",
+		"清杀队分不清他和狂暴者 —— 手电扫到就开枪。",
+		"",
+		"[1]  喂阿司匹林 + 热水（各 1）　良知 +7" + ("" if med else "　—— 缺药"),
+		"[2]  绕开，别惹麻烦　良知 −2",
+		"[3]  撬棍灭口，划一道卌　良知 −10",
+		"[Esc]  先不决定（他会继续烧）",
+	]
+	if choice_msg != "":
+		lines.append("")
+		lines.append(choice_msg)
+	_choice_lbl.text = "\n".join(lines)
+	_choice_panel.visible = true
 
 func _label(txt: String, size: int, col: Color) -> Label:
 	var l := Label.new()
@@ -544,7 +706,8 @@ func _refresh_hud() -> void:
 		if r.state in ["chase", "windup", "lunge"]:
 			chasing += 1
 	var threat := (" · 被 %d 只狂暴者盯上" % chasing) if chasing > 0 else ""
-	_lbl_status.text = "%s · %s%s · 空罐头 ×%d · 借刀 ×%d%s%s" % [stance, light, lit, cans, borrowed, ground, threat]
+	_lbl_status.text = "%s · %s%s · 空罐头 ×%d · 借刀 ×%d · 良知 %+d · 卌 %d%s%s" % [
+		stance, light, lit, cans, borrowed, int(conscience), tally, ground, threat]
 	var names: Array[String] = []
 	for id in pack:
 		names.append(item_name(id))
@@ -555,7 +718,7 @@ func _refresh_hud() -> void:
 	else:
 		_lbl_hint.text = "目标：三号车厢的透析液（门口有狂暴者）· 用 G 罐头把它引进清杀队的光锥   ·   Ctrl 蹲  Shift 跑  E 搜刮  F 手电"
 	match state:
-		"play":
+		"play", "choice":
 			_lbl_center.text = ""
 		"caught":
 			_lbl_center.text = "被清杀队发现\nОСК открыл огонь\n\nR / Enter 重来"
@@ -571,6 +734,7 @@ func _refresh_hud() -> void:
 			for id in pack:
 				names2.append(item_name(id))
 			var line := "妈妈今晚有透析液了。" if has_dial else "空着手回去，妈妈还在等透析液。"
-			_lbl_center.text = "撤离成功 · %d 件物资 · 借刀 ×%d\n%s\n%s\n\nR / Enter 再来一夜   Esc 返回战役" % [
-				pack.size(), borrowed, "、".join(names2), line]
+			var moral := "良知 %+d · 救下半人 %d · 误杀 %d · 卌 %d" % [int(conscience), half_saved, half_lost, tally]
+			_lbl_center.text = "撤离成功 · %d 件物资 · 借刀 ×%d\n%s\n%s\n%s\n\nR / Enter 再来一夜   Esc 返回战役" % [
+				pack.size(), borrowed, "、".join(names2), line, moral]
 			_lbl_center.add_theme_color_override("font_color", Color("#bbf7d0"))
