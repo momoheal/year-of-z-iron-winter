@@ -29,7 +29,7 @@ from __future__ import annotations
 import importlib
 
 # 关卡 id → 模块名。新地图：写一个 levels/<id>.py，然后在这里登记一行。
-LEVELS = ["yard", "marshalling"]
+LEVELS = ["yard", "marshalling", "manor"]
 
 
 def load(name: str):

@@ -47,6 +47,7 @@ func _run() -> void:
 	_registry()
 	_yard()
 	_marshalling()
+	_manor()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -63,7 +64,7 @@ func _registry() -> void:
 			continue
 		with_scene += 1
 		_assert(ResourceLoader.exists(sc), "LOCS[%s].scene 存在 (%s)" % [L.id, sc])
-	_assert(with_scene >= 2, "至少两关有节点化场景", str(with_scene))
+	_assert(with_scene >= 3, "至少三关有节点化场景（yard/marshalling/manor）", str(with_scene))
 	# 每个带 scene 的地点：CampaignData 的 loot 类别都得在表里（夜潜掉落读同一张表）
 	for L in Data.LOCS:
 		for cat in L.loot:
@@ -165,6 +166,83 @@ func _marshalling() -> void:
 	_assert(is_equal_approx(m.dawn_progress(), 0.5), "marshalling 最后 20% 的一半 dawn=0.5",
 			str(m.dawn_progress()))
 	_shared(m, "marshalling")
+
+# ---------------------------------------------------------------------------
+func _manor() -> void:
+	var g: Node = _scene("res://scenes/night_manor.tscn")
+	_assert(g.level_id == "manor", "manor metadata.level_id", g.level_id)
+	_assert(g.level_zh == "松林庄园 · 二号恒温库", "manor metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "Pine Manor · Depot No.2", "manor metadata.level_en", g.level_en)
+	_assert(g.prize == "dial", "manor prize = dial（409 批腹透液）", g.prize)
+	_assert(g.objective_zh.contains("409"), "manor objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("电网"), "manor extract 元数据（剪开的电网豁口）", g.extract_zh)
+	_assert(g.rail_y.size() == 0, "manor 没有铁轨（rail_y 空串 ≠ 兜底）", str(g.rail_y))
+	# 装配：4 组特勤 / 4 只狂暴者（1 壮硕）/ 2 个半人 / 8 个容器 / 5 块冻雪泥
+	_assert(g.soldiers.size() == 4, "manor 4 组特勤巡逻", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 4, "manor 4 只狂暴者", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 1, "其中 1 只壮硕（危险度 5 的焚化院看守）", str(brutes))
+	_assert(g.halfs.size() == 2, "manor 2 个回退半人", str(g.halfs.size()))
+	_assert(g.containers.size() == 8, "manor 8 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 5, "manor 5 块冻雪泥（冻观赏池等）", str(g.slush.size()))
+	# 三个回温点：两个火堆 + 2000℃ 炉口
+	_assert(g.warm_lights.size() == 3, "manor 三个回温点（火堆×2 + 炉口）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/Furnace") != null, "manor 有焚化炉口灯")
+	_assert(g.get_node_or_null("Lights/Catwalk") != null, "manor 有二楼钢廊灯")
+	_assert(g.get_node_or_null("Lights/Tower") == null, "manor 没有调度塔灯")
+	_assert(g.get_node_or_null("Lights/Terminal") == null, "manor 没有电传终端灯")
+	_assert(g.get_node_or_null("Searchlight") != null, "manor 有探照灯（东南岗塔）")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightManor_Baked.png"), "manor 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_Manor_A.png"), "manor 恒温库+焚化车间立面",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 故事锚点：409 托盘 / 进料口里的焚化炉照片 / 木箱里的阿司匹林
+	var pallet: Node = g.get_node_or_null("World/Props/BatchPallet")
+	_assert(pallet != null and String(pallet.get_meta("container", "")) == "fridge"
+			and String(pallet.get_meta("guaranteed", "")) == "dial",
+			"防爆门前托盘 = fridge 容器且必出 409 批腹透液")
+	var feed: Node = g.get_node_or_null("World/Props/IncineratorFeed")
+	_assert(feed != null and String(feed.get_meta("container", "")) == "hidden"
+			and String(feed.get_meta("guaranteed", "")) == "photo",
+			"焚化炉进料口 = hidden 容器且必出焚化炉照片")
+	var crates: Node = g.get_node_or_null("World/Props/CrateStack")
+	_assert(crates != null and String(crates.get_meta("guaranteed", "")) == "asp",
+			"木箱堆必出阿司匹林（喂半人退烧）")
+	# 地表 → 脚步材质：没有铁轨，主道也是踩雪；冻观赏池是冰面
+	_assert(g.step_sound(_m(20.5, 20.0), false) == "step_snow", "中央车道 = 雪地脚步（无铁轨）",
+			g.step_sound(_m(20.5, 20.0), false))
+	_assert(g.step_sound(_m(33.0, 24.0), true) == "step_ice", "冻观赏池 = 冰面脚步")
+	_assert(g.is_slush(_m(33.0, 24.0)), "池塘整面是冻雪泥")
+	_assert(not g.is_slush(_m(20.5, 20.0)), "中央车道不是冻雪泥")
+	# 电网高墙：剪开的豁口（x 6~8.5）是唯一缺口
+	var fl: Node = g.get_node("World/FenceLine")
+	_assert(fl.get_node("West").shape.size.x == 6.0 * PPM, "豁口以西整段电网挡路",
+			str(fl.get_node("West").shape.size.x))
+	_assert(fl.get_node("East").shape.size.x == 37.5 * PPM, "豁口以东整段电网挡路",
+			str(fl.get_node("East").shape.size.x))
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(46.0 * PPM), "manor limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(38.0 * GY), "manor limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "manor limit_top（立面顶）", str(g.cam.limit_top))
+	# 环境音：高墙里风小、没有蒸汽管 → 只有风/火/钠灯嗡鸣三路
+	for nm in ["Wind", "LampBuzz", "FireAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "manor 环境音 " + nm)
+	_assert(g.get_node_or_null("SteamAudio") == null, "manor 没有蒸汽管环境音")
+	# 天亮窗口同样是最后 20%（manor 夜长 120 分钟）
+	g.in_campaign = true
+	g.night_max = 120.0
+	g.night_left = 120.0
+	_assert(g.dawn_progress() == 0.0, "manor 夜刚开始 dawn=0")
+	g.night_left = 12.0
+	_assert(is_equal_approx(g.dawn_progress(), 0.5), "manor 最后 20% 的一半 dawn=0.5",
+			str(g.dawn_progress()))
+	_shared(g, "manor")
 
 # ---------------------------------------------------------------------------
 func _shared(s: Node, tag: String) -> void:

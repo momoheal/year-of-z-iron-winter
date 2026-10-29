@@ -864,6 +864,170 @@ def dispatch_board():
     return L.finish(), (cx, base)
 
 
+def pine_snow():
+    """雪松：三层枝盘 + 压雪 + 树干；庄园外围的松林。"""
+    w, h = 190, 430
+    L = Layer(w, h, 3)
+    base, cx = 424, 95
+    L.paint(L.rect(cx - 7, base - 120, cx + 7, base), L.tex("#4a382a", 0.1, 4, 501, cy=20))
+    L.shade(L.rect(cx - 7, base - 120, cx + 7, base), L.gx(cx - 7, cx + 7, 1.15, 0.75))
+    tiers = [(base - 96, 84, 96), (base - 178, 68, 86), (base - 250, 52, 78), (base - 312, 34, 66)]
+    for k, (ty, rw, rh) in enumerate(tiers):
+        m = L.poly([(cx - rw, ty), (cx + rw, ty), (cx + rw * 0.55, ty - rh * 0.62), (cx, ty - rh),
+                    (cx - rw * 0.55, ty - rh * 0.62)])
+        L.paint(m, L.tex("#2c3b30", 0.12, 6, 502 + k))
+        L.shade(m, L.gy(ty - rh, ty, 1.12, 0.72))
+        L.shade(m, L.gx(cx - rw, cx + rw, 1.08, 0.86))
+        # 枝盘上的压雪（外缘厚）
+        sm = L.poly([(cx - rw + 4, ty - 2), (cx + rw - 4, ty - 2), (cx + rw * 0.5, ty - rh * 0.5),
+                     (cx, ty - rh * 0.72), (cx - rw * 0.5, ty - rh * 0.5)])
+        n = L.noise(4, 506 + k)
+        L.paint(sm * smooth(0.35, 0.6, n), lerp(hexc("#e9eff5"), hexc("#a9bacb"), 0.3), 0.95)
+        L.icicles(cx - rw * 0.7, cx + rw * 0.7, ty - 1, 12, 14, 508 + k, 1.8)
+    L.snow_cap(cx - 26, cx + 26, base - 306, 12, 510, droop=0.4)
+    L.snow_cap(cx - 34, cx + 34, base - 2, 13, 511, droop=0.0)
+    return L.finish(), (cx, base)
+
+
+def cold_chest():
+    """特供冷柜（卧式）：结霜柜体 + 掀盖 + 温度牌 + 挂锁。"""
+    w, h = 210, 150
+    L = Layer(w, h, 3)
+    base, x0 = 144, 20
+    top, front = obox(L, x0, base, 170, _d(1.1), 74, "#8f9aa2", "#79848c", 520, snow=0.5)
+    L.shade(front, L.gx(x0, x0 + 170, 1.06, 0.86))
+    L.paint(L.rect(x0 + 4, base - 46, x0 + 166, base - 40), hexc("#39413f"), 0.8)   # 盖缝
+    for xx in (x0 + 52, x0 + 116):                                                   # 合页
+        L.paint(L.rect(xx, base - 50, xx + 10, base - 38), hexc("#4a5157"))
+    L.paint(L.rect(x0 + 140, base - 44, x0 + 152, base - 32), hexc("#9aa1a6"))       # 挂锁
+    L.paint(L.rect(x0 + 12, base - 66, x0 + 62, base - 50), hexc("#2f4a63"), 0.85)   # 温度牌
+    L.paint(L.rect(x0 + 18, base - 62, x0 + 46, base - 56), hexc("#e7eae4"), 0.7)
+    L.rust_streaks(front, 521, 0.35, color="#6a4a2a", cell=(2.0, 16))
+    L.grime(front, 522, 0.2, 6)
+    fr = smooth(0.6, 0.85, L.noise(3, 523))
+    L.tint(front, hexc("#dfeaf2"), 0.4 * fr)                                          # 结霜
+    L.tint(top, hexc("#e9eff5"), 0.35 * smooth(0.5, 0.8, L.noise(3, 524)))
+    L.snow_cap(x0 - 4, x0 + 174, base - 74, 8, 525, droop=0.25)
+    L.snow_cap(x0 - 10, x0 + 180, base - 2, 10, 526, droop=0.0)
+    return L.finish(), (x0 + 85, base)
+
+
+def forklift():
+    """铲货叉车（停）：门架 + 货叉贴地 + 护顶架 + 座位上搭一件棉大衣。"""
+    w, h = 220, 240
+    L = Layer(w, h, 3)
+    base, x0 = 232, 30
+    # 车体
+    body = L.rect(x0 + 40, base - 92, x0 + 168, base - 26)
+    L.paint(body, L.tex("#7a5a2c", 0.08, 6, 530))
+    L.shade(body, L.gy(base - 92, base - 26, 1.1, 0.8))
+    L.grime(body, 531, 0.25, 7)
+    L.rust_streaks(body, 532, 0.4, color="#5a3020")
+    L.paint(L.rect(x0 + 40, base - 60, x0 + 168, base - 52), hexc("#2c2e31"), 0.8)
+    # 护顶架
+    for px_ in (x0 + 52, x0 + 150):
+        L.paint(L.rect(px_, base - 176, px_ + 7, base - 90), hexc("#39413f"))
+    L.paint(L.rect(x0 + 44, base - 184, x0 + 164, base - 174), hexc("#4a5157"))
+    L.snow_cap(x0 + 42, x0 + 166, base - 180, 8, 533, droop=0.25)
+    # 门架 + 货叉（贴地）
+    for px_ in (x0 + 6, x0 + 26):
+        L.paint(L.rect(px_, base - 168, px_ + 8, base - 10), hexc("#39413f"))
+    L.paint(L.rect(x0 + 2, base - 128, x0 + 34, base - 120), hexc("#4a5157"))
+    L.paint(L.rect(x0 - 16, base - 12, x0 + 40, base - 4), hexc("#4a5157"))
+    L.paint(L.rect(x0 - 16, base - 12, x0 - 10, base - 4), hexc("#6c757c"), 0.7)
+    L.snow_cap(x0 - 18, x0 + 42, base - 10, 5, 534, droop=0.1)
+    # 轮
+    for wx, wr in ((x0 + 66, 26), (x0 + 146, 22)):
+        L.paint(L.ellipse(wx, base - wr, wr, wr), hexc("#1a1c1f"))
+        L.paint(L.ellipse(wx, base - wr, wr * 0.45, wr * 0.45), hexc("#3b3f44"))
+        L.snow_cap(wx - wr, wx + wr, base - wr * 1.5, 6, int(wx), droop=0.2)
+    # 座位上的棉大衣 + 驾驶杆
+    L.paint(L.poly([(x0 + 96, base - 92), (x0 + 132, base - 92), (x0 + 128, base - 122),
+                    (x0 + 100, base - 122)]), hexc("#4c4a42"), 0.95)
+    L.paint(L.poly([(x0 + 100, base - 122), (x0 + 128, base - 122), (x0 + 122, base - 132),
+                    (x0 + 106, base - 132)]), hexc("#5a574c"), 0.9)
+    L.paint(L.line([(x0 + 138, base - 92), (x0 + 146, base - 118)], 4), hexc("#2f3538"))
+    L.snow_cap(x0 + 38, x0 + 170, base - 2, 11, 535, droop=0.0)
+    return L.finish(), (x0 + 90, base)
+
+
+def incinerator_feed():
+    """焚化炉进料口：斜坡 + 掀开的铁盖 + 炉口红光 + 灰斗 + 半烧的纸。"""
+    w, h = 230, 200
+    L = Layer(w, h, 3)
+    base, cx = 194, 120
+    # 炉体前脸
+    face = L.rect(cx - 78, base - 150, cx + 78, base)
+    L.paint(face, L.tex("#4a4038", 0.08, 7, 540))
+    L.shade(face, L.gy(base - 150, base, 1.05, 0.75))
+    L.grime(face, 541, 0.3, 8)
+    L.rust_streaks(face, 542, 0.5, color="#5a3020", cell=(2.4, 22))
+    # 铆钉带
+    for yy in (base - 140, base - 76):
+        L.paint(L.rect(cx - 78, yy, cx + 78, yy + 5), hexc("#2c2e31"), 0.8)
+        for k in range(9):
+            L.paint(L.ellipse(cx - 70 + k * 17.5, yy + 2.5, 2, 2), hexc("#6c757c"), 0.8)
+    # 炉口（红光）+ 掀开的铁盖
+    maw = L.rect(cx - 46, base - 108, cx + 46, base - 22)
+    L.paint(maw, hexc("#160b08"))
+    L.tint(maw, hexc("#ff7a2e"), 0.55 * smooth(base - 40, base - 22, L.Y))
+    L.tint(maw, hexc("#c8401e"), 0.35 * smooth(base - 70, base - 40, L.Y))
+    for k in range(5):   # 炉栅
+        L.paint(L.rect(cx - 46, base - 96 + k * 16, cx + 46, base - 92 + k * 16) * maw, hexc("#120806"), 0.8)
+    lid = L.poly([(cx - 50, base - 108), (cx + 50, base - 108), (cx + 62, base - 158), (cx - 38, base - 158)])
+    L.paint(lid, L.tex("#3d4348", 0.06, 6, 543))
+    L.shade(lid, 0.9)
+    L.snow_cap(cx - 40, cx + 64, base - 156, 8, 544, droop=0.3)
+    # 斜坡 + 灰斗 + 半烧的纸
+    ramp = L.poly([(cx - 96, base), (cx - 46, base - 22), (cx + 46, base - 22), (cx + 96, base)])
+    L.paint(ramp, L.tex("#565c62", 0.06, 6, 545))
+    L.shade(ramp, L.gy(base - 22, base, 1.05, 0.85))
+    L.snow_cap(cx - 98, cx - 52, base - 4, 7, 546, droop=0.15)
+    L.paint(L.ellipse(cx + 66, base - 16, 26, 12), hexc("#2b2f33"))
+    L.paint(L.ellipse(cx + 66, base - 18, 22, 9), hexc("#14171a"))
+    for k in range(4):
+        px_ = cx - 70 + k * 22
+        L.paint(L.poly([(px_, base - 6), (px_ + 14, base - 10), (px_ + 12, base - 20), (px_ + 2, base - 16)]),
+                hexc("#d8d5cf" if k % 2 else "#8a8578"), 0.85)
+        L.tint(L.rect(px_, base - 20, px_ + 14, base - 6), hexc("#1a1c1f"), 0.5 * smooth(0.4, 0.8, L.noise(2, 547 + k)))
+    L.snow_cap(cx - 80, cx + 80, base - 2, 10, 548, droop=0.0)
+    return L.finish(), (cx, base)
+
+
+def fence_electric(cut: bool = False):
+    """电网高墙段（4m）：混凝土立柱 + 三道带绝缘子的铁丝 + 警示牌；cut = 被剪开的那一段。"""
+    w, h = 266, 170
+    L = Layer(w, h, 3)
+    base = 164
+    for px_ in (14, w - 22):
+        L.paint(L.rect(px_, base - 150, px_ + 9, base), L.tex("#6a6f74", 0.08, 4, 551, cy=18))
+        L.shade(L.rect(px_, base - 150, px_ + 9, base), L.gx(px_, px_ + 9, 1.12, 0.8))
+        L.snow_cap(px_ - 2, px_ + 11, base - 148, 6, int(px_), droop=0.2)
+        L.paint(L.rect(px_ - 5, base - 8, px_ + 14, base), L.tex("#5d6266", 0.08, 4, 552))
+    if not cut:
+        for k, yy in enumerate((base - 140, base - 108, base - 76)):
+            sag = 4 + k
+            L.paint(L.line([(18, yy), (w / 2, yy + sag), (w - 18, yy)], 1.6), hexc("#8d959b"), 0.9)
+            for px_ in (14, w - 22):
+                L.paint(L.ellipse(px_ + 4.5, yy - 1, 3.4, 4.4), hexc("#c8cfc4"))   # 瓷绝缘子
+        # 警示牌
+        L.paint(L.poly([(w / 2 - 26, base - 128), (w / 2 + 26, base - 128), (w / 2 + 26, base - 92),
+                        (w / 2 - 26, base - 92)]), hexc("#b8a02c"), 0.9)
+        L.paint(L.poly([(w / 2 - 4, base - 122), (w / 2 + 10, base - 110), (w / 2 + 2, base - 110),
+                        (w / 2 + 6, base - 98), (w / 2 - 8, base - 112), (w / 2, base - 112)]),
+                hexc("#141414"), 0.9)
+        L.snow_cap(w / 2 - 28, w / 2 + 28, base - 126, 5, 553, droop=0.2)
+    else:
+        # 剪断的铁丝垂下来 + 一头立柱歪了
+        for k, yy in enumerate((base - 140, base - 108, base - 76)):
+            L.paint(L.line([(18, yy), (60 + k * 10, yy + 26 + k * 8)], 1.6), hexc("#8d959b"), 0.9)
+            L.paint(L.line([(w - 18, yy), (w - 66 - k * 8, yy + 20 + k * 10)], 1.6), hexc("#8d959b"), 0.9)
+        L.paint(L.line([(w - 22, base - 150), (w - 40, base - 40)], 9), hexc("#6a6f74"))
+        L.snow_cap(w - 52, w - 26, base - 44, 6, 554, droop=0.2)
+    L.snow_cap(0, w, base - 2, 9, 555, droop=0.0)
+    return L.finish(), (w / 2, base)
+
+
 ALL = {
     "PRP_Crate_Wood_Stack": crate_stack,
     "PRP_SupplyCrates_Military": supply_crates,
@@ -884,6 +1048,11 @@ ALL = {
     "PRP_BrakeVan_Dead": brake_van,
     "PRP_SwitchStand": switch_stand,
     "PRP_DispatchBoard_Tin": dispatch_board,
+    "PRP_Pine_Snow": pine_snow,
+    "PRP_ColdStore_Chest": cold_chest,
+    "PRP_Forklift_Parked": forklift,
+    "PRP_Incinerator_Feed": incinerator_feed,
 }
 FENCES = {"a": "PRP_Fence_ChainLink_A", "b": "PRP_Fence_ChainLink_B", "torn": "PRP_Fence_ChainLink_Torn",
-          "torn_l": "PRP_Fence_ChainLink_TornL"}
+          "torn_l": "PRP_Fence_ChainLink_TornL",
+          "elec": "PRP_Fence_Electric_A", "elec_cut": "PRP_Fence_Electric_Cut"}

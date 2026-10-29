@@ -79,6 +79,11 @@ ITEMS, CATS, LOCS_INFO = _campaign_tables()
 CONT_TYPES = CATS | {"corpse"}          # corpse 走 CORPSE_CATS 兜底（冻尸）
 
 
+def warm_keys(spec) -> list:
+    """关卡里的回温点：火堆 + 焚化炉口（night_warm 组，规格与场景两边都要对得上）。"""
+    return [k for k in spec.LIGHTS if k.startswith("brazier") or k == "furnace"]
+
+
 def check_spec(name: str) -> dict:
     spec = levels.load(name)
     M = spec.META
@@ -86,7 +91,7 @@ def check_spec(name: str) -> dict:
         ok(k in M, f"{name}: META 缺字段 {k}")
     ok(M["id"] == name, f"{name}: META.id != 文件名")
     ok(M["prize"] in ITEMS, f"{name}: prize '{M['prize']}' 不在 CampaignData.ITEMS")
-    ok(M["facade"] in ("khrushchyovka", "depot"), f"{name}: 未知立面种类 {M['facade']}")
+    ok(M["facade"] in ("khrushchyovka", "depot", "manor"), f"{name}: 未知立面种类 {M['facade']}")
     W, H = spec.W, spec.H
     fy = spec.FENCE_Y
 
@@ -140,8 +145,8 @@ def check_spec(name: str) -> dict:
                            open(os.path.join(PROJ, "scripts", "CampaignData.gd"),
                                 encoding="utf-8").read(), re.S).group(1))         if name in LOCS_INFO else 1.0
     need = 2 if night_s * cold >= 230.0 else 1
-    warm = [k for k in spec.LIGHTS if k.startswith("brazier")]
-    ok(len(warm) >= need, f"{name}: 夜长 {night_s:.0f}s × cold {cold} 只有 {len(warm)} 个火堆（要 ≥{need}）")
+    warm = warm_keys(spec)
+    ok(len(warm) >= need, f"{name}: 夜长 {night_s:.0f}s × cold {cold} 只有 {len(warm)} 个回温点（要 ≥{need}）")
     return spec
 
 
@@ -205,7 +210,7 @@ def check_scene(name: str, spec, man) -> None:
     ok(n_cont == want_cont, f"{name}: 容器 {n_cont} != 规格 {want_cont}")
     ok(len(groups.get("night_slush", [])) == len(spec.SLUSH),
        f"{name}: 冻雪泥 {len(groups.get('night_slush', []))} != 规格 {len(spec.SLUSH)}")
-    warm = len([k for k in spec.LIGHTS if k.startswith("brazier")])
+    warm = len(warm_keys(spec))
     ok(len(groups.get("night_warm", [])) == warm, f"{name}: 火堆灯 {len(groups.get('night_warm', []))} != {warm}")
     ok(len(groups.get("night_searchlight", [])) == (1 if spec.SEARCHLIGHT else 0),
        f"{name}: 探照灯数量不对")

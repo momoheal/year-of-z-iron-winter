@@ -221,7 +221,9 @@ for p in LY.PROPS:
 fence = S.node("Fence", "Node2D", "World", y_sort_enabled="true")
 for x0, kind in LY.FENCE_SEGMENTS:
     key = {"a": "PRP_Fence_ChainLink_A", "b": "PRP_Fence_ChainLink_B", "torn": "PRP_Fence_ChainLink_Torn",
-           "torn_l": "PRP_Fence_ChainLink_TornL"}[kind]
+           "torn_l": "PRP_Fence_ChainLink_TornL",
+           # manor：带电的高墙（elec_cut = 被剪开垂丝的那一格）
+           "elec": "PRP_Fence_Electric_A", "elec_cut": "PRP_Fence_Electric_Cut"}[kind]
     seg = S.node(f"Seg_{x0:g}".replace(".", "_"), "Node2D", fence, position=v2(px(x0, LY.FENCE_Y)))
     sprite(seg, key)
 fl = S.node("FenceLine", "StaticBody2D", "World", position=v2((0, round(LY.FENCE_Y * GY, 2))),
@@ -288,6 +290,26 @@ def _rig_brazier(key):
                 position=v2((bx, by - 6)), script=SCRIPT("NightFlicker"), mode='"fire"',
                 metadata__radius="2.6")
     light_pair(br, "VFX_Light_Radial", col(1, 0.62, 0.32), 1.55, 1.25, 1.5, shadow_mask=3, obj_scale=1.3)
+
+
+def _rig_furnace(key):
+    """2000℃ 焚化炉口：第三个回温点，也是全图最亮最烫的一块光（比火堆大、颜色偏白）。"""
+    if key not in LY.LIGHTS:
+        return
+    fx, fy = px(*LY.LIGHTS[key])
+    fu = S.node("Furnace", "Node2D", lights, groups=["night_warm"], position=v2((fx, fy)),
+                script=SCRIPT("NightFlicker"), mode='"fire"', strength="1.4", metadata__radius="4.2")
+    light_pair(fu, "VFX_Light_Radial", col(1, 0.72, 0.42), 1.9, 1.5, 2.6, shadow_mask=3, obj_scale=1.5)
+
+
+def _rig_catwalk():
+    """二楼行政监控钢廊：一排白灯 + 灯罩漏下来的冷光（从头顶压下来，不是回温点）。"""
+    if "catwalk" not in LY.LIGHTS:
+        return
+    cx, cy = px(*LY.LIGHTS["catwalk"])
+    cw = S.node("Catwalk", "Node2D", lights, position=v2((cx, cy)),
+                script=SCRIPT("NightFlicker"), mode='"steady"', strength="0.9")
+    light_pair(cw, "VFX_Light_Radial", col(0.78, 0.86, 1.0), 1.1, 0.9, 2.0, shadow_mask=3)
 
 
 def _rig_lamp(key):
@@ -372,6 +394,10 @@ def _emit_rig(entry):
         _rig_brazier(entry)
     elif entry.startswith("lamp_"):
         _rig_lamp(entry)
+    elif entry == "furnace":
+        _rig_furnace(entry)
+    elif entry == "catwalk":
+        _rig_catwalk()
     elif entry == "terminal":
         _rig_terminal()
     elif entry == "vent":

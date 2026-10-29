@@ -201,15 +201,15 @@ func _read_level_meta() -> void:
 	objective_zh = String(get_meta("objective_zh", objective_zh))
 	extract_zh = String(get_meta("extract_zh", extract_zh))
 	prize = String(get_meta("prize", prize))
-	var raw := String(get_meta("rail_y", ""))
+	# rail_y 元数据缺失 → 用兜底（yard）；写成空串 → 这张图没有铁轨（manor）
 	rail_y = []
-	if raw.strip_edges() == "":
-		rail_y = DEFAULT_RAIL_Y.duplicate()
-	else:
-		for part in raw.split(","):
+	if has_meta("rail_y"):
+		for part in String(get_meta("rail_y", "")).split(","):
 			var v := part.strip_edges()
 			if v != "":
 				rail_y.append(float(v))
+	else:
+		rail_y = DEFAULT_RAIL_Y.duplicate()
 
 
 ## P2.5：环境层交给 NightSfx（风雪随 cfg.cold 变强、天亮退去），清杀兵挂上面具呼吸循环。

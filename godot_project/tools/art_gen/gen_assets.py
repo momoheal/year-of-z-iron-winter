@@ -98,11 +98,13 @@ def build_props(man, only=None):
             continue
         img, piv = fn()
         _put(man, name, _path("30_props", name + ".png"), img, piv)
-    if only:
-        return
     for kind, name in gen_props.FENCES.items():
+        if only is not None and name not in only:
+            continue
         img, piv = gen_props.fence_segment(kind)
         _put(man, name, _path("30_props", name + ".png"), img, piv)
+    if only:
+        return
     sheet, piv = gen_props.flame_sheet()
     _put(man, "VFX_Fire_Brazier_Sheet", _path("50_vfx", "VFX_Fire_Brazier_Sheet.png"), sheet, piv, hframes=6)
 
