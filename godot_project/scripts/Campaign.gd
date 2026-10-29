@@ -57,7 +57,12 @@ var t: float = 0.0
 var shake := 0.0
 
 func _ready() -> void:
-	sim = SimScript.new()
+	# P1: 从夜潜场景回来时，RaidBridge 持有原 CampaignSim（含 stash/day/flags），
+	# 取回复用；否则才开新档。
+	if RaidBridge.active:
+		sim = RaidBridge.take_sim()
+	else:
+		sim = SimScript.new()
 	font = SystemFont.new()
 	font.font_names = PackedStringArray([
 		"Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "SimHei",
@@ -82,6 +87,13 @@ func _on_ui_sfx(name: String) -> void:
 # ============================================================================
 func _process(delta: float) -> void:
 	if sim == null:
+		return
+	# P1: depart 设了 pending_scene → 切到节点化夜潜场景
+	#     （story_open 时先在本场景播完剧情，下一帧再切）
+	if sim.pending_scene != "":
+		var sc: String = sim.pending_scene
+		sim.pending_scene = ""
+		get_tree().change_scene_to_file(sc)
 		return
 	t += delta
 	if sfx != null:

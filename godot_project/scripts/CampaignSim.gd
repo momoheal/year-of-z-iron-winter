@@ -35,6 +35,7 @@ var lang: String = "zh"
 var phase: String = "title"      # title | base | map | raid | report | ending
 var selected_loc: String = ""
 var raid = null                  # RaidSim 实例（仅 raid 阶段非空）
+var pending_scene: String = ""   # depart 后待切到的节点化场景（空=灰盒 raid 原地跑）
 var story_open := false
 var story_id: String = ""
 var story_result: Dictionary = {}
@@ -345,6 +346,15 @@ func depart(L: Dictionary) -> bool:
 	if sid != "" and not bool(story_done.get(sid, false)):
 		story_id = sid
 		story_open = true
+	# P1: 带 scene 字段的地点 → 常驻 sim 到 RaidBridge，切节点化夜潜场景；
+	#     story_open 时先在 campaign.tscn 播完剧情，下一帧再切（见 Campaign._process）。
+	var sc: String = String(L.get("scene", ""))
+	if sc != "":
+		# RefCounted 脚本不直接解析 autoload 全局名，动态取节点。
+		var bridge := (Engine.get_main_loop() as SceneTree).root.get_node_or_null("RaidBridge")
+		if bridge:
+			bridge.begin(self, cfg)
+		pending_scene = sc
 	return true
 
 # ============================================================================

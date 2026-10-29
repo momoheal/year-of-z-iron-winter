@@ -25,6 +25,7 @@ config/features=PackedStringArray("4.7", "Forward Plus")
 SignalBus="*res://autoload/SignalBus.gd"
 LogbookManager="*res://autoload/LogbookManager.gd"
 AcousticRippleBus="*res://autoload/AcousticRippleBus.gd"
+RaidBridge="*res://autoload/RaidBridge.gd"
 
 [display]
 

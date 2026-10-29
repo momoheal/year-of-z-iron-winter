@@ -24,10 +24,17 @@ const WARMTH_DECAY := 100.0 / 240.0
 const WARMTH_FIRE := 7.0
 const CAN_RANGE := 9.0
 const CAN_NOISE := 9.0
-const BAG_MAX := 8
 const CORPSE_CATS := ["med", "val", "intel"]
 
-var state := "play"            # play | choice | caught | frozen | downed | extracted
+# P1: 是否从战役出发（RaidBridge 持有 sim/cfg）。false = F2 独立灰盒跑。
+var in_campaign := false
+var bag_max := 8
+var night_left := 0.0
+var night_max := 0.0
+var abort_pending := false
+var abort_timer := 0.0
+
+var state := "play"            # play | choice | caught | frozen | downed | extracted | dawn | abort
 var pack: Array[String] = []
 var warmth := 100.0
 var hp := 100.0
@@ -91,6 +98,24 @@ func _ready() -> void:
 		"PingFang SC", "Segoe UI", "Arial"])
 	sfx = SfxScript.new()
 	add_child(sfx)
+	# P1: 战役出发 → 读 cfg 初始化背包 / 携带物 / 天亮倒计时；F2 独立跑用灰盒默认。
+	in_campaign = RaidBridge.active
+	var cfg: Dictionary = RaidBridge.cfg if in_campaign else {}
+	if in_campaign:
+		bag_max = int(cfg.get("pack_max", 8))
+		var ld: Dictionary = cfg.get("load", {})
+		for i in int(ld.get("water", 0)):
+			pack.append("water")
+		for i in int(ld.get("asp", 0)):
+			pack.append("asp")
+		for i in int(ld.get("band", 0)):
+			pack.append("band")
+		cans = int(ld.get("can", 0))
+		night_max = float(cfg.get("night", 120.0))
+		night_left = night_max
+	else:
+		pack.append("water")       # F2 出门前灌的热水壶 —— 喂半人退烧要用
+		cans = 3
 	player = $World/Player
 	player.ctl = self
 	for s in get_tree().get_nodes_in_group("night_osk"):
@@ -104,7 +129,6 @@ func _ready() -> void:
 	for h in get_tree().get_nodes_in_group("night_half"):
 		h.ctl = self
 		halfs.append(h)
-	pack.append("water")       # 出门前灌的热水壶 —— 喂半人退烧要用
 	containers = get_tree().get_nodes_in_group("night_container")
 	fade_props = get_tree().get_nodes_in_group("night_fade")
 	for z in get_tree().get_nodes_in_group("night_slush"):
@@ -136,9 +160,18 @@ func _process(delta: float) -> void:
 	t += delta
 	hurt = maxf(0.0, hurt - delta)
 	cam.global_position = player.global_position + Vector2(0, -40)
+	if abort_pending:
+		abort_timer -= delta
+		if abort_timer <= 0.0:
+			abort_pending = false
 	if state == "play":
 		_update_interact(delta)
 		_update_warmth(delta)
+		if in_campaign:
+			night_left -= delta
+			if night_left <= 0.0:
+				night_left = 0.0
+				_end("dawn")
 	_update_fx(delta)
 	_update_fade()
 	_update_post()
@@ -243,7 +276,7 @@ func choose(idx: int) -> bool:
 			conscience += 7.0
 			half_saved += 1
 			h.save()
-			if pack.size() < BAG_MAX:
+			if pack.size() < bag_max:
 				pack.append("intel")
 			spawn_float(top, "他的瞳孔回色了：「……水塔下面，找戴蓝毛线帽的老头……」", Color("#34d399"))
 			sfx.play("beep")
@@ -291,7 +324,7 @@ func _finish_search(c: Node2D) -> void:
 		got.append(String(pool[rng.randi() % pool.size()]))
 	var names: Array[String] = []
 	for id in got:
-		if pack.size() >= BAG_MAX:
+		if pack.size() >= bag_max:
 			spawn_float(c.global_position + Vector2(0, -90), "背包满了 · Bag full", Color("#fbbf24"))
 			break
 		pack.append(id)
@@ -465,8 +498,57 @@ func _end(reason: String) -> void:
 	match reason:
 		"extracted":
 			sfx.play("beep")
-		"frozen", "downed":
+		"dawn":
 			sfx.play("thirst")
+		"abort":
+			sfx.play("thirst")
+		"frozen", "downed", "caught":
+			sfx.play("thirst")
+
+# P1: 把夜潜结果填进 RaidSim 数据容器，走 CampaignSim.finish_raid 统一结算，
+#     再切回 campaign.tscn（_ready 会 take_sim 取回原 sim）。
+func _return_to_campaign(reason: String) -> void:
+	if not in_campaign:
+		return
+	var sim = RaidBridge.sim
+	if sim == null or sim.raid == null:
+		RaidBridge.clear()
+		get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+		return
+	var R = sim.raid
+	R.pack = pack.duplicate()
+	R.player.hp = hp
+	R.player.warmth = warmth
+	R.load = {}            # 携带消耗品已并入 pack，finish_raid 不再重复归还
+	R.half_saved = half_saved
+	R.killed = borrowed    # 借刀杀人清掉的狂暴者
+	R.looted = _count_searched()
+	R.total_cont = containers.size()
+	R.events = []
+	if not pack.is_empty():
+		R.add_event("good", "带回 %d 件物资" % pack.size(), "Brought back %d items" % pack.size())
+	if half_saved > 0:
+		R.add_event("good", "救下半人 %d 名" % half_saved, "Saved %d half-humans" % half_saved)
+	if borrowed > 0:
+		R.add_event("knife", "借刀杀人 ×%d" % borrowed, "Borrowed knife ×%d" % borrowed)
+	if half_lost > 0:
+		R.add_event("witness", "清杀队误杀半人 %d 名" % half_lost, "OSK gunned down %d half-humans" % half_lost)
+	if reason == "dawn":
+		R.add_event("note", "天亮前没回到撤离点：只带得回一半。", "Caught by dawn: only half the haul comes home.")
+	# 道德账回写
+	if conscience != 0.0:
+		sim.raid_add_conscience(conscience)
+	if tally > 0:
+		sim.raid_add_tally(tally, "夜潜货场：亲手灭口", "Yard: mercy kill")
+	sim.finish_raid(reason)
+	get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+
+func _count_searched() -> int:
+	var n := 0
+	for c in containers:
+		if bool(c.get_meta("searched", false)):
+			n += 1
+	return n
 
 # ============================================================================
 # 输入
@@ -499,12 +581,32 @@ func _unhandled_input(event: InputEvent) -> void:
 				sfx.set_muted(muted)
 				AudioServer.set_bus_mute(0, muted)
 			KEY_R:
-				get_tree().reload_current_scene()
+				# 战役模式禁止重来（不能刷物资）；F2 独立跑可重开
+				if not in_campaign:
+					get_tree().reload_current_scene()
 			KEY_ESCAPE:
-				get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+				if state == "play":
+					if in_campaign:
+						if abort_pending:
+							abort_pending = false
+							_end("abort")
+						else:
+							abort_pending = true
+							abort_timer = 2.5
+					else:
+						get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+				elif state != "choice":
+					# 结束画面：战役回写结算，F2 重开
+					if in_campaign:
+						_return_to_campaign(state)
+					else:
+						get_tree().reload_current_scene()
 			KEY_ENTER, KEY_KP_ENTER:
 				if state != "play":
-					get_tree().reload_current_scene()
+					if in_campaign:
+						_return_to_campaign(state)
+					else:
+						get_tree().reload_current_scene()
 
 func _throw_can(target: Vector2) -> void:
 	if cans <= 0:
@@ -706,35 +808,48 @@ func _refresh_hud() -> void:
 		if r.state in ["chase", "windup", "lunge"]:
 			chasing += 1
 	var threat := (" · 被 %d 只狂暴者盯上" % chasing) if chasing > 0 else ""
-	_lbl_status.text = "%s · %s%s · 空罐头 ×%d · 借刀 ×%d · 良知 %+d · 卌 %d%s%s" % [
-		stance, light, lit, cans, borrowed, int(conscience), tally, ground, threat]
+	var dawn_str := ""
+	if in_campaign and state == "play":
+		dawn_str = " · 天亮 %ds" % maxi(0, int(ceil(night_left)))
+	_lbl_status.text = "%s · %s%s · 空罐头 ×%d · 借刀 ×%d · 良知 %+d · 卌 %d%s%s%s" % [
+		stance, light, lit, cans, borrowed, int(conscience), tally, ground, threat, dawn_str]
 	var names: Array[String] = []
 	for id in pack:
 		names.append(item_name(id))
-	_lbl_bag.text = "背包 %d/%d：%s" % [pack.size(), BAG_MAX, "、".join(names) if not names.is_empty() else "—"]
+	_lbl_bag.text = "背包 %d/%d：%s" % [pack.size(), bag_max, "、".join(names) if not names.is_empty() else "—"]
 	var has_dial := pack.has("dial")
-	if has_dial:
-		_lbl_hint.text = "透析液到手 —— 回锅炉房通风口长按 E 撤离   ·   R 重来  Esc 返回战役"
+	if abort_pending:
+		_lbl_hint.text = "再按 Esc 放弃这次夜潜？（背包清空，活着回 602 室）"
+	elif has_dial:
+		_lbl_hint.text = "透析液到手 —— 回锅炉房通风口长按 E 撤离" + ("   ·   R 重来  Esc 返回战役" if not in_campaign else "")
 	else:
 		_lbl_hint.text = "目标：三号车厢的透析液（门口有狂暴者）· 用 G 罐头把它引进清杀队的光锥   ·   Ctrl 蹲  Shift 跑  E 搜刮  F 手电"
+	var again_hint := "R / Enter 重来" if not in_campaign else "Enter 回 602 室"
 	match state:
 		"play", "choice":
 			_lbl_center.text = ""
 		"caught":
-			_lbl_center.text = "被清杀队发现\nОСК открыл огонь\n\nR / Enter 重来"
+			_lbl_center.text = "被清杀队发现\nОСК открыл огонь\n\n%s" % again_hint
 			_lbl_center.add_theme_color_override("font_color", Color("#fca5a5"))
 		"downed":
-			_lbl_center.text = "被狂暴者扑倒了\n高烧的身体烫得像炉子。\n\nR / Enter 重来"
+			_lbl_center.text = "被狂暴者扑倒了\n高烧的身体烫得像炉子。\n\n%s" % again_hint
 			_lbl_center.add_theme_color_override("font_color", Color("#fca5a5"))
 		"frozen":
-			_lbl_center.text = "体温耗尽，倒在了雪里\n\nR / Enter 重来"
+			_lbl_center.text = "体温耗尽，倒在了雪里\n\n%s" % again_hint
 			_lbl_center.add_theme_color_override("font_color", Color("#bae6fd"))
+		"dawn":
+			_lbl_center.text = "天亮了\n你连滚带爬回到撤离点——只带得回一半。\n\n%s" % again_hint
+			_lbl_center.add_theme_color_override("font_color", Color("#bae6fd"))
+		"abort":
+			_lbl_center.text = "你放弃了这次夜潜\n背包里的东西全留在了雪里。\n\n%s" % again_hint
+			_lbl_center.add_theme_color_override("font_color", Color("#f59e0b"))
 		"extracted":
 			var names2: Array[String] = []
 			for id in pack:
 				names2.append(item_name(id))
 			var line := "妈妈今晚有透析液了。" if has_dial else "空着手回去，妈妈还在等透析液。"
 			var moral := "良知 %+d · 救下半人 %d · 误杀 %d · 卌 %d" % [int(conscience), half_saved, half_lost, tally]
-			_lbl_center.text = "撤离成功 · %d 件物资 · 借刀 ×%d\n%s\n%s\n%s\n\nR / Enter 再来一夜   Esc 返回战役" % [
-				pack.size(), borrowed, "、".join(names2), line, moral]
+			_lbl_center.text = "撤离成功 · %d 件物资 · 借刀 ×%d\n%s\n%s\n%s\n\n%s" % [
+				pack.size(), borrowed, "、".join(names2), line, moral,
+				"R / Enter 再来一夜   Esc 返回战役" if not in_campaign else "Enter 回 602 室 · 结算"]
 			_lbl_center.add_theme_color_override("font_color", Color("#bbf7d0"))
