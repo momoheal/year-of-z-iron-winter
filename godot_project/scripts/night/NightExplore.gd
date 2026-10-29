@@ -190,6 +190,20 @@ func _ready() -> void:
 	cam.reset_smoothing()
 	_wire_audio()
 	_build_hud()
+	_init_post_defaults()
+
+
+## 显式初始化后处理 shader 参数。未 set 过的 ShaderMaterial，get_shader_parameter
+## 返回 null（即使 shader 里有默认值），这会让刚 _ready 后的断言 / float() 转换失败。
+## 只设 shader 参数，不碰 sfx / 夜色 / 雪（那些等第一帧 _update_post 自然驱动）。
+func _init_post_defaults() -> void:
+	var mat := post.material as ShaderMaterial
+	if mat == null:
+		return
+	mat.set_shader_parameter("frost", clampf((35.0 - warmth) / 35.0, 0.0, 1.0))
+	mat.set_shader_parameter("alarm", 0.0)
+	mat.set_shader_parameter("dawn", 0.0)
+	mat.set_shader_parameter("cam_offset", cam.get_screen_center_position())
 
 
 ## 关卡身份：build_scene.py 把这些写在根节点的 metadata 上，多张图共用同一个脚本。

@@ -38,8 +38,12 @@ func _scene() -> Node:
 	return s
 
 func _physics(n: int) -> void:
+	# 游戏逻辑（update_dawn / _update_post / _apply_shake）在 _process（idle）里。
+	# headless 下连续 await physics_frame 会在一个 idle 周期内追赶多个物理帧，
+	# 可能 0 个 idle frame，故每个物理帧后显式等一个 idle frame。
 	for i in n:
 		await physics_frame
+		await process_frame
 
 func _release() -> void:
 	for a in ["move_left", "move_right", "move_up", "move_down", "crouch", "sprint", "interact"]:
@@ -182,14 +186,22 @@ func _run() -> void:
 	s = _scene()
 	await _physics(3)
 	_freeze_rabids(s)
+	# 冻结的敌人节点仍在场景里，清杀兵的 _engage_rabids 会瞄准它们并提前 return，
+	# 导致看不到玩家。这里把它们移到场景外，确保只测「手电发现玩家」这一条。
+	for r in s.rabids + s.halfs:
+		r.global_position = Vector2(-5000, -5000)
 	var rail = s.soldiers[0]
 	for o in s.soldiers:
 		if String(o.name) == "OSK_Rail":
 			rail = o
 	rail.facing = 0.0
 	rail.state = "pause"
+	# 让清杀兵确定性地停在原地（pause 会扫视，故给足 timer 并把扫视中心锁定朝右），
+	# 否则 timer=0 会立即转 patrol 走开，测试就依赖 headless 追赶时序而不稳定。
+	rail.set("_look_base", 0.0)
+	rail.set("_timer", 30.0)
 	s.player.global_position = rail.global_position + Vector2(4.0 * PPM, 0)
-	await _physics(240)
+	await _physics(300)
 	_assert(s.state == "caught", "OSK flashlight catches a standing player", s.state)
 
 	# --- 11. 三方潜行：狂暴者 ---
@@ -248,6 +260,7 @@ func _run() -> void:
 	var tower = _find(s.rabids, "Rabid_Tower")
 	for i in 200:
 		await physics_frame
+		await process_frame
 		if not bait.is_alive():
 			break
 	_assert(not bait.is_alive(), "OSK shoots a rabid in its flashlight cone")
@@ -433,9 +446,14 @@ func _run() -> void:
 		"%f vs %f" % [s.shake, near_shake])
 
 	# --- 16. 战役口径：cfg 读取 / cold / 静音跟随（P1.4 · P1.5 · P2.5）---
-	RaidBridge.begin(null, {"pack_max": 11, "day": 3, "cold": 1.5, "night": 216.0,
+	# SceneTree 脚本不直接解析 autoload 全局名，动态取节点。
+	var bridge := root.get_node_or_null("RaidBridge")
+	bridge.begin(null, {"pack_max": 11, "day": 3, "cold": 1.5, "night": 216.0,
 		"sound_on": false, "load": {"water": 1, "asp": 2, "band": 1, "can": 2}})
 	s = _scene()
+	# 初始夜长预算在 _ready 里设置、跑帧前精确等于 cfg.night（倒计时还没开始）。
+	_assert(is_equal_approx(s.night_max, 216.0) and is_equal_approx(s.night_left, 216.0),
+		"night budget from cfg.night", "%f/%f" % [s.night_max, s.night_left])
 	await _physics(3)
 	_assert(s.in_campaign, "RaidBridge.active puts the slice into campaign mode")
 	_assert(s.bag_max == 11, "pack cap from cfg.pack_max", str(s.bag_max))
@@ -443,8 +461,6 @@ func _run() -> void:
 	_assert(s.cans == 2, "tin cans from cfg.load.can", str(s.cans))
 	_assert(s.pack.count("asp") == 2 and s.pack.count("water") == 1 and s.pack.count("band") == 1,
 		"the loadout enters the pack", str(s.pack))
-	_assert(is_equal_approx(s.night_max, 216.0) and is_equal_approx(s.night_left, 216.0),
-		"night budget from cfg.night", "%f/%f" % [s.night_max, s.night_left])
 	_assert(is_equal_approx(s.cold, 1.5), "cold factor from cfg.cold", str(s.cold))
 	_assert(is_equal_approx(s.sfx.cold, 1.5), "NightSfx gets the same cold factor (wind gain)")
 	_assert(s.muted and AudioServer.is_bus_mute(0), "the campaign's mute follows you into the yard")
@@ -453,7 +469,7 @@ func _run() -> void:
 	var wc: float = s.warmth
 	await _physics(60)
 	var cold_loss: float = wc - s.warmth
-	RaidBridge.clear()
+	root.get_node("RaidBridge").clear()
 	AudioServer.set_bus_mute(0, false)
 	s = _scene()
 	await _physics(3)
