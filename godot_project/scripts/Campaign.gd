@@ -150,6 +150,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if k == KEY_F2:
 			get_tree().change_scene_to_file("res://scenes/night_explore.tscn")
 			return
+		if k == KEY_F3:
+			# 开发 / QA 直开第二张节点化地图（战役里要等 lana_car3 解锁）
+			get_tree().change_scene_to_file("res://scenes/night_marshalling.tscn")
+			return
 		if k == KEY_M:
 			hud.toggle_sound()         # 顶栏那个「音效：开 (M)」按钮终于对得起自己的提示
 			return

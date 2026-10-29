@@ -1,7 +1,12 @@
-"""从 layout.py + art/night_yard_manifest.json 生成 res://scenes/night_explore.tscn。
+"""从关卡规格（levels/<id>.py）+ art/night_<id>_manifest.json 生成 scenes/night_<id>.tscn。
+
+    python build_scene.py                     # yard → res://scenes/night_explore.tscn
+    python build_scene.py --level marshalling # → res://scenes/night_marshalling.tscn
 
 这是一次性「搭场景」脚本：生成后可以直接在 Godot 编辑器里拖动、调灯、改路线。
 重新运行会覆盖 .tscn（编辑器里的手工修改会丢），所以改完布局后再跑，或从此在编辑器里维护。
+yard 的输出文件名沿用 night_explore.tscn（测试 / F2 / 文档都指着它），别的新关卡一律
+night_<id>.tscn。场景根节点带 metadata（level_id / level_zh / …），NightExplore 读它。
 """
 from __future__ import annotations
 
@@ -11,14 +16,29 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+
+
+def _argv_level() -> str:
+    for i, a in enumerate(sys.argv):
+        if a == "--level" and i + 1 < len(sys.argv):
+            return sys.argv[i + 1]
+        if a.startswith("--level="):
+            return a.split("=", 1)[1]
+    return os.environ.get("NOVORSK_LEVEL") or "yard"
+
+
+LEVEL = _argv_level()          # 必须在 import layout 之前定（layout 导入时就灌数据）
+os.environ["NOVORSK_LEVEL"] = LEVEL
 import layout as LY  # noqa: E402
+import gen_env  # noqa: E402
 
 PROJ = os.path.abspath(os.path.join(HERE, "..", ".."))
-OUT = os.path.join(PROJ, "scenes", "night_explore.tscn")
+OUT = os.path.join(PROJ, "scenes", os.path.basename(LY.META["scene"]))
+MANIFEST = os.path.join(PROJ, "art", LY.META["manifest"])
 PPM, SQ = 64.0, 0.62
 GY = PPM * SQ
 
-with open(os.path.join(PROJ, "art", "night_yard_manifest.json"), encoding="utf-8") as f:
+with open(MANIFEST, encoding="utf-8") as f:
     MAN = json.load(f)
 
 
@@ -136,27 +156,32 @@ def character(parent, name, sheet_key, script, layer, mask, groups=None, **extra
 # ===========================================================================
 # 根 + 夜色
 # ===========================================================================
-S.node("NightExplore", "Node2D", None, texture_filter="2", script=SCRIPT("NightExplore"))
+S.node("NightExplore", "Node2D", None, texture_filter="2", script=SCRIPT("NightExplore"),
+       metadata__level_id=f'"{LY.META["id"]}"', metadata__level_zh=f'"{LY.META["zh"]}"',
+       metadata__level_en=f'"{LY.META["en"]}"', metadata__objective_zh=f'"{LY.META["objective_zh"]}"',
+       metadata__extract_zh=f'"{LY.META["extract_zh"]}"', metadata__prize=f'"{LY.META["prize"]}"',
+       metadata__rail_y=f'"{",".join(str(v) for v in LY.TRACKS)}"')
 S.node("CanvasModulate", "CanvasModulate", ".", color=col(0.27, 0.32, 0.45))
 S.node("Ground", "Sprite2D", ".", z_index="-1", light_mask="2", centered="false",
-       texture=S.tex("TIL_Ground_NightYard_Baked"))
+       texture=S.tex(gen_env.ground_key()))
 # 血迹等地面贴花（运行时往里加），画在地面之上、所有立起的精灵之下
 S.node("Decals", "Node2D", ".", z_index="-1")
 S.node("World", "Node2D", ".", y_sort_enabled="true")
 
-# ---- 立面（北侧赫鲁晓夫楼）----
+# ---- 立面（北侧那堵墙：khrushchyovka 赫鲁晓夫楼 / depot 机车库+调度塔）----
 base_y = LY.FACADE_BASE_Y * GY
+FH = gen_env.facade_h()
+FAC_KEY, GLOW_KEY = gen_env.facade_keys()
 fac = S.node("Facade", "StaticBody2D", "World", position=v2((0, round(base_y, 2))), collision_layer="1",
              collision_mask="0")
-S.node("Sprite", "Sprite2D", fac, texture=S.tex("TIL_Facade_Khrushchyovka_A"), centered="false",
-       offset=v2((0, -600)))
+S.node("Sprite", "Sprite2D", fac, texture=S.tex(FAC_KEY), centered="false",
+       offset=v2((0, -FH)))
 S.node("Shape", "CollisionShape2D", fac, position=v2((LY.W * PPM / 2, -150)),
        shape=rect_shape(LY.W * PPM, 300))
 
 # ---- 道具 ----
 S.node("Props", "Node2D", "World", y_sort_enabled="true")
 LAYER_BITS = {0: 0, 1: 1, 2: 2, 3: 4}
-FADE = {"Boxcar03", "WaterTower", "Watchtower", "CarWreck"}
 for p in LY.PROPS:
     groups = []
     meta = {}
@@ -167,7 +192,7 @@ for p in LY.PROPS:
             meta["metadata/guaranteed"] = f'"{p["guaranteed"]}"'
         if p.get("reach"):
             meta["metadata/interact_offset"] = v2((p["reach"][0] * PPM, round(p["reach"][1] * GY, 2)))
-    if p["id"] in FADE:
+    if p.get("fade"):
         groups.append("night_fade")
     n = S.node(p["id"], "StaticBody2D", "World/Props", groups=groups or None, position=v2(px(*p["pos"])),
                collision_layer=str(LAYER_BITS[p["layer"]]), collision_mask="0", **meta)
@@ -175,10 +200,10 @@ for p in LY.PROPS:
     fw, fd = p["fp"][0] * PPM, p["fp"][1] * GY
     if p["layer"]:
         S.node("Shape", "CollisionShape2D", n, position=v2((0, round(-fd / 2, 2))), shape=rect_shape(fw, fd))
-    if p["layer"] in (1, 2) and p["id"] not in ("Brazier", "LampWest", "LampEast", "SignalPost", "Bench"):
+    if p["layer"] in (1, 2) and p.get("occlude", True):
         S.node("Occluder", "LightOccluder2D", n,
                occluder=occluder(round(-fw / 2, 1), round(-fd, 1), round(fw / 2, 1), 0))
-    if p["id"] == "Brazier":
+    if p.get("fire"):
         S.node("Flame", "Sprite2D", n, texture=S.tex("VFX_Fire_Brazier_Sheet"), hframes="6",
                centered="false", offset=v2((-28, -80)), position=v2((0, -50)), script=SCRIPT("NightAnim"))
         S.node("Embers", "GPUParticles2D", n, position=v2((0, -64)), amount="26", lifetime="1.6",
@@ -241,63 +266,141 @@ for hf in LY.HALFS:
 # 灯光
 # ===========================================================================
 lights = S.node("Lights", "Node2D", ".")
-S.node("FacadeGlow", "PointLight2D", lights, texture=S.tex("VFX_Facade_WindowGlow"),
-       position=v2((W_PX / 2, round(base_y - 600 + MAN["VFX_Facade_WindowGlow"]["size"][1] / 2, 2))),
-       energy="1.15", range_item_cull_mask="3")
+FIRE_POS = [None]        # 第一个火堆的世界像素（火苗环境音要用）
+STEAM_PIPE = next((q for q in LY.PROPS if q["id"] == "SteamPipe"), None)
+VALVE = None if STEAM_PIPE is None else (
+    (STEAM_PIPE["pos"][0] - STEAM_PIPE["fp"][0] / 2 + 5.0) * PPM, STEAM_PIPE["pos"][1] * GY - 100)
 
-bx, by = px(*LY.LIGHTS["brazier"])
-br = S.node("Brazier", "Node2D", lights, groups=["night_warm"], position=v2((bx, by - 6)),
-            script=SCRIPT("NightFlicker"), mode='"fire"', metadata__radius="2.6")
-light_pair(br, "VFX_Light_Radial", col(1, 0.62, 0.32), 1.55, 1.25, 1.5, shadow_mask=3, obj_scale=1.3)
 
-for key, sd in (("lamp_west", 3), ("lamp_east", 7)):
+def _rig_glow():
+    S.node("FacadeGlow", "PointLight2D", lights, texture=S.tex(GLOW_KEY),
+           position=v2((W_PX / 2, round(base_y - FH + MAN[GLOW_KEY]["size"][1] / 2, 2))),
+           energy="1.15", range_item_cull_mask="3")
+
+
+def _rig_brazier(key):
+    if key not in LY.LIGHTS:
+        return
+    bx, by = px(*LY.LIGHTS[key])
+    if FIRE_POS[0] is None:
+        FIRE_POS[0] = (bx, by)
+    br = S.node(key.title().replace("_", ""), "Node2D", lights, groups=["night_warm"],
+                position=v2((bx, by - 6)), script=SCRIPT("NightFlicker"), mode='"fire"',
+                metadata__radius="2.6")
+    light_pair(br, "VFX_Light_Radial", col(1, 0.62, 0.32), 1.55, 1.25, 1.5, shadow_mask=3, obj_scale=1.3)
+
+
+def _rig_lamp(key):
+    if key not in LY.LIGHTS:
+        return
     lx, ly = px(*LY.LIGHTS[key])
     lr = S.node(key.title().replace("_", ""), "Node2D", lights, position=v2((lx + 64, ly)),
-                script=SCRIPT("NightFlicker"), mode='"sodium"', flicker_seed=str(sd))
+                script=SCRIPT("NightFlicker"), mode='"sodium"',
+                flicker_seed=str(LY.LIGHT_SEEDS.get(key, 3)))
     light_pair(lr, "VFX_Light_Radial", col(1, 0.7, 0.4), 1.2, 0.85, 1.35, shadow_mask=3)
     S.node("Head", "PointLight2D", lr, position=v2((6, -347)), texture=S.tex("VFX_Light_Radial"),
            texture_scale="0.22", color=col(1, 0.8, 0.5), energy="2.2", range_item_cull_mask="1")
 
-tx = LY.FACADE_FEATURES["terminal_x"] * PPM
-crt = S.node("Terminal", "Node2D", lights, position=v2((tx, round(base_y - 110, 2))),
-             script=SCRIPT("NightFlicker"), mode='"crt"')
-S.node("Light", "PointLight2D", crt, texture=S.tex("VFX_Light_Radial"), texture_scale="0.45",
-       color=col(0.29, 0.87, 0.5), energy="1.1", range_item_cull_mask="3")
-vx = LY.FACADE_FEATURES["vent_x"] * PPM
-vent = S.node("BoilerVent", "Node2D", lights, position=v2((vx, round(base_y - 18, 2))),
-              script=SCRIPT("NightFlicker"), mode='"fire"', strength="0.6")
-S.node("Light", "PointLight2D", vent, texture=S.tex("VFX_Light_Radial"), texture_scale="0.5",
-       color=col(1, 0.55, 0.25), energy="1.0", range_item_cull_mask="3")
-sx, sy = px(*LY.LIGHTS["signal"])
-sig = S.node("Signal", "Node2D", lights, position=v2((sx, sy)), script=SCRIPT("NightFlicker"), mode='"steady"')
-S.node("Lens", "PointLight2D", sig, position=v2((0, -196)), texture=S.tex("VFX_Light_Radial"),
-       texture_scale="0.14", color=col(1, 0.28, 0.2), energy="2.4", range_item_cull_mask="1")
-S.node("Pool", "PointLight2D", sig, texture=S.tex("VFX_Light_Radial"), texture_scale="0.5",
-       color=col(1, 0.25, 0.18), energy="0.6", range_item_cull_mask="2")
 
-sl = LY.SEARCHLIGHT
-slp = px(*sl["pos"])
-srch = S.node("Searchlight", "Node2D", ".", groups=["night_searchlight"], position=v2(slp),
-              script=SCRIPT("NightSearchlight"), sweep_min_deg=f'{sl["sweep"][0]:g}',
-              sweep_max_deg=f'{sl["sweep"][1]:g}', period=f'{sl["period"]:g}', range_m=f'{sl["range"]:g}',
-              half_deg=f'{sl["half"]:g}')
-rig = S.node("Rig", "Node2D", srch, scale=v2((1, SQ)))
-piv = S.node("Pivot", "Node2D", rig)
-sl_sc = round(sl["range"] * PPM / 1024, 4)
-light_pair(piv, "VFX_Searchlight_Cone", col(1, 0.94, 0.74), 1.9, 1.2, sl_sc, offset=(round(512 * sl_sc, 2), 0))
-S.node("LampHead", "PointLight2D", srch, position=v2((-33, -399)), texture=S.tex("VFX_Light_Radial"),
-       texture_scale="0.25", color=col(1, 0.95, 0.8), energy="2.5", range_item_cull_mask="1")
+def _rig_terminal():
+    if "terminal_x" not in LY.FACADE_FEATURES:
+        return
+    tx = LY.FACADE_FEATURES["terminal_x"] * PPM
+    crt = S.node("Terminal", "Node2D", lights, position=v2((tx, round(base_y - 110, 2))),
+                 script=SCRIPT("NightFlicker"), mode='"crt"')
+    S.node("Light", "PointLight2D", crt, texture=S.tex("VFX_Light_Radial"), texture_scale="0.45",
+           color=col(0.29, 0.87, 0.5), energy="1.1", range_item_cull_mask="3")
 
-# ---- 蒸汽阀 ----
-pipe = next(p for p in LY.PROPS if p["id"] == "SteamPipe")
-valve = (pipe["pos"][0] - pipe["fp"][0] / 2 + 5.0) * PPM, pipe["pos"][1] * GY - 100
-S.node("Steam", "GPUParticles2D", ".", position=v2((round(valve[0], 2), round(valve[1], 2))), amount="22",
-       lifetime="2.6", preprocess="3.0", texture=S.tex("VFX_Steam_Puff"),
-       visibility_rect="Rect2(-300, -400, 600, 500)",
-       process_material=S.subres(
-           "ParticleProcessMaterial", particle_flag_disable_z="true", direction="Vector3(0.35, -1, 0)",
-           spread="18.0", initial_velocity_min="24.0", initial_velocity_max="48.0",
-           gravity="Vector3(16, -10, 0)", scale_min="0.5", scale_max="1.6", color=col(0.92, 0.95, 1, 0.32)))
+
+def _rig_vent():
+    if "vent_x" not in LY.FACADE_FEATURES:
+        return
+    vx = LY.FACADE_FEATURES["vent_x"] * PPM
+    vent = S.node("BoilerVent", "Node2D", lights, position=v2((vx, round(base_y - 18, 2))),
+                  script=SCRIPT("NightFlicker"), mode='"fire"', strength="0.6")
+    S.node("Light", "PointLight2D", vent, texture=S.tex("VFX_Light_Radial"), texture_scale="0.5",
+           color=col(1, 0.55, 0.25), energy="1.0", range_item_cull_mask="3")
+
+
+def _rig_signal():
+    if "signal" not in LY.LIGHTS:
+        return
+    sx, sy = px(*LY.LIGHTS["signal"])
+    sig = S.node("Signal", "Node2D", lights, position=v2((sx, sy)), script=SCRIPT("NightFlicker"),
+                 mode='"steady"')
+    S.node("Lens", "PointLight2D", sig, position=v2((0, -196)), texture=S.tex("VFX_Light_Radial"),
+           texture_scale="0.14", color=col(1, 0.28, 0.2), energy="2.4", range_item_cull_mask="1")
+    S.node("Pool", "PointLight2D", sig, texture=S.tex("VFX_Light_Radial"), texture_scale="0.5",
+           color=col(1, 0.25, 0.18), energy="0.6", range_item_cull_mask="2")
+
+
+def _rig_tower():
+    """调度塔的玻璃调度室：CRT 绿光 + 值班台灯，从机车库屋顶后面透出来。"""
+    if "tower_x" not in LY.FACADE_FEATURES:
+        return
+    txp = LY.FACADE_FEATURES["tower_x"] * PPM
+    tw = S.node("Tower", "Node2D", lights, position=v2((txp, round(base_y - 430, 2))),
+                script=SCRIPT("NightFlicker"), mode='"crt"')
+    S.node("CRT", "PointLight2D", tw, texture=S.tex("VFX_Light_Radial"), texture_scale="0.6",
+           color=col(0.29, 0.87, 0.5), energy="1.1", range_item_cull_mask="3")
+    S.node("Desk", "PointLight2D", tw, position=v2((40, 8)), texture=S.tex("VFX_Light_Radial"),
+           texture_scale="0.4", color=col(1, 0.78, 0.48), energy="0.8", range_item_cull_mask="3")
+
+
+def _rig_searchlight():
+    sl = LY.has("SEARCHLIGHT", None)
+    if not sl:
+        return
+    slp = px(*sl["pos"])
+    srch = S.node("Searchlight", "Node2D", ".", groups=["night_searchlight"], position=v2(slp),
+                  script=SCRIPT("NightSearchlight"), sweep_min_deg=f'{sl["sweep"][0]:g}',
+                  sweep_max_deg=f'{sl["sweep"][1]:g}', period=f'{sl["period"]:g}',
+                  range_m=f'{sl["range"]:g}', half_deg=f'{sl["half"]:g}')
+    rg = S.node("Rig", "Node2D", srch, scale=v2((1, SQ)))
+    piv = S.node("Pivot", "Node2D", rg)
+    sl_sc = round(sl["range"] * PPM / 1024, 4)
+    light_pair(piv, "VFX_Searchlight_Cone", col(1, 0.94, 0.74), 1.9, 1.2, sl_sc,
+               offset=(round(512 * sl_sc, 2), 0))
+    S.node("LampHead", "PointLight2D", srch, position=v2((-33, -399)), texture=S.tex("VFX_Light_Radial"),
+           texture_scale="0.25", color=col(1, 0.95, 0.8), energy="2.5", range_item_cull_mask="1")
+
+
+def _emit_rig(entry):
+    if entry == "facade_glow":
+        _rig_glow()
+    elif entry.startswith("brazier"):
+        _rig_brazier(entry)
+    elif entry.startswith("lamp_"):
+        _rig_lamp(entry)
+    elif entry == "terminal":
+        _rig_terminal()
+    elif entry == "vent":
+        _rig_vent()
+    elif entry == "signal":
+        _rig_signal()
+    elif entry == "tower":
+        _rig_tower()
+    elif entry == "searchlight":
+        _rig_searchlight()
+    else:
+        raise SystemExit(f"LIGHT_RIG 里不认识的灯位 '{entry}'")
+
+
+# 灯光节点的生成顺序由关卡的 LIGHT_RIG 决定（yard 保持第一版的顺序 → .tscn 逐字节不变）
+for _entry in LY.has("LIGHT_RIG", ["facade_glow", "brazier", "terminal", "vent", "signal",
+                                   "searchlight"]):
+    _emit_rig(_entry)
+
+# ---- 蒸汽阀（有 SteamPipe 才有）----
+if VALVE is not None:
+    valve = VALVE
+    S.node("Steam", "GPUParticles2D", ".", position=v2((round(valve[0], 2), round(valve[1], 2))), amount="22",
+           lifetime="2.6", preprocess="3.0", texture=S.tex("VFX_Steam_Puff"),
+           visibility_rect="Rect2(-300, -400, 600, 500)",
+           process_material=S.subres(
+               "ParticleProcessMaterial", particle_flag_disable_z="true", direction="Vector3(0.35, -1, 0)",
+               spread="18.0", initial_velocity_min="24.0", initial_velocity_max="48.0",
+               gravity="Vector3(16, -10, 0)", scale_min="0.5", scale_max="1.6", color=col(0.92, 0.95, 1, 0.32)))
 
 # ---- 标记点 / 冻雪泥 ----
 mk = S.node("Markers", "Node2D", ".")
@@ -309,7 +412,7 @@ for i, (cx, cy, rx, ry) in enumerate(LY.SLUSH):
 
 # ---- 镜头 + 雪 ----
 cam = S.node("Camera2D", "Camera2D", ".", position=v2(px(*LY.SPAWN)), limit_left="0",
-             limit_top=str(int(base_y - 600)), limit_right=str(int(W_PX)), limit_bottom=str(int(H_PX)),
+             limit_top=str(int(base_y - FH)), limit_right=str(int(W_PX)), limit_bottom=str(int(H_PX)),
              position_smoothing_enabled="true", position_smoothing_speed="6.0")
 S.node("Snow", "GPUParticles2D", cam, amount="900", lifetime="8.0", preprocess="8.0",
        texture=S.tex("VFX_Snow_Particle"), local_coords="false",
@@ -343,19 +446,27 @@ hud = S.node("HUD", "CanvasLayer", ".", layer="10")
 S.node("Root", "Control", hud, anchors_preset="15", anchor_right="1.0", anchor_bottom="1.0",
        grow_horizontal="2", grow_vertical="2", mouse_filter="2")
 
-# ---- 环境音 ----
+# ---- 环境音（关卡的 AMBIENCE 决定有哪几路、什么顺序）----
 def wav(key):
     return S.res(MAN[key]["path"], "AudioStream")
 
 
-S.node("Wind", "AudioStreamPlayer", ".", stream=wav("AMB_Wind_Blizzard_Loop"), volume_db="-9.0")
-S.node("FireAudio", "AudioStreamPlayer2D", ".", position=v2((bx, by)), stream=wav("AMB_Fire_Crackle_Loop"),
-       max_distance="900.0", volume_db="-2.0")
-S.node("SteamAudio", "AudioStreamPlayer2D", ".", position=v2((round(valve[0], 2), round(valve[1] + 80, 2))),
-       stream=wav("AMB_Steam_Hiss_Loop"), max_distance="700.0", volume_db="-8.0")
-lwx, lwy = px(*LY.LIGHTS["lamp_west"])
-S.node("LampBuzz", "AudioStreamPlayer2D", ".", position=v2((lwx, lwy)), stream=wav("AMB_Sodium_Buzz_Loop"),
-       max_distance="500.0", volume_db="-14.0")
+for role in LY.has("AMBIENCE", ["wind", "fire", "steam", "buzz"]):
+    if role == "wind":
+        S.node("Wind", "AudioStreamPlayer", ".", stream=wav("AMB_Wind_Blizzard_Loop"), volume_db="-9.0")
+    elif role == "fire" and FIRE_POS[0] is not None:
+        S.node("FireAudio", "AudioStreamPlayer2D", ".", position=v2(FIRE_POS[0]),
+               stream=wav("AMB_Fire_Crackle_Loop"), max_distance="900.0", volume_db="-2.0")
+    elif role == "steam" and VALVE is not None:
+        S.node("SteamAudio", "AudioStreamPlayer2D", ".",
+               position=v2((round(VALVE[0], 2), round(VALVE[1] + 80, 2))),
+               stream=wav("AMB_Steam_Hiss_Loop"), max_distance="700.0", volume_db="-8.0")
+    elif role == "buzz":
+        _lk = next((k for k in LY.LIGHTS if k.startswith("lamp_")), None)
+        if _lk:
+            lwx, lwy = px(*LY.LIGHTS[_lk])
+            S.node("LampBuzz", "AudioStreamPlayer2D", ".", position=v2((lwx, lwy)),
+                   stream=wav("AMB_Sodium_Buzz_Loop"), max_distance="500.0", volume_db="-14.0")
 
 S.write(OUT)
 print("scene ->", OUT, f"({len(S.nodes)} nodes, {len(S.ext)} ext, {len(S.sub)} sub)")

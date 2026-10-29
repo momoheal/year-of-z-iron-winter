@@ -85,6 +85,7 @@ year-of-z-iron-winter/
     ├── tests/
     │   ├── campaign_smoke.gd                                     # ★ 97 项 headless 探索循环测试
     │   ├── night_explore_smoke.gd                                # ★ 109 项 headless 夜潜货场测试
+    │   ├── night_level_smoke.gd                                  # ★ 58 项 headless 多关卡管线测试
     │   ├── gym_smoke.gd                                          # ★ 61 项 headless 机制冒烟测试
     │   ├── data_pipeline_smoke.gd                                # 71 项事件 / 数据管线测试
     │   └── room_a_smoke.gd                                       # 20 项 Room A 夜潜切片测试
@@ -116,17 +117,43 @@ year-of-z-iron-winter/
 | **三方潜行** | 4 只灰鳞狂暴者（含守在三号车厢门口的壮硕变体）：360° 近距视线 + 循声调查（脚步 / 搜刮 / 罐头 / 枪声），0.45s 起跳预警红圈后扑咬；清杀兵光锥里出现狂暴者会瞄准 0.5s 击毙并留下血迹 → **借刀杀人**；枪声 10m 又会引来下一只。声纹三色：灰白=你 / 暗红=狂暴者 / 冷蓝=清杀队（淡琥珀=半人的呻吟） |
 | **道德抉择** | 两个回退半人（0388 缩在蒸汽管下、0507 在煤水塔东侧）：还有瞳孔、不咬人，但清杀队分不清 —— 光锥里一律开枪（误杀 良知 −4）。他们会被罐头声吸引，所以借刀杀人可能把他们一起引进光锥。靠近按 `E` 抉择：① 阿司匹林 + 热水退烧（良知 +7，他睡着后清杀队认不出，送你一张调度单）② 绕开（良知 −2）③ 撬棍灭口（良知 −10、卌 +1）。热水壶随身带，阿司匹林在西院木箱（旁边就是狂暴者）。口径与战役抉择 A 一致，结算显示良知 / 救下 / 误杀 / 卌 |
 
-**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `R` 重来 · `Esc` 返回战役。测试：`tests/night_explore_smoke.gd`（**109 项**，已加进 `run_smoke_tests.bat`）。
+**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `R` 重来 · `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场（开发直开）。测试：`tests/night_explore_smoke.gd`（**109 项**，已加进 `run_smoke_tests.bat`）。
 
-**美术管线**（`godot_project/tools/art_gen/`，Python 3 + numpy + Pillow，无需外部服务）：
+**美术管线**（`godot_project/tools/art_gen/`，Python 3 + numpy + Pillow，无需外部服务，**多关卡**）：
 
 ```text
-layout.py        关卡布局（米）—— 地面烘焙和场景生成共用的唯一数据源
-gen_assets.py    生成全部 PNG/WAV 到 godot_project/art/ 并写 night_yard_manifest.json（尺寸 + pivot）
-build_scene.py   由布局 + manifest 生成 scenes/night_explore.tscn（会覆盖场景，之后建议直接在编辑器里维护）
+levels/<id>.py   关卡布局（米）—— 地面烘焙和场景生成共用的唯一数据源（yard / marshalling / …）
+layout.py        兼容入口：把「当前关卡」的数据灌进老代码用的 LY.* 名字空间
+gen_assets.py    生成 PNG/WAV 到 godot_project/art/ 并写 art/night_<id>_manifest.json（尺寸 + pivot）
+build_scene.py   由布局 + manifest 生成 scenes/night_<id>.tscn（会覆盖场景，之后建议直接在编辑器里维护）
+check_levels.py  静态体检：规格 ↔ manifest ↔ 场景 ↔ CampaignData 四层对表（不用 Godot 也能跑）
+
+    python gen_assets.py --level marshalling ground facade   # 只重出某一关的地面 / 立面
+    python gen_assets.py --level marshalling props --only PRP_BrakeVan_Dead
+    python build_scene.py --level marshalling
+    python check_levels.py                                   # 全关卡体检
 ```
 
+新关卡的 manifest 继承 yard 的共享资产（角色 / 道具 / VFX / 环境音），只换关卡专属的地面大图、
+立面与窗光贴图；yard 的地面 / 立面 / 场景是**回归基准**：重跑必须与仓库里那一版逐像素、
+逐字节一致（场景只允许多 metadata 块）。
+
 资产目录与命名遵循 `docs/zh/Z年纪事_美术资源生成Prompt规格书.md` §3（`10_characters / 20_tileset / 30_props / 50_vfx / 70_audio`，64px/m，地面 y×0.62）。现在这批是程序化手绘风占位图；用 AI 出图替换时，**文件名、画布尺寸、pivot 保持不变**，覆盖 PNG 即可，场景不用改。
+
+---
+
+## 🚂 第二张节点化地图 · 西站调车场（`scenes/night_marshalling.tscn`）
+
+P4 的第一张新地图：危险度 4 / 夜长 100 分钟（≈240 秒）/ 寒冷 1.1，战役里安娜入队（`lana_car3`）后解锁，
+开发期可直接按 `F3` 打开。44×36 米：机车库砖墙 + 调度塔立面（新立面种类 `depot`）、五股道驼峰溜放线、
+站台沥青便道、南边铁丝网下的涵洞进出。剧本锚点全部落在场景里：调度塔外那张还没撕的**发车令**
+（`PRP_DispatchBoard_Tin`，必出 `intel` = 本关关键物资）、两台**报废守车**里的零件（其中一台必出莫辛枪机）、
+**煤水塔**水箱里的手稿复写件。3 组清杀队（其中一组压在你自己的撤离路上）、5 只狂暴者（2 只壮硕）、
+2 个回退半人 —— 0613 就躺在涵洞东侧你的撤离路上。灯桥上那盏探照灯每 13 秒扫过整片道砟。
+
+新增资产：`TIL_Ground_NightMarshalling_Baked`（2816×1428）、`TIL_Facade_Depot_A`（2816×600）、
+`VFX_Facade_WindowGlow_Depot`、`PRP_BrakeVan_Dead` / `PRP_SwitchStand` / `PRP_DispatchBoard_Tin`。
+测试：`tests/night_level_smoke.gd`（58 项）+ `tools/art_gen/check_levels.py`。
 
 ---
 
@@ -206,6 +233,7 @@ All three scenes draw **zero art assets** (pure `_draw()` geometry) and synthesi
 | `scripts/night/NightSfx.gd` | 夜潜场景的音效层：25 种音色 + `AudioStreamPlayer2D` 定位声部 + 实体循环声（面具呼吸）+ 环境层混音（`cfg.cold` / 天亮）+ 紧张度心跳 |
 | `scripts/Sim.gd` / `Main.gd` / `HUD.gd` | Room A 夜潜切片：纯逻辑 / 75° 斜俯视 `_draw()` 渲染 / HUD |
 | `tests/campaign_smoke.gd` | 97 项 headless 探索循环测试（成功打印 `CAMPAIGN_SMOKE_PASS`） |
+| `tests/night_level_smoke.gd` | 58 项 headless 多关卡管线测试（注册表 / metadata / 装配 / 脚步材质 / 边界） |
 | `tests/gym_smoke.gd` | 61 项 headless 冒烟测试（见下方命令；成功打印 `GYM_SMOKE_PASS`） |
 | `tests/room_a_smoke.gd` | 20 项 Room A 冒烟测试（成功打印 `ROOM_A_SMOKE_PASS`） |
 
