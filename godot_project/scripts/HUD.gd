@@ -2,6 +2,8 @@ extends CanvasLayer
 ## Room A HUD — 每帧从 Sim 纯数据对象读取，无信号连接。
 ## 生命/体力/体温、BPM、姿态/噪声、罐头/水、目标、撤离提示、toast、胜负横幅。
 
+const SovietUI := preload("res://scripts/ui/SovietUI.gd")
+
 var sim                       # Sim 纯数据对象（动态访问，不使用静态类型）
 var _bars: Dictionary = {}
 var _meta: Label
@@ -20,12 +22,17 @@ func _ready() -> void:
 	var root := Control.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var th := Theme.new()
+	th.default_font = SovietUI.body_font()
+	th.default_font_size = 13
+	root.theme = th
 	add_child(root)
 
 	# --- 生命体征（左上） ---
 	var panel := PanelContainer.new()
 	panel.position = Vector2(16, 14)
 	panel.custom_minimum_size = Vector2(300, 0)
+	panel.add_theme_stylebox_override("panel", SovietUI.plate(SovietUI.IRON, SovietUI.STEEL, 2, 14))
 	root.add_child(panel)
 	var vb := VBoxContainer.new()
 	vb.add_theme_constant_override("separation", 5)

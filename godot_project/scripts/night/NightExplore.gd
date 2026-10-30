@@ -21,6 +21,10 @@ extends Node2D
 
 const Data := preload("res://scripts/CampaignData.gd")
 const SfxScript := preload("res://scripts/night/NightSfx.gd")
+const Beats := preload("res://scripts/night/LevelBeats.gd")
+const SovietUI := preload("res://scripts/ui/SovietUI.gd")
+const SovietMeter := preload("res://scripts/ui/SovietMeter.gd")
+const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
 
 const PPM := 64.0
 const SQ := 0.62
@@ -124,10 +128,45 @@ var _lbl_status: Label
 var _lbl_bag: Label
 var _lbl_hint: Label
 var _lbl_center: Label
-var _bar_warm: ProgressBar
-var _bar_hp: ProgressBar
+var _lbl_clock: Label
+var _lbl_target: Label
+var _lbl_bearing: Label
+var _lbl_exit: Label
+var _lbl_threat: Label
+var _lbl_landmarks: Label
+var _m_warm
+var _m_hp
+var _lbl_warm_val: Label
+var _lbl_hp_val: Label
+var _chrome
+var _brief_card: PanelContainer
+var _brief_lbl: Label
 var _choice_panel: PanelContainer
+var _choice_head: Label
 var _choice_lbl: Label
+
+# ============================================================================
+# 关卡导演（LevelBeats.gd 的数据在这里跑）
+# ============================================================================
+var beats: Dictionary = {}
+var landmarks: Array = []              # 本关地标（米制坐标）
+var landmark_seen: Array[String] = []
+var objective_px := Vector2.ZERO       # 关键物资所在容器的交互点（方位读数用）
+var brief_t := 0.0                     # 开场档案卡剩余时间
+var beat_events: Array = []            # 本关环境节拍
+var beat_timer := 0.0                  # 距离下一次节拍
+var beat_phase := ""                   # "" | warn | live
+var beat_t := 0.0
+var beat_idx := 0
+var beat_flare := 0.0                  # 炉口爆燃的视觉强度 0..1
+var beat_rake: Sprite2D = null         # 溜放中的车皮
+var beat_rake_lane := 0.0
+var beat_shoved := false               # 本次溜放是否已经被刮倒过
+var _rake_rumble := 0.0                # 车皮轮轨声的节拍
+var switch_thrown := false             # 转辙器是否已经扳到另一股
+var forklift_used := false             # 叉车只能发动一次
+var _flare_light: PointLight2D = null   # 炉口爆燃用的补光灯（不抢 NightFlicker 的火苗）
+var _furnace_px := Vector2.ZERO
 
 static func to_m(p: Vector2) -> Vector2:
 	return Vector2(p.x / PPM, p.y / (PPM * SQ))
@@ -189,6 +228,7 @@ func _ready() -> void:
 	cam.global_position = player.global_position
 	cam.reset_smoothing()
 	_wire_audio()
+	_init_beats()
 	_build_hud()
 	_init_post_defaults()
 
@@ -290,11 +330,13 @@ func _process(delta: float) -> void:
 	if state == "play":
 		_update_interact(delta)
 		_update_warmth(delta)
+		_update_director(delta)
 		if in_campaign:
 			night_left = maxf(0.0, night_left - delta)
 			update_dawn()
 			if night_left <= 0.0:
 				_end("dawn")
+	_update_brief(delta)
 	_update_fx(delta)
 	_update_fade()
 	_update_post()
@@ -332,6 +374,10 @@ func _update_interact(delta: float) -> void:
 	var h = nearest_half()
 	if h != null and Input.is_action_just_pressed("interact"):
 		open_choice(h)
+		return
+	var mech := nearest_mechanism()
+	if mech != null and Input.is_action_just_pressed("interact"):
+		use_mechanism(mech)
 		return
 	var holding := Input.is_action_pressed("interact")
 	var near_exit := dist_m(player.global_position, exit_px) <= REACH
@@ -719,6 +765,12 @@ func caught(by: Node) -> void:
 func _end(reason: String) -> void:
 	state = reason
 	player.frozen = true
+	# 环境的节拍也停下：别让画面在某次爆燃的红里定格
+	beat_phase = ""
+	beat_flare = 0.0
+	if beat_rake != null and is_instance_valid(beat_rake):
+		beat_rake.queue_free()
+		beat_rake = null
 	sfx.set_tension(0.0)             # 心跳停下：这一夜已经结束了
 	match reason:
 		"extracted":
@@ -906,10 +958,14 @@ func _update_post() -> void:
 		if state == "caught" or state == "downed":
 			alarm = 1.0
 		alarm = maxf(alarm, hurt / 0.35)
+		alarm = maxf(alarm, beat_flare)          # 炉口爆燃：整屏泛红，但不是警报 —— 是炉膛
 		mat.set_shader_parameter("frost", clampf((35.0 - warmth) / 35.0, 0.0, 1.0))
 		mat.set_shader_parameter("alarm", alarm)
 		mat.set_shader_parameter("dawn", g)
 		mat.set_shader_parameter("cam_offset", cam.get_screen_center_position())
+	# 炉口爆燃：补光灯顶上（火焰那两盏归 NightFlicker 管，别去抢）
+	if _flare_light != null and is_instance_valid(_flare_light):
+		_flare_light.energy = 3.4 * beat_flare
 	# 天亮：夜色（CanvasModulate）由夜青转黎明清灰，暴风雪变薄
 	if night_mod != null:
 		night_mod.color = NIGHT_MOD.lerp(DAWN_MOD, g)
@@ -969,82 +1025,453 @@ func _apply_shake(delta: float) -> void:
 	cam.rotation = sin(_shake_t * 1.3) * 0.014 * k
 
 # ============================================================================
+# 关卡导演：档案头 / 地标勘踏 / 环境节拍 / 专属机关
+#   数据源：scripts/night/LevelBeats.gd（三张图共用本脚本，差异全在数据里）
+#   原则：不新增美术资产、不改场景文件；一切都挂在已有节点与已有音色上。
+# ============================================================================
+func _init_beats() -> void:
+	beats = Beats.for_level(level_id)
+	landmarks = beats.get("landmarks", []).duplicate(true)
+	beat_events = beats.get("events", []).duplicate(true)
+	landmark_seen = []
+	brief_t = 7.5 if not (beats.get("brief", []) as Array).is_empty() else 0.0
+	beat_timer = float(beats.get("first_beat", 0.0))
+	beat_phase = ""
+	beat_t = 0.0
+	beat_idx = 0
+	beat_flare = 0.0
+	beat_rake = null
+	switch_thrown = false
+	forklift_used = false
+	objective_px = _find_objective_point()
+	_gather_furnace_lights()
+
+
+## 关键物资在哪：优先找「必出 prize」的容器，找不到就退回撤离点（HUD 不会指错方向）。
+func _find_objective_point() -> Vector2:
+	for c in containers:
+		if String(c.get_meta("guaranteed", "")) == prize:
+			return interact_point(c)
+	for c in containers:
+		if String(c.get_meta("guaranteed", "")) != "":
+			return interact_point(c)
+	return exit_px
+
+
+## 炉口：manor 的 Lights/Furnace（挂着 NightFlicker 的火苗调制）。
+## 爆燃不能去改那两盏灯的能量 —— NightFlicker 每帧会把它们写回基础值；
+## 所以在 Lights 下单独挂一盏「补光」灯，只由爆燃驱动，平时 energy = 0。
+func _gather_furnace_lights() -> void:
+	_flare_light = null
+	_furnace_px = Vector2.ZERO
+	var node := get_node_or_null("Lights/Furnace") as Node2D
+	if node == null:
+		return
+	_furnace_px = node.global_position
+	var tex := load("res://art/50_vfx/VFX_Light_Radial_Soft.png") as Texture2D
+	if tex == null:
+		return
+	var flare := PointLight2D.new()
+	flare.name = "FlareBurst"
+	flare.texture = tex
+	flare.color = Color(1.0, 0.72, 0.42)
+	flare.energy = 0.0
+	flare.texture_scale = 3.6
+	flare.light_mask = 3
+	var parent := node.get_parent()
+	if parent == null:
+		return
+	parent.add_child(flare)
+	flare.global_position = _furnace_px
+	_flare_light = flare
+
+
+func _m_px(pos: Array) -> Vector2:
+	## 米制坐标（x 东 / y 南）→ 像素（地面按 SQ 压缩）
+	return Vector2(float(pos[0]) * PPM, float(pos[1]) * PPM * SQ)
+
+
+func _update_brief(delta: float) -> void:
+	if brief_t <= 0.0:
+		if _brief_card != null and _brief_card.visible:
+			_brief_card.visible = false
+		return
+	brief_t = maxf(0.0, brief_t - delta)
+	if _brief_card == null:
+		return
+	_brief_card.visible = true
+	# 前 1s 淡入、最后 1.6s 淡出
+	var a := clampf(minf((7.5 - brief_t) * 2.5, brief_t / 1.6), 0.0, 1.0)
+	_brief_card.modulate.a = a
+
+
+func _update_director(delta: float) -> void:
+	_update_landmarks()
+	_update_beats(delta)
+
+
+func _update_landmarks() -> void:
+	for l in landmarks:
+		var nm := String(l.get("name", ""))
+		if nm == "" or nm in landmark_seen:
+			continue
+		var p := _m_px(l.get("pos", [0.0, 0.0]))
+		if dist_m(player.global_position, p) <= float(l.get("radius", 4.0)):
+			landmark_seen.append(nm)
+			sfx.play("beep", -9.0)
+			add_shake(0.05)
+			spawn_float(player.global_position + Vector2(0, -158), "勘踏 · " + nm, SovietUI.OCHRE)
+			var note := String(l.get("note", ""))
+			if note != "":
+				spawn_float(player.global_position + Vector2(0, -136), note, SovietUI.BONE_DIM)
+
+
+# ---------------------------------------------------------------------------
+# 环境节拍
+# ---------------------------------------------------------------------------
+func _update_beats(delta: float) -> void:
+	if beat_events.is_empty():
+		return
+	var ev: Dictionary = beat_events[beat_idx % beat_events.size()]
+	var warn := float(ev.get("warn", 2.0))
+	var live := float(ev.get("live", 2.0))
+	if beat_phase == "":
+		beat_timer -= delta
+		if beat_timer <= 0.0:
+			_begin_beat(ev)
+		return
+	beat_t += delta
+	if beat_phase == "warn":
+		if beat_t >= warn:
+			_go_live_beat(ev)
+	elif beat_phase == "live":
+		_tick_beat(ev, delta)
+		if beat_t >= warn + live:
+			_end_beat(ev)
+
+
+func _begin_beat(ev: Dictionary) -> void:
+	beat_phase = "warn"
+	beat_t = 0.0
+	beat_shoved = false
+	match String(ev.get("kind", "")):
+		"hump":
+			sfx.play("klaxon", -11.0)
+			spawn_float(player.global_position + Vector2(0, -172), "驼峰溜放 —— 股道上来车皮了", SovietUI.SIGNAL)
+		"flare":
+			sfx.play("klaxon", -9.0)
+			spawn_float(player.global_position + Vector2(0, -172), "炉膛要爆燃 —— 找影子", SovietUI.SIGNAL)
+
+
+func _go_live_beat(ev: Dictionary) -> void:
+	beat_phase = "live"
+	match String(ev.get("kind", "")):
+		"hump":
+			_spawn_rake(ev)
+			add_shake(0.12)
+			sfx.play("crowbar_hit", -12.0)
+		"flare":
+			add_shake(0.1)
+			sfx.play_at("gunshot", _furnace_px, -16.0)      # 一声闷响：炉膛吞了一口气
+
+
+func _tick_beat(ev: Dictionary, delta: float) -> void:
+	var warn := float(ev.get("warn", 2.0))
+	var live := float(ev.get("live", 2.0))
+	var k := clampf((beat_t - warn) / maxf(0.01, live), 0.0, 1.0)
+	match String(ev.get("kind", "")):
+		"hump":
+			_tick_hump(ev, k, delta)
+		"flare":
+			_tick_flare(ev, k)
+
+
+# --- 驼峰溜放 ----------------------------------------------------------------
+func _spawn_rake(ev: Dictionary) -> void:
+	var tex := load("res://art/30_props/PRP_Buran_Boxcar03.png") as Texture2D
+	if tex == null:
+		return
+	beat_rake_lane = float(ev.get("lane_alt" if switch_thrown else "lane", 15.6))
+	var spr := Sprite2D.new()
+	spr.name = "HumpRake"
+	spr.texture = tex
+	spr.centered = false
+	spr.light_mask = 2
+	spr.offset = Vector2(-468, -410)                       # 与场景里那节闷罐车同一套定位
+	spr.modulate = Color(0.34, 0.36, 0.42, 0.92)          # 夜色里的剪影
+	spr.position = Vector2(float(ev.get("from", 43.0)) * PPM, beat_rake_lane * PPM * SQ)
+	spr.z_index = 0
+	$World.add_child(spr)
+	# 挂在车皮上的一盏小灯：能看见它正在扫过来
+	var lamp := PointLight2D.new()
+	lamp.texture = load("res://art/50_vfx/VFX_Light_Radial_Soft.png")
+	lamp.color = Color(1.0, 0.86, 0.62)
+	lamp.energy = 1.25
+	lamp.texture_scale = 1.4
+	lamp.light_mask = 3
+	lamp.position = Vector2(300, -170)
+	spr.add_child(lamp)
+	beat_rake = spr
+
+
+func _tick_hump(ev: Dictionary, k: float, delta: float) -> void:
+	var from_x := float(ev.get("from", 43.0))
+	var to_x := float(ev.get("to", 1.0))
+	if beat_rake != null and is_instance_valid(beat_rake):
+		var x := lerpf(from_x, to_x, k)
+		beat_rake.position.x = x * PPM
+		# 车皮每滑一段就轧一次道岔：轮轨声是真实的声音，会引来狂暴者
+		_rake_rumble -= delta
+		if _rake_rumble <= 0.0:
+			_rake_rumble = 0.34
+			sfx.play_at("step_rail", beat_rake.position, -11.0)
+	if beat_shoved:
+		return
+	var lane := beat_rake_lane
+	var pos_m := to_m(player.global_position)
+	var rake_m := lerpf(from_x, to_x, k)
+	if absf(pos_m.y - lane) <= 1.15 and absf(rake_m - pos_m.x) <= float(ev.get("shove", 2.2)):
+		beat_shoved = true
+		hp = maxf(0.0, hp - 9.0)
+		warmth = maxf(0.0, warmth - 6.0)
+		hurt = 0.45
+		add_shake(0.7)
+		punch = 1.0
+		emit_noise(player.global_position, 12.0, "can")
+		spawn_float(player.global_position + Vector2(0, -140), "被溜放的车皮刮倒了 —— 整个货场都听见了",
+			Color("#f87171"))
+		if hp <= 0.0:
+			_end("downed")
+
+
+# --- 炉口爆燃 ----------------------------------------------------------------
+func _tick_flare(ev: Dictionary, k: float) -> void:
+	var peak := sin(clampf(k * 1.25, 0.0, 1.0) * PI)
+	beat_flare = maxf(0.0, minf(1.0, peak * 1.15))
+	if beat_shoved:
+		return
+	var origin := _m_px(ev.get("pos", [34.0, 4.6]))
+	if _furnace_px != Vector2.ZERO:
+		origin = _furnace_px
+	var radius := float(ev.get("radius", 22.0))
+	if dist_m(player.global_position, origin) > radius:
+		return
+	# 蹲下 + 有遮挡（松树 / 车皮 / 钢管）= 影子够短，炉火照不到你
+	var mask := 1 | (2 if player.crouching else 0)
+	if player.crouching and not los_clear(origin, player.global_position, mask):
+		return
+	if not los_clear(origin, player.global_position, 1):
+		return
+	beat_shoved = true
+	spawn_float(player.global_position + Vector2(0, -140), "炉口爆燃 —— 你的影子被钉在雪地上",
+		Color("#fca5a5"))
+	# 附近的清杀队会顺着这片亮压过来；狂暴者也会被惊动
+	for s in soldiers:
+		if dist_m(s.global_position, player.global_position) <= 34.0:
+			s.alert_to(player.global_position)
+	emit_noise(player.global_position, 10.0, "can", true)
+
+
+func _end_beat(ev: Dictionary) -> void:
+	beat_phase = ""
+	beat_t = 0.0
+	beat_idx += 1
+	beat_timer = float(ev.get("period", 30.0))
+	if beat_rake != null and is_instance_valid(beat_rake):
+		beat_rake.queue_free()
+		beat_rake = null
+	beat_flare = 0.0
+
+
+# ---------------------------------------------------------------------------
+# 关卡机关（靠近按 E）
+# ---------------------------------------------------------------------------
+func nearest_mechanism() -> Dictionary:
+	for m in beats.get("mechanisms", []):
+		if String(m.get("kind", "")) == "forklift" and forklift_used:
+			continue
+		var node := get_node_or_null(String(m.get("node", ""))) as Node2D
+		if node == null:
+			continue
+		if dist_m(player.global_position, node.global_position) <= float(m.get("radius", 2.4)):
+			var out: Dictionary = m.duplicate()
+			out["node2d"] = node
+			return out
+	return {}
+
+
+func use_mechanism(m: Dictionary) -> void:
+	match String(m.get("kind", "")):
+		"switch":
+			switch_thrown = not switch_thrown
+			sfx.play_at("wedge", (m["node2d"] as Node2D).global_position, -3.0)
+			emit_noise((m["node2d"] as Node2D).global_position, 7.0, "can")
+			spawn_float(player.global_position + Vector2(0, -138),
+				"%s 已扳向 %s 股" % [String(m.get("label", "转辙器")),
+					"2" if switch_thrown else "1"], SovietUI.OCHRE)
+			add_shake(0.08)
+		"forklift":
+			forklift_used = true
+			var node := m["node2d"] as Node2D
+			sfx.play_at("crowbar_hit", node.global_position, 0.0)
+			sfx.play("klaxon", -8.0)
+			emit_noise(node.global_position, 16.0, "can")
+			add_shake(0.28)
+			spawn_float(player.global_position + Vector2(0, -138),
+				"叉车轰的一声窜出去 —— 16 米内的东西都朝那边去了", SovietUI.SIGNAL)
+
+
+# ============================================================================
 # HUD
 # ============================================================================
 func _build_hud() -> void:
-	var panel := PanelContainer.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.03, 0.04, 0.06, 0.72)
-	sb.border_color = Color(0.2, 0.27, 0.33, 0.8)
-	sb.set_border_width_all(1)
-	sb.set_content_margin_all(14)
-	panel.add_theme_stylebox_override("panel", sb)
-	panel.position = Vector2(24, 24)
-	hud_root.add_child(panel)
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 6)
-	panel.add_child(v)
-	var title := _label("%s · 第 %d 夜   %s" % [level_zh, day_n, level_en.to_upper()], 17, Color("#cbd5e1"))
-	v.add_child(title)
-	var row := HBoxContainer.new()
-	row.add_child(_label("体温 WARMTH ", 14, Color("#94a3b8")))
-	_bar_warm = ProgressBar.new()
-	_bar_warm.custom_minimum_size = Vector2(220, 14)
-	_bar_warm.show_percentage = false
-	var fill := StyleBoxFlat.new()
-	fill.bg_color = Color("#f59e0b")
-	_bar_warm.add_theme_stylebox_override("fill", fill)
-	var bg := StyleBoxFlat.new()
-	bg.bg_color = Color(0.1, 0.12, 0.15, 0.9)
-	_bar_warm.add_theme_stylebox_override("background", bg)
-	row.add_child(_bar_warm)
-	v.add_child(row)
-	var row2 := HBoxContainer.new()
-	row2.add_child(_label("健康 HEALTH ", 14, Color("#94a3b8")))
-	_bar_hp = ProgressBar.new()
-	_bar_hp.custom_minimum_size = Vector2(220, 14)
-	_bar_hp.show_percentage = false
-	var fill2 := StyleBoxFlat.new()
-	fill2.bg_color = Color("#e05656")
-	_bar_hp.add_theme_stylebox_override("fill", fill2)
-	_bar_hp.add_theme_stylebox_override("background", bg)
-	row2.add_child(_bar_hp)
-	v.add_child(row2)
-	_lbl_status = _label("", 14, Color("#94a3b8"))
-	v.add_child(_lbl_status)
-	_lbl_bag = _label("", 14, Color("#e2e8f0"))
-	_lbl_bag.custom_minimum_size = Vector2(420, 0)
+	# ---- 全屏金属框：暗角 / 角码 / 铆钉 / 扫描线 / 红星厂标 ----
+	_chrome = SovietChrome.new()
+	_chrome.name = "Chrome"
+	_chrome.font = font
+	_chrome.zone = String(beats.get("zone", "НОВОРСК-17 · ЖЕЛЕЗНАЯ ЗИМА"))
+	_chrome.code = String(beats.get("code", ""))
+	_chrome.accent = beats.get("accent", SovietUI.BLOOD)
+	hud_root.add_child(_chrome)
+
+	# ---- 左上：夜潜工作日志（档案牌） ----
+	var left := PanelContainer.new()
+	left.name = "Dossier"
+	left.add_theme_stylebox_override("panel", SovietUI.plate(SovietUI.IRON, SovietUI.STEEL, 2, 18))
+	left.position = Vector2(26, 22)
+	left.custom_minimum_size = Vector2(572, 0)
+	left.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_root.add_child(left)
+	var lv := VBoxContainer.new()
+	lv.add_theme_constant_override("separation", 6)
+	lv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	left.add_child(lv)
+
+	# 红章条：档案号 + 天亮倒计时
+	var stamp_row := PanelContainer.new()
+	stamp_row.add_theme_stylebox_override("panel", SovietUI.stamp(7))
+	stamp_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lv.add_child(stamp_row)
+	var sh := HBoxContainer.new()
+	sh.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stamp_row.add_child(sh)
+	var code_lbl := _mono_label(String(beats.get("code", "ДЕЛО № 17")), 11, SovietUI.BONE)
+	code_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sh.add_child(code_lbl)
+	_lbl_clock = _mono_label("", 11, SovietUI.BONE)
+	sh.add_child(_lbl_clock)
+
+	var title := _label(level_zh, 26, SovietUI.BONE)
+	title.add_theme_font_override("font", SovietUI.display_font())
+	lv.add_child(title)
+	var sub := _mono_label("%s  ·  第 %s 夜" % [level_en.to_upper(), SovietUI.night_zh(day_n)],
+		11, SovietUI.BONE_DIM)
+	lv.add_child(sub)
+	lv.add_child(SovietUI.rule(SovietUI.STEEL, 1))
+
+	# 仪表：体温 / 健康（分段式，掉格看得见）
+	var warm_row := _meter_row(lv, "体温", "ТЕПЛО", SovietUI.SIGNAL)
+	_m_warm = warm_row[0]
+	_lbl_warm_val = warm_row[1]
+	var hp_row := _meter_row(lv, "健康", "ЗДОРОВЬЕ", SovietUI.BLOOD_LIT)
+	_m_hp = hp_row[0]
+	_lbl_hp_val = hp_row[1]
+
+	lv.add_child(SovietUI.rule(SovietUI.STEEL, 1))
+	_lbl_status = _mono_label("", 12, SovietUI.BONE)
+	lv.add_child(_lbl_status)
+	_lbl_bag = _label("", 12, SovietUI.OCHRE)
+	_lbl_bag.custom_minimum_size = Vector2(520, 0)
 	_lbl_bag.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	v.add_child(_lbl_bag)
+	lv.add_child(_lbl_bag)
 
-	_lbl_hint = _label("", 15, Color(0.8, 0.85, 0.9, 0.85))
-	_lbl_hint.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	_lbl_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_lbl_hint.offset_left = -760
-	_lbl_hint.offset_right = 760
-	_lbl_hint.offset_top = -64
-	_lbl_hint.offset_bottom = -30
-	hud_root.add_child(_lbl_hint)
+	# ---- 右上：任务卡（目标方位 / 撤离方位 / 威胁 / 勘踏） ----
+	var right := PanelContainer.new()
+	right.name = "Mission"
+	right.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	right.offset_left = -506
+	right.offset_right = -26
+	right.offset_top = 22
+	right.offset_bottom = 22
+	right.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	right.grow_vertical = Control.GROW_DIRECTION_END
+	right.add_theme_stylebox_override("panel", SovietUI.plate(SovietUI.IRON, SovietUI.STEEL, 2, 16))
+	right.custom_minimum_size = Vector2(480, 0)
+	right.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_root.add_child(right)
+	var rv := VBoxContainer.new()
+	rv.add_theme_constant_override("separation", 5)
+	rv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	right.add_child(rv)
+	var head := PanelContainer.new()
+	head.add_theme_stylebox_override("panel", SovietUI.stamp(6))
+	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rv.add_child(head)
+	var head_lbl := _mono_label("ЦЕЛЬ · 今夜任务", 11, SovietUI.BONE)
+	head.add_child(head_lbl)
+	_lbl_target = _label(objective_zh, 13, SovietUI.BONE)
+	_lbl_target.custom_minimum_size = Vector2(430, 0)
+	rv.add_child(_lbl_target)
+	_lbl_bearing = _mono_label("", 13, SovietUI.OCHRE)
+	rv.add_child(_lbl_bearing)
+	_lbl_exit = _mono_label("", 13, SovietUI.CRT)
+	rv.add_child(_lbl_exit)
+	rv.add_child(SovietUI.rule(SovietUI.STEEL, 1))
+	_lbl_threat = _mono_label("", 12, SovietUI.SIGNAL)
+	rv.add_child(_lbl_threat)
+	_lbl_landmarks = _mono_label("", 11, SovietUI.ASH)
+	rv.add_child(_lbl_landmarks)
 
-	_choice_panel = PanelContainer.new()
-	var csb := StyleBoxFlat.new()
-	csb.bg_color = Color(0.04, 0.03, 0.02, 0.9)
-	csb.border_color = Color("#b45309")
-	csb.set_border_width_all(2)
-	csb.set_content_margin_all(22)
-	_choice_panel.add_theme_stylebox_override("panel", csb)
-	_choice_panel.set_anchors_preset(Control.PRESET_CENTER)
-	_choice_panel.offset_left = -430
-	_choice_panel.offset_right = 430
-	_choice_panel.offset_top = -170
-	_choice_panel.offset_bottom = 170
-	_choice_panel.visible = false
-	hud_root.add_child(_choice_panel)
-	_choice_lbl = _label("", 17, Color("#e2e8f0"))
-	_choice_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_choice_panel.add_child(_choice_lbl)
+	# ---- 底部：电传打字机（长按 E 的提示都从这里打出来） ----
+	var bar := PanelContainer.new()
+	bar.name = "Teletype"
+	bar.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	bar.offset_left = 26
+	bar.offset_right = -26
+	bar.offset_top = -84
+	bar.offset_bottom = -26
+	bar.add_theme_stylebox_override("panel",
+		SovietUI.plate(Color(0.035, 0.04, 0.042, 0.94), SovietUI.STEEL, 1, 10))
+	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_root.add_child(bar)
+	var bh := HBoxContainer.new()
+	bh.add_theme_constant_override("separation", 12)
+	bh.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bar.add_child(bh)
+	var tt := PanelContainer.new()
+	tt.add_theme_stylebox_override("panel", SovietUI.plate(Color("0d1a12"), SovietUI.CRT, 1, 6))
+	tt.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bh.add_child(tt)
+	var tt_lbl := _mono_label("ТЕЛЕТАЙП", 10, SovietUI.CRT)
+	tt.add_child(tt_lbl)
+	_lbl_hint = _label("", 14, SovietUI.BONE)
+	_lbl_hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_lbl_hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	bh.add_child(_lbl_hint)
+	var tail := _mono_label("№ 0420", 10, SovietUI.BONE_DIM)
+	bh.add_child(tail)
 
-	_lbl_center = _label("", 30, Color("#f1f5f9"))
+	# ---- 开场档案卡（七秒后自己淡掉） ----
+	_brief_card = PanelContainer.new()
+	_brief_card.name = "Brief"
+	_brief_card.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_brief_card.offset_left = -360
+	_brief_card.offset_right = 360
+	_brief_card.offset_top = 300
+	_brief_card.offset_bottom = 300
+	_brief_card.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_brief_card.grow_vertical = Control.GROW_DIRECTION_END
+	_brief_card.add_theme_stylebox_override("panel",
+		SovietUI.plate(Color(0.04, 0.042, 0.045, 0.96), beats.get("accent", SovietUI.BLOOD), 2, 20))
+	_brief_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_root.add_child(_brief_card)
+	_brief_lbl = _label("", 14, SovietUI.BONE)
+	_brief_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_brief_card.add_child(_brief_lbl)
+
+	# ---- 中央读数（结局 / 被发现 / 天亮） ----
+	_lbl_center = _label("", 30, SovietUI.BONE)
+	_lbl_center.add_theme_font_override("font", SovietUI.display_font())
 	_lbl_center.set_anchors_preset(Control.PRESET_CENTER)
 	_lbl_center.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_lbl_center.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -1052,10 +1479,34 @@ func _build_hud() -> void:
 	_lbl_center.offset_right = 700
 	_lbl_center.offset_top = -170
 	_lbl_center.offset_bottom = 170
-	_lbl_center.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
-	_lbl_center.add_theme_constant_override("outline_size", 8)
+	_lbl_center.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.92))
+	_lbl_center.add_theme_constant_override("outline_size", 9)
 	hud_root.add_child(_lbl_center)
 
+	# ---- 道德抉择：一张没人愿意填的问询单 ----
+	_choice_panel = PanelContainer.new()
+	_choice_panel.add_theme_stylebox_override("panel",
+		SovietUI.plate(Color(0.045, 0.04, 0.035, 0.97), SovietUI.OCHRE_DIM, 2, 22))
+	_choice_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_choice_panel.offset_left = -440
+	_choice_panel.offset_right = 440
+	_choice_panel.offset_top = -190
+	_choice_panel.offset_bottom = 190
+	_choice_panel.visible = false
+	hud_root.add_child(_choice_panel)
+	var cv := VBoxContainer.new()
+	cv.add_theme_constant_override("separation", 10)
+	_choice_panel.add_child(cv)
+	var ch := PanelContainer.new()
+	ch.add_theme_stylebox_override("panel", SovietUI.stamp(6))
+	cv.add_child(ch)
+	_choice_head = _mono_label("ОПРОСНЫЙ ЛИСТ · 问询单", 11, SovietUI.BONE)
+	ch.add_child(_choice_head)
+	_choice_lbl = _label("", 17, SovietUI.BONE)
+	_choice_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	cv.add_child(_choice_lbl)
+
+	_update_brief_text()
 func _show_choice() -> void:
 	var h = choice_half
 	if h == null or _choice_lbl == null:
@@ -1085,41 +1536,195 @@ func _label(txt: String, size: int, col: Color) -> Label:
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", col)
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return l
 
-func _refresh_hud() -> void:
-	if _bar_warm == null:
+
+func _mono_label(txt: String, size: int, col: Color) -> Label:
+	var l := _label(txt, size, col)
+	l.add_theme_font_override("font", SovietUI.mono_font())
+	l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	return l
+
+
+## 一行分段仪表：返回 [仪表, 数值 Label]（体温 / 健康共用一套）
+func _meter_row(parent: Node, zh: String, ru: String, col: Color) -> Array:
+	var row := VBoxContainer.new()
+	row.add_theme_constant_override("separation", 2)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(row)
+	var head := HBoxContainer.new()
+	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(head)
+	var nm := _label("%s  %s" % [zh, ru], 12, SovietUI.BONE_DIM)
+	nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(nm)
+	var val := _mono_label("100%", 12, col)
+	head.add_child(val)
+	var m = SovietMeter.new()
+	m.name = "Meter"
+	m.fill = col
+	m.fill_low = SovietUI.BLOOD_LIT
+	m.track = SovietUI.INK
+	m.edge = SovietUI.STEEL
+	m.custom_minimum_size = Vector2(0, 15)
+	m.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(m)
+	return [m, val]
+
+
+## 开场档案卡：这是什么地方 / 危险度 / 夜长 / 从哪儿出去
+func _update_brief_text() -> void:
+	if _brief_lbl == null:
 		return
-	_bar_warm.value = warmth
-	_bar_hp.value = hp
+	var lines: Array[String] = []
+	lines.append(String(beats.get("stamp", "СССР")) + "　·　" + String(beats.get("zone", "")))
+	lines.append("")
+	for b in beats.get("brief", []):
+		lines.append(String(b))
+	lines.append("")
+	lines.append("危险度 %s　·　夜长 %s　·　撤离：%s" % [
+		SovietUI.danger_pips(int(beats.get("danger", 3))),
+		SovietUI.clock(night_max) if in_campaign else "无限制（F2 独立跑）",
+		extract_zh])
+	_brief_lbl.text = "\n".join(lines)
+
+
+## 核心体温在仪表上的颜色：正常是钠灯的琥珀，失温转霜蓝
+func _warm_color() -> Color:
+	if warmth <= 20.0:
+		return SovietUI.FROST
+	if warmth <= 35.0:
+		return SovietUI.SIGNAL
+	return SovietUI.OCHRE
+
+
+func _nearest_unvisited_landmark() -> Dictionary:
+	var best: Dictionary = {}
+	var bd := 1e9
+	for l in landmarks:
+		if String(l.get("name", "")) in landmark_seen:
+			continue
+		var p := _m_px(l.get("pos", [0.0, 0.0]))
+		var d := dist_m(player.global_position, p)
+		if d < bd:
+			bd = d
+			best = l
+	return best
+
+
+func _refresh_hud() -> void:
+	if _m_warm == null:
+		return
+	_m_warm.set_value(warmth / 100.0)
+	_m_hp.set_value(hp / 100.0)
+	_m_warm.fill = _warm_color()
+	_lbl_warm_val.text = SovietUI.pct(warmth / 100.0)
+	_lbl_hp_val.text = SovietUI.pct(hp / 100.0)
+	_lbl_warm_val.add_theme_color_override("font_color", _warm_color())
+	_lbl_hp_val.add_theme_color_override("font_color",
+		SovietUI.BLOOD_LIT if hp <= 35.0 else SovietUI.BONE_DIM)
+
+	# --- 时钟（战役里是离天亮还有多久；F2 独立跑是自由行动） ---
+	if in_campaign:
+		_lbl_clock.text = ("天亮 %s" if dawn_t <= 0.0 else "发白 %s") % SovietUI.clock(night_left)
+		_lbl_clock.add_theme_color_override("font_color",
+			SovietUI.SIGNAL if dawn_t > 0.0 else SovietUI.BONE)
+	else:
+		_lbl_clock.text = "СВОБОДНЫЙ РЕЙД"
+		_lbl_clock.add_theme_color_override("font_color", SovietUI.BONE_DIM)
+
+	# --- 姿态 / 读数一行 ---
 	var stance := "蹲伏" if player.crouching else ("冲刺" if player.sprinting else "步行")
-	var light := "手电 开" if player.flashlight_on else "手电 关"
-	var lit := "（暴露）" if player.flashlight_on or is_lit(player.global_position) else "（暗处）"
-	var ground := " · 冻雪泥！" if player.on_slush else ""
+	var light := "手电开" if player.flashlight_on else "手电关"
+	var lit := "暴露" if player.flashlight_on or is_lit(player.global_position) else "暗处"
+	_lbl_status.text = "%s │ %s %s │ 罐头 %d │ 借刀 %d │ 良知 %+d │ 卌 %s" % [
+		stance, light, lit, cans, borrowed, int(conscience), SovietUI.tally_glyphs(tally)]
+
+	var names: Array[String] = []
+	for id in pack:
+		names.append(item_name(id))
+	_lbl_bag.text = "背包 %d/%d：%s" % [pack.size(), bag_max,
+		"、".join(names) if not names.is_empty() else "—"]
+
+	# --- 右上：目标方位 / 撤离方位 / 威胁 / 勘踏 ---
+	var has_prize := pack.has(prize)
+	if has_prize:
+		_lbl_target.text = "%s 已经在背包里 —— 回撤离点。" % item_name(prize)
+		_lbl_bearing.text = "目标方位  已完成"
+		_lbl_bearing.add_theme_color_override("font_color", SovietUI.ASH)
+	else:
+		_lbl_target.text = objective_zh
+		_lbl_bearing.text = "目标方位  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
+	_lbl_exit.text = "撤离方位  " + SovietUI.bearing_line(to_m(exit_px - player.global_position))
+
 	var chasing := 0
 	for r in rabids:
 		if r.state in ["chase", "windup", "lunge"]:
 			chasing += 1
-	var threat := (" · 被 %d 只狂暴者盯上" % chasing) if chasing > 0 else ""
-	var dawn_str := ""
-	if in_campaign and state == "play":
-		dawn_str = (" · 天色发白 %ds！" if dawn_t > 0.0 else " · 天亮 %ds") % maxi(0, int(ceil(night_left)))
-	_lbl_status.text = "%s · %s%s · 空罐头 ×%d · 借刀 ×%d · 良知 %+d · 卌 %d%s%s%s" % [
-		stance, light, lit, cans, borrowed, int(conscience), tally, ground, threat, dawn_str]
-	var names: Array[String] = []
-	for id in pack:
-		names.append(item_name(id))
-	_lbl_bag.text = "背包 %d/%d：%s" % [pack.size(), bag_max, "、".join(names) if not names.is_empty() else "—"]
-	var has_prize := pack.has(prize)
+	var threats: Array[String] = []
+	if chasing > 0:
+		threats.append("被 %d 只狂暴者盯上" % chasing)
+	var near_s = null
+	var near_d := 1e9
+	for s in soldiers:
+		var d := dist_m(player.global_position, s.global_position)
+		if d < near_d:
+			near_d = d
+			near_s = s
+	if near_s != null and near_d <= 26.0:
+		var head := "最近清杀兵 %dm %s" % [int(round(near_d)),
+			SovietUI.bearing_zh(to_m(near_s.global_position - player.global_position))]
+		if near_s.state == "alert":
+			head = "清杀兵锁定！ " + head
+		threats.append(head)
+	if player.on_slush:
+		threats.append("脚下冻雪泥（噪声 ×2）")
+	if beat_phase == "warn":
+		threats.append("环境警报：" + ("溜放车皮" if String(beat_events[beat_idx % beat_events.size()].get("kind", "")) == "hump" else "炉口爆燃"))
+	elif beat_phase == "live":
+		threats.append("环境警报：正在进行")
+	_lbl_threat.text = "\n".join(threats) if not threats.is_empty() else "没有异常动静。雪在响。"
+	_lbl_threat.add_theme_color_override("font_color",
+		SovietUI.BLOOD_LIT if (chasing > 0 or (near_s != null and near_s.state == "alert")) else SovietUI.SIGNAL)
+
+	var lmk := "勘踏 %d/%d" % [landmark_seen.size(), landmarks.size()]
+	var nxt := _nearest_unvisited_landmark()
+	if not nxt.is_empty():
+		lmk += "　·　未勘：%s %s" % [String(nxt.get("name", "")),
+			SovietUI.bearing_line(to_m(_m_px(nxt.get("pos", [0.0, 0.0])) - player.global_position))]
+	if not beat_events.is_empty() and beat_phase == "":
+		lmk += "　·　下次节拍 %ds" % int(ceil(maxf(0.0, beat_timer)))
+	_lbl_landmarks.text = lmk
+
+	# --- 底栏：电传提示 ---
+	var mech := nearest_mechanism()
+	var near_half = nearest_half()
 	if abort_pending:
 		_lbl_hint.text = "再按 Esc 放弃这次夜潜？（背包清空，活着回 602 室）"
 	elif dawn_t > 0.0:
 		_lbl_hint.text = "天要亮了 —— %s（长按 E）" % extract_zh
 	elif has_prize:
 		_lbl_hint.text = "%s到手 —— %s（长按 E）" % [item_name(prize), extract_zh] \
-			+ ("   ·   R 重来  Esc 返回战役" if not in_campaign else "")
+			+ ("　·　R 重来　Esc 返回战役" if not in_campaign else "")
+	elif not mech.is_empty():
+		_lbl_hint.text = "E · " + String(mech.get("prompt", ""))
+	elif near_half != null:
+		_lbl_hint.text = "E · 半人 %s 在发烧 —— 喂药 / 绕开 / 灭口" % near_half.tag
+	elif dist_m(player.global_position, exit_px) <= REACH:
+		_lbl_hint.text = "长按 E · " + extract_zh
 	else:
-		_lbl_hint.text = objective_zh + "   ·   Ctrl 蹲  Shift 跑  E 搜刮  F 手电  G 罐头"
+		_lbl_hint.text = objective_zh + "　·　Ctrl 蹲　Shift 跑　E 搜刮　F 手电　G 罐头"
+
+	# --- 屏幕边框：警报时边缘渗红 ---
+	if _chrome != null:
+		var d := clampf(maxf(tension_level(), beat_flare), 0.0, 1.0)
+		if state in ["caught", "downed"]:
+			d = 1.0
+		_chrome.set_danger(d)
+
+	# --- 中央读数 ---
 	var again_hint := "R / Enter 重来" if not in_campaign else "Enter 回 602 室"
 	match state:
 		"play", "choice":
@@ -1138,7 +1743,7 @@ func _refresh_hud() -> void:
 			_lbl_center.add_theme_color_override("font_color", Color("#bae6fd"))
 		"abort":
 			_lbl_center.text = "你放弃了这次夜潜\n背包里的东西全留在了雪里。\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", Color("#f59e0b"))
+			_lbl_center.add_theme_color_override("font_color", SovietUI.SIGNAL)
 		"extracted":
 			var names2: Array[String] = []
 			for id in pack:
@@ -1149,8 +1754,10 @@ func _refresh_hud() -> void:
 			else:
 				line = "带回来的东西能换明天的口粮和药。" if not pack.is_empty() \
 					else "空着手回去，602 室还是冷的。"
-			var moral := "良知 %+d · 救下半人 %d · 误杀 %d · 卌 %d" % [int(conscience), half_saved, half_lost, tally]
-			_lbl_center.text = "撤离成功 · %d 件物资 · 借刀 ×%d\n%s\n%s\n%s\n\n%s" % [
-				pack.size(), borrowed, "、".join(names2), line, moral,
-				"R / Enter 再来一夜   Esc 返回战役" if not in_campaign else "Enter 回 602 室 · 结算"]
+			var moral := "良知 %+d · 救下半人 %d · 误杀 %d · 卌 %s" % [int(conscience), half_saved, half_lost,
+				SovietUI.tally_glyphs(tally)]
+			var lmk_line := "勘踏 %d/%d · 借刀 ×%d" % [landmark_seen.size(), landmarks.size(), borrowed]
+			_lbl_center.text = "撤离成功 · %d 件物资\n%s\n%s\n%s\n%s\n\n%s" % [
+				pack.size(), "、".join(names2), line, moral, lmk_line,
+				"R / Enter 再来一夜　Esc 返回战役" if not in_campaign else "Enter 回 602 室 · 结算"]
 			_lbl_center.add_theme_color_override("font_color", Color("#bbf7d0"))

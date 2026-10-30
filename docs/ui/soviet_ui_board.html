@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>«Железная Зима» · 苏联化界面风格板 / Soviet UI Style Board</title>
+<style>
+  :root{
+    /* SovietUI.gd 的调色板，一一对应 */
+    --ink:#070809; --iron:#121618; --iron-lit:#1b2023; --plate:#22282b;
+    --steel:#343c3f; --steel-lit:#4a5457; --rivet:#565f62;
+    --bone:#d8d1bf; --bone-dim:#928c7c;
+    --ochre:#c8a257; --ochre-dim:#8c7139;
+    --blood:#8c1c14; --blood-lit:#b8281c;
+    --signal:#d9a326; --frost:#8fb4c4; --crt:#63d18a; --ash:#6d7173;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--ink);color:var(--bone);
+    font-family:"Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",system-ui,sans-serif;}
+  body{min-height:100vh;overflow-x:hidden}
+  /* 屏幕是一块铁：暗角 + 扫描线，都由 CSS 画，跟 SovietChrome 一个思路 */
+  .vignette{position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, rgba(0,0,0,0) 1px 3px),
+      radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 42%, rgba(0,0,0,.55) 100%);}
+  .corners{position:fixed;inset:10px;pointer-events:none;z-index:10}
+  .corners i{position:absolute;width:74px;height:2px;background:rgba(140,28,20,.7)}
+  .corners i.v{width:2px;height:74px}
+  .corners .tl{top:0;left:0} .corners .tl.v{top:0;left:0}
+  .corners .tr{top:0;right:0} .corners .tr.v{top:0;right:0}
+  .corners .bl{bottom:0;left:0} .corners .bl.v{bottom:0;left:0}
+  .corners .br{bottom:0;right:0} .corners .br.v{bottom:0;right:0}
+  .works{position:fixed;right:26px;bottom:18px;z-index:11;display:flex;gap:8px;align-items:center;
+    font:11px/1 "Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace;color:rgba(146,140,124,.7)}
+  .star{width:14px;height:14px;fill:rgba(184,40,28,.75)}
+
+  main{position:relative;z-index:2;max-width:1320px;margin:0 auto;padding:34px 26px 90px}
+  header{border-bottom:2px solid var(--steel);padding-bottom:16px;margin-bottom:26px}
+  .kicker{font:11px/1.6 "Cascadia Mono",Consolas,monospace;color:var(--bone-dim);letter-spacing:.12em}
+  h1{font-family:Oswald,"Bahnschrift Condensed","Arial Narrow",Impact,sans-serif;
+    font-size:clamp(34px,6vw,64px);margin:.12em 0 .06em;letter-spacing:.02em;line-height:1}
+  h1 small{display:block;font-size:.34em;color:var(--ochre);letter-spacing:.22em;margin-top:.7em}
+  h2{font-family:Oswald,"Bahnschrift Condensed","Arial Narrow",Impact,sans-serif;
+    font-size:20px;letter-spacing:.14em;margin:0 0 14px;color:var(--bone);
+    border-left:4px solid var(--blood);padding-left:12px;text-transform:uppercase}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;margin-bottom:34px}
+  .plate{background:var(--iron);border:2px solid var(--steel);padding:18px 20px;position:relative}
+  .plate.thin{border-width:1px}
+  .plate .ruler{height:1px;background:var(--steel);margin:12px 0}
+  .mono{font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace}
+  .dim{color:var(--bone-dim)}
+  .small{font-size:12px}
+
+  /* 红章条 */
+  .stamp{background:var(--blood);border:1px solid var(--blood-lit);padding:7px 10px;
+    display:flex;justify-content:space-between;font:11px/1.3 "Cascadia Mono",Consolas,monospace;
+    letter-spacing:.06em;margin-bottom:12px}
+  .code{color:var(--bone)}
+  /* 分段表尺 */
+  .meter{display:flex;gap:2px;height:15px;margin:5px 0 12px}
+  .meter b{flex:1;background:rgba(74,84,87,.35);position:relative}
+  .meter b.on{background:var(--ochre);border:1px solid rgba(0,0,0,.35)}
+  .meter b.on.hp{background:var(--blood-lit)}
+  .meter b.warn{background:var(--signal);animation:blink 1.05s steps(2,end) infinite}
+  .meter b.cold{background:var(--frost)}
+  @keyframes blink{50%{opacity:.35}}
+  .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .label{font-size:12px;color:var(--bone-dim);letter-spacing:.04em}
+  .val{font-family:"Cascadia Mono",Consolas,monospace;font-size:12px}
+
+  /* 任务卡 */
+  .objective{font-size:14px;line-height:1.55;margin:4px 0 10px}
+  .bearing{font-family:"Cascadia Mono",Consolas,monospace;font-size:13px;color:var(--ochre)}
+  .exit{font-family:"Cascadia Mono",Consolas,monospace;font-size:13px;color:var(--crt)}
+  .threat{font-family:"Cascadia Mono",Consolas,monospace;font-size:12px;color:var(--signal);line-height:1.7}
+  .land{font-family:"Cascadia Mono",Consolas,monospace;font-size:11px;color:var(--ash)}
+
+  /* 电传条 */
+  .teletype{display:flex;align-items:center;gap:12px;background:rgba(9,11,12,.95);
+    border:1px solid var(--steel);padding:10px 12px;margin-top:8px}
+  .tt-chip{background:#0d1a12;border:1px solid var(--crt);color:var(--crt);
+    font:10px/1 "Cascadia Mono",Consolas,monospace;padding:6px 8px;letter-spacing:.1em}
+  .tt-text{flex:1;font-size:13px;color:var(--bone)}
+  .tt-no{font:10px/1 "Cascadia Mono",Consolas,monospace;color:var(--bone-dim)}
+
+  /* 色板 */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+  .sw{border:1px solid var(--steel);padding:10px;min-height:74px;display:flex;flex-direction:column;justify-content:flex-end}
+  .sw span{font:11px/1.4 "Cascadia Mono",Consolas,monospace;color:var(--bone)}
+  .sw em{font-style:normal;font-size:10px;color:rgba(216,209,191,.55)}
+
+  /* 事件时间轴 */
+  .timeline{display:flex;height:34px;border:1px solid var(--steel);margin:10px 0 6px;position:relative;background:#0b0d0e}
+  .timeline .warn{background:linear-gradient(90deg,rgba(217,163,38,.15),rgba(217,163,38,.55));width:26%}
+  .timeline .live{background:linear-gradient(90deg,rgba(184,40,28,.55),rgba(184,40,28,.95));width:30%}
+  .timeline .idle{flex:1;background:repeating-linear-gradient(90deg,rgba(74,84,87,.25) 0 2px,transparent 2px 8px)}
+  .timeline span{position:absolute;font:10px/1 "Cascadia Mono",monospace;color:var(--bone);
+    top:50%;transform:translateY(-50%)}
+  .keys{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .key{border:1px solid var(--steel-lit);background:var(--iron-lit);padding:4px 7px;
+    font:11px/1 "Cascadia Mono",monospace;color:var(--bone)}
+  .key.hot{border-color:var(--ochre-dim);color:var(--ochre)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(74,84,87,.5);vertical-align:top}
+  th{font:11px/1.4 "Cascadia Mono",monospace;color:var(--bone-dim);letter-spacing:.1em;font-weight:400}
+  td.n{font-family:"Cascadia Mono",Consolas,monospace;color:var(--ochre);white-space:nowrap}
+  .note{font-size:12px;color:var(--bone-dim);line-height:1.7}
+  .crt{color:var(--crt)} .ochre{color:var(--ochre)} .blood{color:var(--blood-lit)} .frost{color:var(--frost)}
+</style>
+</head>
+<body>
+<div class="vignette"></div>
+<div class="corners"><i class="tl"></i><i class="tl v"></i><i class="tr"></i><i class="tr v"></i>
+  <i class="bl"></i><i class="bl v"></i><i class="br"></i><i class="br v"></i></div>
+<div class="works"><svg class="star" viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 16.5,14 19,22 12,17 5,22 7.5,14 1,9 9,9"/></svg>
+  <span>НОВОРСК-17 · ЖЕЛЕЗНАЯ ЗИМА · UI SPEC v4.1</span></div>
+
+<main>
+  <header>
+    <div class="kicker">СССР · НАРКОМАТ ПУТЕЙ СООБЩЕНИЯ · ДЕЛО № 0420</div>
+    <h1>ЖЕЛЕЗНАЯ ЗИМА
+      <small>Z年纪事 · 凛冬铁轨 —— 苏联化界面风格板</small>
+    </h1>
+    <p class="note" style="max-width:62ch;margin-top:14px">
+      这张板子就是 <span class="mono ochre">scripts/ui/SovietUI.gd</span> 的渲染结果：颜色、字号、边框、
+      仪表、档案排版。游戏里（Godot 的 CanvasLayer）画的是同一套东西，所以这里看到的比例、
+      明暗关系和俄文版位都可以直接当验收基准。
+    </p>
+  </header>
+
+  <h2>01 · 夜潜 HUD 组件</h2>
+  <div class="grid">
+
+    <!-- 左上：档案牌 -->
+    <div class="plate">
+      <div class="stamp"><span class="code">ДЕЛО № 1100 · ЗАПАДНЫЙ ПАРК</span><span>天亮 03:12</span></div>
+      <div style="font-family:Oswald,'Bahnschrift Condensed',Impact,sans-serif;font-size:26px;line-height:1.1">
+        西站调车场
+      </div>
+      <div class="mono dim small" style="margin:4px 0 12px">WEST STATION MARSHALLING YARD · 第三夜</div>
+      <div class="ruler"></div>
+
+      <div class="row"><span class="label">体温　ТЕПЛО</span><span class="val ochre"> 68%</span></div>
+      <div class="meter">
+        <b class="on"></b><b class="on"></b><b class="on"></b><b class="on"></b><b class="on"></b>
+        <b class="on warn"></b><b class="on warn"></b><b class="on warn"></b>
+        <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
+      </div>
+
+      <div class="row"><span class="label">健康　ЗДОРОВЬЕ</span><span class="val dim"> 86%</span></div>
+      <div class="meter">
+        <b class="on hp"></b><b class="on hp"></b><b class="on hp"></b><b class="on hp"></b><b class="on hp"></b>
+        <b class="on hp"></b><b class="on hp"></b><b class="on hp"></b><b class="on hp"></b>
+        <b class="on hp"></b><b class="on hp"></b><b class="on hp"></b><b class="on hp"></b>
+        <b class="on hp"></b><b></b><b></b>
+      </div>
+
+      <div class="ruler"></div>
+      <div class="mono small" style="line-height:1.7">
+        蹲伏 │ 手电关 暗处 │ 罐头 2 │ 借刀 1 │ 良知 +3 │ 卌 卌卌
+      </div>
+      <div class="small ochre" style="margin-top:4px">背包 3/8：透析液、阿司匹林、热水壶</div>
+    </div>
+
+    <!-- 右上：任务卡 -->
+    <div class="plate">
+      <div class="stamp"><span class="code">ЦЕЛЬ · 今夜任务</span></div>
+      <div class="objective">目标：调度塔外那张还没撕的发车令（红章新鲜）· 探照灯每 13 秒扫过整片道砟</div>
+      <div class="bearing">目标方位　↖ 西北 23m</div>
+      <div class="exit">撤离方位　↓ 南 31m</div>
+      <div class="ruler"></div>
+      <div class="threat">被 1 只狂暴者盯上<br>最近清杀兵 12m 西南<br>脚下冻雪泥（噪声 ×2）<br>环境警报：溜放车皮</div>
+      <div class="ruler"></div>
+      <div class="land">勘踏 2/4　·　未勘：煤水塔 ↙ 9m　·　下次节拍 14s</div>
+    </div>
+
+    <!-- 电传条 + 档案卡 -->
+    <div>
+      <div class="plate thin">
+        <div class="stamp" style="background:transparent;border:1px solid var(--blood-lit);color:var(--blood-lit)">
+          <span class="mono small">СЕКРЕТНО · 机密 · 开场案卷卡（7 秒）</span>
+        </div>
+        <div class="mono dim small" style="letter-spacing:.08em">СССР　·　НОВОРСК-17 · ЗАПАДНЫЙ СОРТИРОВОЧНЫЙ ПАРК</div>
+        <p style="margin:10px 0;font-size:14px;line-height:1.7">
+          五股道在脚下分开。道砟缝里的雪被风磨成了砂。<br>
+          驼峰那头每隔一会儿就放一辆车皮下来 —— 别站在股道上。
+        </p>
+        <div class="mono small">危险度 <span class="blood">▲▲▲▲△</span>　·　夜长 04:00　·　撤离：回南边铁丝网下的涵洞口</div>
+      </div>
+      <div class="teletype">
+        <span class="tt-chip">ТЕЛЕТАЙП</span>
+        <span class="tt-text">目标：调度塔外那张还没撕的发车令　·　Ctrl 蹲　Shift 跑　E 搜刮　F 手电　G 罐头</span>
+        <span class="tt-no">№ 0420</span>
+      </div>
+    </div>
+  </div>
+
+  <h2>02 · 调色板与字体</h2>
+  <div class="grid">
+    <div class="plate thin">
+      <div class="swatches">
+        <div class="sw" style="background:#070809"><span>INK #070809</span><em>沥青黑</em></div>
+        <div class="sw" style="background:#121618"><span>IRON #121618</span><em>生铁</em></div>
+        <div class="sw" style="background:#22282b"><span>PLATE #22282b</span><em>铆接钢板</em></div>
+        <div class="sw" style="background:#343c3f"><span>STEEL #343c3f</span><em>钢：边框</em></div>
+        <div class="sw" style="background:#d8d1bf;color:#070809"><span style="color:#070809">BONE #d8d1bf</span><em style="color:#3a352c">骨白：正文</em></div>
+        <div class="sw" style="background:#c8a257"><span style="color:#151208">OCHRE #c8a257</span><em style="color:#3a3018">黄铜：关键读数</em></div>
+        <div class="sw" style="background:#8c1c14"><span>BLOOD #8c1c14</span><em>军旗红：红章</em></div>
+        <div class="sw" style="background:#d9a326"><span style="color:#151208">SIGNAL #d9a326</span><em style="color:#3a3018">钠灯：可疑</em></div>
+        <div class="sw" style="background:#8fb4c4"><span style="color:#08110f">FROST #8fb4c4</span><em style="color:#132326">霜蓝：失温</em></div>
+        <div class="sw" style="background:#63d18a"><span style="color:#08110f">CRT #63d18a</span><em style="color:#0f2a1a">电传绿</em></div>
+      </div>
+      <div class="ruler"></div>
+      <div class="note">绿只给电传机；红只给红章与警示；黄铜只给关键读数。除此之外全是骨白与铁灰 —— 这是「厚重」的来源。</div>
+    </div>
+    <div class="plate thin">
+      <div class="label">DISPLAY · 钢印字</div>
+      <div style="font-family:Oswald,'Bahnschrift Condensed','Arial Narrow',Impact,sans-serif;font-size:34px;line-height:1.15;margin:2px 0 14px">
+        ЖЕЛЕЗНАЯ ЗИМА · 西站调车场
+      </div>
+      <div class="label">MONO · 电传打字机</div>
+      <div class="mono" style="font-size:14px;margin:2px 0 14px;color:var(--crt)">
+        ДЕЛО № 1100 · 03:12 · 卌 卌卌 · 68%
+      </div>
+      <div class="label">BODY · 正文</div>
+      <div style="font-size:14px;line-height:1.75;margin-top:4px">
+        一个半人缩在雪里发抖。瞳孔还在，但烫得吓人。清杀队分不清他和狂暴者 —— 手电扫到就开枪。
+      </div>
+    </div>
+  </div>
+
+  <h2>03 · 环境节拍（Level Beats）</h2>
+  <div class="grid">
+    <div class="plate thin">
+      <div class="row"><strong>驼峰溜放 · 西站调车场</strong><span class="mono small dim">period 30s</span></div>
+      <div class="timeline">
+        <div class="warn"></div><div class="live"></div><div class="idle"></div>
+        <span style="left:4px">预警 2.6s · 汽笛</span>
+        <span style="left:31%">车皮滑过 3.0s</span>
+        <span style="left:64%">下一次</span>
+      </div>
+      <p class="note">站在 2 道 ±1.15m 且与车皮横向 2.2m 内 → 刮倒：−9 HP / −6 体温 / 12m 巨响。
+        <span class="ochre">E 扳道岔</span>可以让它改走 3 道。</p>
+    </div>
+    <div class="plate thin">
+      <div class="row"><strong>炉口爆燃 · 松林庄园</strong><span class="mono small dim">period 26s</span></div>
+      <div class="timeline">
+        <div class="warn"></div><div class="live"></div><div class="idle"></div>
+        <span style="left:4px">预警 2.4s · 炉膛发白</span>
+        <span style="left:31%">1.6s 全院发白</span>
+        <span style="left:64%">下一次</span>
+      </div>
+      <p class="note">22m 内、视线没被松树/车皮/钢管挡住 → 影子被钉在雪上：34m 内特勤直接转警戒。
+        蹲进遮挡后面则安全。</p>
+    </div>
+  </div>
+
+  <h2>04 · 操作与数值</h2>
+  <div class="plate thin">
+    <table>
+      <tr><th>参数</th><th>yard</th><th>marshalling</th><th>manor</th></tr>
+      <tr><td>档案号</td><td class="n">0420-А</td><td class="n">1100</td><td class="n">409</td></tr>
+      <tr><td>危险度</td><td class="n">▲▲▲△△</td><td class="n">▲▲▲▲△</td><td class="n">▲▲▲▲▲</td></tr>
+      <tr><td>地标</td><td class="n">4</td><td class="n">4</td><td class="n">5</td></tr>
+      <tr><td>环境节拍</td><td>—（回归基准）</td><td>驼峰溜放 / 30s</td><td>炉口爆燃 / 26s</td></tr>
+      <tr><td>专属机关</td><td>—</td><td>1·2 号转辙器</td><td>停着的叉车（一次性）</td></tr>
+    </table>
+    <div class="keys">
+      <span class="key">WASD 移动</span><span class="key">Ctrl 蹲</span><span class="key">Shift 跑</span>
+      <span class="key hot">E 搜刮 / 机关 / 撤离</span><span class="key">G 罐头</span><span class="key">F 手电</span>
+      <span class="key">M 静音</span><span class="key">R 重来</span><span class="key">Esc 返回战役</span>
+    </div>
+    <p class="note" style="margin-bottom:0">
+      以上所有数值来自 <span class="mono">godot_project/scripts/night/LevelBeats.gd</span>；
+      验收看 <span class="mono">tests/night_beats_smoke.gd</span>。
+    </p>
+  </div>
+</main>
+</body>
+</html>

@@ -26,10 +26,19 @@ func _draw() -> void:
 	_ellipse(ex, 46.0, 46.0 * SQ, ec, 2.0)
 	if ctl.extract_prog > 0.0:
 		_arc(ex, 58.0, ctl.extract_prog, Color(0.35, 0.95, 0.6, 0.95), 4.0)
+	# 目标物资：走近才点亮，远处不剧透（关键物资 = 本关的 prize）
+	if ctl.state == "play" and not ctl.pack.has(ctl.prize) and ctl.objective_px != Vector2.ZERO:
+		var op: Vector2 = ctl.objective_px
+		var od: float = ctl.dist_m(p, op)
+		if od <= 18.0:
+			var k0: float = clampf((18.0 - od) / 8.0, 0.0, 1.0)
+			_ellipse(op, 30.0, 30.0 * SQ, Color(0.85, 0.72, 0.42, 0.22 + 0.3 * k0), 1.5)
+			_text(op + Vector2(0, -78), "ЦЕЛЬ · 目标物资", Color(0.88, 0.76, 0.46, 0.55 + 0.35 * k0), 13)
 	# 可搜刮提示
 	if ctl.state == "play":
 		var c2: Node2D = ctl.nearest_container()
 		var hf = ctl.nearest_half()
+		var mech: Dictionary = ctl.nearest_mechanism()
 		if hf != null:
 			_ellipse(hf.global_position, 34.0, 34.0 * SQ, Color(0.96, 0.62, 0.04, 0.6), 1.5)
 			_text(p + Vector2(0, -132), "按 E · 他在发烧（半人 %s）" % hf.tag, Color("#fcd34d"), 15)
@@ -40,8 +49,12 @@ func _draw() -> void:
 			_text(p + Vector2(0, -132), "长按 E 搜刮 · " + nm, Color(0.99, 0.9, 0.6, 0.95), 15)
 			if ctl.search_prog > 0.0:
 				_arc(p + Vector2(0, -50), 34.0, ctl.search_prog, Color(0.99, 0.85, 0.4, 0.95), 4.0)
+		elif not mech.is_empty():
+			var mnode: Node2D = mech["node2d"]
+			_ellipse(mnode.global_position, 38.0, 38.0 * SQ, Color(0.78, 0.63, 0.34, 0.55), 1.5)
+			_text(p + Vector2(0, -132), "按 E · " + String(mech.get("prompt", "操作")), Color(0.88, 0.76, 0.46, 0.95), 15)
 		elif ctl.dist_m(p, ex) <= REACH:
-			_text(p + Vector2(0, -132), "长按 E 钻回锅炉房（撤离）", Color(0.6, 1.0, 0.75, 0.95), 15)
+			_text(p + Vector2(0, -132), "长按 E 撤离：" + String(ctl.extract_zh), Color(0.6, 1.0, 0.75, 0.95), 15)
 	# 清杀兵头顶读数
 	for s in ctl.soldiers:
 		var sp: Vector2 = s.global_position + Vector2(0, -128)

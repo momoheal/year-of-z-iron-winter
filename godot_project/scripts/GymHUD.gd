@@ -11,6 +11,8 @@ extends CanvasLayer
 signal ui_sfx(name: String)
 
 const SimScript := preload("res://scripts/GymSim.gd")
+const SovietUI := preload("res://scripts/ui/SovietUI.gd")
+const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
 
 const SCREEN := Vector2(1920, 1080)
 const SIDEBAR_X := 1556.0
@@ -90,11 +92,7 @@ var _qte_hint: Label
 
 func _ready() -> void:
 	layer = 20
-	font = SystemFont.new()
-	font.font_names = PackedStringArray([
-		"Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "SimHei",
-		"PingFang SC", "Segoe UI", "Arial",
-	])
+	font = SovietUI.body_font()
 	ui_theme = Theme.new()
 	ui_theme.default_font = font
 	ui_theme.default_font_size = 13
@@ -104,6 +102,14 @@ func _ready() -> void:
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.theme = ui_theme
 	add_child(root)
+
+	# 整屏金属框：灰盒测试场也穿同一身制服
+	var chrome := SovietChrome.new()
+	chrome.name = "Chrome"
+	chrome.font = SovietUI.mono_font()
+	chrome.zone = "НОВОРСК-17 · ПОЛИГОН 5-В-1"
+	chrome.accent = SovietUI.OCHRE_DIM
+	root.add_child(chrome)
 
 	_build_top_bar()
 	_build_sidebar()
@@ -119,7 +125,7 @@ func bind_sim(s) -> void:
 # ============================================================================
 # 构建
 # ============================================================================
-func _style(bg: Color, border: Color, bw: int = 1, radius: int = 6, margin: int = 10) -> StyleBoxFlat:
+func _style(bg: Color, border: Color, bw: int = 1, _radius: int = 6, margin: int = 10) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = bg
 	sb.border_color = border
@@ -127,17 +133,17 @@ func _style(bg: Color, border: Color, bw: int = 1, radius: int = 6, margin: int 
 	sb.border_width_top = bw
 	sb.border_width_right = bw
 	sb.border_width_bottom = bw
-	sb.corner_radius_top_left = radius
-	sb.corner_radius_top_right = radius
-	sb.corner_radius_bottom_left = radius
-	sb.corner_radius_bottom_right = radius
+	sb.corner_radius_top_left = 0
+	sb.corner_radius_top_right = 0
+	sb.corner_radius_bottom_left = 0
+	sb.corner_radius_bottom_right = 0
 	sb.content_margin_left = margin
 	sb.content_margin_right = margin
 	sb.content_margin_top = margin * 0.7
 	sb.content_margin_bottom = margin * 0.7
 	return sb
 
-func _label(parent: Node, text: String, size: int = 13, color: Color = Color("e2e8f0")) -> Label:
+func _label(parent: Node, text: String, size: int = 13, color: Color = Color("#e3ddcd")) -> Label:
 	var l := Label.new()
 	l.text = text
 	l.add_theme_font_size_override("font_size", size)
@@ -146,7 +152,7 @@ func _label(parent: Node, text: String, size: int = 13, color: Color = Color("e2
 	parent.add_child(l)
 	return l
 
-func _wrap_label(parent: Node, text: String, size: int = 12, color: Color = Color("94a3b8")) -> Label:
+func _wrap_label(parent: Node, text: String, size: int = 12, color: Color = Color("#928c7c")) -> Label:
 	var l := _label(parent, text, size, color)
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.custom_minimum_size = Vector2(320, 0)
@@ -169,9 +175,8 @@ func _card(parent: Node, min_height: float, bg: Color = Color(0.043, 0.06, 0.086
 func _button(parent: Node, text: String, size: int = 12) -> Button:
 	var b := Button.new()
 	b.text = text
-	b.add_theme_font_size_override("font_size", size)
+	SovietUI.dress_button(b, false, size)
 	b.custom_minimum_size = Vector2(0, 30)
-	b.focus_mode = Control.FOCUS_NONE
 	parent.add_child(b)
 	return b
 
@@ -195,17 +200,17 @@ func _build_top_bar() -> void:
 	left.custom_minimum_size = Vector2(520, 0)
 	left.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hb.add_child(left)
-	_title = _label(left, "", 16, Color("f8fafc"))
-	_subtitle = _label(left, "", 11, Color("64748b"))
+	_title = _label(left, "", 16, Color("#f5efdd"))
+	_subtitle = _label(left, "", 11, Color("#6d6f66"))
 
 	var mid := VBoxContainer.new()
 	mid.add_theme_constant_override("separation", 2)
 	mid.custom_minimum_size = Vector2(600, 0)
 	mid.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hb.add_child(mid)
-	_zone = _label(mid, "", 14, Color("fbbf24"))
-	_stance = _label(mid, "", 11, Color("6ee7b7"))
-	_dog = _label(mid, "", 11, Color("7dd3fc"))
+	_zone = _label(mid, "", 14, Color("#c8a257"))
+	_stance = _label(mid, "", 11, Color("#a7e8bf"))
+	_dog = _label(mid, "", 11, Color("#b2ab9f"))
 
 	var right := HBoxContainer.new()
 	right.add_theme_constant_override("separation", 18)
@@ -213,11 +218,11 @@ func _build_top_bar() -> void:
 	right.alignment = BoxContainer.ALIGNMENT_END
 	right.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hb.add_child(right)
-	_hp_top = _label(right, "", 14, Color("fca5a5"))
-	_bpm_top = _label(right, "", 14, Color("fca5a5"))
-	_cans_top = _label(right, "", 14, Color("fcd34d"))
-	_tally_top = _label(right, "", 14, Color("fbbf24"))
-	_lang_badge = _label(right, "", 12, Color("93c5fd"))
+	_hp_top = _label(right, "", 14, Color("#e0897e"))
+	_bpm_top = _label(right, "", 14, Color("#e0897e"))
+	_cans_top = _label(right, "", 14, Color("#d9a326"))
+	_tally_top = _label(right, "", 14, Color("#c8a257"))
+	_lang_badge = _label(right, "", 12, Color("#b2ab9f"))
 
 func _build_sidebar() -> void:
 	var col := VBoxContainer.new()
@@ -233,8 +238,8 @@ func _build_sidebar() -> void:
 	var vh := HBoxContainer.new()
 	vh.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vit.add_child(vh)
-	_label(vh, "生命体征  VITALS", 12, Color("94a3b8"))
-	_hp_side = _label(vit, "HP 100%", 12, Color("fca5a5"))
+	_label(vh, "生命体征  VITALS", 12, Color("#928c7c"))
+	_hp_side = _label(vit, "HP 100%", 12, Color("#e0897e"))
 	_hp_bar = ProgressBar.new()
 	_hp_bar.max_value = 100.0
 	_hp_bar.value = 100.0
@@ -242,7 +247,7 @@ func _build_sidebar() -> void:
 	_hp_bar.custom_minimum_size = Vector2(SIDEBAR_W - 24, 10)
 	_hp_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var fill := StyleBoxFlat.new()
-	fill.bg_color = Color("ef4444")
+	fill.bg_color = Color("#b8281c")
 	fill.corner_radius_top_left = 3
 	fill.corner_radius_top_right = 3
 	fill.corner_radius_bottom_left = 3
@@ -252,28 +257,28 @@ func _build_sidebar() -> void:
 	bg.bg_color = Color(0.1, 0.13, 0.18, 1.0)
 	_hp_bar.add_theme_stylebox_override("background", bg)
 	vit.add_child(_hp_bar)
-	_weapon = _label(vit, "", 11, Color("e2e8f0"))
-	_tally_side = _label(vit, "", 11, Color("fbbf24"))
+	_weapon = _label(vit, "", 11, Color("#e3ddcd"))
+	_tally_side = _label(vit, "", 11, Color("#c8a257"))
 
 	# --- 灰盒验证清单 ---
 	var chk := _card(col, 178, Color(0.055, 0.07, 0.09, 0.94), Color(0.2, 0.25, 0.32, 1.0))
-	_label(chk, "📋 5 合 1 灰盒验证清单  GREYBOX TASKS", 12, Color("fbbf24"))
+	_label(chk, "📋 5 合 1 灰盒验证清单  GREYBOX TASKS", 12, Color("#c8a257"))
 	for i in 5:
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 6)
 		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		chk.add_child(row)
-		var mark := _label(row, "○", 12, Color("64748b"))
+		var mark := _label(row, "○", 12, Color("#6d6f66"))
 		mark.custom_minimum_size = Vector2(14, 0)
-		var txt := _wrap_label(row, "", 11, Color("94a3b8"))
+		var txt := _wrap_label(row, "", 11, Color("#928c7c"))
 		txt.custom_minimum_size = Vector2(292, 0)
 		_task_rows.append({"mark": mark, "text": txt, "id": "ABCDE"[i]})
-	_task_progress = _label(chk, "0 / 5", 11, Color("6ee7b7"))
+	_task_progress = _label(chk, "0 / 5", 11, Color("#a7e8bf"))
 
 	# --- 房间简报 ---
 	var brief := _card(col, 190, Color(0.055, 0.07, 0.09, 0.94), Color(0.2, 0.25, 0.32, 1.0))
-	_label(brief, "本轮测试区  ROOM BRIEF", 12, Color("94a3b8"))
-	_brief_title = _label(brief, "", 12, Color("fbbf24"))
+	_label(brief, "本轮测试区  ROOM BRIEF", 12, Color("#928c7c"))
+	_brief_title = _label(brief, "", 12, Color("#c8a257"))
 	_brief_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_brief_title.custom_minimum_size = Vector2(320, 0)
 	_brief_desc = _wrap_label(brief, "", 11, Color(0.72, 0.78, 0.85))
@@ -324,7 +329,7 @@ func _build_sidebar() -> void:
 
 	# --- 实时电传 ---
 	var feed_card := _card(col, 210, Color(0.055, 0.07, 0.09, 0.94), Color(0.2, 0.25, 0.32, 1.0))
-	_label(feed_card, "📻 诺沃斯克-17 实时电传  LIVE TELETYPE", 12, Color("94a3b8"))
+	_label(feed_card, "📻 诺沃斯克-17 实时电传  LIVE TELETYPE", 12, Color("#928c7c"))
 	_feed_box = VBoxContainer.new()
 	_feed_box.add_theme_constant_override("separation", 4)
 	_feed_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -342,7 +347,7 @@ func _build_hint() -> void:
 	root.add_child(bar)
 	_hint = _label(bar, "", 11, Color(0.65, 0.71, 0.78))
 
-	_banner = _label(root, "", 20, Color("34d399"))
+	_banner = _label(root, "", 20, Color("#63d18a"))
 	_banner.position = Vector2(500, 84)
 	_banner.custom_minimum_size = Vector2(800, 0)
 	_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -392,10 +397,10 @@ func _build_logbook_modal() -> void:
 	vb.add_child(_logbook_tally_row)
 	for i in 5:
 		var mark := _label(_logbook_tally_row,
-			"╱" if i == 4 else "｜", 34, Color("7f1d1d"))
+			"╱" if i == 4 else "｜", 34, Color("#5c2417"))
 		mark.custom_minimum_size = Vector2(26, 46)
 		_tally_marks.append(mark)
-	_logbook_tally_count = _label(vb, "0 / 5 STROKES", 13, Color("fca5a5"))
+	_logbook_tally_count = _label(vb, "0 / 5 STROKES", 13, Color("#e0897e"))
 	_logbook_tally_desc = _wrap_label(vb, "", 13, Color("d6d3d1"))
 	_logbook_tally_desc.custom_minimum_size = Vector2(980, 0)
 
@@ -425,7 +430,7 @@ func _build_choice_modal() -> void:
 	vb.add_theme_constant_override("separation", 10)
 	panel.add_child(vb)
 
-	_choice_title = _label(vb, "抉择 A · CHOICE A", 22, Color("fbbf24"))
+	_choice_title = _label(vb, "抉择 A · CHOICE A", 22, Color("#c8a257"))
 	_choice_body = _wrap_label(vb,
 		"涵洞里蜷缩着一个手背灰鳞正在剥落、体温正在回退的年轻人。他还有心跳、还有名字——但电传机已经把他划成了 0 人。",
 		13, Color(0.85, 0.88, 0.92))
@@ -437,7 +442,7 @@ func _build_choice_modal() -> void:
 	_choice_a1.pressed.connect(_on_choice.bind("A1"))
 	_choice_a1_desc = _wrap_label(vb,
 		"救下他。他将告诉你老伊万在西站水塔的暗号，并证实拉娜被锁进铁壳号第三节车厢。工作日志保持零划痕。",
-		11, Color("6ee7b7"))
+		11, Color("#a7e8bf"))
 	_choice_a1_desc.custom_minimum_size = Vector2(1000, 0)
 
 	_choice_a3 = _button(vb, "[A3] 🩸 撬棍灭口并搜刮（+2 道卌字血划痕）", 14)
@@ -445,14 +450,14 @@ func _build_choice_modal() -> void:
 	_choice_a3.pressed.connect(_on_choice.bind("A3"))
 	_choice_a3_desc = _wrap_label(vb,
 		"砸死他，搜出两只罐头。工作日志背面会多出两道划痕；终局鹰嘴崖的救赎将被永久关闭。",
-		11, Color("fca5a5"))
+		11, Color("#e0897e"))
 	_choice_a3_desc.custom_minimum_size = Vector2(1000, 0)
 
 	_choice_a2 = _button(vb, "[A2] 🚪 退开半步（暂不处置）", 14)
 	_choice_a2.custom_minimum_size = Vector2(1000, 38)
 	_choice_a2.pressed.connect(_on_choice.bind("A2"))
 	_choice_a2_desc = _wrap_label(vb, "离开涵洞。他还在那里抽搐，声波会继续在黑暗里回荡。",
-		11, Color("94a3b8"))
+		11, Color("#928c7c"))
 	_choice_a2_desc.custom_minimum_size = Vector2(1000, 0)
 
 func _build_qte_modal() -> void:
@@ -475,7 +480,7 @@ func _build_qte_modal() -> void:
 	vb.add_theme_constant_override("separation", 8)
 	panel.add_child(vb)
 
-	_qte_title = _label(vb, "🩸 锁骨卡刀 · COLLARBONE BLADE JAM", 20, Color("fca5a5"))
+	_qte_title = _label(vb, "🩸 锁骨卡刀 · COLLARBONE BLADE JAM", 20, Color("#e0897e"))
 	_qte_sub = _wrap_label(vb,
 		"砍骨刀卡死在瓦西里的左锁骨缝里。连按 6 次把刀拔出来！",
 		13, Color(0.9, 0.85, 0.85))
@@ -487,7 +492,7 @@ func _build_qte_modal() -> void:
 	_qte_bar.show_percentage = false
 	_qte_bar.custom_minimum_size = Vector2(740, 18)
 	var qfill := StyleBoxFlat.new()
-	qfill.bg_color = Color("ef4444")
+	qfill.bg_color = Color("#b8281c")
 	qfill.corner_radius_top_left = 4
 	qfill.corner_radius_top_right = 4
 	qfill.corner_radius_bottom_left = 4
@@ -501,7 +506,7 @@ func _build_qte_modal() -> void:
 	_qte_btn = _button(vb, "🗡️ 用力拔刀！[SPACE / 左键]", 15)
 	_qte_btn.custom_minimum_size = Vector2(740, 44)
 	_qte_btn.pressed.connect(_on_qte_pressed)
-	_qte_count = _label(vb, "0 / 6", 13, Color("fca5a5"))
+	_qte_count = _label(vb, "0 / 6", 13, Color("#e0897e"))
 	_qte_hint = _label(vb, "连按得越快，越能听见他恢复清醒的呼吸。", 11, Color("a8a29e"))
 
 # ============================================================================
@@ -540,10 +545,10 @@ func refresh() -> void:
 		var finished: bool = sim.tasks_done[row["id"]]
 		row["mark"].text = "✓" if finished else "○"
 		row["mark"].add_theme_color_override("font_color",
-			Color("34d399") if finished else Color("64748b"))
+			Color("#63d18a") if finished else Color("#6d6f66"))
 		row["text"].text = t["zh"] if zh else t["en"]
 		row["text"].add_theme_color_override("font_color",
-			Color("6ee7b7") if finished else Color("94a3b8"))
+			Color("#a7e8bf") if finished else Color("#928c7c"))
 
 	var room_id: String = sim.current_room()["id"]
 	var brief: Dictionary = SimScript.ROOM_BRIEF[room_id]
@@ -591,20 +596,20 @@ func _rebuild_feed(shown: int, zh: bool) -> void:
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		l.custom_minimum_size = Vector2(312, 0)
 	if shown == 0:
-		_label(_feed_box, "…", 10, Color("64748b"))
+		_label(_feed_box, "…", 10, Color("#6d6f66"))
 
 func _feed_color(cls: String) -> Color:
 	if cls.contains("emerald"):
-		return Color("6ee7b7")
+		return Color("#a7e8bf")
 	if cls.contains("rose"):
 		return Color("fda4af")
 	if cls.contains("amber"):
-		return Color("fcd34d")
+		return Color("#d9a326")
 	if cls.contains("cyan"):
 		return Color("67e8f9")
 	if cls.contains("sky"):
-		return Color("7dd3fc")
-	return Color("cbd5e1")
+		return Color("#b2ab9f")
+	return Color("#d8d1bf")
 
 func _update_logbook(zh: bool) -> void:
 	if not sim.logbook_open:
@@ -626,10 +631,10 @@ func _update_logbook(zh: bool) -> void:
 			var row := HBoxContainer.new()
 			row.add_theme_constant_override("separation", 10)
 			_logbook_names.add_child(row)
-			_label(row, "✓", 12, Color("34d399"))
+			_label(row, "✓", 12, Color("#63d18a"))
 			var name_l := _wrap_label(row, String(item["zh"] if zh else item["en"]), 11, Color("e7e5e4"))
 			name_l.custom_minimum_size = Vector2(830, 0)
-			_label(row, "VERIFIED", 10, Color("34d399"))
+			_label(row, "VERIFIED", 10, Color("#63d18a"))
 	var strokes: int = sim.tally_stroke_marks()
 	for i in _tally_marks.size():
 		var mark: Label = _tally_marks[i]

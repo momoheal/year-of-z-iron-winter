@@ -39,14 +39,16 @@ year-of-z-iron-winter/
 │   │   ├── Z年纪事_美术资源生成Prompt规格书.md                   # ★ AI 出图生产规格：视觉宪法 / 宏 / 逐资产 Prompt (Art Prompt Spec ZH)
 │   │   ├── Z年纪事_Godot4引擎迁移技术规范与架构指南.md           # ★ Godot 4.7+ 引擎迁移技术规范与架构指南 (ZH)
 │   │   ├── Z年纪事_Godot灰盒5合1移植对照表.md                     # ★ 5合1 灰盒测试场移植对照表 + 61 项测试清单 (ZH)
-│   │   └── Z年纪事_Godot探索循环移植对照表.md                     # ★ 探索循环（基地→地图→夜潜→结算）移植对照表 + 97 项测试清单 (ZH)
+│   │   ├── Z年纪事_Godot探索循环移植对照表.md                     # ★ 探索循环（基地→地图→夜潜→结算）移植对照表 + 97 项测试清单 (ZH)
+│   │   └── Z年纪事_苏联化界面与关卡节拍.md                        # ★ 苏联化前端（SovietUI/Chrome/Meter）+ 关卡档案层与环境节拍 (ZH)
 │   └── en/                                                       # English Documentation (v4.0 Russian Winter)
 │       ├── Year_of_Z_Iron_Winter_Master_Script_EN.md             # Full 5-Act Master Screenplay (EN)
 │       ├── Year_of_Z_Iron_Winter_GDD_EN.md                       # Game Design Document v4.0 (EN)
 │       ├── Year_of_Z_Iron_Winter_Greybox_Spec_EN.md              # Phase 1 Greybox Spec & Asset List (EN)
 │       ├── Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md    # ★ Godot 4.7+ Engine Migration & Architecture Guide (EN)
 │       ├── Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md    # ★ 5-in-1 Greybox Gym Port Report & 61-assertion suite (EN)
-│       └── Year_of_Z_Iron_Winter_Godot_Exploration_Loop_EN.md    # ★ Exploration-Loop Port Report & 97-assertion suite (EN)
+│       ├── Year_of_Z_Iron_Winter_Godot_Exploration_Loop_EN.md    # ★ Exploration-Loop Port Report & 97-assertion suite (EN)
+│       └── Year_of_Z_Iron_Winter_Soviet_UI_and_Level_Beats_EN.md  # ★ Soviet UI system + per-map level beats (EN)
 ├── prototypes/                                                   # Interactive HTML5 Prototypes & Sandboxes
 │   ├── Year_of_Z_Iron_Winter_Exploration_Demo.html               # ★★ 探索循环 DEMO：据点→地图选点→夜潜→搜刮→撤离→结算 (Bilingual ZH/EN)
 │   ├── Year_of_Z_Iron_Winter_Playable_Greybox_Gym.html           # ★ Single-File HTML5 Playable 5-in-1 Greybox Gym (Bilingual ZH/EN)
@@ -71,8 +73,13 @@ year-of-z-iron-winter/
     │   ├── Gym.gd                                                # ★ 灰盒场输入 + 等比视口 + _draw() 全画面渲染
     │   ├── GymHUD.gd                                             # ★ 顶栏/侧栏/清单/电传 + 日志/抉择A/QTE 模态框
     │   ├── Sfx.gd                                                # ★ 6 种程序化音效（启动时烘焙 AudioStreamWAV）
+    │   ├── ui/                                                   # ★ 苏联化界面系统（全项目共用）
+    │   │   ├── SovietUI.gd                                       #   调色板 / 字体栈 / 方形钢板 StyleBox / 方位·时钟·卌 文本工具
+    │   │   ├── SovietChrome.gd                                   #   整屏金属框：暗角 / 角码 / 铆钉 / 扫描线 / 警报红边 / 红星厂标
+    │   │   └── SovietMeter.gd                                    #   分段式仪表（掉一格看得见；低值闪烁）
     │   ├── night/                                                # ★ 节点化夜潜场景的脚本
-    │   │   ├── NightExplore.gd                                   #   总控：三方潜行 / 搜刮 / 体温 / 天亮渐变 / 抉择 / 战役回写
+    │   │   ├── NightExplore.gd                                   #   总控：三方潜行 / 搜刮 / 体温 / 天亮渐变 / 抉择 / 关卡导演 / 战役回写
+    │   │   ├── LevelBeats.gd                                     #   ★ 关卡档案层：地标勘踏 / 环境节拍（驼峰溜放·炉口爆燃）/ 专属机关
     │   │   ├── NightSfx.gd                                       #   25 种程序化音色 + 定位声部 + 面具呼吸循环 + 心跳
     │   │   ├── NightPlayer / NightSoldier / NightRabid / NightHalf.gd  # 玩家与三方 AI
     │   │   └── NightOverlay / NightFlicker / NightSearchlight / NightAnim.gd  # 世界空间读数 / 灯光调制 / 探照灯塔 / 帧动画
@@ -86,6 +93,7 @@ year-of-z-iron-winter/
     │   ├── campaign_smoke.gd                                     # ★ 97 项 headless 探索循环测试
     │   ├── night_explore_smoke.gd                                # ★ 109 项 headless 夜潜货场测试
     │   ├── night_level_smoke.gd                                  # ★ 58 项 headless 多关卡管线测试
+    │   ├── night_beats_smoke.gd                                  # ★ 界面苏联化 + 关卡档案层 / 节拍状态机测试
     │   ├── gym_smoke.gd                                          # ★ 61 项 headless 机制冒烟测试
     │   ├── data_pipeline_smoke.gd                                # 71 项事件 / 数据管线测试
     │   └── room_a_smoke.gd                                       # 20 项 Room A 夜潜切片测试
@@ -194,6 +202,45 @@ P4 的第二张新地图，也是战役里危险度 5 的终点图：夜长 120 
 
 ---
 
+---
+
+## 🪖 苏联化前端 · 全项目界面系统（`scripts/ui/`）与关卡档案层（`scripts/night/LevelBeats.gd`）
+
+**Front-end pass · «Железная Зима» UI system + per-map dossier layer.** 这一轮不改玩法数值，只改**界面怎么长**和**地图怎么呼吸**：三张节点化地图共用一套「铁冬」界面，差异全部收进数据表。
+
+### 一、视觉宪法（`SovietUI.gd` 是唯一数据源）
+
+| 原则 | 落地 |
+| :--- | :--- |
+| **钢板没有圆角** | 所有 `StyleBoxFlat` 的 `corner_radius = 0`；边框 1–2px，靠留白与双线（`SovietChrome` 画）分层 |
+| **两种颜色说话** | 军旗红 `#8c1c14` 只给红章 / 警示 / 卌；黄铜 `#c8a257` 只给关键读数与目标；其余是沥青黑 `#070809` / 生铁 `#121618` / 骨白 `#d8d1bf` / 霜蓝 `#8fb4c4`。绿色只留给电传机（`#63d18a`） |
+| **三档字体** | `display`（Oswald / Bahnschrift / Impact …压缩体，钢印字）· `mono`（Consolas / DejaVu Sans Mono，电传打字机）· `body`（Noto Sans SC / 雅黑，正文）。`SystemFont` 栈自动降级，中文与俄文永远有兜底 |
+| **屏幕是一块铁** | `SovietChrome` 在整屏上画四角 L 形角码、边框铆钉、由外向内的暗角、极淡扫描线、右下角红星 + `НОВОРСК-17 · 17-Я ДИСТАНЦИЯ ПУТИ` 厂标；`danger > 0` 时边缘渗出红光（警报不弹窗，屏幕发烫） |
+| **仪表会掉格** | `SovietMeter` 把体温 / 健康切成分段表尺：一格一格掉，低于 35% 剩余格子像接触不良一样闪，失温时整体转霜蓝 |
+| **俄文是排版而不是装饰** | 档案号 `ДЕЛО № 0420-А`、`ЦЕЛЬ`（目标）、`ТЕПЛО` / `ЗДОРОВЬЕ`、`ОПРОСНЫЙ ЛИСТ`（问询单）、`ТЕЛЕТАЙП`、`СЕКРЕТНО`……都落在固定的版位（红章条 / 左栏 / 右栏 / 底条） |
+
+**界面骨架**（`NightExplore.gd`）：左上「夜潜工作日志」档案牌（红章条：档案号 + 天亮倒计时 → 关卡名 → 体温/健康分段表尺 → 姿态与良知读数 → 背包）· 右上「任务卡」（目标 / **目标方位** / **撤离方位** / 威胁 / 勘踏进度）· 底部电传条（所有长按 E 的提示都从这台机器打出来）· 屏幕中央的结局读数 · 抉择面板做成一张 **问询单**。
+
+`CampaignHUD.gd` / `GymHUD.gd` / `HUD.gd` 全部改走同一套工厂（`_sb` / `_btn` / `_panel` / `_bar` / `_chip`），配色由 slate 蓝绿整表替换为铁灰 + 骨白 + 黄铜 + 军旗红；战役标题页变成一页**案卷封面**（`ЖЕЛЕЗНАЯ ЗИМА` 钢印大标题 + 斜盖的 `СЕКРЕТНО · 机密` 章）；地图节点卡新增「环境档案」块（这张图会怎么弄死你 + 有多少地标可勘）。
+
+### 二、可玩可感：关卡导演（`LevelBeats.gd` + `NightExplore.gd`）
+
+三张图共用 `NightExplore.gd`，玩法差异全部收进数据表，**不新增美术资产、不改 `.tscn`**。
+
+| 系统 | 说明 |
+| :--- | :--- |
+| **开场档案卡** | 进图 7 秒的案卷头：`СССР · 厂标` → 两行「这是哪儿」 → 危险度 `▲▲▲▲△` / 夜长 / 撤离口令。之后自动淡出，不挡视线 |
+| **地标勘踏** | 每关 4–5 处地标（三号闷罐车厢 / 调度塔 / 煤水塔 / 二号恒温库防爆门 / 2000℃ 炉口 …）。走近半径自动记一笔：电传机「勘踏 · ×××」+ 一行档案注解；右栏累计 `勘踏 n/m`，并给出**最近未勘地标的方位与距离** |
+| **目标 / 撤离方位** | 右栏常驻八方位读数（`↖ 西北 23m`），目标点由「必出 prize 的容器」反查，拿到关键物资后自动切到「回撤离点」；世界里在 18m 内点亮 `ЦЕЛЬ · 目标物资` 的光圈 |
+| **环境节拍 · 驼峰溜放（marshalling）** | 每 30 秒一拍：预警 2.6s（远处汽笛 + 电传提示）→ 3.0s 一辆车皮沿 2 道从东滑到西（暗剪影 + 车灯 + 轮轨声）。站在那股道上会被刮倒（−9 HP / −6 体温 / 巨响引来狂暴者）。**扳道岔可以换股** |
+| **环境节拍 · 炉口爆燃（manor）** | 每 26 秒一拍：预警 2.4s（炉膛发白 + 闷响）→ 1.6s 全院子被照亮（后处理 `alarm` 抬红、炉口两盏灯能量 ×2.45）。站在炉口视野里会「影子被钉在雪上」——34m 内的特勤直接转警戒；**蹲进松林 / 车皮 / 钢管背后的遮挡**则安全 |
+| **专属机关** | `E` 扳转辙器（切换溜放股道，金属巨响会引来东西）· `E` 发动叉车（一次性 16m「巨型罐头」，把敌我全引过去） |
+| **威胁读数** | 右栏实时给「被 N 只狂暴者盯上 / 最近清杀兵 12m 西南 / 脚下冻雪泥（噪声 ×2）/ 环境警报」；屏幕边缘随紧张度渗红 |
+
+测试：`tests/night_beats_smoke.gd`（界面工具 / 三关档案数据 / 关键物资点 / 地标在图内 / 节拍状态机 / 扳道岔 / 叉车一次性）。
+**尚未在装 Godot 的机器上首跑**：本轮改动已通过 gdtoolkit GDScript 解析校验，但需要在本机跑一次
+`night_beats_smoke.gd` 与既有 `night_level_smoke.gd` / `night_explore_smoke.gd` 完成首次验收（含肉眼核对 HUD 排版）。
+
 ## 🗺 Exploration Loop Demo (探索循环 DEMO · `Year_of_Z_Iron_Winter_Exploration_Demo.html`)
 
 **Single-file HTML5 · Canvas · zero art assets · zero build step.** Open it directly in any modern browser (or serve the `prototypes/` folder). Instant **中文 / EN** switching, procedurally synthesized Web Audio SFX, and a full one-day loop:
@@ -291,6 +338,9 @@ Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/campaign_smok
 
 # Greybox gym: 61 headless assertions (prints GYM_SMOKE_PASS on success)
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/gym_smoke.gd
+
+# Soviet UI + level beats: headless UI/dossier/beat-state-machine assertions
+Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_beats_smoke.gd
 
 # Room A slice: 20 headless assertions (prints ROOM_A_SMOKE_PASS on success)
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/room_a_smoke.gd
