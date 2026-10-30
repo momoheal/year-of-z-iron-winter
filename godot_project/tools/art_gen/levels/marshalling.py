@@ -88,6 +88,13 @@ PROPS = [
          occlude=False, fire=True),           # 扳道员的火堆：本关两个回温点之一
     dict(id="Watchtower", art="PRP_Watchtower_Searchlight", pos=(41.0, 8.6), fp=(2.6, 1.3), layer=1,
          fade=True),
+    # --- 检修哨位（P5 战斗切片）：沙袋 + 弹药箱 + 武器架 ---
+    dict(id="Sandbags", art="PRP_Sandbag_Line", pos=(33.0, 9.2), fp=(3.2, 0.85), layer=2,
+         occlude=False),                       # 低矮掩体：蹲下挡视线，站着能架枪打驼峰那头
+    dict(id="AmmoBox", art="PRP_Ammo_Box_Open", pos=(24.2, 5.6), fp=(1.1, 0.5), layer=1,
+         cont="crate", guaranteed="ammo"),     # 调度塔下的弹药箱：补子弹，别在空枪时才发现
+    dict(id="WeaponRack", art="PRP_WeaponRack", pos=(12.4, 4.1), fp=(1.3, 0.5), layer=1,
+         occlude=False),                       # 机车库门边的枪架（只剩空钩子）
     # --- 股道之间（y 12~31）---
     dict(id="SignalPost", art="PRP_SignalPost_Red", pos=(18.4, 13.3), fp=(0.3, 0.25), layer=1,
          occlude=False, ao="post"),

@@ -6,6 +6,9 @@ const SQ := 0.62
 const REACH := 1.45
 const Data := preload("res://scripts/CampaignData.gd")
 const CAN_TEX := preload("res://art/30_props/PRP_TinCan.png")
+const SPARK_TEX := preload("res://art/50_vfx/VFX_Impact_Spark.png")
+const BLOOD_TEX := preload("res://art/50_vfx/VFX_Blood_Mist.png")
+const CASING_TEX := preload("res://art/50_vfx/VFX_Shell_Casing.png")
 
 @onready var ctl = owner
 
@@ -19,6 +22,34 @@ func _draw() -> void:
 		var c: Color = r["col"]
 		c.a = 0.55 * float(r["life"])
 		_ellipse(r["pos"], rad, rad * SQ, c, 2.0)
+	# 战斗特效：曳光 / 弹着 / 血雾 / 弹壳 / 命中标记
+	for tr in ctl.tracers:
+		var ta: float = clampf(float(tr["life"]) / 0.07, 0.0, 1.0)
+		draw_line(tr["from"], tr["to"], Color(1.0, 0.86, 0.58, 0.85 * ta), 2.4, true)
+		draw_circle(tr["to"], 2.2, Color(1.0, 0.94, 0.75, ta))
+	for im in ctl.impacts:
+		var life: float = float(im["life"])
+		var tex: Texture2D = SPARK_TEX
+		if String(im.get("tex", "")).ends_with("Blood_Mist.png"):
+			tex = BLOOD_TEX
+		elif String(im.get("tex", "")).ends_with("Impact_Spark.png"):
+			tex = SPARK_TEX
+		var kk: float = clampf(life / 0.3, 0.0, 1.0)
+		var sc: float = float(im.get("scale", 1.0)) * lerpf(0.7, 1.25, 1.0 - kk)
+		var sz: Vector2 = tex.get_size() * sc
+		draw_texture_rect(tex, Rect2(Vector2(im["pos"]) - sz * 0.5, sz), false, Color(1, 1, 1, kk))
+	for c in ctl.casings:
+		draw_set_transform(Vector2(c["pos"]) + Vector2(0, 0), float(c["life"]) * 9.0)
+		draw_texture(CASING_TEX, -CASING_TEX.get_size() * 0.5)
+		draw_set_transform(Vector2.ZERO, 0.0)
+	for hm in ctl.hit_marks:
+		var ha: float = clampf(float(hm["life"]) / 0.45, 0.0, 1.0)
+		var hc := Color(1.0, 0.82, 0.45, ha)
+		if bool(hm.get("kill", false)):
+			hc = Color(1.0, 0.28, 0.24, ha)
+		var hp2: Vector2 = hm["pos"]
+		for d in [Vector2(-7, -7), Vector2(7, 7), Vector2(-7, 7), Vector2(7, -7)]:
+			draw_line(hp2, hp2 + d, hc, 2.4, true)
 	# 撤离点
 	var ex: Vector2 = ctl.exit_px
 	var pulse := 0.5 + 0.5 * sin(ctl.t * 3.0)
@@ -57,6 +88,8 @@ func _draw() -> void:
 			_text(p + Vector2(0, -132), "长按 E 撤离：" + String(ctl.extract_zh), Color(0.6, 1.0, 0.75, 0.95), 15)
 	# 清杀兵头顶读数
 	for s in ctl.soldiers:
+		if not s.is_alive():
+			continue
 		var sp: Vector2 = s.global_position + Vector2(0, -128)
 		var su: float = clampf(float(s.suspicion), 0.0, 1.0)
 		if s.state == "alert":
@@ -105,6 +138,26 @@ func _draw() -> void:
 		var k: float = clampf(float(c3["t"]), 0.0, 1.0)
 		var pos: Vector2 = Vector2(c3["from"]).lerp(c3["to"], k) + Vector2(0, -sin(k * PI) * 90.0 - 40.0 * (1.0 - k))
 		draw_texture(CAN_TEX, pos - Vector2(8, 13))
+	# 准星（枪）/ 挥击弧（撬棍）/ 装填环
+	if ctl.state == "play":
+		var mw: Vector2 = ctl.get_global_mouse_position()
+		if ctl.cur_is_gun():
+			var w: Dictionary = ctl.cur_w()
+			var spread_px: float = clampf(float(w.get("spread", 2.0)) * 2.6, 5.0, 26.0)
+			var cc := Color(0.98, 0.86, 0.52, 0.75)
+			for a in [0.0, PI * 0.5, PI, PI * 1.5]:
+				var u := Vector2(cos(a), sin(a))
+				draw_line(mw + u * spread_px, mw + u * (spread_px + 6.0), cc, 1.6, true)
+			draw_circle(mw, 1.6, cc)
+			if ctl.reload_left > 0.0:
+				var rk: float = 1.0 - ctl.reload_left / maxf(0.01, float(w.get("reload", 1.4)))
+				_arc(p, 52.0, clampf(rk, 0.0, 1.0), Color(0.98, 0.8, 0.4, 0.9), 4.0)
+		else:
+			var sway: float = clampf(ctl.swing_t / 0.24, 0.0, 1.0)
+			if sway > 0.0:
+				var a0: float = ctl.player.facing - 0.85 + (1.0 - sway) * 1.7
+				draw_arc(p + Vector2(0, -28), 62.0, a0 - 0.35, a0 + 0.35, 12,
+					Color(0.9, 0.84, 0.66, 0.55 * sway), 5.0, true)
 	# 浮字
 	for f in ctl.floats:
 		var fc: Color = f["col"]

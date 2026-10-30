@@ -22,6 +22,10 @@ extends Node2D
 const Data := preload("res://scripts/CampaignData.gd")
 const SfxScript := preload("res://scripts/night/NightSfx.gd")
 const Beats := preload("res://scripts/night/LevelBeats.gd")
+const Arsenal := preload("res://scripts/night/Arsenal.gd")
+const TEX_GLOW := preload("res://art/50_vfx/VFX_Light_Radial_Soft.png")
+const TEX_BLOOD := preload("res://art/50_vfx/VFX_Blood_Mist.png")
+const TEX_SPARK := preload("res://art/50_vfx/VFX_Impact_Spark.png")
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const SovietMeter := preload("res://scripts/ui/SovietMeter.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
@@ -95,6 +99,27 @@ var half_lost := 0             # 被清杀队误杀的半人
 var choice_half = null       # NightHalf
 var choice_msg := ""
 var cans := 3
+
+# ---- 战斗（P5）----
+var weapons: Array[String] = ["crowbar"]
+var w_idx := 0
+var weapon := "crowbar"
+var mag: Dictionary = {}                  # 武器 id → 弹匣内
+var reserve: Dictionary = {}              # 武器 id → 备弹
+var cool := 0.0                           # 攻击冷却
+var reload_left := 0.0                    # 装填剩余时间（>0 = 正在装填）
+var swing_t := 0.0                        # 挥击动画剩余时间
+var muzzle_t := 0.0                       # 枪口焰剩余时间
+var tracers: Array[Dictionary] = []       # 曳光：{from, to, life}
+var impacts: Array[Dictionary] = []       # 弹着：{pos, life}
+var casings: Array[Dictionary] = []       # 弹壳：{pos, vel, life}
+var hit_marks: Array[Dictionary] = []     # 命中标记：{pos, life, kill}
+var soldier_kills := 0
+var rabid_kills := 0
+var _w_sprite: Sprite2D = null
+var _flash_sprite: Sprite2D = null
+var _flash_light: PointLight2D = null
+var _aim_noise := 0.0
 var search_target: Node2D = null
 var search_prog := 0.0
 var extract_prog := 0.0
@@ -134,6 +159,7 @@ var _lbl_bearing: Label
 var _lbl_exit: Label
 var _lbl_threat: Label
 var _lbl_landmarks: Label
+var _lbl_weapon: Label
 var _m_warm
 var _m_hp
 var _lbl_warm_val: Label
@@ -229,6 +255,7 @@ func _ready() -> void:
 	cam.reset_smoothing()
 	_wire_audio()
 	_init_beats()
+	_init_weapons()
 	_build_hud()
 	_init_post_defaults()
 
@@ -329,6 +356,7 @@ func _process(delta: float) -> void:
 			abort_pending = false
 	if state == "play":
 		_update_interact(delta)
+		_update_combat(delta)
 		_update_warmth(delta)
 		_update_director(delta)
 		if in_campaign:
@@ -494,6 +522,11 @@ func choose(idx: int) -> bool:
 func on_half_killed(h, by: String) -> void:
 	_splat(h.global_position)
 	if by == "player":
+		# 抉择面板之外也灭得了口（撬棍 / 枪）：账一样要记，但别重复记
+		if h.resolved != "mercy":
+			h.resolved = "mercy"
+			tally += 1
+			conscience -= 10.0
 		spawn_float(h.global_position + Vector2(0, -124), "撬棍落下。日志背面多了一道卌。", Color("#fbbf24"))
 		return
 	h.resolved = "osk"
@@ -529,6 +562,8 @@ func _finish_search(c: Node2D) -> void:
 		names.append(item_name(id))
 	if not names.is_empty():
 		spawn_float(c.global_position + Vector2(0, -90), "+ " + "、".join(names), Color("#fde68a"))
+	for id in got:
+		ammo_from_item(id)
 	if g != "":
 		var note := "拿到了 %s" % item_name(g)
 		if g == "dial":
@@ -736,7 +771,10 @@ func _splat(pos: Vector2) -> void:
 func on_rabid_killed(r: Node2D, by: String) -> void:
 	_splat(r.global_position)
 	sfx.play_at("bonejam", r.global_position, -6.0)      # 一百公斤的东西倒在雪里
-	if by != "":
+	if by == "player":
+		rabid_kills += 1
+		spawn_float(r.global_position + Vector2(0, -130), "亲手放倒 1 只狂暴者", Color("#fca5a5"))
+	elif by != "":
 		borrowed += 1
 		spawn_float(r.global_position + Vector2(0, -130), "借刀杀人：清杀队替你清掉 1 只狂暴者", Color("#7dd3fc"))
 
@@ -771,6 +809,10 @@ func _end(reason: String) -> void:
 	if beat_rake != null and is_instance_valid(beat_rake):
 		beat_rake.queue_free()
 		beat_rake = null
+	muzzle_t = 0.0
+	reload_left = 0.0
+	if _flash_sprite != null:
+		_flash_sprite.visible = false
 	sfx.set_tension(0.0)             # 心跳停下：这一夜已经结束了
 	match reason:
 		"extracted":
@@ -807,7 +849,13 @@ func _return_to_campaign(reason: String) -> void:
 	R.player.warmth = warmth
 	R.load = {}            # 携带消耗品已并入 pack，finish_raid 不再重复归还
 	R.half_saved = half_saved
-	R.killed = borrowed    # 借刀杀人清掉的狂暴者
+	R.killed = borrowed + rabid_kills    # 借刀杀人 + 亲手放倒的狂暴者
+	# 枪里的余弹带回去（战役结算里武器行显示「弹匣 / 备弹」）
+	match String(R.weapon.get("id", "")):
+		"mosin":
+			R.ammo = int(mag.get("rifle", 0)) + int(reserve.get("rifle", 0))
+		"shotgun":
+			R.ammo = int(mag.get("shotgun", 0)) + int(reserve.get("shotgun", 0))
 	R.looted = _count_searched()
 	R.total_cont = containers.size()
 	R.events = []
@@ -817,6 +865,10 @@ func _return_to_campaign(reason: String) -> void:
 		R.add_event("good", "救下半人 %d 名" % half_saved, "Saved %d half-humans" % half_saved)
 	if borrowed > 0:
 		R.add_event("knife", "借刀杀人 ×%d" % borrowed, "Borrowed knife ×%d" % borrowed)
+	if rabid_kills > 0:
+		R.add_event("good", "亲手放倒狂暴者 ×%d" % rabid_kills, "Rabids put down ×%d" % rabid_kills)
+	if soldier_kills > 0:
+		R.add_event("witness", "打死清杀兵 ×%d" % soldier_kills, "OSK soldiers killed ×%d" % soldier_kills)
 	if half_lost > 0:
 		R.add_event("witness", "清杀队误杀半人 %d 名" % half_lost, "OSK gunned down %d half-humans" % half_lost)
 	if reason == "dawn":
@@ -867,7 +919,14 @@ func _unhandled_input(event: InputEvent) -> void:
 				muted = not muted
 				sfx.set_muted(muted)
 				AudioServer.set_bus_mute(0, muted)
-			KEY_R:
+			KEY_1, KEY_KP_1, KEY_2, KEY_KP_2, KEY_3, KEY_KP_3, KEY_4, KEY_KP_4:
+				# 1~4 换家伙（撬棍 / ТТ / 莫辛 / 双管）—— 只切已经到手的
+				if state == "play":
+					var slot := {KEY_1: 0, KEY_KP_1: 0, KEY_2: 1, KEY_KP_2: 1,
+						KEY_3: 2, KEY_KP_3: 2, KEY_4: 3, KEY_KP_4: 3}
+					if slot.has(k):
+						swap_weapon(int(slot[k]))
+			KEY_F5:
 				# 战役模式禁止重来（不能刷物资）；F2 独立跑可重开
 				if not in_campaign:
 					get_tree().reload_current_scene()
@@ -909,6 +968,382 @@ func _throw_can(target: Vector2) -> void:
 	thrown.append({"from": from, "to": target, "t": 0.0, "dur": 0.25 + d.length() / CAN_RANGE * 0.5})
 
 # ============================================================================
+# 战斗（P5）：撬棍 / ТТ-33 / 莫辛纳甘 / 截短双管
+# ============================================================================
+## 战役里的武器 id（CampaignData.WEAPONS）→ 军械库 id。
+## 砍骨刀不是撬棍，但都是「贴上去、安静、慢」的一类，共用手感。
+const CARRY_MAP := {
+	"fist": "crowbar", "crowbar": "crowbar", "cleaver": "crowbar",
+	"shotgun": "shotgun", "mosin": "rifle",
+}
+
+## 开场带什么：撬棍永远在；枪按战役里已经拼出来的算，F2 独立跑给手枪 + 步枪做验收。
+func _init_weapons() -> void:
+	weapons.clear()
+	mag.clear()
+	reserve.clear()
+	_add_weapon("crowbar")
+	var carried: Array[String] = []
+	if in_campaign:
+		var bridged := String(RaidBridge.cfg.get("weapon", "crowbar"))
+		carried.append(String(CARRY_MAP.get(bridged, "crowbar")))
+		carried.append("pistol")            # 缴获的 ТТ 是阿列克谢的底牌
+	else:
+		carried = ["pistol", "rifle"]
+	for id in carried:
+		_add_weapon(String(id))
+	w_idx = 0
+	for i in weapons.size():
+		if weapons[i] != "crowbar":
+			w_idx = i
+			break
+	weapon = weapons[w_idx]
+
+	# 手里的家伙：一张会跟着朝向转的精灵 + 枪口焰 + 一点补光
+	_w_sprite = Sprite2D.new()
+	_w_sprite.name = "Weapon"
+	_w_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_w_sprite.light_mask = 2
+	_w_sprite.z_index = 2
+	player.add_child(_w_sprite)
+
+	_flash_sprite = Sprite2D.new()
+	_flash_sprite.name = "MuzzleFlash"
+	_flash_sprite.texture = load("res://art/50_vfx/VFX_MuzzleFlash_Sheet.png")
+	_flash_sprite.hframes = 4
+	_flash_sprite.light_mask = 2
+	_flash_sprite.z_index = 3
+	_flash_sprite.visible = false
+	player.add_child(_flash_sprite)
+
+	_flash_light = PointLight2D.new()
+	_flash_light.name = "MuzzleLight"
+	_flash_light.texture = TEX_GLOW
+	_flash_light.texture_scale = 2.2
+	_flash_light.energy = 0.0
+	_flash_light.light_mask = 3
+	player.add_child(_flash_light)
+	_pose_weapon(true)
+
+
+func _add_weapon(id: String) -> void:
+	if not Arsenal.has(id) or weapons.has(id):
+		return
+	weapons.append(id)
+	mag[id] = Arsenal.start_mag(id)
+	reserve[id] = Arsenal.start_reserve(id)
+
+
+func cur_w() -> Dictionary:
+	return Arsenal.spec(weapon)
+
+
+func cur_is_gun() -> bool:
+	return Arsenal.is_gun(weapon)
+
+
+## 已经到手的武器列表（HUD 的 1~4 槽位用）
+func weapon_slots() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for i in Arsenal.ORDER.size():
+		var id := String(Arsenal.ORDER[i])
+		out.append({"id": id, "owned": weapons.has(id), "slot": i + 1,
+			"label": Arsenal.short_zh(id)})
+	return out
+
+
+func swap_weapon(slot: int) -> void:
+	var order := Arsenal.ORDER
+	if slot < 0 or slot >= order.size():
+		return
+	var id := String(order[slot])
+	if not weapons.has(id) or id == weapon:
+		return
+	weapon = id
+	w_idx = slot
+	reload_left = 0.0
+	cool = 0.0
+	swing_t = 0.0
+	_pose_weapon(true)
+	sfx.play("click", -10.0)
+	spawn_float(player.global_position + Vector2(0, -120), Arsenal.name_zh(id), SovietUI.OCHRE)
+
+
+func _pose_weapon(refresh_texture := false) -> void:
+	if _w_sprite == null:
+		return
+	var w := cur_w()
+	if refresh_texture or _w_sprite.texture == null:
+		_w_sprite.texture = load(String(w.get("tex", "")))
+	var s := float(w.get("scale", 0.5))
+	_w_sprite.scale = Vector2(s, s)
+	_w_sprite.rotation = player.facing
+	_w_sprite.flip_v = cos(player.facing) < 0.0
+
+
+## 每帧的战斗状态：冷却 / 收尾装填 / 握枪姿势 / 枪口焰衰减 / 攻击输入。
+func _update_combat(delta: float) -> void:
+	cool = maxf(0.0, cool - delta)
+	swing_t = maxf(0.0, swing_t - delta)
+	muzzle_t = maxf(0.0, muzzle_t - delta)
+	if reload_left > 0.0:
+		reload_left -= delta
+		if reload_left <= 0.0:
+			_finish_reload()
+	if _flash_sprite != null:
+		_flash_sprite.visible = muzzle_t > 0.0
+		if muzzle_t > 0.0:
+			var k := clampf(1.0 - muzzle_t / 0.07, 0.0, 0.999)
+			_flash_sprite.frame = int(k * 4.0)
+			var dir := _aim_vec()
+			_flash_sprite.position = Vector2(dir.x, dir.y) * (34.0 + 8.0 * k) + Vector2(0, -44)
+			_flash_sprite.scale = Vector2(0.55, 0.55)
+	if _flash_light != null:
+		_flash_light.energy = 2.6 * clampf(muzzle_t / 0.07, 0.0, 1.0)
+		_flash_light.position = _w_sprite.position if _w_sprite != null else Vector2.ZERO
+	_pose_weapon()
+	if Input.is_action_just_pressed("reload"):
+		start_reload()
+	if player.frozen:
+		return
+	var w := cur_w()
+	if String(w.get("kind", "melee")) == "melee":
+		if Input.is_action_pressed("attack_primary") and cool <= 0.0:
+			melee_swing()
+		return
+	if Input.is_action_just_pressed("attack_primary"):
+		shoot()
+
+
+## 朝向：地面坐标里指向鼠标的单位向量（y 已除以压缩比）。
+func _aim_vec() -> Vector2:
+	return Vector2(cos(player.facing), sin(player.facing))
+
+
+func start_reload() -> void:
+	if not cur_is_gun():
+		return
+	if reload_left > 0.0:
+		return
+	var id := weapon
+	if int(mag.get(id, 0)) >= int(cur_w().get("mag", 0)):
+		return
+	if int(reserve.get(id, 0)) <= 0:
+		sfx.play("click", -8.0)
+		spawn_float(player.global_position + Vector2(0, -120), "没有备用弹药了", SovietUI.ASH)
+		return
+	reload_left = float(cur_w().get("reload", 1.4))
+	sfx.play("reload", -3.0)
+	emit_noise(player.global_position, 4.0, "search")
+
+
+func _finish_reload() -> void:
+	var id := weapon
+	var cap := int(cur_w().get("mag", 0))
+	var have := int(mag.get(id, 0))
+	var pool := int(reserve.get(id, 0))
+	var need := cap - have
+	var take := mini(need, pool)
+	mag[id] = have + take
+	reserve[id] = pool - take
+	sfx.play("click", -12.0)
+
+
+func shoot() -> void:
+	if reload_left > 0.0 or cool > 0.0:
+		return
+	var w := cur_w()
+	var id := weapon
+	if int(mag.get(id, 0)) <= 0:
+		sfx.play("click", -6.0)
+		start_reload()
+		return
+	mag[id] = int(mag.get(id, 0)) - 1
+	cool = 1.0 / maxf(0.2, float(w.get("rate", 2.0)))
+	muzzle_t = 0.07
+	var noise := float(w.get("noise", 26.0))
+	var origin: Vector2 = player.global_position + Vector2(0, -40)
+	var dir := _aim_vec()
+	# 声纹 + AI：枪声自己不听「gunshot」，用这支枪的音色（步枪 / 双管各有各的响）
+	sfx.play_at(String(w.get("sfx", "gunshot")), origin, 0.0, 0.02)
+	emit_noise(player.global_position, noise, "gun", true)
+	for s in soldiers:
+		if s.is_alive() and dist_m(s.global_position, player.global_position) <= noise * 0.8:
+			s.alert_to(player.global_position)          # 枪声：整片巡逻朝你压过来
+	add_shake(clampf(0.22 + float(w.get("dmg", 40.0)) / 600.0, 0.2, 0.42))
+	punch = 0.5
+	casings.append({"pos": origin + Vector2(cos(player.facing - 1.2) * 10.0, -18.0),
+		"vel": Vector2(randf_range(-40.0, 40.0), randf_range(-90.0, -40.0)), "life": 1.1})
+	# 逐颗弹丸做命中
+	var pellets := int(w.get("pellets", 1))
+	var spread := float(w.get("spread", 1.0))
+	var reach := float(w.get("reach", 16.0))
+	var dmg := float(w.get("dmg", 40.0))
+	for i in pellets:
+		var ang := player.facing + deg_to_rad(randf_range(-spread, spread))
+		_cast_shot(origin, Vector2(cos(ang), sin(ang)), reach, dmg)
+
+
+## 一发（或一颗弹丸）：先看有没有打到人，再看打到哪儿。
+func _cast_shot(origin: Vector2, dir: Vector2, reach_m: float, dmg: float) -> void:
+	var hit := _hit_enemy(origin, dir, reach_m)
+	var to := _ray_stop(origin, dir, reach_m)
+	if not hit.is_empty():
+		var node: Node2D = hit["node"]
+		to = origin + _m_dir_px(dir) * (float(hit["t"]) * PPM)
+		_damage_enemy(node, dmg, "player")
+		hit_marks.append({"pos": node.global_position + Vector2(0, -46), "life": 0.45,
+			"kill": node.has_method("is_alive") and not node.is_alive()})
+		_spawn_vfx(TEX_BLOOD, to, 0.9, 0.35)
+	else:
+		_spawn_vfx(TEX_SPARK, to, 0.75, 0.2)
+	tracers.append({"from": origin, "to": to, "life": 0.07})
+
+
+func _m_dir_px(dir: Vector2) -> Vector2:
+	return Vector2(dir.x, dir.y * SQ).normalized()
+
+
+## 子弹会被什么挡住：只有墙 / 车厢 / 大件（物理层 1）。
+func _ray_stop(origin: Vector2, dir: Vector2, reach_m: float) -> Vector2:
+	var dpx := _m_dir_px(dir)
+	var to := origin + dpx * (reach_m * PPM)
+	var q := PhysicsRayQueryParameters2D.create(origin, to, 1)
+	var res := get_world_2d().direct_space_state.intersect_ray(q)
+	if res.is_empty():
+		return to
+	return res["position"]
+
+
+## 射线上的第一个活人（含清杀兵 / 狂暴者 / 半人）。返回 {node, t}，t 为逻辑米。
+func _hit_enemy(origin: Vector2, dir: Vector2, reach_m: float) -> Dictionary:
+	var best := {}
+	var bd := reach_m
+	for e in _combat_targets():
+		# 枪从胸口高度出去：目标也按胸口高度算，别让「脚的偏移」变成固定偏斜
+		var rel := to_m((e.global_position + Vector2(0, -40)) - origin)
+		var t := rel.dot(dir)
+		if t <= 0.15 or t > reach_m:
+			continue
+		var perp := absf(rel.cross(dir))
+		if perp > _hit_radius(e):
+			continue
+		if not los_clear(origin, e.global_position, 1):
+			continue
+		if t < bd:
+			bd = t
+			best = {"node": e, "t": t}
+	return best
+
+
+func _combat_targets() -> Array:
+	var out: Array = []
+	for s in soldiers:
+		if s.is_alive():
+			out.append(s)
+	for r in rabids:
+		if r.is_alive():
+			out.append(r)
+	for h in halfs:
+		if h.is_alive():
+			out.append(h)
+	return out
+
+
+func _hit_radius(e: Node) -> float:
+	if e.is_in_group("night_osk"):
+		return float(Arsenal.HIT_R["soldier"])
+	if e.is_in_group("night_rabid"):
+		return float(Arsenal.HIT_R["rabid"])
+	return float(Arsenal.HIT_R["half"])
+
+
+func _damage_enemy(e: Node, dmg: float, by: String) -> void:
+	if e.has_method("hit"):
+		e.hit(dmg, by)
+
+
+## 撬棍：扇形近战。安静，但要贴到 1.9m 内，而且一次只能挑一个。
+func melee_swing() -> void:
+	var w := cur_w()
+	cool = 1.0 / maxf(0.3, float(w.get("rate", 1.4)))
+	swing_t = 0.24
+	sfx.play_at("swing", player.global_position, -3.0, 0.08)
+	var reach := float(w.get("reach", 1.9))
+	var half := float(w.get("arc", 0.85))
+	var dir := _aim_vec()
+	var best: Node = null
+	var bd := reach
+	for e in _combat_targets():
+		var rel := to_m(e.global_position - player.global_position)
+		var d := rel.length()
+		if d > reach or d < 0.01:
+			continue
+		if absf(angle_difference(dir.angle(), rel.angle())) > half:
+			continue
+		if not los_clear(player.global_position, e.global_position, 1):
+			continue
+		if d < bd:
+			bd = d
+			best = e
+	if best != null:
+		_damage_enemy(best, float(w.get("dmg", 34.0)), "player")
+		sfx.play_at("crowbar_hit", best.global_position, -1.0)
+		add_shake(0.24)
+		punch = 0.6
+		hit_marks.append({"pos": best.global_position + Vector2(0, -46), "life": 0.45,
+			"kill": not best.has_method("is_alive") or not best.is_alive()})
+		_spawn_vfx(TEX_BLOOD,
+			best.global_position + Vector2(0, -44), 0.8, 0.3)
+	emit_noise(player.global_position, float(w.get("noise", 4.5)), "step", true)
+
+
+func _spawn_vfx(tex: Texture2D, pos: Vector2, scale_k: float, life: float) -> void:
+	impacts.append({"pos": pos, "life": life, "tex": tex.resource_path, "scale": scale_k})
+
+
+## 搜到弹药类物品 → 补备弹（武器没到手时也能先攒着）
+func ammo_from_item(item_id: String) -> void:
+	var gain: Dictionary = Arsenal.ammo_for(item_id)
+	if gain.is_empty():
+		return
+	var got: Array[String] = []
+	for id in gain.keys():
+		if not weapons.has(String(id)):
+			continue
+		var cap := int(Arsenal.spec(String(id)).get("reserve_max", 32))
+		var cur := int(reserve.get(String(id), 0))
+		var add := mini(int(gain[id]), cap - cur)
+		if add <= 0:
+			continue
+		reserve[String(id)] = cur + add
+		got.append("+%d %s" % [add, Arsenal.short_zh(String(id))])
+	if not got.is_empty():
+		spawn_float(player.global_position + Vector2(0, -150), "弹药 " + "、".join(got), SovietUI.SIGNAL)
+
+
+# ============================================================================
+# 战斗的后果（敌人那边回调过来）
+# ============================================================================
+func on_soldier_hurt(s: Node, _by: String) -> void:
+	sfx.play_at("bonejam", s.global_position, -6.0)
+	add_shake(0.12)
+
+
+func on_soldier_killed(s: Node, _by: String) -> void:
+	soldier_kills += 1
+	conscience -= 0.5
+	_splat(s.global_position)
+	sfx.play_at("bonejam", s.global_position, -4.0)
+	spawn_float(s.global_position + Vector2(0, -140),
+		"清杀兵倒了 —— 剩下的人会搜得更凶", SovietUI.BLOOD_LIT)
+	# 同僚倒下：附近的人直接压过来
+	for other in soldiers:
+		if other != s and other.is_alive() and dist_m(other.global_position, s.global_position) <= 34.0:
+			other.alert_to(s.global_position)
+
+
+# ============================================================================
 # 表现
 # ============================================================================
 func spawn_float(pos: Vector2, txt: String, col: Color) -> void:
@@ -923,6 +1358,25 @@ func _update_fx(delta: float) -> void:
 		f["life"] = float(f["life"]) - delta
 		f["pos"] = Vector2(f["pos"]) + Vector2(0, -22.0 * delta)
 	floats = floats.filter(func(f): return float(f["life"]) > 0.0)
+	for tr in tracers:
+		tr["life"] = float(tr["life"]) - delta
+	tracers = tracers.filter(func(x): return float(x["life"]) > 0.0)
+	for im in impacts:
+		im["life"] = float(im["life"]) - delta
+	impacts = impacts.filter(func(x): return float(x["life"]) > 0.0)
+	for hm in hit_marks:
+		hm["life"] = float(hm["life"]) - delta
+	hit_marks = hit_marks.filter(func(x): return float(x["life"]) > 0.0)
+	var settled: Array = []
+	for c in casings:
+		c["life"] = float(c["life"]) - delta
+		var v: Vector2 = c["vel"]
+		v.y += 240.0 * delta
+		c["vel"] = v
+		c["pos"] = Vector2(c["pos"]) + v * delta
+		if float(c["life"]) > 0.0:
+			settled.append(c)
+	casings = settled
 	var landed: Array = []
 	for c in thrown:
 		c["t"] = float(c["t"]) + delta / float(c["dur"])
@@ -1068,7 +1522,7 @@ func _gather_furnace_lights() -> void:
 	if node == null:
 		return
 	_furnace_px = node.global_position
-	var tex := load("res://art/50_vfx/VFX_Light_Radial_Soft.png") as Texture2D
+	var tex: Texture2D = TEX_GLOW
 	if tex == null:
 		return
 	var flare := PointLight2D.new()
@@ -1204,7 +1658,7 @@ func _spawn_rake(ev: Dictionary) -> void:
 	$World.add_child(spr)
 	# 挂在车皮上的一盏小灯：能看见它正在扫过来
 	var lamp := PointLight2D.new()
-	lamp.texture = load("res://art/50_vfx/VFX_Light_Radial_Soft.png")
+	lamp.texture = TEX_GLOW
 	lamp.color = Color(1.0, 0.86, 0.62)
 	lamp.energy = 1.25
 	lamp.texture_scale = 1.4
@@ -1380,6 +1834,10 @@ func _build_hud() -> void:
 	lv.add_child(SovietUI.rule(SovietUI.STEEL, 1))
 	_lbl_status = _mono_label("", 12, SovietUI.BONE)
 	lv.add_child(_lbl_status)
+	_lbl_weapon = _mono_label("", 12, SovietUI.BONE)
+	_lbl_weapon.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_lbl_weapon.custom_minimum_size = Vector2(520, 0)
+	lv.add_child(_lbl_weapon)
 	_lbl_bag = _label("", 12, SovietUI.OCHRE)
 	_lbl_bag.custom_minimum_size = Vector2(520, 0)
 	_lbl_bag.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -1641,6 +2099,22 @@ func _refresh_hud() -> void:
 	_lbl_status.text = "%s │ %s %s │ 罐头 %d │ 借刀 %d │ 良知 %+d │ 卌 %s" % [
 		stance, light, lit, cans, borrowed, int(conscience), SovietUI.tally_glyphs(tally)]
 
+	# --- 手里的家伙 ---
+	var wspec := cur_w()
+	var slots: Array[String] = []
+	for sl in weapon_slots():
+		if bool(sl["owned"]):
+			var tag := "%d·%s" % [int(sl["slot"]), String(sl["label"])]
+			slots.append("[%s]" % tag if String(sl["id"]) == weapon else tag)
+	var wline := Arsenal.label(weapon, int(mag.get(weapon, 0)), int(reserve.get(weapon, 0)))
+	if reload_left > 0.0:
+		wline += "  装填中…"
+	elif cur_is_gun() and int(mag.get(weapon, 0)) == 0:
+		wline += "  空仓 · R 装填"
+	_lbl_weapon.text = "%s\n%s" % [wline, "　".join(slots)]
+	_lbl_weapon.add_theme_color_override("font_color",
+		SovietUI.SIGNAL if cur_is_gun() and int(mag.get(weapon, 0)) == 0 else SovietUI.BONE)
+
 	var names: Array[String] = []
 	for id in pack:
 		names.append(item_name(id))
@@ -1669,6 +2143,8 @@ func _refresh_hud() -> void:
 	var near_s = null
 	var near_d := 1e9
 	for s in soldiers:
+		if not s.is_alive():
+			continue
 		var d := dist_m(player.global_position, s.global_position)
 		if d < near_d:
 			near_d = d
@@ -1707,7 +2183,7 @@ func _refresh_hud() -> void:
 		_lbl_hint.text = "天要亮了 —— %s（长按 E）" % extract_zh
 	elif has_prize:
 		_lbl_hint.text = "%s到手 —— %s（长按 E）" % [item_name(prize), extract_zh] \
-			+ ("　·　R 重来　Esc 返回战役" if not in_campaign else "")
+			+ ("　·　F5 重来　Esc 返回战役" if not in_campaign else "")
 	elif not mech.is_empty():
 		_lbl_hint.text = "E · " + String(mech.get("prompt", ""))
 	elif near_half != null:
@@ -1715,7 +2191,7 @@ func _refresh_hud() -> void:
 	elif dist_m(player.global_position, exit_px) <= REACH:
 		_lbl_hint.text = "长按 E · " + extract_zh
 	else:
-		_lbl_hint.text = objective_zh + "　·　Ctrl 蹲　Shift 跑　E 搜刮　F 手电　G 罐头"
+		_lbl_hint.text = objective_zh + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电"
 
 	# --- 屏幕边框：警报时边缘渗红 ---
 	if _chrome != null:

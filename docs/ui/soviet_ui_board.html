@@ -255,7 +255,33 @@
     </div>
   </div>
 
-  <h2>04 · 操作与数值</h2>
+  <h2>05 · 军械库与灰盒新道具</h2>
+  <div class="grid">
+    <div class="plate thin">
+      <div class="row"><strong>四件家伙</strong><span class="mono small dim">scripts/night/Arsenal.gd</span></div>
+      <table>
+        <tr><th>家伙</th><th>伤害</th><th>弹匣/备弹</th><th>噪声</th><th>射程</th></tr>
+        <tr><td>铸铁道钉撬棍</td><td class="n">34</td><td class="n">—</td><td class="n">4.5m</td><td class="n">1.9m</td></tr>
+        <tr><td>ТТ-33</td><td class="n">42</td><td class="n">8 / 16</td><td class="n">26m</td><td class="n">16m</td></tr>
+        <tr><td>莫辛纳甘</td><td class="n">96</td><td class="n">5 / 10</td><td class="n">44m</td><td class="n">28m</td></tr>
+        <tr><td>截短双管</td><td class="n">15×6</td><td class="n">2 / 8</td><td class="n">38m</td><td class="n">9.5m</td></tr>
+      </table>
+      <p class="note" style="margin-bottom:0">
+        枪是花钱买路：噪声半径远大于射程，一枪就把 80% 半径内的巡逻拽到你脸上。
+        撬棍安静，但要贴到 1.9m 内，一次只挑一个。
+      </p>
+    </div>
+    <div class="plate thin">
+      <div class="row"><strong>13 件新资产</strong><span class="mono small dim">gen_weapons.py</span></div>
+      <img src="weapon_assets_preview.png" alt="weapon assets"
+           style="width:100%;border:1px solid var(--steel);display:block;margin:8px 0">
+      <p class="note" style="margin-bottom:0">
+        武器 4 · 哨位道具 4（弹药箱 / 沙袋 / 枪架 / 木靶人）· 战斗 VFX 5（枪口焰 4 帧 / 曳光 / 弹着 / 弹壳 / 血雾）。
+        世界道具按 1m = 64px 的真实尺寸出图，握在手里的武器由引擎缩回 0.42~0.52。
+      </p>
+    </div>
+  </div>
+  <h2>06 · 操作与数值</h2>
   <div class="plate thin">
     <table>
       <tr><th>参数</th><th>yard</th><th>marshalling</th><th>manor</th></tr>
@@ -267,8 +293,10 @@
     </table>
     <div class="keys">
       <span class="key">WASD 移动</span><span class="key">Ctrl 蹲</span><span class="key">Shift 跑</span>
-      <span class="key hot">E 搜刮 / 机关 / 撤离</span><span class="key">G 罐头</span><span class="key">F 手电</span>
-      <span class="key">M 静音</span><span class="key">R 重来</span><span class="key">Esc 返回战役</span>
+      <span class="key hot">左键 攻击（撬棍 / 枪械）</span><span class="key hot">R 装填</span>
+      <span class="key hot">1~4 换家伙</span><span class="key">E 搜刮 / 机关 / 撤离</span>
+      <span class="key">G 罐头</span><span class="key">F 手电</span><span class="key">M 静音</span>
+      <span class="key">F5 重来</span><span class="key">Esc 返回战役</span>
     </div>
     <p class="note" style="margin-bottom:0">
       以上所有数值来自 <span class="mono">godot_project/scripts/night/LevelBeats.gd</span>；

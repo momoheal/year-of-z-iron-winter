@@ -40,6 +40,7 @@ import gen_env  # noqa: E402
 import gen_props  # noqa: E402
 import gen_rabid  # noqa: E402
 import gen_vfx  # noqa: E402
+import gen_weapons  # noqa: E402
 import layout as LY  # noqa: E402
 
 PROJ = os.path.abspath(os.path.join(HERE, "..", ".."))
@@ -93,7 +94,8 @@ def build_facade(man):
 
 
 def build_props(man, only=None):
-    for name, fn in gen_props.ALL.items():
+    # 武器 / 弹药 / 靶场道具与 PRP_* 同一套注册表，--only 也一起筛选
+    for name, fn in list(gen_props.ALL.items()) + list(gen_weapons.ALL.items()):
         if only and name not in only:
             continue
         img, piv = fn()
@@ -136,6 +138,12 @@ def build_vfx(man):
     _put(man, "VFX_Steam_Puff", _path("50_vfx", "VFX_Steam_Puff.png"), V.steam_puff(64, 7))
     _put(man, "VFX_Blood_Splat", _path("50_vfx", "VFX_Blood_Splat.png"), gen_rabid.blood_splat(96, 5))
     _put(man, "VFX_FogNoise", _path("50_vfx", "VFX_FogNoise.png"), V.fog_noise(512))
+    # P5 战斗：枪口焰 / 曳光 / 弹着 / 弹壳 / 血雾
+    for key, fn in gen_weapons.VFX.items():
+        img, _piv = fn()
+        _put(man, key, _path("50_vfx", key + ".png"), img, _piv)
+    flash, fpiv = gen_weapons.muzzle_flash_sheet()
+    _put(man, "VFX_MuzzleFlash_Sheet", _path("50_vfx", "VFX_MuzzleFlash_Sheet.png"), flash, fpiv, hframes=4)
 
 
 def build_audio(man):
@@ -148,8 +156,24 @@ def build_audio(man):
         print(f"  {key:34s} -> {_res(p)}", flush=True)
 
 
+def build_weapons(man):
+    """P5 战斗资产专用步骤：只出武器 / 弹药 / 靶场道具与战斗 VFX。
+
+    为什么单开一步：PIL 版本会让「重跑出来的旧资产」出现肉眼不可见、但字节不同的差异，
+    而仓库要求 yard 的地面 / 立面 / 既有道具保持不变。所以旧资产一个都不碰。
+    """
+    for name, fn in gen_weapons.ALL.items():
+        img, piv = fn()
+        _put(man, name, _path("30_props", name + ".png"), img, piv)
+    for key, fn in gen_weapons.VFX.items():
+        img, piv = fn()
+        _put(man, key, _path("50_vfx", key + ".png"), img, piv)
+    flash, fpiv = gen_weapons.muzzle_flash_sheet()
+    _put(man, "VFX_MuzzleFlash_Sheet", _path("50_vfx", "VFX_MuzzleFlash_Sheet.png"), flash, fpiv, hframes=4)
+
+
 STEPS = dict(ground=build_ground, facade=build_facade, props=build_props, chars=build_chars,
-             vfx=build_vfx, audio=build_audio)
+             vfx=build_vfx, audio=build_audio, weapons=build_weapons)
 
 
 def main(argv):

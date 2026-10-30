@@ -71,6 +71,13 @@ PROPS = [
          ao="pipe"),                                                 # 机车厂无缝钢管（蹲下能藏）
     dict(id="LampWest", art="PRP_StreetLamp_Sodium", pos=(6.0, 6.6), fp=(0.3, 0.25), layer=1,
          occlude=False, ao="post"),
+    # --- 卫兵哨位（P5 战斗切片）：沙袋 + 弹药箱 + 武器架 ---
+    dict(id="Sandbags", art="PRP_Sandbag_Line", pos=(27.0, 12.6), fp=(3.2, 0.85), layer=2,
+         occlude=False),                       # 焚化院前的沙袋：和叉车一起构成两个掩体
+    dict(id="AmmoBox", art="PRP_Ammo_Box_Open", pos=(21.0, 6.2), fp=(1.1, 0.5), layer=1,
+         cont="crate", guaranteed="ammo"),
+    dict(id="WeaponRack", art="PRP_WeaponRack", pos=(9.2, 4.2), fp=(1.3, 0.5), layer=1,
+         occlude=False),
     dict(id="LampEast", art="PRP_StreetLamp_Sodium", pos=(40.0, 6.6), fp=(0.3, 0.25), layer=1,
          occlude=False, ao="post"),
     # --- 焚化院（y 8~14）---

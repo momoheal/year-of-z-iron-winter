@@ -40,7 +40,8 @@ year-of-z-iron-winter/
 │   │   ├── Z年纪事_Godot4引擎迁移技术规范与架构指南.md           # ★ Godot 4.7+ 引擎迁移技术规范与架构指南 (ZH)
 │   │   ├── Z年纪事_Godot灰盒5合1移植对照表.md                     # ★ 5合1 灰盒测试场移植对照表 + 61 项测试清单 (ZH)
 │   │   ├── Z年纪事_Godot探索循环移植对照表.md                     # ★ 探索循环（基地→地图→夜潜→结算）移植对照表 + 97 项测试清单 (ZH)
-│   │   └── Z年纪事_苏联化界面与关卡节拍.md                        # ★ 苏联化前端（SovietUI/Chrome/Meter）+ 关卡档案层与环境节拍 (ZH)
+│   │   ├── Z年纪事_苏联化界面与关卡节拍.md                        # ★ 苏联化前端（SovietUI/Chrome/Meter）+ 关卡档案层与环境节拍 (ZH)
+│   │   └── Z年纪事_武器与战斗切片.md                              # ★ 撬棍与枪械 / 灰盒美术扩展 / 命中与噪声规则 (ZH)
 │   └── en/                                                       # English Documentation (v4.0 Russian Winter)
 │       ├── Year_of_Z_Iron_Winter_Master_Script_EN.md             # Full 5-Act Master Screenplay (EN)
 │       ├── Year_of_Z_Iron_Winter_GDD_EN.md                       # Game Design Document v4.0 (EN)
@@ -48,7 +49,8 @@ year-of-z-iron-winter/
 │       ├── Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md    # ★ Godot 4.7+ Engine Migration & Architecture Guide (EN)
 │       ├── Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md    # ★ 5-in-1 Greybox Gym Port Report & 61-assertion suite (EN)
 │       ├── Year_of_Z_Iron_Winter_Godot_Exploration_Loop_EN.md    # ★ Exploration-Loop Port Report & 97-assertion suite (EN)
-│       └── Year_of_Z_Iron_Winter_Soviet_UI_and_Level_Beats_EN.md  # ★ Soviet UI system + per-map level beats (EN)
+│       ├── Year_of_Z_Iron_Winter_Soviet_UI_and_Level_Beats_EN.md  # ★ Soviet UI system + per-map level beats (EN)
+│       └── Year_of_Z_Iron_Winter_Weapons_and_Combat_EN.md         # ★ Weapons & combat slice, greybox art extension (EN)
 ├── prototypes/                                                   # Interactive HTML5 Prototypes & Sandboxes
 │   ├── Year_of_Z_Iron_Winter_Exploration_Demo.html               # ★★ 探索循环 DEMO：据点→地图选点→夜潜→搜刮→撤离→结算 (Bilingual ZH/EN)
 │   ├── Year_of_Z_Iron_Winter_Playable_Greybox_Gym.html           # ★ Single-File HTML5 Playable 5-in-1 Greybox Gym (Bilingual ZH/EN)
@@ -80,6 +82,7 @@ year-of-z-iron-winter/
     │   ├── night/                                                # ★ 节点化夜潜场景的脚本
     │   │   ├── NightExplore.gd                                   #   总控：三方潜行 / 搜刮 / 体温 / 天亮渐变 / 抉择 / 关卡导演 / 战役回写
     │   │   ├── LevelBeats.gd                                     #   ★ 关卡档案层：地标勘踏 / 环境节拍（驼峰溜放·炉口爆燃）/ 专属机关
+    │   │   ├── Arsenal.gd                                        #   ★ 军械库：撬棍 / ТТ-33 / 莫辛纳甘 / 截短双管（伤害·射速·噪声·散布唯一数据源）
     │   │   ├── NightSfx.gd                                       #   25 种程序化音色 + 定位声部 + 面具呼吸循环 + 心跳
     │   │   ├── NightPlayer / NightSoldier / NightRabid / NightHalf.gd  # 玩家与三方 AI
     │   │   └── NightOverlay / NightFlicker / NightSearchlight / NightAnim.gd  # 世界空间读数 / 灯光调制 / 探照灯塔 / 帧动画
@@ -89,11 +92,13 @@ year-of-z-iron-winter/
     ├── shaders/night_post.gdshader                               # ★ 后处理：冷调分级 / 雪雾 / 暗角 / 颗粒 / 霜边 / 警报红边 / dawn 天亮
     ├── art/                                                      # ★ 管线生成的程序化资产（10_characters / 20_tileset / 30_props / 50_vfx / 70_audio + manifest）
     ├── tools/art_gen/                                            # ★ Python 美术管线：layout.py → gen_*.py → build_scene.py
+    │   └── gen_weapons.py                                        # ★ P5 武器 / 弹药 / 靶场道具 / 战斗 VFX（13 件，独立 weapons 步骤）
     ├── tests/
     │   ├── campaign_smoke.gd                                     # ★ 97 项 headless 探索循环测试
     │   ├── night_explore_smoke.gd                                # ★ 109 项 headless 夜潜货场测试
     │   ├── night_level_smoke.gd                                  # ★ 58 项 headless 多关卡管线测试
     │   ├── night_beats_smoke.gd                                  # ★ 界面苏联化 + 关卡档案层 / 节拍状态机测试
+    │   ├── night_combat_smoke.gd                                 # ★ 战斗切片：军械库 / 装备 / 命中 / 装填 / 击杀 / 补给
     │   ├── gym_smoke.gd                                          # ★ 61 项 headless 机制冒烟测试
     │   ├── data_pipeline_smoke.gd                                # 71 项事件 / 数据管线测试
     │   └── room_a_smoke.gd                                       # 20 项 Room A 夜潜切片测试
@@ -125,7 +130,7 @@ year-of-z-iron-winter/
 | **三方潜行** | 4 只灰鳞狂暴者（含守在三号车厢门口的壮硕变体）：360° 近距视线 + 循声调查（脚步 / 搜刮 / 罐头 / 枪声），0.45s 起跳预警红圈后扑咬；清杀兵光锥里出现狂暴者会瞄准 0.5s 击毙并留下血迹 → **借刀杀人**；枪声 10m 又会引来下一只。声纹三色：灰白=你 / 暗红=狂暴者 / 冷蓝=清杀队（淡琥珀=半人的呻吟） |
 | **道德抉择** | 两个回退半人（0388 缩在蒸汽管下、0507 在煤水塔东侧）：还有瞳孔、不咬人，但清杀队分不清 —— 光锥里一律开枪（误杀 良知 −4）。他们会被罐头声吸引，所以借刀杀人可能把他们一起引进光锥。靠近按 `E` 抉择：① 阿司匹林 + 热水退烧（良知 +7，他睡着后清杀队认不出，送你一张调度单）② 绕开（良知 −2）③ 撬棍灭口（良知 −10、卌 +1）。热水壶随身带，阿司匹林在西院木箱（旁边就是狂暴者）。口径与战役抉择 A 一致，结算显示良知 / 救下 / 误杀 / 卌 |
 
-**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `R` 重来 · `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园（开发直开）。测试：`tests/night_explore_smoke.gd`（**109 项**，已加进 `run_smoke_tests.bat`）。
+**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · **左键 攻击（撬棍连挥 / 枪械单发）** · **`R` 装填** · **`1~4` 换家伙** · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `F5` 重来（原 `R` 让位给装填）· `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园（开发直开）。测试：`tests/night_explore_smoke.gd`（**109 项**，已加进 `run_smoke_tests.bat`）。
 
 **美术管线**（`godot_project/tools/art_gen/`，Python 3 + numpy + Pillow，无需外部服务，**多关卡**）：
 
@@ -241,6 +246,59 @@ P4 的第二张新地图，也是战役里危险度 5 的终点图：夜长 120 
 **尚未在装 Godot 的机器上首跑**：本轮改动已通过 gdtoolkit GDScript 解析校验，但需要在本机跑一次
 `night_beats_smoke.gd` 与既有 `night_level_smoke.gd` / `night_explore_smoke.gd` 完成首次验收（含肉眼核对 HUD 排版）。
 
+## 🔧 武器与战斗切片 · 撬棍 / 枪械 + 灰盒美术扩展（`scripts/night/Arsenal.gd`）
+
+夜潜第一次「能还手」：撬棍（默认在手上）+ 三支枪。核心是**枪是花钱买路**——一枪换一次暴露，
+所以噪声半径远大于射程；撬棍安静，但要贴到 1.9m 内。
+
+**军械库（唯一数据源 `Arsenal.gd`）**
+
+| 家伙 | 类型 | 伤害 | 射速 | 弹匣/备弹 | 噪声 | 射程 |
+|---|---|---|---|---|---|---|
+| 铸铁道钉撬棍 | 近战扇形 | 34 | 1.45/s | — | 4.5 m | 1.9 m |
+| ТТ-33 | 半自动 | 42 | 3.6/s | 8 / 16 | 26 m | 16 m |
+| 莫辛纳甘 | 单发 | 96 | 1.05/s | 5 / 10 | 44 m | 28 m |
+| 截短双管 | 单发 6 弹丸 | 15×6 | 1.15/s | 2 / 8 | 38 m | 9.5 m |
+
+撬棍伤害与 `CampaignData.WEAPONS` 的 `crowbar`（34）对齐；开场撬棍必在，战役里再按 `cfg.weapon`
+带一支枪（`mosin → rifle` / `shotgun → shotgun`），外加一支缴获的 ТТ；F2 独立跑额外给莫辛方便验收。
+
+**规则要点**
+
+* 子弹从胸口高度射出，目标也按胸口高度判定；只被物理层 1（墙 / 车厢 / 大件）挡住——
+  **沙袋（层 2）挡视线不挡子弹**。
+* 开枪：`emit_noise(…, "gun", true)` 只画声纹、放这支枪自己的音色，并让噪声 80% 半径内的清杀兵
+  直接 `alert_to(玩家位置)`。打死清杀兵要记良知账（−0.5），附近 34m 的同僚会朝尸体压过来。
+* 清杀兵现在有 `hp=100` 且**会死**：中弹转警戒、血空成尸体（不再抓人 / 开枪）。
+  狂暴者撬棍 3 下、手枪 3 枪、莫辛 1 枪；半人被武器打死同样算灭口（`卌 +1`、良知 −10，不重复记账）。
+* 空仓扣扳机 = 「咔」+ 自动装填；`R` 随时装填；`1~4` 换家伙（只切已到手）；原来的 `R` 重来改为 `F5`。
+* 搜到 `ammo` / `bolt` / `part` 折算成备弹；撤离时余弹写回 `RaidSim.ammo`。
+
+**美术（`tools/art_gen/gen_weapons.py`，13 件，独立 `weapons` 步骤）**
+
+武器 4 件（撬棍 / ТТ / 莫辛 / 双管）+ 哨位道具 4 件（弹药箱 / 沙袋 / 枪架 / 木靶人）+
+战斗 VFX 5 件（枪口焰 4 帧 / 曳光 / 弹着火星 / 弹壳 / 血雾）。世界道具按 1m = 64px 的真实尺寸出图
+（`_fit()` 收口 + 同步缩放 pivot），握在手里的武器故意放大 2~3 倍、由引擎缩回来。
+**只出新的**：`python gen_assets.py --level <id> weapons`，不重跑 `props`/`vfx`，旧图一个字节都不动。
+
+**两张图的新哨位（数据驱动，场景由 `build_scene.py` 重建）**
+
+* 西站调车场：沙袋哨位在驼峰肩（33.0, 9.2）· 弹药箱在调度塔下（24.2, 5.6，必出步枪弹）· 枪架在机车库门边（12.4, 4.1）。
+* 松林庄园：沙袋在焚化院前（27.0, 12.6，与叉车互为掩体）· 弹药箱在卫兵哨位（21.0, 6.2）· 枪架在 409 批托盘旁（9.2, 4.2）。
+* 货场（yard）不动：它是逐像素基准。
+
+**HUD / 世界读数**：档案牌新增武器行（`ТТ-33 · 6 / 16` + 槽位 `1·撬棍 [2·ТТ-33] 3·莫辛`，空仓转琥珀）；
+世界里画准星（间距随散布）、装填环、挥击弧、曳光、弹着 / 血雾、弹壳与命中标记。
+
+测试：`tests/night_combat_smoke.gd`（军械库表与资产 / 开场装备 / 换枪 / 装填扣备弹 / 撬棍扇形命中 /
+三棍放倒狂暴者 / 开枪扣弹+曳光+惊动巡逻 / 冷却与空仓 / 清杀兵掉血与死亡 / 弹药上限）。
+详细说明见 `docs/zh/Z年纪事_武器与战斗切片.md` 与 `docs/en/Year_of_Z_Iron_Winter_Weapons_and_Combat_EN.md`。
+
+> ⚠️ 沙箱里没有 Godot 引擎：本切片**尚未在装引擎的机器上首跑**，首次运行请按文档的「验收」清单
+> 肉眼核对枪口位置 / 沙袋挡视线不挡子弹 / 同僚反应 / 三张图的弹药箱。
+
+---
+
 ## 🗺 Exploration Loop Demo (探索循环 DEMO · `Year_of_Z_Iron_Winter_Exploration_Demo.html`)
 
 **Single-file HTML5 · Canvas · zero art assets · zero build step.** Open it directly in any modern browser (or serve the `prototypes/` folder). Instant **中文 / EN** switching, procedurally synthesized Web Audio SFX, and a full one-day loop:
@@ -338,6 +396,9 @@ Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/campaign_smok
 
 # Greybox gym: 61 headless assertions (prints GYM_SMOKE_PASS on success)
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/gym_smoke.gd
+
+# Combat slice: arsenal / loadout / hitscan / reload / kills / ammo (headless)
+Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_combat_smoke.gd
 
 # Soviet UI + level beats: headless UI/dossier/beat-state-machine assertions
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_beats_smoke.gd

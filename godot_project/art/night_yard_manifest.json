@@ -415,5 +415,149 @@
   ],
   "hframes": 8,
   "vframes": 3
+ },
+ "PRP_Crowbar_Rail": {
+  "path": "res://art/30_props/PRP_Crowbar_Rail.png",
+  "size": [
+   108,
+   82
+  ],
+  "pivot": [
+   54,
+   76
+  ]
+ },
+ "PRP_Pistol_TT": {
+  "path": "res://art/30_props/PRP_Pistol_TT.png",
+  "size": [
+   104,
+   68
+  ],
+  "pivot": [
+   30,
+   62
+  ]
+ },
+ "PRP_Rifle_Mosin": {
+  "path": "res://art/30_props/PRP_Rifle_Mosin.png",
+  "size": [
+   208,
+   48
+  ],
+  "pivot": [
+   88,
+   42
+  ]
+ },
+ "PRP_Shotgun_Sawn": {
+  "path": "res://art/30_props/PRP_Shotgun_Sawn.png",
+  "size": [
+   132,
+   58
+  ],
+  "pivot": [
+   28,
+   50
+  ]
+ },
+ "PRP_Ammo_Box_Open": {
+  "path": "res://art/30_props/PRP_Ammo_Box_Open.png",
+  "size": [
+   58,
+   47
+  ],
+  "pivot": [
+   28.8,
+   43.2
+  ]
+ },
+ "PRP_Sandbag_Line": {
+  "path": "res://art/30_props/PRP_Sandbag_Line.png",
+  "size": [
+   208,
+   118
+  ],
+  "pivot": [
+   104.0,
+   110
+  ]
+ },
+ "PRP_WeaponRack": {
+  "path": "res://art/30_props/PRP_WeaponRack.png",
+  "size": [
+   96,
+   94
+  ],
+  "pivot": [
+   48.0,
+   89.45454545454545
+  ]
+ },
+ "PRP_Target_Silhouette": {
+  "path": "res://art/30_props/PRP_Target_Silhouette.png",
+  "size": [
+   77,
+   127
+  ],
+  "pivot": [
+   38.4,
+   121.10769230769229
+  ]
+ },
+ "VFX_Bullet_Tracer": {
+  "path": "res://art/50_vfx/VFX_Bullet_Tracer.png",
+  "size": [
+   128,
+   16
+  ],
+  "pivot": [
+   64.0,
+   8.0
+  ]
+ },
+ "VFX_Impact_Spark": {
+  "path": "res://art/50_vfx/VFX_Impact_Spark.png",
+  "size": [
+   64,
+   64
+  ],
+  "pivot": [
+   32.0,
+   32.0
+  ]
+ },
+ "VFX_Shell_Casing": {
+  "path": "res://art/50_vfx/VFX_Shell_Casing.png",
+  "size": [
+   22,
+   12
+  ],
+  "pivot": [
+   11.0,
+   6.0
+  ]
+ },
+ "VFX_Blood_Mist": {
+  "path": "res://art/50_vfx/VFX_Blood_Mist.png",
+  "size": [
+   72,
+   72
+  ],
+  "pivot": [
+   36.0,
+   36.0
+  ]
+ },
+ "VFX_MuzzleFlash_Sheet": {
+  "path": "res://art/50_vfx/VFX_MuzzleFlash_Sheet.png",
+  "size": [
+   384,
+   96
+  ],
+  "pivot": [
+   40.32,
+   48.0
+  ],
+  "hframes": 4
  }
 }
