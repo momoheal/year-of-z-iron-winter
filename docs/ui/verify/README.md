@@ -29,6 +29,23 @@
 
 > 特写图（7、8）里**故意不画角色**，避免路过的兵挡住道具；整关图（1–6）保留角色，用来看人／环境比例。
 
+### Index (EN, condensed)
+
+| File | Scene | What it shows |
+|---|---|---|
+| `yard_grey.png` | `night_explore.tscn` — L03 Freight Yard (48×40 m) | Whole level, neutral light: block facade, lit windows, fuse box, notice board, sodium lamps, fence, switch cabin, water tower |
+| `yard_night.png` | same | Same layout with the `CanvasModulate` night grade + lamp/brazier glow |
+| `marshalling_grey.png` | `night_marshalling.tscn` — L04 West Sorting Park (44×36 m) | Brick dispatch hall, platform canopy, hump tracks, boxcars, water tower, the three new outpost props |
+| `marshalling_night.png` | same | Night grade; check that platform / window / brazier lights do not fight each other |
+| `manor_grey.png` | `night_manor.tscn` — L05 Pine Manor (46×38 m) | Manor facade, garage roller door, pine belt, steam pipe, iron gate |
+| `manor_night.png` | same | Darkest level: driveway asphalt band, pine silhouettes, watchtower searchlight |
+| `outpost_marshalling.png` | `night_marshalling.tscn` | 2× close-ups of sandbags (33.0, 9.2 m), ammo box (24.2, 5.6 m), weapon rack (12.4, 4.1 m); dashed box = sprite bounds, crosshair = ground anchor |
+| `outpost_manor.png` | `night_manor.tscn` | 2× close-ups of sandbags (27.0, 12.6 m), ammo box (21.0, 6.2 m), weapon rack (9.2, 4.2 m) |
+| `combat_readout.png` | L03–L05 (shared) | Top-down noise radii (TT-33 26 m / sawn-off 38 m / Mosin 44 m), crowbar cone ±49° at 1.9 m, hit radii 0.40 / 0.46 / 0.52 m, arsenal table |
+
+Close-up sheets (7, 8) deliberately omit actors so a passing soldier cannot hide the prop;
+the full-level sheets (1–6) keep them for scale.
+
 ---
 
 ## 二、怎么复现 / Regenerate
