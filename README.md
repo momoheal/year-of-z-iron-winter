@@ -297,6 +297,12 @@ P4 的第二张新地图，也是战役里危险度 5 的终点图：夜长 120 
 > ⚠️ 沙箱里没有 Godot 引擎：本切片**尚未在装引擎的机器上首跑**，首次运行请按文档的「验收」清单
 > 肉眼核对枪口位置 / 沙袋挡视线不挡子弹 / 同僚反应 / 三张图的弹药箱。
 
+**验收图（无需引擎）** / Acceptance sheets, no engine needed：`docs/ui/verify/` 下 9 张 PNG ——
+`yard|marshalling|manor` 三关各一张中性光 + 一张夜色整关图，`outpost_marshalling|outpost_manor` 两张新哨位 2× 特写，
+`combat_readout.png` 一张战斗数值读数（噪声圈 / 撬棍扇形 / 命中半径）。
+它们由 `godot_project/tools/art_gen/render_preview.py` 直接读 `.tscn` 复合成画面（位置 / 层级 / 夜色一致，不含 shader 与 HUD），
+逐张说明见 `docs/ui/verify/README.md`，也可以在 `docs/ui/soviet_ui_board.html` 的「07 · 验收图」一节里滚动查看。
+
 ---
 
 ## 🗺 Exploration Loop Demo (探索循环 DEMO · `Year_of_Z_Iron_Winter_Exploration_Demo.html`)
