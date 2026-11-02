@@ -1,5 +1,8 @@
 # 验收图 / Acceptance Sheets
 
+> 新增 **三区分野**（白 / 红 / 黑）与黑市：`zones_market.png` 是这一轮的主图；
+> 六张整关图上都能直接看到分区色带与雪面标签。规则与坐标见 `docs/zh/Z年纪事_三区与黑市.md`。
+
 > 这个目录里的 PNG **不是引擎截图**。本机跑不了 Godot，所以由
 > `godot_project/tools/art_gen/render_preview.py` 直接读 `godot_project/scenes/*.tscn`，
 > 按节点 `position / offset / z_index / y-sort` 把真实的 PNG 贴回去，再叠 `CanvasModulate`
@@ -17,8 +20,9 @@
 
 | # | 文件 / File | 场景 / Scene | 画面区域 / Area | 看什么 / What to check |
 |---|---|---|---|---|
+| 0 | `zones_market.png` | `NightZones.gd` + `NightZoneField.gd`<br>L03–L05 通用 / all three night levels | 三关各一格黑市 2× + 三区色标 / market per level + zone legend | 三条带的分界数字（货场 12 / 21.5 · 调车场 9 / 20 · 庄园 10 / 22）；每格都有「摊位 + 摊主 + 2 名幸存者」且就在自己的光源旁边；油桶火只到桶口以上一小截 |
 | 1 | `yard_grey.png` | `res://scenes/night_explore.tscn`<br>L03 · ШИРОКАЯ КОЛЕЯ · 宽轨货场（48×40 m） | 整关、中性光 / full level, neutral light | 街面是否连成一片：五层赫鲁晓夫楼立面 + 亮窗、配电箱、告示板、钠路灯、铁网、扳道房、水塔、雪堆；角色站位是否压在雪地上而不是浮空 |
-| 2 | `yard_night.png` | 同上 / same | 整关、夜色 / full level, night grade | `CanvasModulate` 冷调是否压得住；钠灯黄色光斑半径是否合理；两处油桶火的暖光有没有烧掉细节 |
+| 2 | `yard_night.png` | 同上 / same | 整关、夜色 / full level, night grade | `CanvasModulate` 冷调是否压得住；钠灯黄色光斑半径是否合理；两处油桶火的暖光有没有烧掉细节；三条色带（白 / 红虚线 / 青虚线）与前一轮比是否更好认 |
 | 3 | `marshalling_grey.png` | `res://scenes/night_marshalling.tscn`<br>L04 · ЗАПАДНЫЙ СОРТИРОВОЧНЫЙ ПАРК · 西调车场（44×36 m） | 整关、中性光 | 砖砌调度楼 + 站台雨棚 + 驼峰线 + 4 节车皮 + 水塔 + 铁网；新加的三件哨位道具（沙袋 / 弹药箱 / 枪架）是否落在车站逻辑位置上 |
 | 4 | `marshalling_night.png` | 同上 | 整关、夜色 | 站台灯、调度楼窗光、油桶火三套光源是否互相打架；雪被灯照到的边缘是否过曝 |
 | 5 | `manor_grey.png` | `res://scenes/night_manor.tscn`<br>L05 · СОСНОВАЯ УСАДЬА · 松林庄园（46×38 m） | 整关、中性光 | 庄园主楼立面 + 车库卷帘门（黄黑警示条）+ 松林 + 长蒸汽管 + 庄园铁门；庄园这一关比货场"有钱"，检查砖石与铁艺的对比级差 |
@@ -33,10 +37,11 @@
 
 | File | Scene | What it shows |
 |---|---|---|
+| `zones_market.png` | all three night levels | 2× market close-up per level + the three-zone legend with band boundaries (12/21.5, 9/20, 10/22 m) |
 | `yard_grey.png` | `night_explore.tscn` — L03 Freight Yard (48×40 m) | Whole level, neutral light: block facade, lit windows, fuse box, notice board, sodium lamps, fence, switch cabin, water tower |
 | `yard_night.png` | same | Same layout with the `CanvasModulate` night grade + lamp/brazier glow |
 | `marshalling_grey.png` | `night_marshalling.tscn` — L04 West Sorting Park (44×36 m) | Brick dispatch hall, platform canopy, hump tracks, boxcars, water tower, the three new outpost props |
-| `marshalling_night.png` | same | Night grade; check that platform / window / brazier lights do not fight each other |
+| `marshalling_night.png` | same | Night grade; check that platform / window / brazier lights do not fight each other; zone bands white 0-9 / red 9-20 / black 20-36 |
 | `manor_grey.png` | `night_manor.tscn` — L05 Pine Manor (46×38 m) | Manor facade, garage roller door, pine belt, steam pipe, iron gate |
 | `manor_night.png` | same | Darkest level: driveway asphalt band, pine silhouettes, watchtower searchlight |
 | `outpost_marshalling.png` | `night_marshalling.tscn` | 2× close-ups of sandbags (33.0, 9.2 m), ammo box (24.2, 5.6 m), weapon rack (12.4, 4.1 m); dashed box = sprite bounds, crosshair = ground anchor |
@@ -65,7 +70,7 @@ python3 godot_project/tools/art_gen/build_acceptance_page.py      # 改了图之
 
 ```bash
 cd godot_project/tools/art_gen
-python3 render_preview.py            # 6 张整关图（3 关 × 中性光 / 夜色）+ 3 张辅助图
+python3 render_preview.py            # 6 张整关图（3 关 × 中性光 / 夜色）+ 4 张辅助图（含 zones_market）
 python3 render_preview.py --crops    # 只重出特写与战斗读数
 python3 render_preview.py --level manor
 ```
@@ -84,4 +89,9 @@ python3 render_preview.py --level manor
 3. **图里没有 UI**：HUD、武器栏、提示条请看 `docs/ui/soviet_ui_board.html`。
 4. **这四张场景仍是灰盒，没有出图**：`gym.tscn`、`main.tscn`、`campaign.tscn`、`event_demo.tscn`
    目前还是 `_draw()` 画的占位，属于下一批要美术化的对象。
-5. 图上所有文字是拉丁 / 西里尔字母：环境里只有 DejaVu 字体，没有中文字库，写中文会变成方块。
+5. **分区色带是合成出来的**：引擎里由 `NightZoneField.gd` 每帧画（半透明矩形 + 虚线 + 雪面标签），
+   预览图用 `render_preview.zone_layer()` 按同一份 `metadata/zones` 画在 `Ground` 之上。
+   两边颜色 / 透明度写在两处，**改了一边就要同步另一边**（`NightZones.INFO` 与 `ZONE_STYLE`）。
+6. **黑市那格的亮度被压过高光**：`zones_market.png` 里调车场的摊子紧挨油桶火，两个补光叠在合成里会烧成白块，
+   所以对这一张做了 highlight rolloff；引擎里是渐变衰减，不会这么白。
+7. 图上所有文字是拉丁 / 西里尔字母：环境里只有 DejaVu 字体，没有中文字库，写中文会变成方块。

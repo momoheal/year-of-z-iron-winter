@@ -23,6 +23,7 @@ const Data := preload("res://scripts/CampaignData.gd")
 const SfxScript := preload("res://scripts/night/NightSfx.gd")
 const Beats := preload("res://scripts/night/LevelBeats.gd")
 const Arsenal := preload("res://scripts/night/Arsenal.gd")
+const Zones := preload("res://scripts/night/NightZones.gd")
 const TEX_GLOW := preload("res://art/50_vfx/VFX_Light_Radial_Soft.png")
 const TEX_BLOOD := preload("res://art/50_vfx/VFX_Blood_Mist.png")
 const TEX_SPARK := preload("res://art/50_vfx/VFX_Impact_Spark.png")
@@ -92,6 +93,18 @@ var borrowed := 0              # 借刀杀人：清杀队替你清掉的狂暴�
 var rabids: Array = []
 var halfs: Array = []
 # 道德账（接进战役时按同样口径回写 CampaignSim：raid_add_conscience / raid_add_tally）
+# --- 三区（白 / 红 / 黑）---
+var zones: Array = []          # [{id, rects:[Rect2 米]}]，来自场景根的 metadata/zones
+var zone_id := ""              # 玩家当前所在区（"" = 老场景没划分区）
+var zone_time := 0.0           # 在当前区连续待了多久（红区「禁止进入」的宽限计时）
+var zone_warned := false       # 红区提示只弹一次
+var zone_curfew := false       # 红区：已经被清杀队盯上
+var zone_seen := {}            # 已经进过的区（只报一次「进入黑区」）
+var markets: Array = []        # 黑市（night_market）
+var market_used := false       # 黑市一夜只做一次买卖
+var survivors: Array = []      # 黑区的幸存者（night_survivor）
+var survivor_seen := {}
+
 var conscience := 0.0          # 本夜良知变化
 var tally := 0                 # 卌 划痕（亲手灭口才划）
 var half_saved := 0
@@ -150,6 +163,7 @@ var _search_noise := 0.0
 @onready var snow_front: GPUParticles2D = get_node_or_null("FrontSnow/Flakes")
 
 var _lbl_status: Label
+var _lbl_zone: Label
 var _lbl_bag: Label
 var _lbl_hint: Label
 var _lbl_center: Label
@@ -244,6 +258,10 @@ func _ready() -> void:
 		h.ctl = self
 		halfs.append(h)
 	containers = get_tree().get_nodes_in_group("night_container")
+	for m in get_tree().get_nodes_in_group("night_market"):
+		markets.append(m)
+	for sv in get_tree().get_nodes_in_group("night_survivor"):
+		survivors.append(sv)
 	fade_props = get_tree().get_nodes_in_group("night_fade")
 	for z in get_tree().get_nodes_in_group("night_slush"):
 		slush.append([to_m(z.global_position), Vector2(float(z.get_meta("rx", 1.0)), float(z.get_meta("ry", 1.0)))])
@@ -291,6 +309,10 @@ func _read_level_meta() -> void:
 				rail_y.append(float(v))
 	else:
 		rail_y = DEFAULT_RAIL_Y.duplicate()
+	# 三区：没有 metadata/zones 的老场景 → zones 为空，全套分区逻辑自动不生效
+	zones = Zones.parse(String(get_meta("zones", "")))
+	zone_id = ""
+	zone_time = 0.0
 
 
 ## P2.5：环境层交给 NightSfx（风雪随 cfg.cold 变强、天亮退去），清杀兵挂上面具呼吸循环。
@@ -355,6 +377,7 @@ func _process(delta: float) -> void:
 		if abort_timer <= 0.0:
 			abort_pending = false
 	if state == "play":
+		_update_zone(delta)
 		_update_interact(delta)
 		_update_combat(delta)
 		_update_warmth(delta)
@@ -407,6 +430,10 @@ func _update_interact(delta: float) -> void:
 	if mech != null and Input.is_action_just_pressed("interact"):
 		use_mechanism(mech)
 		return
+	var mkt := nearest_market()
+	if mkt != null and Input.is_action_just_pressed("interact"):
+		trade_market(mkt)
+		return
 	var holding := Input.is_action_pressed("interact")
 	var near_exit := dist_m(player.global_position, exit_px) <= REACH
 	var c := nearest_container()
@@ -445,6 +472,123 @@ func nearest_container() -> Node2D:
 			bd = d
 			best = c
 	return best
+
+# ============================================================================
+# 三区（白 / 红 / 黑）：进区提示、红区禁止进入的盘问、黑区资源加成
+# ============================================================================
+func _update_zone(delta: float) -> void:
+	if zones.is_empty():
+		return
+	var z := Zones.zone_at(zones, to_m(player.global_position))
+	if z != zone_id:
+		var prev := zone_id
+		zone_id = z
+		zone_time = 0.0
+		zone_warned = false
+		zone_curfew = false
+		_on_zone_enter(prev, z)
+	if zone_id == "red":
+		# 白区户口进红区：先警告，再被盘问 —— 站在管制带里不动不是办法
+		zone_time += delta
+		if not zone_warned and zone_time >= Zones.CURFEW_WARN:
+			zone_warned = true
+			spawn_float(player.global_position + Vector2(0, -160), "红区 · 白区居民禁止进入", Color("#f87171"))
+			sfx.play("beep", -6.0)
+		if not zone_curfew and zone_time >= Zones.CURFEW_CHALLENGE:
+			zone_curfew = true
+			_curfew_challenge()
+	_survivor_lines()
+
+
+func _on_zone_enter(_from: String, to: String) -> void:
+	if to == "":
+		return
+	var inf := Zones.info(to)
+	if inf.is_empty() or bool(zone_seen.get(to, false)):
+		return
+	zone_seen[to] = true
+	spawn_float(player.global_position + Vector2(0, -176), String(inf["zh"]), inf["hud_col"])
+	if to == "black":
+		sfx.play("radio", -12.0)
+
+
+func _curfew_challenge() -> void:
+	var best: Node2D = null
+	var bd := 1e9
+	for s in soldiers:
+		if bool(s.dead):
+			continue
+		var d := dist_m(s.global_position, player.global_position)
+		if d < bd:
+			bd = d
+			best = s
+	spawn_float(player.global_position + Vector2(0, -176), "管制带 · 出示通行证！", SovietUI.SIGNAL)
+	add_shake(0.14)
+	if best != null:
+		best.alert_to(player.global_position)
+		on_soldier_alert(best)
+
+
+## 黑市：一罐罐头换 8 发，一夜一次。只换手里已有的枪。
+func nearest_market() -> Node2D:
+	var best: Node2D = null
+	var bd := REACH * 1.4
+	for m in markets:
+		var d := dist_m(player.global_position, (m as Node2D).global_position)
+		if d < bd:
+			bd = d
+			best = m
+	return best
+
+
+func trade_market(m: Node2D) -> bool:
+	if market_used:
+		spawn_float(m.global_position + Vector2(0, -110), "摊主：今晚就这样了", Color("#94a3b8"))
+		return false
+	var wid := ""
+	for w in ["rifle", "shotgun", "pistol"]:
+		if weapons.has(w):
+			wid = w
+			break
+	if wid == "":
+		spawn_float(m.global_position + Vector2(0, -110), "摊主：你连枪都没有", Color("#94a3b8"))
+		return false
+	var cost := int(m.get_meta("cans", 1))
+	var gain := int(m.get_meta("ammo", 8))
+	if cans < cost:
+		spawn_float(m.global_position + Vector2(0, -110), "摊主：罐头拿来", Color("#fbbf24"))
+		return false
+	var cap := int(Arsenal.spec(wid).get("reserve_max", 32))
+	var cur := int(reserve.get(wid, 0))
+	var add := mini(gain, cap - cur)
+	if add <= 0:
+		spawn_float(m.global_position + Vector2(0, -110), "摊主：你弹袋是满的", Color("#94a3b8"))
+		return false
+	cans -= cost
+	reserve[wid] = cur + add
+	market_used = true
+	spawn_float(m.global_position + Vector2(0, -110),
+		"黑市：−%d 罐头 · +%d %s" % [cost, add, Arsenal.short_zh(wid)], SovietUI.SIGNAL)
+	sfx.play("click", -2.0)
+	emit_noise(m.global_position, 2.0, "search")
+	return true
+
+
+## 幸存者：走近了说一句话（不挡路、不交互，纯气氛 + 黑区有人在的证明）
+func _survivor_lines() -> void:
+	for sv in survivors:
+		var n := sv as Node2D
+		if survivor_seen.has(n.name):
+			continue
+		if dist_m(player.global_position, n.global_position) > 2.4:
+			continue
+		survivor_seen[n.name] = true
+		var role := String(n.get_meta("role", "survivor"))
+		var line := "「别站在灯底下。」"
+		if role == "trader":
+			line = "「罐头换子弹，别的免谈。」"
+		spawn_float(n.global_position + Vector2(0, -120), line, Color("#c7d2fe"))
+
 
 func nearest_half():
 	var best = null
@@ -549,7 +693,8 @@ func _finish_search(c: Node2D) -> void:
 	if g != "":
 		got.append(g)
 	var cats: Array = Data.CONTAINER_CATS.get(kind, CORPSE_CATS)
-	var n := 1 + (1 if rng.randf() < 0.45 else 0)
+	# 黑区：离白区最远，东西也最多 —— 同一个容器多翻一件
+	var n := 1 + (1 if rng.randf() < 0.45 else 0) + Zones.loot_bonus(Zones.zone_at(zones, to_m(c.global_position)))
 	for i in n:
 		var pool: Array = Data.LOOT_CATS[cats[rng.randi() % cats.size()]]
 		got.append(String(pool[rng.randi() % pool.size()]))
@@ -1834,6 +1979,8 @@ func _build_hud() -> void:
 	lv.add_child(SovietUI.rule(SovietUI.STEEL, 1))
 	_lbl_status = _mono_label("", 12, SovietUI.BONE)
 	lv.add_child(_lbl_status)
+	_lbl_zone = _mono_label("", 12, SovietUI.BONE_DIM)
+	lv.add_child(_lbl_zone)
 	_lbl_weapon = _mono_label("", 12, SovietUI.BONE)
 	_lbl_weapon.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_lbl_weapon.custom_minimum_size = Vector2(520, 0)
@@ -2098,6 +2245,20 @@ func _refresh_hud() -> void:
 	var lit := "暴露" if player.flashlight_on or is_lit(player.global_position) else "暗处"
 	_lbl_status.text = "%s │ %s %s │ 罐头 %d │ 借刀 %d │ 良知 %+d │ 卌 %s" % [
 		stance, light, lit, cans, borrowed, int(conscience), SovietUI.tally_glyphs(tally)]
+
+	# --- 当前所在区（白 / 红 / 黑）---
+	if _lbl_zone != null:
+		if zone_id == "":
+			_lbl_zone.text = ""
+		else:
+			var inf := Zones.info(zone_id)
+			var line := String(inf.get("zh", zone_id))
+			if zone_id == "red":
+				line += "  ·  禁止进入（白区户口）"
+			elif zone_id == "black":
+				line += "  ·  尸群无上限"
+			_lbl_zone.text = "所在区  " + line
+			_lbl_zone.add_theme_color_override("font_color", inf.get("hud_col", SovietUI.BONE_DIM))
 
 	# --- 手里的家伙 ---
 	var wspec := cur_w()

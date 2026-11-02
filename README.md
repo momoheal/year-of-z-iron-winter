@@ -306,6 +306,37 @@ P4 的第二张新地图，也是战役里危险度 5 的终点图：夜长 120 
 
 ---
 
+## 🌗 三区分野 · 白 / 红 / 黑 + 黑市与幸存者（`scripts/night/NightZones.gd`）
+
+三张夜潜图统一按**离白区的距离**切成三条带。一句话：离白区越远，丧尸越多、东西越好、规矩越少。
+
+| 区 | 位置 | 丧尸 | 资源 | 清杀队 | 玩家 |
+|---|---|---|---|---|---|
+| **白区** WHITE · 安全区 | 楼前院子 / 调度楼前 / 装卸场 | 0 | 常规 | 不进来 | 唯一能站定搜包的地方 |
+| **红区** RED · 管制带 | 白区外围到铁丝网 / 股道 | ≤ 3 | 常规 | 主力巡逻 | **白区居民禁止进入**：3.5 s 警告、7 s 盘问 |
+| **黑区** BLACK · 沉降带 | 铁网以南 / 车皮区 / 松林 | 7~8 | **每箱多翻一件** | 只在边上晃 | 黑市与幸存者在这里 |
+
+分界（米）：货场 12 / 21.5 · 调车场 9 / 20 · 庄园 10 / 22。红区不是不能过，是**不能停**——
+跑过去，别在灯下站着。黑区容器多一次战利品判定（`loot_bonus`），所以值得冒险。
+
+**怎么读出来**：地面淡淡染一层（白 `#9fc6e0` 0.075 / 红 `#c8483a` 0.115 / 黑 `#3aa0b4` 0.165），
+上沿一条虚线，雪面上压一行 `ZONE A · SAFE` / `ZONE B · CURFEW` / `ZONE C · SUNKEN`；
+色带画在地面上、所有立体物之下（`z_index = -1`），不动道具原本的颜色。HUD 档案牌多一行「所在区」。
+
+**黑市**（三图各一个，都在黑区）：一罐罐头换 8 发，只换已有的枪，一夜一次。摊子是拼板桌 + 弹盒 + 马灯
+（`PRP_Market_Stall`），摊主 `PRP_Trader_Stand`（红袖标）、幸存者 `PRP_Survivor_Stand`（灰褐棉袄 + **白袖标**
+= 白区户口），都是无碰撞静态立绘，走近说一句话。罐头是引丧尸的饵——换子弹还是换命，这下真成了选择。
+
+**火苗修正**：油桶桶身只有 54 px，原来的火苗却有 84 px 高、顶端到 130 px，看着像墙在烧。
+现在纵向压到 0.42 / 横向 0.58，顶端 91 px、只从桶口蹿 35 px，火星粒子一起收小。
+
+测试：`tests/night_zones_smoke.gd`（解析 / 分区无缝 / 出生区 / 尸群分布 / 半人不在白区 / 黑市位置与摊边有人 /
+红区警告与盘问 / 一罐八发且一夜一次 / 火苗高度）。数据源在 `tools/art_gen/levels/*.py` 的 `ZONES` / `MARKET`，
+场景根 `metadata/zones` 由 `build_scene.py` 写入，色带与标签由 `NightZoneField.gd` 画。
+详见 `docs/zh/Z年纪事_三区与黑市.md` 与 `docs/en/Year_of_Z_Iron_Winter_Zones_and_Black_Market_EN.md`。
+
+---
+
 ## 🗺 Exploration Loop Demo (探索循环 DEMO · `Year_of_Z_Iron_Winter_Exploration_Demo.html`)
 
 **Single-file HTML5 · Canvas · zero art assets · zero build step.** Open it directly in any modern browser (or serve the `prototypes/` folder). Instant **中文 / EN** switching, procedurally synthesized Web Audio SFX, and a full one-day loop:

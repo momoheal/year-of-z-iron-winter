@@ -156,17 +156,28 @@ def character(parent, name, sheet_key, script, layer, mask, groups=None, **extra
 # ===========================================================================
 # 根 + 夜色
 # ===========================================================================
+def _zone_str(z):
+    """white:0,0,48,12,0,12,48,21.5 —— id:矩形（多块用 ; 分隔）"""
+    rs = ";".join("%g,%g,%g,%g" % r for r in z["rects"])
+    return z["id"] + ":" + rs
+
+
 S.node("NightExplore", "Node2D", None, texture_filter="2", script=SCRIPT("NightExplore"),
        metadata__level_id=f'"{LY.META["id"]}"', metadata__level_zh=f'"{LY.META["zh"]}"',
        metadata__level_en=f'"{LY.META["en"]}"', metadata__objective_zh=f'"{LY.META["objective_zh"]}"',
        metadata__extract_zh=f'"{LY.META["extract_zh"]}"', metadata__prize=f'"{LY.META["prize"]}"',
-       metadata__rail_y=f'"{",".join(str(v) for v in LY.TRACKS)}"')
+       metadata__rail_y=f'"{",".join(str(v) for v in LY.TRACKS)}"',
+       metadata__zones=f'"{"|".join(_zone_str(z) for z in LY.has("ZONES", []))}"')
 S.node("CanvasModulate", "CanvasModulate", ".", color=col(0.27, 0.32, 0.45))
 S.node("Ground", "Sprite2D", ".", z_index="-1", light_mask="2", centered="false",
        texture=S.tex(gen_env.ground_key()))
 # 血迹等地面贴花（运行时往里加），画在地面之上、所有立起的精灵之下
 S.node("Decals", "Node2D", ".", z_index="-1")
 S.node("World", "Node2D", ".", y_sort_enabled="true")
+
+# ---- 三区：运行时由 NightExplore 读 metadata/zones，画面由 NightZoneField 画 ----
+S.node("ZoneField", "Node2D", ".", z_index="-1", script=SCRIPT("NightZoneField"),
+       metadata__zones=f'"{"|".join(_zone_str(z) for z in LY.has("ZONES", []))}"')
 
 # ---- 立面（北侧那堵墙：khrushchyovka 赫鲁晓夫楼 / depot 机车库+调度塔）----
 base_y = LY.FACADE_BASE_Y * GY
@@ -204,9 +215,12 @@ for p in LY.PROPS:
         S.node("Occluder", "LightOccluder2D", n,
                occluder=occluder(round(-fw / 2, 1), round(-fd, 1), round(fw / 2, 1), 0))
     if p.get("fire"):
+        # 火苗高度按油桶本身定：桶身 54 px，火只从桶口（-56）往上蹿 35 px ——
+        # 之前整簇 84 px、顶到 -130，比桶还高一倍多，看着像烧到墙上了。
         S.node("Flame", "Sprite2D", n, texture=S.tex("VFX_Fire_Brazier_Sheet"), hframes="6",
-               centered="false", offset=v2((-28, -80)), position=v2((0, -50)), script=SCRIPT("NightAnim"))
-        S.node("Embers", "GPUParticles2D", n, position=v2((0, -64)), amount="26", lifetime="1.6",
+               centered="false", offset=v2((-28, -84)), position=v2((0, -56)),
+               scale=v2((0.58, 0.42)), script=SCRIPT("NightAnim"))
+        S.node("Embers", "GPUParticles2D", n, position=v2((0, -60)), amount="20", lifetime="1.3",
                preprocess="2.0", texture=S.tex("VFX_Ember"),
                material=S.subres("CanvasItemMaterial", blend_mode="1"),
                visibility_rect="Rect2(-200, -400, 400, 420)",
@@ -263,6 +277,34 @@ for rb in LY.RABIDS:
 for hf in LY.HALFS:
     character("World", hf["id"], "CHR_04_HalfHuman_Sheet", "NightHalf", 32, 7, groups=["night_half"],
               position=v2(px(*hf["pos"])), tag=f'"{hf["tag"]}"')
+
+# ===========================================================================
+# 黑市与幸存者（只出现在黑区）
+# ===========================================================================
+def npc(name, art, pos_m, groups, **meta):
+    """站着不动的平民：只有精灵、没有碰撞 —— 玩家能从他们身上穿过去，别把人卡在摊子前。"""
+    n = S.node(name, "Node2D", "World", groups=groups, position=v2(px(*pos_m)), **meta)
+    S.node("Sprite", "Sprite2D", n, texture=S.tex(art), centered="false",
+           offset=v2((-36, -108)))          # 72x112 立绘，脚底中心 (36,108)
+    return n
+
+
+if LY.has("MARKET", None):
+    _MK = LY.MARKET
+    _mkt = S.node("Market", "Node2D", "World", groups=["night_market"],
+                  position=v2(px(*_MK["pos"])), metadata__cans=str(_MK["cans"]),
+                  metadata__ammo=str(_MK["ammo"]), metadata__zh=f'"{_MK["zh"]}"')
+    S.node("Stall", "Sprite2D", _mkt, texture=S.tex("PRP_Market_Stall"), centered="false",
+           offset=v2((-59, -88)))                    # 118x96 摊位，脚底中心 (59,88)
+    S.node("Glow", "PointLight2D", _mkt, position=v2((46, -60)), texture=S.tex("VFX_Light_Radial"),
+           color=col(1, 0.72, 0.42), texture_scale="0.62", energy="1.15",
+           range_item_cull_mask="3")
+    npc("Trader", "PRP_Trader_Stand", _MK["trader"], ["night_survivor"],
+        metadata__role='"trader"')
+    for _i, _sv in enumerate(_MK.get("survivors", [])):
+        npc(f"Survivor_{_i}", "PRP_Survivor_Stand", _sv, ["night_survivor"],
+            metadata__role='"survivor"')
+
 
 # ===========================================================================
 # 灯光

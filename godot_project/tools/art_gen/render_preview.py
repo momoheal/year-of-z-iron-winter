@@ -126,9 +126,11 @@ def collect_sprites(nodes, order, ext):
             continue
         centered = n["props"].get("centered", "true") != "false"
         ox, oy = v2(n["props"].get("offset", "Vector2(0, 0)"))
+        sc = v2(n["props"].get("scale", "Vector2(1, 1)"))
         gx, gy = gpos(nodes, key)
         z = int(float(n["props"].get("z_index", "0")))
-        out.append(dict(key=key, path=path, gx=gx + ox, gy=gy + oy, centered=centered,
+        out.append(dict(key=key, path=path, gx=gx + ox * sc[0], gy=gy + oy * sc[1],
+                        scale=sc, centered=centered,
                         z=z, sort_y=owner_base(nodes, key),
                         flip_h=n["props"].get("flip_h", "false") == "true",
                         hframes=int(float(n["props"].get("hframes", "1"))),
@@ -194,10 +196,60 @@ def add_glow(dst: np.ndarray, glow: np.ndarray, pos, color, k: float) -> None:
     dst[y0:y1, x0:x1, :3] = np.clip(dst[y0:y1, x0:x1, :3] + g[..., :3] * a * col * 1.6, 0, 1)
 
 
+# 三区样式（与 scripts/night/NightZones.gd 的 INFO 保持一致）
+ZONE_STYLE = {
+    "white": ((0.62, 0.78, 0.88), 0.075, "ZONE A · SAFE"),
+    "red": ((0.78, 0.28, 0.23), 0.115, "ZONE B · CURFEW"),
+    "black": ((0.23, 0.63, 0.71), 0.165, "ZONE C · SUNKEN"),
+}
+
+
+def scene_zones(scene_path: str) -> str:
+    txt = open(scene_path, encoding="utf-8").read()
+    m = re.search(r'metadata/zones = "([^"]*)"', txt)
+    return m.group(1) if m else ""
+
+
+def zone_layer(W: int, H: int, src: str):
+    """地面上的三区色带（和游戏里 NightZoneField 画的一致）：淡染 + 上沿虚线 + 标签。"""
+    if not src:
+        return None
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    f = ImageFont.truetype(FONT_B, 26)
+    for chunk in src.split("|"):
+        if ":" not in chunk:
+            continue
+        zid, rs = chunk.split(":", 1)
+        style = ZONE_STYLE.get(zid.strip())
+        if style is None:
+            continue
+        (r, g, b), a, tag = style
+        col = (int(r * 255), int(g * 255), int(b * 255))
+        for rect in rs.split(";"):
+            n = [float(v) for v in rect.split(",")]
+            if len(n) != 4:
+                continue
+            x0 = int(n[0] * PPM)
+            x1 = int(n[2] * PPM)
+            y0 = int(n[1] * GY) + PAD
+            y1 = int(n[3] * GY) + PAD
+            d.rectangle([x0, y0, x1, y1], fill=(*col, int(a * 255)))
+            x = x0
+            while x < x1:                      # 上沿虚线
+                d.line([x, y0, min(x + 26, x1), y0], fill=(*col, 205), width=5)
+                x += 42
+            d.line([x0, y1, x1, y1], fill=(*col, 60), width=2)
+            for tx in (x0 + 40, int(x0 + (x1 - x0) * 0.62)):
+                d.text((tx, y0 + 52), tag, font=f, fill=(*col, 115))
+    return img
+
+
 def render(level: str, night: bool, scale: float = 0.62, actors: bool = True) -> Image.Image:
     spec = SCENES[level]
     scene = res_path(spec["path"])
     nodes, order, ext = parse_tscn(scene)
+    zsrc = scene_zones(scene)
     sprites = collect_sprites(nodes, order, ext)
     if not actors:
         # 特写图里把角色藏起来：验收的是道具本身，别被路过的清杀兵挡住
@@ -231,10 +283,17 @@ def render(level: str, night: bool, scale: float = 0.62, actors: bool = True) ->
             img = img.crop(((f % hf) * fw, (f // hf) * fh, (f % hf) * fw + fw, (f // hf) * fh + fh))
         if s["flip_h"]:
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
+        sx, sy = s.get("scale", (1.0, 1.0))
+        if abs(sx - 1.0) > 1e-3 or abs(sy - 1.0) > 1e-3:
+            img = img.resize((max(1, int(img.width * sx)), max(1, int(img.height * sy))), Image.LANCZOS)
         arr = to_np(img)
         x = int(round(s["gx"] - (arr.shape[1] / 2 if s["centered"] else 0)))
         y = int(round(s["gy"] + PAD - (arr.shape[0] / 2 if s["centered"] else 0)))
         over(canvas, arr, x, y)
+        if "Ground" in os.path.basename(s["path"]):
+            zl = zone_layer(W, H, zsrc)
+            if zl is not None:
+                over(canvas, to_np(zl), 0, 0)
 
     # 2) 夜色：把 CanvasModulate 的颜色乘上去（灯再补回来）
     mod = nodes.get("CanvasModulate", {}).get("props", {}).get("color")
@@ -376,7 +435,8 @@ def crop_mark(level: str, out_path: str) -> None:
     for i, it in enumerate(spec["items"]):
         mx, my = it["m"]
         half_w, up, down = it["win"]
-        cx, cy = mx * PPM, my * GY + PAD
+        ox_, oy_ = ZONE_CROP.get(lv, (0.0, 0.0))
+        cx, cy = (mx + ox_) * PPM, (my + oy_) * GY + PAD
         box = (int(cx - half_w * PPM), int(cy - up * GY),
                int(cx + half_w * PPM), int(cy + down * GY))
         img = base.crop(box)
@@ -532,6 +592,105 @@ def combat_diagram(out_path: str) -> None:
     print("  ->", out_path, img.size)
 
 
+
+# ---------------------------------------------------------------------------
+# 三区与黑市（每个区一条色带 + 每张图的摊子）
+# ---------------------------------------------------------------------------
+ZONE_SPLIT = [
+    "yard 0-12  ·  marshalling 0-9  ·  manor 0-10",
+    "yard 12-21.5  ·  marshalling 9-20  ·  manor 10-22",
+    "yard 21.5-40  ·  marshalling 20-36  ·  manor 22-38",
+]
+
+ZONE_CROP = {  # 取景偏移（米）：调车场的摊子紧挨着油桶火，往西挪一点避开火心
+    "yard": (0.0, 0.0),
+    "marshalling": (-2.0, -0.4),
+    "manor": (0.0, 0.0),
+}
+
+ZONE_ROWS = [
+    ("#9fc6e0", "A · WHITE  /  SAFE",   "no infected  ·  patrols never enter  ·  the only place you can stand still"),
+    ("#c8483a", "B · RED  /  CURFEW",   "0-3 infected  ·  3.5 s warning, 7 s challenge  ·  residents forbidden"),
+    ("#3aa0b4", "C · BLACK  /  SUNKEN", "7-8 infected  ·  +1 loot roll per container  ·  market & survivors"),
+]
+
+
+def zone_sheet(out_path: str) -> None:
+    """三区验收图：三关各一格黑市特写（2×），下面一条三区色标。
+
+    每格都能同时看到：地面本色带 / 区标签 / 摊位 + 摊主 + 幸存者。
+    """
+    import levels
+
+    PW, PH = 520, 258
+    gap, head, cap, leg = 10, 50, 58, 168
+    W = PW * 3 + gap * 4
+    H = head + PH + gap + cap + leg
+    sheet = Image.new("RGBA", (W, H), (14, 18, 19, 255))
+    d = ImageDraw.Draw(sheet)
+    ft = ImageFont.truetype(FONT_B, 18)
+    fb = ImageFont.truetype(FONT_B, 14)
+    fs = ImageFont.truetype(FONT, 12)
+    d.text((16, 14), "THREE ZONES  ·  WHITE / RED / BLACK  ·  BLACK MARKET", font=ft,
+           fill=(216, 209, 191))
+    d.text((16, 34), "each panel: ground band + zone stencil + stall, trader and survivors",
+           font=fs, fill=(132, 128, 116))
+
+    for i, lv in enumerate(("yard", "marshalling", "manor")):
+        sp = levels.load(lv)
+        mkt = sp.MARKET
+        mx, my = mkt["pos"]
+        base = render(lv, night=True, scale=1.0, actors=True)
+        base = base.crop((0, BAND, base.width, base.height))
+        ox_, oy_ = ZONE_CROP.get(lv, (0.0, 0.0))
+        cx, cy = (mx + ox_) * PPM, (my + oy_) * GY + PAD
+        box = (int(cx - 6.0 * PPM), int(cy - 6.0 * GY), int(cx + 6.0 * PPM), int(cy + 3.6 * GY))
+        img = base.crop(box)
+        img = ImageEnhance.Brightness(img).enhance(1.14)
+        # 油桶火 + 摊子马灯两个补光叠在一起会把中间烧成白块：压一下高光肩部
+        a = np.asarray(img).astype(np.float32) / 255.0
+        hi = a > 0.72
+        a[hi] = 0.72 + 0.23 * np.tanh((a[hi] - 0.72) / 0.23)
+        img = Image.fromarray((np.clip(a, 0, 1) * 255).astype(np.uint8))
+        k = min(PW / img.width, PH / img.height)
+        img = img.resize((max(1, int(img.width * k)), max(1, int(img.height * k))), Image.LANCZOS)
+        x = gap + i * (PW + gap)
+        pane = Image.new("RGBA", (PW, PH), (10, 13, 14, 255))
+        pane.alpha_composite(img.convert("RGBA"), ((PW - img.width) // 2, (PH - img.height) // 2))
+        sheet.alpha_composite(pane, (x, head))
+        d.rectangle([x, head, x + PW - 1, head + PH - 1], outline=(74, 84, 87, 255))
+        # 摊位后的那圈暖光：在图上钉一个点，方便对位
+        px_ = x + (PW / 2)
+        d.line([px_ - 14, head + PH - 9, px_ + 14, head + PH - 9], fill=(217, 163, 38), width=2)
+        d.text((x + 8, head + PH + 6), f"{SCENES[lv]['title']}  ·  BLACK MARKET", font=fb,
+               fill=(216, 209, 191))
+        n = 1 + len(mkt["survivors"])
+        d.text((x + 8, head + PH + 24),
+               f"({mx:.1f}, {my:.1f}) m  ·  {n} people  ·  {mkt['cans']} can -> {mkt['ammo']} rounds",
+               font=fs, fill=(143, 180, 196))
+        d.text((x + 8, head + PH + 39),
+               "bands: " + "  /  ".join(
+                   f"{z['id']} {z['rects'][0][1]:g}-{z['rects'][-1][3]:g}" for z in sp.ZONES),
+               font=fs, fill=(132, 128, 116))
+
+    # 三区色标
+    y0 = head + PH + gap + cap
+    d.line([16, y0 - 12, W - 16, y0 - 12], fill=(52, 60, 63), width=1)
+    for j, (col, name, note) in enumerate(ZONE_ROWS):
+        y = y0 + j * 52
+        c = tuple(int(col[k:k + 2], 16) for k in (1, 3, 5))
+        d.rectangle([18, y + 8, 58, y + 36], fill=c + (255,))
+        d.rectangle([18, y + 8, 58, y + 36], outline=(120, 130, 132))
+        d.text((70, y + 10), name, font=fb, fill=(216, 209, 191))
+        d.text((70, y + 28), note, font=fs, fill=(150, 146, 136))
+        d.text((W - 380, y + 18), ZONE_SPLIT[j], font=fs, fill=(132, 128, 116))
+    d.text((W - 380, y0 + 3 * 52 - 4),
+           "brazier flame top 91 px on a 54 px drum", font=fs, fill=(217, 163, 38))
+
+    sheet.convert("RGB").save(out_path)
+    print("  ->", out_path, sheet.size)
+
+
 def main(argv):
     os.makedirs(OUT, exist_ok=True)
     only = None
@@ -551,6 +710,7 @@ def main(argv):
             crop_mark(lv, os.path.join(OUT, f"outpost_{lv}.png"))
     if only is None:
         combat_diagram(os.path.join(OUT, "combat_readout.png"))
+        zone_sheet(os.path.join(OUT, "zones_market.png"))
 
 
 if __name__ == "__main__":

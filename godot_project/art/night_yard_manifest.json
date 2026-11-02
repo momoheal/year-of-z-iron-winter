@@ -559,5 +559,38 @@
    48.0
   ],
   "hframes": 4
+ },
+ "PRP_Survivor_Stand": {
+  "path": "res://art/30_props/PRP_Survivor_Stand.png",
+  "size": [
+   72,
+   112
+  ],
+  "pivot": [
+   36,
+   108
+  ]
+ },
+ "PRP_Trader_Stand": {
+  "path": "res://art/30_props/PRP_Trader_Stand.png",
+  "size": [
+   72,
+   112
+  ],
+  "pivot": [
+   36,
+   108
+  ]
+ },
+ "PRP_Market_Stall": {
+  "path": "res://art/30_props/PRP_Market_Stall.png",
+  "size": [
+   118,
+   96
+  ],
+  "pivot": [
+   59.0,
+   88
+  ]
  }
 }

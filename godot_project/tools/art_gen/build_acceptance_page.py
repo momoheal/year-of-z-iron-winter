@@ -25,14 +25,26 @@ OUT = os.path.join(REPO, "docs", "ui")
 
 # file, 关卡标签, 场景文件, 区域, 尺寸标签, 中文验收点[], 英文验收点[], 分组
 SHEETS = [
+    dict(file="zones_market.png", level="L03–L05 · 三区分野 / THREE ZONES",
+         scene="NightZones.gd + NightZoneField.gd · levels/*.py 的 ZONES",
+         area="三关各一格黑市 2× · 加三区色标",
+         zh=["白 / 红 / 黑三条带的分界（米）写在同一张图上：货场 12 / 21.5 · 调车场 9 / 20 · 庄园 10 / 22",
+             "每格都能看到「摊位 + 摊主 + 2 名幸存者」：黑市只在黑区，且紧着自己的光源（火堆 / 马灯）",
+             "白区没有丧尸；红区 0~3 只 + 清杀队巡逻（白区居民禁止进入：3.5 s 警告、7 s 盘问）；黑区 7~8 只、每箱多翻一件"],
+         en=["Band boundaries (m) are printed on the sheet: yard 12 / 21.5 · park 9 / 20 · manor 10 / 22",
+             "Every panel shows the stall + trader + 2 survivors: the market only exists in the black zone, always by its own light",
+             "White: no infected. Red: 0-3 + OSK patrols (residents forbidden: 3.5 s warn, 7 s challenge). Black: 7-8, +1 loot roll"],
+         group="zone"),
     dict(file="yard_grey.png", level="L03 · ШИРОКАЯ КОЛЕЯ · 宽轨货场",
          scene="res://scenes/night_explore.tscn", area="整关 48×40 m · 中性光",
          zh=["五层赫鲁晓夫楼立面 + 亮窗、配电箱、告示板、钠路灯、铁网、扳道房、水塔是否连成一条街",
              "角色是否踩在雪地上、比例对不对（1 m = 64 px）",
-             "警戒线 / 铁网 / 轨道三层纵深有没有把画面压平"],
+             "警戒线 / 铁网 / 轨道三层纵深有没有把画面压平",
+             "三条色带读不读得出来：白 0–12 / 红 12–21.5（红虚线）/ 黑 21.5–40（青虚线）"],
          en=["Does the block facade + lit windows + fuse box + notice board + sodium lamps + fence read as one street?",
              "Are actors standing on snow at the right scale (1 m = 64 px)?",
-             "Do fence / tracks / yard keep three layers of depth?"],
+             "Do fence / tracks / yard keep three layers of depth?",
+             "Can you read the three bands: white 0-12 / red 12-21.5 (red dashes) / black 21.5-40 (cyan dashes)?"],
          group="level"),
     dict(file="yard_night.png", level="L03 · ШИРОКАЯ КОЛЕЯ · 宽轨货场",
          scene="res://scenes/night_explore.tscn", area="整关 · 夜色",
@@ -47,10 +59,12 @@ SHEETS = [
          scene="res://scenes/night_marshalling.tscn", area="整关 44×36 m · 中性光",
          zh=["砖砌调度楼、站台雨棚、驼峰线、四节车皮、水塔的空间关系",
              "三件新道具（沙袋 33.0, 9.2 / 弹药箱 24.2, 5.6 / 枪架 12.4, 4.1 m）是否落在车站逻辑位置上",
-             "站台边缘与轨道是否有可走的通道"],
+             "站台边缘与轨道是否有可走的通道",
+             "色带：白 0–9 / 红 9–20 / 黑 20–36；出生点在黑区（涵洞）"],
          en=["Brick dispatch hall, canopy, hump tracks, boxcars, water tower — do they read in the right order?",
              "Do the three new props sit where a station would actually keep them?",
-             "Is there a walkable lane along the platform edge?"],
+             "Is there a walkable lane along the platform edge?",
+             "Bands: white 0-9 / red 9-20 / black 20-36; spawn is in the black zone (culvert)"],
          group="level"),
     dict(file="marshalling_night.png", level="L04 · ЗАПАДНЫЙ СОРТИРОВОЧНЫЙ ПАРК · 西调车场",
          scene="res://scenes/night_marshalling.tscn", area="整关 · 夜色",
@@ -65,10 +79,12 @@ SHEETS = [
          scene="res://scenes/night_manor.tscn", area="整关 46×38 m · 中性光",
          zh=["庄园主楼立面、车库卷帘门（黄黑警示条）、松林、长蒸汽管、庄园铁门",
              "这关要比货场「有钱」：砖石 / 铁艺 / 涂装的级差够不够",
-             "庄园车道那条深色沥青带边缘是否生硬"],
+             "庄园车道那条深色沥青带边缘是否生硬",
+             "色带：白 0–10 / 红 10–22 / 黑 22–38；黑市在西门内西松林（11.8, 27.4）"],
          en=["Manor facade, garage roller door (hazard stripes), pine belt, steam pipe, iron gate",
              "This level must read richer than the freight yard — is the material tiering enough?",
-             "Is the dark driveway edge too hard?"],
+             "Is the dark driveway edge too hard?",
+             "Bands: white 0-10 / red 10-22 / black 22-38; market sits in the western pines (11.8, 27.4)"],
          group="level"),
     dict(file="manor_night.png", level="L05 · СОСНОВАЯ УСАДЬА · 松林庄园",
          scene="res://scenes/night_manor.tscn", area="整关 · 夜色",
@@ -108,7 +124,8 @@ SHEETS = [
          group="read"),
 ]
 
-GROUPS = [("level", "01 · 三关整图 / Full levels"),
+GROUPS = [("zone", "00 · 三区分野与黑市 / Three zones & black market"),
+          ("level", "01 · 三关整图 / Full levels"),
           ("crop", "02 · 哨位特写 / Outpost close-ups"),
           ("read", "03 · 战斗读数 / Combat readout")]
 
@@ -211,6 +228,14 @@ def build(standalone: bool) -> str:
   .checks li{{margin:2px 0}}
   footer{{margin-top:46px;border-top:2px solid var(--steel);padding-top:16px;
          font-size:12px;color:var(--bone-dim)}}
+  .zones{{display:grid;gap:8px;margin:16px 0 0}}
+  @media(min-width:820px){{.zones{{grid-template-columns:repeat(3,1fr)}}}}
+  .z{{background:#141819;border:1px solid var(--steel);border-left:7px solid var(--steel);padding:9px 11px}}
+  .z b{{font-size:13px;color:var(--bone);display:block;letter-spacing:.02em}}
+  .z em{{font:10.5px/1.4 "Cascadia Mono",Consolas,monospace;color:var(--ash);font-style:normal;
+        letter-spacing:.12em;display:block;margin:1px 0 4px}}
+  .z small{{font-size:11.5px;color:#b6ae9d;line-height:1.5;display:block}}
+  .z.a{{border-left-color:#9fc6e0}} .z.b{{border-left-color:#c8483a}} .z.c{{border-left-color:#3aa0b4}}
   .pill{{display:inline-block;border:1px solid var(--steel-lit);padding:3px 8px;margin:3px 6px 3px 0;
         font:11px/1.4 "Cascadia Mono",Consolas,monospace;color:var(--bone-dim)}}
 </style>
@@ -221,14 +246,23 @@ def build(standalone: bool) -> str:
     <div class="kicker">YEAR OF Z · IRON WINTER — ACCEPTANCE SHEETS</div>
     <h1>验收图 / Acceptance Sheets</h1>
     <p class="lede">
-      9 张图，每张都标了它属于哪个场景。整关图看美术与摆位，特写看三件新哨位道具，
-      读数图看战斗手感是否成立。逐张说明也写在 <span class="mono">docs/ui/verify/README.md</span>。
+      10 张图，每张都标了它属于哪个场景。第一张看三区分野与黑市，整关图看美术与摆位，
+      特写看三件新哨位道具，读数图看战斗手感是否成立。
+      逐张说明也写在 <span class="mono">docs/ui/verify/README.md</span>。
     </p>
+    <div class="zones">
+      <div class="z a"><b>白区 · 安全区</b><em>ZONE A · WHITE · SAFE</em>
+        <small>0 丧尸 · 清杀队不进 · 唯一能站定了搜包的地方</small></div>
+      <div class="z b"><b>红区 · 管制带</b><em>ZONE B · RED · CURFEW</em>
+        <small>0~3 丧尸 · 巡逻主力 · <b>白区居民禁止进入</b>：3.5 s 警告、7 s 盘问</small></div>
+      <div class="z c"><b>黑区 · 沉降带</b><em>ZONE C · BLACK · SUNKEN</em>
+        <small>7~8 丧尸 · 每箱多翻一件 · 黑市与幸存者只在这里</small></div>
+    </div>
     <div class="warn">
       ⚠️ 这些不是引擎截图：沙箱里没有 Godot，图片由
       <span class="mono">tools/art_gen/render_preview.py</span> 直接读 <span class="mono">.tscn</span>
-      复合成画面 —— 位置、层级、夜色、补光与游戏一致；shader、粒子、HUD、动画中间帧不在图上。
-      战斗手感（后坐、命中反馈、音效）仍然只是静态验证。
+      复合成画面 —— 位置、层级、夜色、补光、分区色带与游戏一致；shader、粒子、HUD、动画中间帧不在图上。
+      战斗手感（后坐、命中反馈、音效）与红区警告的实际触发仍然只是静态验证。
     </div>
     <div style="margin-top:12px">{note}</div>
   </div>
