@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YEAR OF Z · 验收图 / Acceptance Sheets</title>
+<style>
+  :root{--ink:#070809;--iron:#121618;--plate:#1b2023;--steel:#343c3f;--steel-lit:#4a5457;
+        --bone:#d8d1bf;--bone-dim:#8c8578;--ash:#6b6560;--ochre:#c8a257;--blood:#8c1c14;
+        --signal:#d9a326;--frost:#8fb4c4;--crt:#63d18a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:var(--bone);
+       font:15px/1.65 -apple-system,"Segoe UI","Noto Sans SC","PingFang SC",sans-serif}
+  a{color:var(--ochre)}
+  .mono{font-family:"Cascadia Mono",Consolas,"DejaVu Sans Mono",monospace}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+  .mast{border-bottom:2px solid var(--steel);padding:26px 0 14px;margin-bottom:6px}
+  .kicker{font:11px/1.6 "Cascadia Mono",Consolas,monospace;letter-spacing:.16em;color:var(--bone-dim)}
+  h1{font-size:26px;margin:6px 0 6px;letter-spacing:.02em}
+  .lede{color:var(--bone-dim);font-size:13px;max-width:78ch;margin:0 0 12px}
+  .warn{border-left:3px solid var(--signal);padding:8px 12px;background:#15181a;
+        color:#c9c2b0;font-size:12.5px;margin:12px 0 0}
+  nav{position:sticky;top:0;z-index:5;background:rgba(7,8,9,.94);backdrop-filter:blur(6px);
+       border-bottom:1px solid var(--steel);display:flex;gap:8px;flex-wrap:wrap;padding:10px 0;margin-bottom:8px}
+  nav a{font:12px/1 "Cascadia Mono",Consolas,monospace;text-decoration:none;color:var(--bone-dim);
+        border:1px solid var(--steel);padding:7px 10px}
+  nav a:hover{color:var(--bone);border-color:var(--ochre)}
+  h2{font-size:15px;letter-spacing:.1em;color:var(--ochre);text-transform:uppercase;
+      margin:38px 0 12px;border-bottom:1px solid var(--steel);padding-bottom:8px}
+  .grid{display:grid;gap:18px}
+  .card{background:var(--plate);border:1px solid var(--steel);padding:14px 14px 12px}
+  .card header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .chip{font:12px/1 "Cascadia Mono",Consolas,monospace;color:#0b0d0e;background:var(--ochre);
+        padding:6px 9px;letter-spacing:.04em}
+  .meta{font-size:11px;color:var(--ash)}
+  .shot{display:block;line-height:0;border:1px solid var(--steel-lit);margin-bottom:10px;background:#0b0d0e}
+  .shot img{width:100%;display:block}
+  .sub{font-size:11.5px;color:var(--frost);margin-top:-2px}
+  .sub.dim{color:var(--ash)}
+  .checks{display:grid;grid-template-columns:1fr;gap:2px;margin-top:10px;
+          border-top:1px dashed var(--steel);padding-top:9px}
+  @media(min-width:900px){.checks{grid-template-columns:1fr 1fr;gap:0 22px}}
+  .checks ul{margin:0;padding-left:16px;font-size:12.5px;color:#c0b9a7}
+  .checks ul.en{color:var(--bone-dim);font-size:12px}
+  .checks li{margin:2px 0}
+  footer{margin-top:46px;border-top:2px solid var(--steel);padding-top:16px;
+         font-size:12px;color:var(--bone-dim)}
+  .pill{display:inline-block;border:1px solid var(--steel-lit);padding:3px 8px;margin:3px 6px 3px 0;
+        font:11px/1.4 "Cascadia Mono",Consolas,monospace;color:var(--bone-dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="mast">
+    <div class="kicker">YEAR OF Z · IRON WINTER — ACCEPTANCE SHEETS</div>
+    <h1>验收图 / Acceptance Sheets</h1>
+    <p class="lede">
+      9 张图，每张都标了它属于哪个场景。整关图看美术与摆位，特写看三件新哨位道具，
+      读数图看战斗手感是否成立。逐张说明也写在 <span class="mono">docs/ui/verify/README.md</span>。
+    </p>
+    <div class="warn">
+      ⚠️ 这些不是引擎截图：沙箱里没有 Godot，图片由
+      <span class="mono">tools/art_gen/render_preview.py</span> 直接读 <span class="mono">.tscn</span>
+      复合成画面 —— 位置、层级、夜色、补光与游戏一致；shader、粒子、HUD、动画中间帧不在图上。
+      战斗手感（后坐、命中反馈、音效）仍然只是静态验证。
+    </div>
+    <div style="margin-top:12px">在线版 / served: 图片走相对路径，原尺寸 PNG 点图可看。</div>
+  </div>
+  <nav><a href="#level">01 · 三关整图 / Full levels</a><a href="#crop">02 · 哨位特写 / Outpost close-ups</a><a href="#read">03 · 战斗读数 / Combat readout</a><a href="soviet_ui_board.html">04 · 界面板 / UI board</a>
+    <a href="verify/README.md">README.md</a></nav>
+  <h2 id="level">01 · 三关整图 / Full levels</h2>
+<section class="grid">  <article class="card">
+    <header>
+      <span class="chip">L03 · ШИРОКАЯ КОЛЕЯ · 宽轨货场</span>
+      <span class="meta mono">1904×1197</span>
+    </header>
+    <a class="shot" href="verify/yard_grey.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/yard_grey.jpg" alt="yard_grey.png">
+    </a>
+    <div class="sub mono">res://scenes/night_explore.tscn</div>
+    <div class="sub dim">整关 48×40 m · 中性光 · yard_grey.png</div>
+    <div class="checks">
+      <ul><li>五层赫鲁晓夫楼立面 + 亮窗、配电箱、告示板、钠路灯、铁网、扳道房、水塔是否连成一条街</li><li>角色是否踩在雪地上、比例对不对（1 m = 64 px）</li><li>警戒线 / 铁网 / 轨道三层纵深有没有把画面压平</li></ul>
+      <ul class="en"><li>Does the block facade + lit windows + fuse box + notice board + sodium lamps + fence read as one street?</li><li>Are actors standing on snow at the right scale (1 m = 64 px)?</li><li>Do fence / tracks / yard keep three layers of depth?</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L03 · ШИРОКАЯ КОЛЕЯ · 宽轨货场</span>
+      <span class="meta mono">1904×1197</span>
+    </header>
+    <a class="shot" href="verify/yard_night.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/yard_night.jpg" alt="yard_night.png">
+    </a>
+    <div class="sub mono">res://scenes/night_explore.tscn</div>
+    <div class="sub dim">整关 · 夜色 · yard_night.png</div>
+    <div class="checks">
+      <ul><li>CanvasModulate 冷调是否压得住，暗部有没有糊死</li><li>钠灯黄色光斑半径是否合理，两处油桶火有没有烧掉细节</li><li>雪面高光是否过曝</li></ul>
+      <ul class="en"><li>Does the CanvasModulate night grade hold, or do shadows crush?</li><li>Are sodium lamp pools a believable radius, and do braziers blow out detail?</li><li>Is snow highlight clipping?</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L04 · ЗАПАДНЫЙ СОРТИРОВОЧНЫЙ ПАРК · 西调车场</span>
+      <span class="meta mono">1745×1098</span>
+    </header>
+    <a class="shot" href="verify/marshalling_grey.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/marshalling_grey.jpg" alt="marshalling_grey.png">
+    </a>
+    <div class="sub mono">res://scenes/night_marshalling.tscn</div>
+    <div class="sub dim">整关 44×36 m · 中性光 · marshalling_grey.png</div>
+    <div class="checks">
+      <ul><li>砖砌调度楼、站台雨棚、驼峰线、四节车皮、水塔的空间关系</li><li>三件新道具（沙袋 33.0, 9.2 / 弹药箱 24.2, 5.6 / 枪架 12.4, 4.1 m）是否落在车站逻辑位置上</li><li>站台边缘与轨道是否有可走的通道</li></ul>
+      <ul class="en"><li>Brick dispatch hall, canopy, hump tracks, boxcars, water tower — do they read in the right order?</li><li>Do the three new props sit where a station would actually keep them?</li><li>Is there a walkable lane along the platform edge?</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L04 · ЗАПАДНЫЙ СОРТИРОВОЧНЫЙ ПАРК · 西调车场</span>
+      <span class="meta mono">1745×1098</span>
+    </header>
+    <a class="shot" href="verify/marshalling_night.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/marshalling_night.jpg" alt="marshalling_night.png">
+    </a>
+    <div class="sub mono">res://scenes/night_marshalling.tscn</div>
+    <div class="sub dim">整关 · 夜色 · marshalling_night.png</div>
+    <div class="checks">
+      <ul><li>站台灯 / 调度楼窗光 / 油桶火三套光源是否互相打架</li><li>车皮侧面在夜色里还能不能看出体积</li><li>雪被灯照到的边缘是否过曝</li></ul>
+      <ul class="en"><li>Do platform lamps, window light and braziers fight each other?</li><li>Can you still read boxcar volume in the dark?</li><li>Do lit snow edges clip?</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L05 · СОСНОВАЯ УСАДЬА · 松林庄园</span>
+      <span class="meta mono">1825×1148</span>
+    </header>
+    <a class="shot" href="verify/manor_grey.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/manor_grey.jpg" alt="manor_grey.png">
+    </a>
+    <div class="sub mono">res://scenes/night_manor.tscn</div>
+    <div class="sub dim">整关 46×38 m · 中性光 · manor_grey.png</div>
+    <div class="checks">
+      <ul><li>庄园主楼立面、车库卷帘门（黄黑警示条）、松林、长蒸汽管、庄园铁门</li><li>这关要比货场「有钱」：砖石 / 铁艺 / 涂装的级差够不够</li><li>庄园车道那条深色沥青带边缘是否生硬</li></ul>
+      <ul class="en"><li>Manor facade, garage roller door (hazard stripes), pine belt, steam pipe, iron gate</li><li>This level must read richer than the freight yard — is the material tiering enough?</li><li>Is the dark driveway edge too hard?</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L05 · СОСНОВАЯ УСАДЬА · 松林庄园</span>
+      <span class="meta mono">1825×1148</span>
+    </header>
+    <a class="shot" href="verify/manor_night.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/manor_night.jpg" alt="manor_night.png">
+    </a>
+    <div class="sub mono">res://scenes/night_manor.tscn</div>
+    <div class="sub dim">整关 · 夜色 · manor_night.png</div>
+    <div class="checks">
+      <ul><li>最暗的一关：松林会不会把玩家整个吃掉</li><li>两处火盆是否给出可用的导航锚点</li><li>瞭望塔探照灯位置与地面光斑</li></ul>
+      <ul class="en"><li>Darkest level: do the pines swallow the player?</li><li>Do the two braziers work as navigation anchors?</li><li>Watchtower searchlight position vs its ground pool</li></ul>
+    </div>
+  </article></section><h2 id="crop">02 · 哨位特写 / Outpost close-ups</h2>
+<section class="grid">  <article class="card">
+    <header>
+      <span class="chip">L04 · 哨位特写</span>
+      <span class="meta mono">1600×518</span>
+    </header>
+    <a class="shot" href="verify/outpost_marshalling.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/outpost_marshalling.jpg" alt="outpost_marshalling.png">
+    </a>
+    <div class="sub mono">res://scenes/night_marshalling.tscn</div>
+    <div class="sub dim">三个新哨位 2× · 沙袋 / 弹药箱 / 枪架 · outpost_marshalling.png</div>
+    <div class="checks">
+      <ul><li>虚线框 = 精灵本体外框；十字 = 落地锚点（碰撞、遮蔽都按锚点算）</li><li>沙袋 (33.0, 9.2 m)：低掩体，只挡视线不挡子弹</li><li>弹药箱 (24.2, 5.6 m)：必出步枪弹；枪架 (12.4, 4.1 m)：只剩一把撬棍</li></ul>
+      <ul class="en"><li>Dashed box = sprite bounds; crosshair = ground anchor (collision & occlusion use it)</li><li>Sandbags (33.0, 9.2 m): low cover, hides you but does not stop bullets</li><li>Ammo box (24.2, 5.6 m): guaranteed rifle rounds; rack (12.4, 4.1 m): one crowbar left</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L05 · 哨位特写</span>
+      <span class="meta mono">1600×518</span>
+    </header>
+    <a class="shot" href="verify/outpost_manor.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/outpost_manor.jpg" alt="outpost_manor.png">
+    </a>
+    <div class="sub mono">res://scenes/night_manor.tscn</div>
+    <div class="sub dim">三个新哨位 2× · 沙袋 / 弹药箱 / 枪架 · outpost_manor.png</div>
+    <div class="checks">
+      <ul><li>沙袋 (27.0, 12.6 m)：与停着的叉车互为掩体</li><li>弹药箱 (21.0, 6.2 m)：卫兵哨位；枪架 (9.2, 4.2 m)：409 批托盘旁</li><li>有没有穿帮：压在雪脊上、堵死必经路线、和托盘挤在一起</li></ul>
+      <ul class="en"><li>Sandbags (27.0, 12.6 m): pairs with the parked forklift</li><li>Ammo box (21.0, 6.2 m): guard post; rack (9.2, 4.2 m): beside the Batch-409 pallet</li><li>Clipping: sunk into snow ridges, blocking the only route, jammed against the pallet</li></ul>
+    </div>
+  </article></section><h2 id="read">03 · 战斗读数 / Combat readout</h2>
+<section class="grid">  <article class="card">
+    <header>
+      <span class="chip">战斗读数 · L03–L05 通用</span>
+      <span class="meta mono">1344×1344</span>
+    </header>
+    <a class="shot" href="verify/combat_readout.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/combat_readout.jpg" alt="combat_readout.png">
+    </a>
+    <div class="sub mono">godot_project/scripts/night/Arsenal.gd</div>
+    <div class="sub dim">俯视 1 m = 14 px · combat_readout.png</div>
+    <div class="checks">
+      <ul><li>撬棍扇形 ±49° / 1.9 m：够不够「贴身才有用」</li><li>噪声圈 ТТ-33 26 m / 锯短 38 m / 莫辛 44 m：一枪就把 80% 半径内的巡逻拽过来，是不是太狠</li><li>命中半径 0.40 / 0.46 / 0.52 m 与左下数值表是否和 Arsenal.gd 对得上</li></ul>
+      <ul class="en"><li>Crowbar cone ±49° at 1.9 m — is it intimate enough?</li><li>Noise rings 26 / 38 / 44 m pull every patrol inside 80% — too punishing?</li><li>Hit radii 0.40 / 0.46 / 0.52 m and the stat table must match Arsenal.gd</li></ul>
+    </div>
+  </article></section>
+  <footer>
+    <div class="pill">1 m = 64 px</div><div class="pill">地面纵向 ×0.62</div>
+    <div class="pill">1080p 目标</div><div class="pill">Godot 4.7.2</div>
+    <p>重新生成：<span class="mono">python3 godot_project/tools/art_gen/render_preview.py</span>
+       出图 · <span class="mono">python3 godot_project/tools/art_gen/build_acceptance_page.py</span>
+       出页面。</p>
+    <p>仍然没美术化的场景：<span class="mono">gym.tscn / main.tscn / campaign.tscn / event_demo.tscn</span>
+       —— 还是 <span class="mono">_draw()</span> 灰盒，下一批处理。</p>
+  </footer>
+</div>
+</body>
+</html>

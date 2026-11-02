@@ -48,6 +48,19 @@ the full-level sheets (1–6) keep them for scale.
 
 ---
 
+## 一·补、网页版 / Web view
+
+不想一张张点开的话，直接看 `docs/ui/acceptance.html`（三组：整关图 / 哨位特写 / 战斗读数，
+每张下面写了这一张要看什么）。同目录下还有 `acceptance_standalone.html` —— 图片内嵌成 base64 的单文件，
+离线、发给别人、双击都能开。
+
+```bash
+python3 -m http.server 8080 --bind 0.0.0.0 --directory docs/ui   # 然后开 http://localhost:8080/
+python3 godot_project/tools/art_gen/build_acceptance_page.py      # 改了图之后重出页面
+```
+
+---
+
 ## 二、怎么复现 / Regenerate
 
 ```bash

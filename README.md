@@ -301,7 +301,8 @@ P4 的第二张新地图，也是战役里危险度 5 的终点图：夜长 120 
 `yard|marshalling|manor` 三关各一张中性光 + 一张夜色整关图，`outpost_marshalling|outpost_manor` 两张新哨位 2× 特写，
 `combat_readout.png` 一张战斗数值读数（噪声圈 / 撬棍扇形 / 命中半径）。
 它们由 `godot_project/tools/art_gen/render_preview.py` 直接读 `.tscn` 复合成画面（位置 / 层级 / 夜色一致，不含 shader 与 HUD），
-逐张说明见 `docs/ui/verify/README.md`，也可以在 `docs/ui/soviet_ui_board.html` 的「07 · 验收图」一节里滚动查看。
+逐张说明见 `docs/ui/verify/README.md`；想一页看完就开 `docs/ui/acceptance.html`
+（或单文件离线版 `docs/ui/acceptance_standalone.html`，图片已内嵌），界面板仍在 `docs/ui/soviet_ui_board.html`。
 
 ---
 
