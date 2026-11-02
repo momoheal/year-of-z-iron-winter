@@ -39,14 +39,18 @@ year-of-z-iron-winter/
 │   │   ├── Z年纪事_美术资源生成Prompt规格书.md                   # ★ AI 出图生产规格：视觉宪法 / 宏 / 逐资产 Prompt (Art Prompt Spec ZH)
 │   │   ├── Z年纪事_Godot4引擎迁移技术规范与架构指南.md           # ★ Godot 4.7+ 引擎迁移技术规范与架构指南 (ZH)
 │   │   ├── Z年纪事_Godot灰盒5合1移植对照表.md                     # ★ 5合1 灰盒测试场移植对照表 + 61 项测试清单 (ZH)
-│   │   └── Z年纪事_Godot探索循环移植对照表.md                     # ★ 探索循环（基地→地图→夜潜→结算）移植对照表 + 97 项测试清单 (ZH)
+│   │   ├── Z年纪事_Godot探索循环移植对照表.md                     # ★ 探索循环（基地→地图→夜潜→结算）移植对照表 + 97 项测试清单 (ZH)
+│   │   ├── Z年纪事_苏联化界面与关卡节拍.md                        # ★ 苏联化前端（SovietUI/Chrome/Meter）+ 关卡档案层与环境节拍 (ZH)
+│   │   └── Z年纪事_武器与战斗切片.md                              # ★ 撬棍与枪械 / 灰盒美术扩展 / 命中与噪声规则 (ZH)
 │   └── en/                                                       # English Documentation (v4.0 Russian Winter)
 │       ├── Year_of_Z_Iron_Winter_Master_Script_EN.md             # Full 5-Act Master Screenplay (EN)
 │       ├── Year_of_Z_Iron_Winter_GDD_EN.md                       # Game Design Document v4.0 (EN)
 │       ├── Year_of_Z_Iron_Winter_Greybox_Spec_EN.md              # Phase 1 Greybox Spec & Asset List (EN)
 │       ├── Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md    # ★ Godot 4.7+ Engine Migration & Architecture Guide (EN)
 │       ├── Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md    # ★ 5-in-1 Greybox Gym Port Report & 61-assertion suite (EN)
-│       └── Year_of_Z_Iron_Winter_Godot_Exploration_Loop_EN.md    # ★ Exploration-Loop Port Report & 97-assertion suite (EN)
+│       ├── Year_of_Z_Iron_Winter_Godot_Exploration_Loop_EN.md    # ★ Exploration-Loop Port Report & 97-assertion suite (EN)
+│       ├── Year_of_Z_Iron_Winter_Soviet_UI_and_Level_Beats_EN.md  # ★ Soviet UI system + per-map level beats (EN)
+│       └── Year_of_Z_Iron_Winter_Weapons_and_Combat_EN.md         # ★ Weapons & combat slice, greybox art extension (EN)
 ├── prototypes/                                                   # Interactive HTML5 Prototypes & Sandboxes
 │   ├── Year_of_Z_Iron_Winter_Exploration_Demo.html               # ★★ 探索循环 DEMO：据点→地图选点→夜潜→搜刮→撤离→结算 (Bilingual ZH/EN)
 │   ├── Year_of_Z_Iron_Winter_Playable_Greybox_Gym.html           # ★ Single-File HTML5 Playable 5-in-1 Greybox Gym (Bilingual ZH/EN)
@@ -71,8 +75,14 @@ year-of-z-iron-winter/
     │   ├── Gym.gd                                                # ★ 灰盒场输入 + 等比视口 + _draw() 全画面渲染
     │   ├── GymHUD.gd                                             # ★ 顶栏/侧栏/清单/电传 + 日志/抉择A/QTE 模态框
     │   ├── Sfx.gd                                                # ★ 6 种程序化音效（启动时烘焙 AudioStreamWAV）
+    │   ├── ui/                                                   # ★ 苏联化界面系统（全项目共用）
+    │   │   ├── SovietUI.gd                                       #   调色板 / 字体栈 / 方形钢板 StyleBox / 方位·时钟·卌 文本工具
+    │   │   ├── SovietChrome.gd                                   #   整屏金属框：暗角 / 角码 / 铆钉 / 扫描线 / 警报红边 / 红星厂标
+    │   │   └── SovietMeter.gd                                    #   分段式仪表（掉一格看得见；低值闪烁）
     │   ├── night/                                                # ★ 节点化夜潜场景的脚本
-    │   │   ├── NightExplore.gd                                   #   总控：三方潜行 / 搜刮 / 体温 / 天亮渐变 / 抉择 / 战役回写
+    │   │   ├── NightExplore.gd                                   #   总控：三方潜行 / 搜刮 / 体温 / 天亮渐变 / 抉择 / 关卡导演 / 战役回写
+    │   │   ├── LevelBeats.gd                                     #   ★ 关卡档案层：地标勘踏 / 环境节拍（驼峰溜放·炉口爆燃）/ 专属机关
+    │   │   ├── Arsenal.gd                                        #   ★ 军械库：撬棍 / ТТ-33 / 莫辛纳甘 / 截短双管（伤害·射速·噪声·散布唯一数据源）
     │   │   ├── NightSfx.gd                                       #   25 种程序化音色 + 定位声部 + 面具呼吸循环 + 心跳
     │   │   ├── NightPlayer / NightSoldier / NightRabid / NightHalf.gd  # 玩家与三方 AI
     │   │   └── NightOverlay / NightFlicker / NightSearchlight / NightAnim.gd  # 世界空间读数 / 灯光调制 / 探照灯塔 / 帧动画
@@ -82,10 +92,13 @@ year-of-z-iron-winter/
     ├── shaders/night_post.gdshader                               # ★ 后处理：冷调分级 / 雪雾 / 暗角 / 颗粒 / 霜边 / 警报红边 / dawn 天亮
     ├── art/                                                      # ★ 管线生成的程序化资产（10_characters / 20_tileset / 30_props / 50_vfx / 70_audio + manifest）
     ├── tools/art_gen/                                            # ★ Python 美术管线：layout.py → gen_*.py → build_scene.py
+    │   └── gen_weapons.py                                        # ★ P5 武器 / 弹药 / 靶场道具 / 战斗 VFX（13 件，独立 weapons 步骤）
     ├── tests/
     │   ├── campaign_smoke.gd                                     # ★ 97 项 headless 探索循环测试
     │   ├── night_explore_smoke.gd                                # ★ 109 项 headless 夜潜货场测试
     │   ├── night_level_smoke.gd                                  # ★ 58 项 headless 多关卡管线测试
+    │   ├── night_beats_smoke.gd                                  # ★ 界面苏联化 + 关卡档案层 / 节拍状态机测试
+    │   ├── night_combat_smoke.gd                                 # ★ 战斗切片：军械库 / 装备 / 命中 / 装填 / 击杀 / 补给
     │   ├── gym_smoke.gd                                          # ★ 61 项 headless 机制冒烟测试
     │   ├── data_pipeline_smoke.gd                                # 71 项事件 / 数据管线测试
     │   └── room_a_smoke.gd                                       # 20 项 Room A 夜潜切片测试
@@ -117,7 +130,7 @@ year-of-z-iron-winter/
 | **三方潜行** | 4 只灰鳞狂暴者（含守在三号车厢门口的壮硕变体）：360° 近距视线 + 循声调查（脚步 / 搜刮 / 罐头 / 枪声），0.45s 起跳预警红圈后扑咬；清杀兵光锥里出现狂暴者会瞄准 0.5s 击毙并留下血迹 → **借刀杀人**；枪声 10m 又会引来下一只。声纹三色：灰白=你 / 暗红=狂暴者 / 冷蓝=清杀队（淡琥珀=半人的呻吟） |
 | **道德抉择** | 两个回退半人（0388 缩在蒸汽管下、0507 在煤水塔东侧）：还有瞳孔、不咬人，但清杀队分不清 —— 光锥里一律开枪（误杀 良知 −4）。他们会被罐头声吸引，所以借刀杀人可能把他们一起引进光锥。靠近按 `E` 抉择：① 阿司匹林 + 热水退烧（良知 +7，他睡着后清杀队认不出，送你一张调度单）② 绕开（良知 −2）③ 撬棍灭口（良知 −10、卌 +1）。热水壶随身带，阿司匹林在西院木箱（旁边就是狂暴者）。口径与战役抉择 A 一致，结算显示良知 / 救下 / 误杀 / 卌 |
 
-**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `R` 重来 · `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园（开发直开）。测试：`tests/night_explore_smoke.gd`（**109 项**，已加进 `run_smoke_tests.bat`）。
+**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · **左键 攻击（撬棍连挥 / 枪械单发）** · **`R` 装填** · **`1~4` 换家伙** · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `F5` 重来（原 `R` 让位给装填）· `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园（开发直开）。测试：`tests/night_explore_smoke.gd`（**109 项**，已加进 `run_smoke_tests.bat`）。
 
 **美术管线**（`godot_project/tools/art_gen/`，Python 3 + numpy + Pillow，无需外部服务，**多关卡**）：
 
@@ -191,6 +204,136 @@ P4 的第二张新地图，也是战役里危险度 5 的终点图：夜长 120 
 `PRP_Incinerator_Feed` / `PRP_Fence_Electric_A` / `PRP_Fence_Electric_Cut`；
 新灯位 `furnace`（回温）与 `catwalk`（钢廊冷光）。
 测试：`tests/night_level_smoke.gd` 增补 manor 段（累计 **100+ 项**）+ `check_levels.py`（3 关）。
+
+---
+
+---
+
+## 🪖 苏联化前端 · 全项目界面系统（`scripts/ui/`）与关卡档案层（`scripts/night/LevelBeats.gd`）
+
+**Front-end pass · «Железная Зима» UI system + per-map dossier layer.** 这一轮不改玩法数值，只改**界面怎么长**和**地图怎么呼吸**：三张节点化地图共用一套「铁冬」界面，差异全部收进数据表。
+
+### 一、视觉宪法（`SovietUI.gd` 是唯一数据源）
+
+| 原则 | 落地 |
+| :--- | :--- |
+| **钢板没有圆角** | 所有 `StyleBoxFlat` 的 `corner_radius = 0`；边框 1–2px，靠留白与双线（`SovietChrome` 画）分层 |
+| **两种颜色说话** | 军旗红 `#8c1c14` 只给红章 / 警示 / 卌；黄铜 `#c8a257` 只给关键读数与目标；其余是沥青黑 `#070809` / 生铁 `#121618` / 骨白 `#d8d1bf` / 霜蓝 `#8fb4c4`。绿色只留给电传机（`#63d18a`） |
+| **三档字体** | `display`（Oswald / Bahnschrift / Impact …压缩体，钢印字）· `mono`（Consolas / DejaVu Sans Mono，电传打字机）· `body`（Noto Sans SC / 雅黑，正文）。`SystemFont` 栈自动降级，中文与俄文永远有兜底 |
+| **屏幕是一块铁** | `SovietChrome` 在整屏上画四角 L 形角码、边框铆钉、由外向内的暗角、极淡扫描线、右下角红星 + `НОВОРСК-17 · 17-Я ДИСТАНЦИЯ ПУТИ` 厂标；`danger > 0` 时边缘渗出红光（警报不弹窗，屏幕发烫） |
+| **仪表会掉格** | `SovietMeter` 把体温 / 健康切成分段表尺：一格一格掉，低于 35% 剩余格子像接触不良一样闪，失温时整体转霜蓝 |
+| **俄文是排版而不是装饰** | 档案号 `ДЕЛО № 0420-А`、`ЦЕЛЬ`（目标）、`ТЕПЛО` / `ЗДОРОВЬЕ`、`ОПРОСНЫЙ ЛИСТ`（问询单）、`ТЕЛЕТАЙП`、`СЕКРЕТНО`……都落在固定的版位（红章条 / 左栏 / 右栏 / 底条） |
+
+**界面骨架**（`NightExplore.gd`）：左上「夜潜工作日志」档案牌（红章条：档案号 + 天亮倒计时 → 关卡名 → 体温/健康分段表尺 → 姿态与良知读数 → 背包）· 右上「任务卡」（目标 / **目标方位** / **撤离方位** / 威胁 / 勘踏进度）· 底部电传条（所有长按 E 的提示都从这台机器打出来）· 屏幕中央的结局读数 · 抉择面板做成一张 **问询单**。
+
+`CampaignHUD.gd` / `GymHUD.gd` / `HUD.gd` 全部改走同一套工厂（`_sb` / `_btn` / `_panel` / `_bar` / `_chip`），配色由 slate 蓝绿整表替换为铁灰 + 骨白 + 黄铜 + 军旗红；战役标题页变成一页**案卷封面**（`ЖЕЛЕЗНАЯ ЗИМА` 钢印大标题 + 斜盖的 `СЕКРЕТНО · 机密` 章）；地图节点卡新增「环境档案」块（这张图会怎么弄死你 + 有多少地标可勘）。
+
+### 二、可玩可感：关卡导演（`LevelBeats.gd` + `NightExplore.gd`）
+
+三张图共用 `NightExplore.gd`，玩法差异全部收进数据表，**不新增美术资产、不改 `.tscn`**。
+
+| 系统 | 说明 |
+| :--- | :--- |
+| **开场档案卡** | 进图 7 秒的案卷头：`СССР · 厂标` → 两行「这是哪儿」 → 危险度 `▲▲▲▲△` / 夜长 / 撤离口令。之后自动淡出，不挡视线 |
+| **地标勘踏** | 每关 4–5 处地标（三号闷罐车厢 / 调度塔 / 煤水塔 / 二号恒温库防爆门 / 2000℃ 炉口 …）。走近半径自动记一笔：电传机「勘踏 · ×××」+ 一行档案注解；右栏累计 `勘踏 n/m`，并给出**最近未勘地标的方位与距离** |
+| **目标 / 撤离方位** | 右栏常驻八方位读数（`↖ 西北 23m`），目标点由「必出 prize 的容器」反查，拿到关键物资后自动切到「回撤离点」；世界里在 18m 内点亮 `ЦЕЛЬ · 目标物资` 的光圈 |
+| **环境节拍 · 驼峰溜放（marshalling）** | 每 30 秒一拍：预警 2.6s（远处汽笛 + 电传提示）→ 3.0s 一辆车皮沿 2 道从东滑到西（暗剪影 + 车灯 + 轮轨声）。站在那股道上会被刮倒（−9 HP / −6 体温 / 巨响引来狂暴者）。**扳道岔可以换股** |
+| **环境节拍 · 炉口爆燃（manor）** | 每 26 秒一拍：预警 2.4s（炉膛发白 + 闷响）→ 1.6s 全院子被照亮（后处理 `alarm` 抬红、炉口两盏灯能量 ×2.45）。站在炉口视野里会「影子被钉在雪上」——34m 内的特勤直接转警戒；**蹲进松林 / 车皮 / 钢管背后的遮挡**则安全 |
+| **专属机关** | `E` 扳转辙器（切换溜放股道，金属巨响会引来东西）· `E` 发动叉车（一次性 16m「巨型罐头」，把敌我全引过去） |
+| **威胁读数** | 右栏实时给「被 N 只狂暴者盯上 / 最近清杀兵 12m 西南 / 脚下冻雪泥（噪声 ×2）/ 环境警报」；屏幕边缘随紧张度渗红 |
+
+测试：`tests/night_beats_smoke.gd`（界面工具 / 三关档案数据 / 关键物资点 / 地标在图内 / 节拍状态机 / 扳道岔 / 叉车一次性）。
+**尚未在装 Godot 的机器上首跑**：本轮改动已通过 gdtoolkit GDScript 解析校验，但需要在本机跑一次
+`night_beats_smoke.gd` 与既有 `night_level_smoke.gd` / `night_explore_smoke.gd` 完成首次验收（含肉眼核对 HUD 排版）。
+
+## 🔧 武器与战斗切片 · 撬棍 / 枪械 + 灰盒美术扩展（`scripts/night/Arsenal.gd`）
+
+夜潜第一次「能还手」：撬棍（默认在手上）+ 三支枪。核心是**枪是花钱买路**——一枪换一次暴露，
+所以噪声半径远大于射程；撬棍安静，但要贴到 1.9m 内。
+
+**军械库（唯一数据源 `Arsenal.gd`）**
+
+| 家伙 | 类型 | 伤害 | 射速 | 弹匣/备弹 | 噪声 | 射程 |
+|---|---|---|---|---|---|---|
+| 铸铁道钉撬棍 | 近战扇形 | 34 | 1.45/s | — | 4.5 m | 1.9 m |
+| ТТ-33 | 半自动 | 42 | 3.6/s | 8 / 16 | 26 m | 16 m |
+| 莫辛纳甘 | 单发 | 96 | 1.05/s | 5 / 10 | 44 m | 28 m |
+| 截短双管 | 单发 6 弹丸 | 15×6 | 1.15/s | 2 / 8 | 38 m | 9.5 m |
+
+撬棍伤害与 `CampaignData.WEAPONS` 的 `crowbar`（34）对齐；开场撬棍必在，战役里再按 `cfg.weapon`
+带一支枪（`mosin → rifle` / `shotgun → shotgun`），外加一支缴获的 ТТ；F2 独立跑额外给莫辛方便验收。
+
+**规则要点**
+
+* 子弹从胸口高度射出，目标也按胸口高度判定；只被物理层 1（墙 / 车厢 / 大件）挡住——
+  **沙袋（层 2）挡视线不挡子弹**。
+* 开枪：`emit_noise(…, "gun", true)` 只画声纹、放这支枪自己的音色，并让噪声 80% 半径内的清杀兵
+  直接 `alert_to(玩家位置)`。打死清杀兵要记良知账（−0.5），附近 34m 的同僚会朝尸体压过来。
+* 清杀兵现在有 `hp=100` 且**会死**：中弹转警戒、血空成尸体（不再抓人 / 开枪）。
+  狂暴者撬棍 3 下、手枪 3 枪、莫辛 1 枪；半人被武器打死同样算灭口（`卌 +1`、良知 −10，不重复记账）。
+* 空仓扣扳机 = 「咔」+ 自动装填；`R` 随时装填；`1~4` 换家伙（只切已到手）；原来的 `R` 重来改为 `F5`。
+* 搜到 `ammo` / `bolt` / `part` 折算成备弹；撤离时余弹写回 `RaidSim.ammo`。
+
+**美术（`tools/art_gen/gen_weapons.py`，13 件，独立 `weapons` 步骤）**
+
+武器 4 件（撬棍 / ТТ / 莫辛 / 双管）+ 哨位道具 4 件（弹药箱 / 沙袋 / 枪架 / 木靶人）+
+战斗 VFX 5 件（枪口焰 4 帧 / 曳光 / 弹着火星 / 弹壳 / 血雾）。世界道具按 1m = 64px 的真实尺寸出图
+（`_fit()` 收口 + 同步缩放 pivot），握在手里的武器故意放大 2~3 倍、由引擎缩回来。
+**只出新的**：`python gen_assets.py --level <id> weapons`，不重跑 `props`/`vfx`，旧图一个字节都不动。
+
+**两张图的新哨位（数据驱动，场景由 `build_scene.py` 重建）**
+
+* 西站调车场：沙袋哨位在驼峰肩（33.0, 9.2）· 弹药箱在调度塔下（24.2, 5.6，必出步枪弹）· 枪架在机车库门边（12.4, 4.1）。
+* 松林庄园：沙袋在焚化院前（27.0, 12.6，与叉车互为掩体）· 弹药箱在卫兵哨位（21.0, 6.2）· 枪架在 409 批托盘旁（9.2, 4.2）。
+* 货场（yard）不动：它是逐像素基准。
+
+**HUD / 世界读数**：档案牌新增武器行（`ТТ-33 · 6 / 16` + 槽位 `1·撬棍 [2·ТТ-33] 3·莫辛`，空仓转琥珀）；
+世界里画准星（间距随散布）、装填环、挥击弧、曳光、弹着 / 血雾、弹壳与命中标记。
+
+测试：`tests/night_combat_smoke.gd`（军械库表与资产 / 开场装备 / 换枪 / 装填扣备弹 / 撬棍扇形命中 /
+三棍放倒狂暴者 / 开枪扣弹+曳光+惊动巡逻 / 冷却与空仓 / 清杀兵掉血与死亡 / 弹药上限）。
+详细说明见 `docs/zh/Z年纪事_武器与战斗切片.md` 与 `docs/en/Year_of_Z_Iron_Winter_Weapons_and_Combat_EN.md`。
+
+> ⚠️ 沙箱里没有 Godot 引擎：本切片**尚未在装引擎的机器上首跑**，首次运行请按文档的「验收」清单
+> 肉眼核对枪口位置 / 沙袋挡视线不挡子弹 / 同僚反应 / 三张图的弹药箱。
+
+**验收图（无需引擎）** / Acceptance sheets, no engine needed：`docs/ui/verify/` 下 9 张 PNG ——
+`yard|marshalling|manor` 三关各一张中性光 + 一张夜色整关图，`outpost_marshalling|outpost_manor` 两张新哨位 2× 特写，
+`combat_readout.png` 一张战斗数值读数（噪声圈 / 撬棍扇形 / 命中半径）。
+它们由 `godot_project/tools/art_gen/render_preview.py` 直接读 `.tscn` 复合成画面（位置 / 层级 / 夜色一致，不含 shader 与 HUD），
+逐张说明见 `docs/ui/verify/README.md`；想一页看完就开 `docs/ui/acceptance.html`
+（或单文件离线版 `docs/ui/acceptance_standalone.html`，图片已内嵌），界面板仍在 `docs/ui/soviet_ui_board.html`。
+
+---
+
+## 🌗 三区分野 · 白 / 红 / 黑 + 黑市与幸存者（`scripts/night/NightZones.gd`）
+
+三张夜潜图统一按**离白区的距离**切成三条带。一句话：离白区越远，丧尸越多、东西越好、规矩越少。
+
+| 区 | 位置 | 丧尸 | 资源 | 清杀队 | 玩家 |
+|---|---|---|---|---|---|
+| **白区** WHITE · 安全区 | 楼前院子 / 调度楼前 / 装卸场 | 0 | 常规 | 不进来 | 唯一能站定搜包的地方 |
+| **红区** RED · 管制带 | 白区外围到铁丝网 / 股道 | ≤ 3 | 常规 | 主力巡逻 | **白区居民禁止进入**：3.5 s 警告、7 s 盘问 |
+| **黑区** BLACK · 沉降带 | 铁网以南 / 车皮区 / 松林 | 7~8 | **每箱多翻一件** | 只在边上晃 | 黑市与幸存者在这里 |
+
+分界（米）：货场 12 / 21.5 · 调车场 9 / 20 · 庄园 10 / 22。红区不是不能过，是**不能停**——
+跑过去，别在灯下站着。黑区容器多一次战利品判定（`loot_bonus`），所以值得冒险。
+
+**怎么读出来**：地面淡淡染一层（白 `#9fc6e0` 0.075 / 红 `#c8483a` 0.115 / 黑 `#3aa0b4` 0.165），
+上沿一条虚线，雪面上压一行 `ZONE A · SAFE` / `ZONE B · CURFEW` / `ZONE C · SUNKEN`；
+色带画在地面上、所有立体物之下（`z_index = -1`），不动道具原本的颜色。HUD 档案牌多一行「所在区」。
+
+**黑市**（三图各一个，都在黑区）：一罐罐头换 8 发，只换已有的枪，一夜一次。摊子是拼板桌 + 弹盒 + 马灯
+（`PRP_Market_Stall`），摊主 `PRP_Trader_Stand`（红袖标）、幸存者 `PRP_Survivor_Stand`（灰褐棉袄 + **白袖标**
+= 白区户口），都是无碰撞静态立绘，走近说一句话。罐头是引丧尸的饵——换子弹还是换命，这下真成了选择。
+
+**火苗修正**：油桶桶身只有 54 px，原来的火苗却有 84 px 高、顶端到 130 px，看着像墙在烧。
+现在纵向压到 0.42 / 横向 0.58，顶端 91 px、只从桶口蹿 35 px，火星粒子一起收小。
+
+测试：`tests/night_zones_smoke.gd`（解析 / 分区无缝 / 出生区 / 尸群分布 / 半人不在白区 / 黑市位置与摊边有人 /
+红区警告与盘问 / 一罐八发且一夜一次 / 火苗高度）。数据源在 `tools/art_gen/levels/*.py` 的 `ZONES` / `MARKET`，
+场景根 `metadata/zones` 由 `build_scene.py` 写入，色带与标签由 `NightZoneField.gd` 画。
+详见 `docs/zh/Z年纪事_三区与黑市.md` 与 `docs/en/Year_of_Z_Iron_Winter_Zones_and_Black_Market_EN.md`。
 
 ---
 
@@ -291,6 +434,12 @@ Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/campaign_smok
 
 # Greybox gym: 61 headless assertions (prints GYM_SMOKE_PASS on success)
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/gym_smoke.gd
+
+# Combat slice: arsenal / loadout / hitscan / reload / kills / ammo (headless)
+Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_combat_smoke.gd
+
+# Soviet UI + level beats: headless UI/dossier/beat-state-machine assertions
+Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_beats_smoke.gd
 
 # Room A slice: 20 headless assertions (prints ROOM_A_SMOKE_PASS on success)
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/room_a_smoke.gd

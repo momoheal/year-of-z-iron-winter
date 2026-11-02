@@ -7,3 +7,6 @@
 Thumbs.db
 __pycache__/
 *.pyc
+
+# 验收页单文件离线版（由 build_acceptance_page.py 生成，2.4 MB，可随时重出）
+docs/ui/acceptance_standalone.html

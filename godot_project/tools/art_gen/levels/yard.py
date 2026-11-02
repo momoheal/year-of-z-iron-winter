@@ -127,10 +127,18 @@ PATROLS = [
 # 灰鳞狂暴者（CHR_03）：home = 游荡中心；brute = 壮硕变体（慢、咬得重、更耐打）
 # 摆位思路：都不在清杀兵的常规光锥里 —— 想让清杀队替你动手，得先用罐头 / 脚步把它们引过去。
 RABIDS = [
+    # 红区（12~21.5 m）：只有 2 只 —— 管制带靠清杀队维持，不是靠尸群
     dict(id="Rabid_Car", home=(38.5, 12.6), radius=2.2, brute=False),      # 报废车北侧，靠近冻尸
     dict(id="Rabid_West", home=(5.5, 18.6), radius=2.8, brute=False),      # 西院木箱堆旁，挡在去豁口的路上
+    # 黑区（21.5 m 以南）：8 只。这边没人清，资源才留得下来
     dict(id="Rabid_Tower", home=(10.5, 36.8), radius=2.5, brute=False),    # 煤水塔西侧
     dict(id="Rabid_Brute", home=(36.5, 36.7), radius=1.8, brute=True),     # 守在三号车厢门口
+    dict(id="Rabid_Gap", home=(13.5, 26.0), radius=2.4, brute=False),      # 豁口南侧的第一段道砟
+    dict(id="Rabid_Rails", home=(19.0, 30.5), radius=3.0, brute=False),    # 两道轨之间
+    dict(id="Rabid_Mast", home=(31.0, 29.5), radius=2.2, brute=False),     # 信号杆东侧
+    dict(id="Rabid_East", home=(42.0, 24.5), radius=2.6, brute=True),      # 探照灯塔脚
+    dict(id="Rabid_Shed", home=(24.0, 36.5), radius=2.2, brute=False),     # 水塔北侧的煤棚
+    dict(id="Rabid_End", home=(44.0, 35.0), radius=2.0, brute=False),      # 东南角，黑区最深处
 ]
 
 # 回退半人（CHR_04）：高烧正在退、还有瞳孔。清杀队分不清他和狂暴者。
@@ -139,6 +147,34 @@ HALFS = [
     dict(id="Half_0388", pos=(14.5, 19.4), tag="0388"),   # 缩在蒸汽管下取暖，离铁丝网豁口不远
     dict(id="Half_0507", pos=(18.6, 37.2), tag="0507"),   # 煤水塔东侧，离 Rabid_Tower 8m
 ]
+
+# ===========================================================================
+# 三个区（白 / 红 / 黑）—— 地图的骨架
+#   white: 白区 · 安全区      楼前院子和锅炉房这一片。居民区，没有丧尸，清杀队也不进来。
+#   red  : 红区 · 管制带      白区外围到铁丝网。清杀队巡逻，丧尸少，**白区居民禁止进入**。
+#   black: 黑区 · 沉降带      铁丝网以南的货场。没人清，丧尸成堆，资源也留在这儿；
+#                             黑市和幸存者躲在里面（离白区最远，所以能活）。
+# rect = (x0, y0, x1, y1)，单位米；一个区可以写多块矩形拼 L 形。
+# ===========================================================================
+ZONES = [
+    dict(id="white", zh="白区 · 安全区", en="WHITE ZONE · SAFE", rule="safe",
+         rects=[(0.0, 0.0, 48.0, 12.0)],
+         note_zh="居民区：没有丧尸，也不许开枪"),
+    dict(id="red", zh="红区 · 管制带", en="RED ZONE · CURFEW", rule="curfew",
+         rects=[(0.0, 12.0, 48.0, 21.5)],
+         note_zh="白区居民禁止进入 · 清杀队巡逻 · 丧尸较少"),
+    dict(id="black", zh="黑区 · 沉降带", en="BLACK ZONE · SUNKEN", rule="sunken",
+         rects=[(0.0, 21.5, 48.0, 40.0)],
+         note_zh="丧尸成群 · 资源最多 · 黑市与幸存者"),
+]
+
+# 黑市：1 罐罐头换 8 发步枪弹，一夜一次。位置在黑区中段、豁口以南 3 m —— 过了网就能看见那盏灯。
+MARKET = dict(
+    pos=(26.5, 24.2), trader=(27.5, 24.6),
+    survivors=[(24.8, 25.0), (28.8, 25.4)],
+    cans=1, ammo=8,
+    zh="黑市 · 一罐换八发", en="BLACK MARKET",
+)
 
 # 探照灯塔：灯头世界位置 + 扫描角（度，0=东，90=南）；None = 本关没有探照灯
 SEARCHLIGHT = dict(pos=(45.2, 24.2), sweep=(146.0, 188.0), period=11.0, range=26.0, half=11.0)

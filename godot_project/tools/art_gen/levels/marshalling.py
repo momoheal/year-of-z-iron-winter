@@ -88,6 +88,13 @@ PROPS = [
          occlude=False, fire=True),           # 扳道员的火堆：本关两个回温点之一
     dict(id="Watchtower", art="PRP_Watchtower_Searchlight", pos=(41.0, 8.6), fp=(2.6, 1.3), layer=1,
          fade=True),
+    # --- 检修哨位（P5 战斗切片）：沙袋 + 弹药箱 + 武器架 ---
+    dict(id="Sandbags", art="PRP_Sandbag_Line", pos=(33.0, 9.2), fp=(3.2, 0.85), layer=2,
+         occlude=False),                       # 低矮掩体：蹲下挡视线，站着能架枪打驼峰那头
+    dict(id="AmmoBox", art="PRP_Ammo_Box_Open", pos=(24.2, 5.6), fp=(1.1, 0.5), layer=1,
+         cont="crate", guaranteed="ammo"),     # 调度塔下的弹药箱：补子弹，别在空枪时才发现
+    dict(id="WeaponRack", art="PRP_WeaponRack", pos=(12.4, 4.1), fp=(1.3, 0.5), layer=1,
+         occlude=False),                       # 机车库门边的枪架（只剩空钩子）
     # --- 股道之间（y 12~31）---
     dict(id="SignalPost", art="PRP_SignalPost_Red", pos=(18.4, 13.3), fp=(0.3, 0.25), layer=1,
          occlude=False, ao="post"),
@@ -170,11 +177,18 @@ PATROLS = [
 # 摆位思路：BrakeVan 那只守在零件车上；涵洞那只压在你的撤离路上 —— 想用清杀队清它，
 # 得先把它引进站台便道的钠灯 / 探照灯里，而那里正好是 OSK_Depot 的巡逻线。
 RABIDS = [
+    # 红区（9~20 m）：只有 2 只。调度塔那只原本在 8.0，挪到 10.5 —— 白区必须干净。
     dict(id="Rabid_Van", home=(16.6, 18.4), radius=2.0, brute=True),    # 守着守车 01（零件）
     dict(id="Rabid_Hump", home=(6.0, 13.3), radius=2.6, brute=False),   # 驼峰西头
-    dict(id="Rabid_Tower", home=(33.0, 8.0), radius=2.2, brute=False),  # 调度塔下
+    dict(id="Rabid_Tower", home=(33.0, 10.5), radius=2.2, brute=False), # 调度塔南侧
+    # 黑区（20 m 以南）：7 只。涵洞进来就是它们的地盘
     dict(id="Rabid_Culvert", home=(13.0, 33.4), radius=2.4, brute=False),  # 压撤离路
     dict(id="Rabid_Tender", home=(37.6, 27.1), radius=1.8, brute=True),    # 守着煤水塔（复写件）
+    dict(id="Rabid_Ballast", home=(20.5, 23.5), radius=2.8, brute=False),  # 4 道道砟
+    dict(id="Rabid_South", home=(24.5, 32.5), radius=2.2, brute=False),    # 南侧雪道
+    dict(id="Rabid_Mast", home=(34.0, 22.0), radius=2.4, brute=False),     # 信号机下
+    dict(id="Rabid_Corner", home=(5.5, 25.5), radius=2.6, brute=False),    # 西南角
+    dict(id="Rabid_Shed", home=(40.5, 34.0), radius=2.0, brute=True),      # 东南车棚
 ]
 
 # 回退半人：2 个。0613 躺在你自己的撤离路上 —— 绕开、退烧、还是灭口，都在探照灯的扫区里。
@@ -182,6 +196,29 @@ HALFS = [
     dict(id="Half_0613", pos=(10.4, 32.8), tag="0613"),   # 涵洞东侧，离 Rabid_Culvert 2.6m
     dict(id="Half_0244", pos=(37.0, 22.8), tag="0244"),   # 4 道东头，缩在守车 02 的背风侧
 ]
+
+# ===========================================================================
+# 三个区（白 / 红 / 黑）—— 这张图是「从黑区往里摸」：涵洞在黑区，白区在楼前
+# ===========================================================================
+ZONES = [
+    dict(id="white", zh="白区 · 安全区", en="WHITE ZONE · SAFE", rule="safe",
+         rects=[(0.0, 0.0, 44.0, 9.0)],
+         note_zh="调度楼 / 站台便道：没有丧尸，清杀队替居民看着"),
+    dict(id="red", zh="红区 · 管制带", en="RED ZONE · CURFEW", rule="curfew",
+         rects=[(0.0, 9.0, 44.0, 20.0)],
+         note_zh="白区居民禁止进入 · 1~2 号转辙器 · 清杀队巡逻"),
+    dict(id="black", zh="黑区 · 沉降带", en="BLACK ZONE · SUNKEN", rule="sunken",
+         rects=[(0.0, 20.0, 44.0, 36.0)],
+         note_zh="车皮与守车都在这一片 · 丧尸成群 · 黑市在南侧雪道"),
+]
+
+# 黑市：藏在东南角的火堆旁 —— 涵洞出来往东 24 m，靠火光认路
+MARKET = dict(
+    pos=(33.0, 29.6), trader=(34.0, 30.1),      # 挨着南侧那盆火 —— 黑区的灯就是路标
+    survivors=[(31.8, 30.2), (33.6, 28.6)],
+    cans=1, ammo=8,
+    zh="黑市 · 一罐换八发", en="BLACK MARKET",
+)
 
 # 探照灯：装在调度塔东侧的灯桥上，扫整片道砟（比货场那盏远 4m、宽 2°、慢 2s）
 SEARCHLIGHT = dict(pos=(41.0, 8.6), sweep=(138.0, 206.0), period=13.0, range=24.0, half=12.0)

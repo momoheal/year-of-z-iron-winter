@@ -30,6 +30,8 @@ var target := Vector2.ZERO
 var aim := 0.0
 var aim_target: Node2D = null
 var kills := 0
+var hp := 100.0                 # P5：清杀兵也会被打死（撬棍 3 下 / 莫辛 1 枪）
+var dead := false
 
 var _wp := 0
 var _dir := 1
@@ -51,6 +53,10 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if ctl == null:
+		return
+	if dead:
+		velocity = Vector2.ZERO
+		sprite.modulate.a = maxf(0.42, sprite.modulate.a - delta * 0.22)
 		return
 	if ctl.state != "play":
 		velocity = Vector2.ZERO
@@ -221,6 +227,45 @@ func _resume_route() -> void:
 	_wp = best
 	state = "patrol"
 	suspicion = minf(suspicion, 0.3)
+
+## 中弹 / 中棍：掉血、立刻转警戒；血打空就是尸体（不会再抓人，也不会再开枪）。
+func hit(dmg: float, by: String) -> void:
+	if dead:
+		return
+	hp -= dmg
+	if ctl != null:
+		ctl.on_soldier_hurt(self, by)
+	if hp <= 0.0:
+		die(by)
+		return
+	state = "alert"
+	suspicion = 1.0
+	lost_time = 0.0
+	seen_time = 0.0
+	if ctl != null:
+		target = ctl.player.global_position
+
+
+func die(by: String) -> void:
+	if dead:
+		return
+	dead = true
+	state = "dead"
+	velocity = Vector2.ZERO
+	aim_target = null
+	collision_layer = 0
+	collision_mask = 0
+	flash_pivot.rotation = facing
+	if muzzle != null:
+		muzzle.energy = 0.0
+	sprite.frame = sprite.frame - sprite.frame % 8 + 6
+	if ctl != null:
+		ctl.on_soldier_killed(self, by)
+
+
+func is_alive() -> bool:
+	return not dead
+
 
 func _animate(delta: float, k: float) -> void:
 	var deg := rad_to_deg(facing)

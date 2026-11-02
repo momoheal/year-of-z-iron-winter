@@ -1,0 +1,59 @@
+extends Node2D
+## 地面上的三区色带：白区冷白、红区赭红、黑区深青，加一条上沿虚线和地面标签。
+##
+## 只画一次（静态图），z_index = -1：盖在地面大图之上、所有立起来的精灵之下，
+## 所以道具 / 人物 / 灯光都不受影响，只是「地面告诉你这是哪个区」。
+## 数据来自场景根节点与自己的 metadata/zones（build_scene.py 写），格式见 NightZones.gd。
+
+const Zones := preload("res://scripts/night/NightZones.gd")
+const PPM := 64.0
+const SQ := 0.62
+
+var zones: Array = []
+
+
+func _ready() -> void:
+	var src := String(get_meta("zones", ""))
+	if src == "" and get_parent() != null:
+		src = String(get_parent().get_meta("zones", ""))
+	zones = Zones.parse(src)
+	queue_redraw()
+
+
+func _zrect(r: Rect2) -> Rect2:
+	return Rect2(r.position.x * PPM, r.position.y * PPM * SQ, r.size.x * PPM, r.size.y * PPM * SQ)
+
+
+func _draw() -> void:
+	if zones.is_empty():
+		return
+	var font := ThemeDB.fallback_font
+	for z in zones:
+		var zid := String(z["id"])
+		var inf := Zones.info(zid)
+		if inf.is_empty():
+			continue
+		var col: Color = inf["col"]
+		var a := float(inf["tint"])
+		for r in z["rects"]:
+			var rc := _zrect(r as Rect2)
+			# 1) 区带淡染（上沿更浓一点，像纸上的分区线）
+			draw_rect(rc, Color(col.r, col.g, col.b, a), true)
+			# 2) 上沿虚线 + 下沿细线
+			_dash(rc.position.x, rc.position.x + rc.size.x, rc.position.y, Color(col.r, col.g, col.b, 0.80), 26.0, 16.0)
+			draw_line(Vector2(rc.position.x, rc.end.y), Vector2(rc.end.x, rc.end.y),
+				Color(col.r, col.g, col.b, 0.22), 2.0)
+			# 3) 地面标签：左右各一处，避免镜头在中间时看不到
+			var tag := String(inf["tag"])
+			if font != null and tag != "":
+				var ty := rc.position.y + 76.0
+				for tx in [rc.position.x + 40.0, rc.position.x + rc.size.x * 0.62]:
+					draw_string(font, Vector2(tx, ty), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 30,
+						Color(col.r, col.g, col.b, 0.45))
+
+
+func _dash(x0: float, x1: float, y: float, col: Color, dash: float, gap: float) -> void:
+	var x := x0
+	while x < x1:
+		draw_line(Vector2(x, y), Vector2(minf(x + dash, x1), y), col, 5.0)
+		x += dash + gap

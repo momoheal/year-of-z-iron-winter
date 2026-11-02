@@ -71,6 +71,13 @@ PROPS = [
          ao="pipe"),                                                 # 机车厂无缝钢管（蹲下能藏）
     dict(id="LampWest", art="PRP_StreetLamp_Sodium", pos=(6.0, 6.6), fp=(0.3, 0.25), layer=1,
          occlude=False, ao="post"),
+    # --- 卫兵哨位（P5 战斗切片）：沙袋 + 弹药箱 + 武器架 ---
+    dict(id="Sandbags", art="PRP_Sandbag_Line", pos=(27.0, 12.6), fp=(3.2, 0.85), layer=2,
+         occlude=False),                       # 焚化院前的沙袋：和叉车一起构成两个掩体
+    dict(id="AmmoBox", art="PRP_Ammo_Box_Open", pos=(21.0, 6.2), fp=(1.1, 0.5), layer=1,
+         cont="crate", guaranteed="ammo"),
+    dict(id="WeaponRack", art="PRP_WeaponRack", pos=(9.2, 4.2), fp=(1.3, 0.5), layer=1,
+         occlude=False),
     dict(id="LampEast", art="PRP_StreetLamp_Sodium", pos=(40.0, 6.6), fp=(0.3, 0.25), layer=1,
          occlude=False, ao="post"),
     # --- 焚化院（y 8~14）---
@@ -170,10 +177,16 @@ PATROLS = [
 
 # 狂暴者：4 只（1 壮硕）。庄园里的是「销账」没销干净的家伙。
 RABIDS = [
+    # 红区（10~22 m）：只有 1 只 —— 庄园的管制比站场还紧
     dict(id="Rabid_Kiln", home=(36.5, 10.5), radius=2.0, brute=True),   # 焚化院（守着照片）
-    dict(id="Rabid_Grove", home=(4.0, 22.0), radius=2.6, brute=False),  # 西松林
+    # 黑区（22 m 以南）：7 只。松林和池塘那一带没人清
+    dict(id="Rabid_Grove", home=(4.0, 22.5), radius=2.6, brute=False),  # 西松林
     dict(id="Rabid_Pond", home=(30.0, 26.5), radius=2.4, brute=False),  # 池塘边
     dict(id="Rabid_Gate", home=(12.0, 33.0), radius=2.2, brute=False),  # 压撤离路
+    dict(id="Rabid_Pines", home=(8.0, 27.0), radius=2.8, brute=False),  # 松林深处
+    dict(id="Rabid_Glass", home=(19.0, 25.5), radius=2.2, brute=False), # 玻璃房废墟
+    dict(id="Rabid_Drive", home=(40.0, 30.5), radius=2.4, brute=True),  # 车道尽头
+    dict(id="Rabid_Camp", home=(24.0, 35.5), radius=2.0, brute=False),  # 黑市外圈
 ]
 
 # 回退半人：2 个。0771 是厨房帮工（烧灼伤），0128 躲在松林里等不存在的那班车。
@@ -181,6 +194,29 @@ HALFS = [
     dict(id="Half_0771", pos=(39.0, 10.0), tag="0771"),
     dict(id="Half_0128", pos=(6.5, 14.5), tag="0128"),
 ]
+
+# ===========================================================================
+# 三个区（白 / 红 / 黑）
+# ===========================================================================
+ZONES = [
+    dict(id="white", zh="白区 · 安全区", en="WHITE ZONE · SAFE", rule="safe",
+         rects=[(0.0, 0.0, 46.0, 10.0)],
+         note_zh="装卸 apron / 主楼：特供冷柜和 409 批托盘都在这儿"),
+    dict(id="red", zh="红区 · 管制带", en="RED ZONE · CURFEW", rule="curfew",
+         rects=[(0.0, 10.0, 46.0, 22.0)],
+         note_zh="白区居民禁止进入 · 焚化院 · 清杀队四班倒"),
+    dict(id="black", zh="黑区 · 沉降带", en="BLACK ZONE · SUNKEN", rule="sunken",
+         rects=[(0.0, 22.0, 46.0, 38.0)],
+         note_zh="松林 / 池塘 / 车道 · 丧尸成群 · 黑市在林子里"),
+]
+
+# 黑市：西松林深处的一处窝棚，靠一堆木箱挡风
+MARKET = dict(
+    pos=(11.8, 27.4), trader=(12.7, 27.9),      # 西松林里，紧着那堆木箱
+    survivors=[(10.6, 28.4), (13.3, 26.9)],
+    cans=1, ammo=8,
+    zh="黑市 · 一罐换八发", en="BLACK MARKET",
+)
 
 # 探照灯：东南角岗塔，从西扫到西北（正好掠过池塘与撤离路）
 SEARCHLIGHT = dict(pos=(44.0, 32.4), sweep=(165.0, 255.0), period=12.0, range=26.0, half=10.0)

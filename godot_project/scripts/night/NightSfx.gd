@@ -268,6 +268,11 @@ func _build_streams() -> void:
 	CACHE["radio"] = _radio()
 	CACHE["klaxon"] = _klaxon()
 	CACHE["gunshot"] = _gunshot()
+	# —— P5 战斗：步枪 / 双管 / 空仓 / 装填（撬棍的挥击与闷响上面已经有了）——
+	CACHE["rifle_shot"] = _rifle_shot()
+	CACHE["shotgun_shot"] = _shotgun_shot()
+	CACHE["click"] = _tone(1500.0, 0.045, 70.0, 0.25, -260.0, 0.22)
+	CACHE["reload"] = _reload()
 	# —— 撬棍：挥击 / 闷响（P2.3 近战会复用；现在给「灭口」抉择用）——
 	CACHE["swing"] = _swing()
 	CACHE["crowbar_hit"] = _crowbar_hit()
@@ -495,6 +500,55 @@ func _gunshot() -> AudioStreamWAV:
 		var t := float(i) / float(RATE)
 		d[i] += tail[i] * exp(-t * 5.5) * 0.45    # 楼群里的回响
 	return _wav(d, false, 0.72)
+
+
+func _rifle_shot() -> AudioStreamWAV:
+	# 莫辛：比手枪更沉、尾巴更长（山谷 / 楼群里的回声）
+	var d := _buf(0.5)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1611
+	_noise(d, rng, 0.78)
+	for i in d.size():
+		var t := float(i) / float(RATE)
+		d[i] *= exp(-t * 46.0)
+	_sine_ring(d, [78.0, 120.0, 210.0], 20.0, 0.42)
+	var tail := _buf(0.5)
+	_noise(tail, rng, 0.4)
+	_lowpass(tail, 260.0)
+	for i in tail.size():
+		var t := float(i) / float(RATE)
+		d[i] += tail[i] * exp(-t * 3.6) * 0.5
+	return _wav(d, false, 0.78)
+
+
+func _shotgun_shot() -> AudioStreamWAV:
+	# 截短双管：低频更足、更「闷」的一声，没有步枪那种尖啸
+	var d := _buf(0.42)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1621
+	_noise(d, rng, 0.8)
+	_lowpass(d, 2600.0)
+	for i in d.size():
+		var t := float(i) / float(RATE)
+		d[i] *= exp(-t * 34.0)
+	_sine_ring(d, [62.0, 96.0], 16.0, 0.5)
+	return _wav(d, false, 0.8)
+
+
+func _reload() -> AudioStreamWAV:
+	# 两下金属动作：退匣 / 推弹入膛
+	var d := _buf(0.42)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1631
+	for i in d.size():
+		d[i] = 0.0
+	for at in [0.02, 0.22]:
+		var i0 := int(at * RATE)
+		for k in int(0.06 * RATE):
+			var t := float(k) / float(RATE)
+			d[i0 + k] += rng.randf_range(-1.0, 1.0) * exp(-t * 70.0) * 0.35
+		_sine_ring(d, [820.0, 1240.0], 55.0, 0.12, at)
+	return _wav(d, false, 0.6)
 
 
 func _swing() -> AudioStreamWAV:
