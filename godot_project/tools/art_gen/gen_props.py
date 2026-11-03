@@ -1214,6 +1214,208 @@ def dummy_tower():
     return L.finish(), (cx, base)
 
 
+def shanty_shed():
+    """棚户板房：板墙 + 柏油纸顶 + 炉筒 + 钉死的窗——棚户巷的立面骨架。"""
+    w, h = 260, 260
+    L = Layer(w, h, 3)
+    base = 242
+    x0, bw, bh = 12, 236, 148
+    wall = L.poly([(x0 + 8, base), (x0 + bw - 8, base), (x0 + bw - 2, base - bh),
+                   (x0 + 2, base - bh)])
+    L.paint(wall, L.tex("#6b5138", 0.11, 6, 41))
+    L.shade(wall, L.gy(base - bh, base, 1.06, 0.72))
+    for k in range(1, 11):                      # 板缝
+        xx = x0 + bw * k / 11
+        L.paint(L.rect(xx - 1, base - bh, xx + 1, base), hexc("#4c3826"), 0.55)
+    roof = L.poly([(x0 - 6, base - bh + 4), (x0 + bw + 6, base - bh + 4),
+                   (x0 + bw - 10, base - bh - 18), (x0 + 10, base - bh - 18)])
+    L.paint(roof, L.tex("#3a4048", 0.13, 6, 43))
+    L.snow_cap(x0 - 4, x0 + bw + 4, base - bh - 18, 34, 45, droop=0.22)
+    # 炉筒
+    sx, sy = x0 + bw - 42, base - bh - 18
+    L.paint(L.rect(sx, sy - 62, sx + 12, sy), hexc("#2b2f35"))
+    L.paint(L.rect(sx + 12, sy - 62, sx + 15, sy), hexc("#1e2126"), 0.7)
+    L.paint(L.rect(sx - 3, sy - 66, sx + 15, sy - 58), hexc("#23272c"))
+    L.snow_cap(sx - 3, sx + 15, sy - 62, 12, 46, droop=0.4)
+    n = 37
+    sm = L.ellipse(sx + 22 + n % 16, sy - 56, 24, 10)               # 烟
+    L.paint(sm, hexc("#2c3138"), 0.5)
+    sm2 = L.ellipse(sx + 40 + n % 18, sy - 68, 15, 6)
+    L.paint(sm2, hexc("#232830"), 0.35)
+    # 钉死的窗 + 门洞
+    wx = x0 + 40
+    L.paint(L.rect(wx, base - 118, wx + 58, base - 62), hexc("#221a12"))
+    for i in range(3):
+        L.paint(L.line([(wx + 2, base - 114 + i * 22), (wx + 56, base - 86 + i * 22)], 5),
+                hexc("#5b452c"))
+    L.paint(L.rect(x0 + 128, base - 128, x0 + 176, base), hexc("#241c13"))
+    L.paint(L.rect(x0 + 132, base - 124, x0 + 172, base - 4), hexc("#33261a"))
+    L.paint(L.rect(x0 + 138, base - 120, x0 + 141, base - 8), hexc("#171009"))
+    L.grime(wall, 47, 0.28)
+    L.rust_streaks(wall, 47, 0.14)
+    L.snow_cap(x0 + 8, x0 + bw - 8, base - 2, 12, 48, droop=0.5)
+    return L.finish(), (w / 2, base)
+
+
+def med_shed():
+    """药棚 + 铁门：C2 的锁点（门禁磁卡读头 + 可锁死的挂环）。"""
+    w, h = 260, 230
+    L = Layer(w, h, 3)
+    base = 212
+    x0, bw, bh = 14, 232, 156
+    wall = L.poly([(x0 + 6, base), (x0 + bw - 6, base), (x0 + bw - 2, base - bh),
+                   (x0 + 2, base - bh)])
+    L.paint(wall, L.tex("#4a5560", 0.1, 6, 51))
+    L.shade(wall, L.gy(base - bh, base, 1.05, 0.74))
+    for k in range(1, 9):
+        xx = x0 + bw * k / 9
+        L.paint(L.rect(xx - 1, base - bh, xx + 1, base), hexc("#333c45"), 0.55)
+    # 白漆十字（药）——掉了漆的卫生标记
+    L.paint(L.rect(x0 + 150, base - 140, x0 + 168, base - 84), hexc("#c9cfd6"), 0.8)
+    L.paint(L.rect(x0 + 122, base - 116, x0 + 196, base - 98), hexc("#c9cfd6"), 0.8)
+    L.paint(L.rect(x0 + 126, base - 113, x0 + 192, base - 101), hexc("#4a5560"), 0.5)
+    roof = L.poly([(x0 - 8, base - bh + 2), (x0 + bw + 8, base - bh + 2),
+                   (x0 + bw - 12, base - bh - 20), (x0 + 12, base - bh - 20)])
+    L.paint(roof, L.tex("#3a4048", 0.12, 6, 53))
+    L.snow_cap(x0 - 6, x0 + bw + 6, base - bh - 20, 36, 55, droop=0.2)
+    # 铁门
+    dx0, dx1 = x0 + 44, x0 + 118
+    L.paint(L.rect(dx0, base - 132, dx1, base), hexc("#3d4650"))
+    L.paint(L.rect(dx0 + 4, base - 128, dx1 - 4, base - 4), L.tex("#5b6772", 0.1, 5, 57))
+    for yy in (base - 110, base - 78, base - 34):
+        L.paint(L.rect(dx0 + 4, yy, dx1 - 4, yy + 3), hexc("#2c333b"))
+    L.paint(L.ellipse(dx1 - 16, base - 72, 4, 4), hexc("#20262c"))
+    L.paint(L.rect(dx1 - 24, base - 64, dx1 - 12, base - 52), hexc("#20262c"))  # 挂环
+    # 磁卡读头
+    L.paint(L.rect(dx1 + 6, base - 110, dx1 + 24, base - 82), hexc("#232a31"))
+    L.paint(L.rect(dx1 + 9, base - 106, dx1 + 15, base - 98), hexc("#9fd08a"))  # 指示灯
+    L.grime(wall, 59, 0.26)
+    L.rust_streaks(wall, 59, 0.3)
+    L.snow_cap(x0 + 6, x0 + bw - 6, base - 2, 12, 61, droop=0.5)
+    return L.finish(), (w / 2, base)
+
+
+def med_cache():
+    """药箱：朴素白瓶（真药）与花哨商标瓶（掺防冻液的假药）同箱对照——辨药三分法的全部信息。"""
+    w, h = 150, 108
+    L = Layer(w, h, 3)
+    base = 100
+    x0 = 12
+    top, front = obox(L, x0 + 26, base, 84, 22, 30, "#7d6b4c", "#6e5c40", 71)
+    L.paint(L.rect(x0 + 30, base - 22, x0 + 106, base - 20), hexc("#4e412c"))
+    # 真药：朴素白瓶（左半）
+    for i, xx in enumerate((38, 52, 66)):
+        L.paint(L.rect(xx, base - 60 + (i % 2) * 4, xx + 9, base - 26), hexc("#e8e4da"))
+        L.paint(L.rect(xx + 1, base - 64 + (i % 2) * 4, xx + 8, base - 58 + (i % 2) * 4),
+                hexc("#b9b3a6"))
+        L.paint(L.rect(xx + 2, base - 50 + (i % 2) * 4, xx + 7, base - 42 + (i % 2) * 4),
+                hexc("#8a94a6"), 0.8)
+    # 假药：花哨商标瓶（右半，偏绿的甜腻感）
+    for i, xx in enumerate((82, 96, 110)):
+        L.paint(L.rect(xx, base - 56 + ((i + 1) % 2) * 4, xx + 10, base - 26),
+                hexc("#a9c46a"))
+        L.paint(L.rect(xx + 1, base - 60 + ((i + 1) % 2) * 4, xx + 9, base - 54 + ((i + 1) % 2) * 4),
+                hexc("#d8e6a2"))
+        L.paint(L.rect(xx + 2, base - 46 + ((i + 1) % 2) * 4, xx + 8, base - 34 + ((i + 1) % 2) * 4),
+                hexc("#e0552c"), 0.85)                # 花哨商标
+    L.paint(L.rect(x0 + 2, base - 8, x0 + 12, base), hexc("#4e412c"))
+    L.grime(front, 73, 0.24)
+    L.snow_cap(x0 + 26, x0 + 110, base - 30, 8, 75, droop=0.4)
+    return L.finish(), (w / 2, base)
+
+
+def quack_forge():
+    """烫鳞炭炉：炭炉 + 烧红的马蹄铁（挂在钳子上）+ 折叠凳 + 烫焦的绷带——只有工具和痕迹。"""
+    w, h = 180, 158
+    L = Layer(w, h, 3)
+    base = 148
+    # 炭炉（油桶改的炉子）
+    x0, bw, bh = 14, 74, 52
+    body = L.poly([(x0, base), (x0 + bw, base), (x0 + bw - 2, base - bh), (x0 + 2, base - bh)])
+    L.paint(body, L.tex("#4a4038", 0.12, 5, 81))
+    L.shade(body, L.gy(base - bh, base, 1.05, 0.72))
+    L.paint(L.rect(x0 + 12, base - bh + 12, x0 + bw - 12, base - bh + 36), hexc("#2a211a"))
+    L.paint(L.ellipse(x0 + bw / 2, base - bh + 24, 16, 9), hexc("#e0442e"))      # 炭火
+    L.paint(L.ellipse(x0 + bw / 2, base - bh + 24, 9, 5), hexc("#f08a3a"))
+    L.paint(L.ellipse(x0 + bw / 2, base - bh + 24, 4, 2), hexc("#ffd9a0"))
+    L.rust_streaks(body, 83, 0.42)
+    L.grime(body, 83, 0.34)
+    L.paint(L.rect(x0 - 3, base - bh - 3, x0 + bw + 3, base - bh + 2), hexc("#2e2822"))
+    # 钳子与烧红的马蹄铁
+    L.paint(L.line([(x0 + bw - 4, base - bh + 16), (x0 + bw + 46, base - bh + 46)], 5),
+            hexc("#3a3f45"))
+    hs_x, hs_y = x0 + bw + 52, base - bh + 52
+    L.paint(L.arc(hs_x, hs_y, 15, 15, 190, 350, 7), hexc("#8a2f22"))
+    L.paint(L.arc(hs_x, hs_y, 15, 15, 195, 345, 4), hexc("#e0442e"))
+    L.paint(L.arc(hs_x, hs_y, 15, 15, 205, 335, 2), hexc("#f08a3a"))
+    # 折叠凳
+    sx, sb = 128, base - 2
+    L.paint(L.line([(sx, sb), (sx + 26, sb - 40)], 4), hexc("#5b452c"))
+    L.paint(L.line([(sx + 34, sb), (sx + 8, sb - 40)], 4), hexc("#5b452c"))
+    L.paint(L.rect(sx + 2, sb - 44, sx + 36, sb - 36), hexc("#6b5138"))
+    # 烫焦的绷带与人形灰印（痕迹，不画人）
+    L.paint(L.ellipse(46, base + 2, 30, 8), hexc("#2b2723"), 0.55)
+    L.paint(L.line([(30, base + 4), (62, base + 1)], 5), hexc("#8a7f6f"), 0.75)
+    L.paint(L.line([(34, base + 1), (40, base + 7)], 4), hexc("#5a5148"), 0.8)
+    L.paint(L.ellipse(150, base + 4, 12, 5), hexc("#8a7f6f"), 0.6)                # 焦黑绷带
+    L.paint(L.line([(142, base + 4), (158, base + 2)], 3), hexc("#4a423a"), 0.8)
+    return L.finish(), (w / 2, base)
+
+
+def radio666():
+    """6.66 电台棚：板棚柜台 + 老式短波收音机（指针钉死 + 电子管微绿）+ 天线 + 假药瓶。"""
+    w, h = 240, 236
+    L = Layer(w, h, 3)
+    base = 224
+    # 棚板
+    x0, bw, bh = 10, 220, 128
+    wall = L.poly([(x0 + 6, base), (x0 + bw - 6, base), (x0 + bw - 2, base - bh),
+                   (x0 + 2, base - bh)])
+    L.paint(wall, L.tex("#5b4a36", 0.11, 6, 91))
+    L.shade(wall, L.gy(base - bh, base, 1.05, 0.74))
+    roof = L.poly([(x0 - 10, base - bh + 2), (x0 + bw + 10, base - bh + 2),
+                   (x0 + bw - 14, base - bh - 22), (x0 + 14, base - bh - 22)])
+    L.paint(roof, L.tex("#3a4048", 0.12, 6, 93))
+    L.snow_cap(x0 - 8, x0 + bw + 8, base - bh - 22, 38, 95, droop=0.22)
+    # 天线（棚顶斜杆 + 拉线）
+    ax = x0 + 30
+    L.paint(L.line([(ax, base - bh - 20), (ax + 26, base - bh - 88)], 4), hexc("#3a3f45"))
+    L.paint(L.line([(ax + 26, base - bh - 88), (x0 + bw - 30, base - bh - 20)], 1.6),
+            hexc("#5a6068"), 0.8)
+    L.paint(L.ellipse(ax + 26, base - bh - 88, 3, 3), hexc("#5a6068"))
+    # 柜台
+    L.paint(L.rect(x0 + 18, base - 46, x0 + bw - 18, base - 38), hexc("#6b5138"))
+    L.paint(L.rect(x0 + 18, base - 38, x0 + bw - 18, base), hexc("#4c3826"))
+    for k in range(4):
+        xx = x0 + 30 + k * 48
+        L.paint(L.rect(xx, base - 34, xx + 3, base - 4), hexc("#33261a"), 0.7)
+    # 收音机（柜台右段）
+    rx0, ry0, rw, rh = x0 + 128, base - 118, 82, 72
+    L.paint(L.rect(rx0, ry0, rx0 + rw, ry0 + rh), hexc("#4c3826"))
+    L.paint(L.rect(rx0 + 4, ry0 + 4, rx0 + rw - 4, ry0 + rh - 4), hexc("#6b5138"))
+    L.paint(L.rect(rx0 + 10, ry0 + 12, rx0 + 52, ry0 + 46), hexc("#2b2f2a"))       # 刻度窗
+    L.paint(L.rect(rx0 + 6, ry0 + 8, rx0 + 56, ry0 + 50), hexc("#b8c98a"), 0.16)   # 病绿辉光晕
+    L.paint(L.rect(rx0 + 13, ry0 + 15, rx0 + 49, ry0 + 43), hexc("#cfe8a6"), 0.95)  # 电子管微绿
+    for k in range(6):                              # 刻度
+        xx = rx0 + 16 + k * 6.6
+        L.paint(L.rect(xx, ry0 + 18, xx + 1, ry0 + 40), hexc("#2b2f2a"), 0.8)
+    L.paint(L.rect(rx0 + 38, ry0 + 15, rx0 + 41, ry0 + 43), hexc("#e0552c"))       # 指针钉死
+    L.paint(L.ellipse(rx0 + 66, ry0 + 22, 7, 7), hexc("#3a2f22"))                  # 喇叭
+    L.paint(L.ellipse(rx0 + 66, ry0 + 22, 4, 4), hexc("#241c13"))
+    L.paint(L.ellipse(rx0 + 22, ry0 + 58, 5, 5), hexc("#2b2f2a"))                  # 旋钮
+    L.paint(L.ellipse(rx0 + 44, ry0 + 58, 5, 5), hexc("#2b2f2a"))
+    L.paint(L.line([(rx0 + 62, ry0 + 52), (rx0 + 76, ry0 + 52)], 3), hexc("#8a7f6f"))
+    # 柜台上的假药瓶（花哨商标）
+    for i, xx in enumerate((x0 + 30, x0 + 52, x0 + 72)):
+        L.paint(L.rect(xx, base - 72 + (i % 2) * 5, xx + 11, base - 46), hexc("#a9c46a"))
+        L.paint(L.rect(xx + 2, base - 60 + (i % 2) * 5, xx + 9, base - 48 + (i % 2) * 5),
+                hexc("#e0552c"), 0.85)
+    L.grime(wall, 97, 0.24)
+    L.rust_streaks(wall, 97, 0.12)
+    L.snow_cap(x0 + 6, x0 + bw - 6, base - 2, 10, 99, droop=0.5)
+    return L.finish(), (w / 2, base)
+
+
 ALL = {
     "PRP_Crate_Wood_Stack": crate_stack,
     "PRP_SupplyCrates_Military": supply_crates,
@@ -1226,6 +1428,11 @@ ALL = {
     "PRP_Bench_Snowy": bench,
     "PRP_Playground_Dome": playground_dome,
     "PRP_Corpse_Tarp": corpse_tarp,
+    "PRP_Shanty_Shed": shanty_shed,
+    "PRP_MedShed": med_shed,
+    "PRP_MedCache": med_cache,
+    "PRP_QuackForge": quack_forge,
+    "PRP_Radio666": radio666,
     "PRP_Buran_Boxcar03": boxcar,
     "PRP_WaterTower": water_tower,
     "PRP_Watchtower_Searchlight": watchtower,

@@ -23,13 +23,17 @@ const SCENES := {
 	"marshalling": "res://scenes/night_marshalling.tscn",
 	"manor": "res://scenes/night_manor.tscn",
 	"mine": "res://scenes/night_mine.tscn",
+	"market": "res://scenes/night_market.tscn",
 }
 ## 每张图的出生点应该在哪个区（涵洞在庄园 / 站场 → 从黑区摸进来；货场从锅炉房 → 白区）
-const SPAWN_ZONE := {"yard": "white", "marshalling": "black", "manor": "black", "mine": "black"}
+const SPAWN_ZONE := {"yard": "white", "marshalling": "black", "manor": "black", "mine": "black",
+		"market": "white"}
 ## 按关覆盖的尸群/黑市规则：L07M 矿坑是「环境杀」关（塌方 / 粉尘 / 起爆倒计时）——
-## 尸少（感染掘进工只有 2 只，都是孢子源头的注脚）、无黑市（黑市是居民点的生意，不是作业面的）
+## 尸少（感染掘进工只有 2 只，都是孢子源头的注脚）、无黑市（黑市是居民点的生意，不是作业面的）；
+## market 是黑市老家（低危交易关：尸是注脚，摊区就在黑区中心）
 const LEVEL_RULES := {
 	"mine": {"black_min": 1, "red_max": 1, "market": false},
+	"market": {"black_min": 2, "red_max": 1, "market": true},
 }
 
 

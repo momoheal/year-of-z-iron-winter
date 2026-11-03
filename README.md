@@ -59,7 +59,7 @@ year-of-z-iron-winter/
 │   ├── Z年纪事_结局分支与双线汇聚流程图.html                     # 俄式“卌”字划痕与五结局交互模拟器 (ZH)
 │   ├── Year_of_Z_Iron_Winter_Ending_Simulator_EN.html            # Dual-Anchor & 5-Ending Tally Simulator (EN)
 │   └── Z年纪事_核心关卡俯视角平面动线图.html                     # v4.0 核心关卡俯视角平面动线与战术沙盘，中英双语切换 (Tactical Blueprints)
-└── godot_project/                                                # ★ Godot 4.7.2 场景集：探索循环 + 5合1灰盒测试场 + Room A 夜潜切片 + 节点化夜潜四图（货场/调车场/庄园/矿坑）
+└── godot_project/                                                # ★ Godot 4.7.2 场景集：探索循环 + 5合1灰盒测试场 + Room A 夜潜切片 + 节点化夜潜五图（货场/调车场/庄园/矿坑/铁路黑市）
     ├── project.godot                                             # 8 Physics Layers, 24 input actions, 1920x1080, main_scene = campaign.tscn
     ├── scenes/
     │   ├── campaign.tscn                                         # ★ 主场景：「一夜」探索循环（基地/地图/夜潜/结算/结局）
@@ -67,6 +67,7 @@ year-of-z-iron-winter/
     │   ├── night_marshalling.tscn                                # ★ L04 西站调车场（同管线）
     │   ├── night_manor.tscn                                      # ★ L05 松林庄园 · 二号恒温库（同管线）
     │   ├── night_mine.tscn                                       # ★ L07M 3 号矿坑 · 温压爆破作业面（同管线）
+    │   ├── night_market.tscn                                     # ★ L07 铁路黑市 · 废弃工人镇（同管线）
     │   ├── gym.tscn                                              # 5合1 灰盒测试场（Rooms A–E）
     │   └── main.tscn                                             # Room A 夜潜垂直切片
     ├── scripts/
@@ -135,12 +136,12 @@ year-of-z-iron-winter/
 | **三方潜行** | 4 只灰鳞狂暴者（含守在三号车厢门口的壮硕变体）：360° 近距视线 + 循声调查（脚步 / 搜刮 / 罐头 / 枪声），0.45s 起跳预警红圈后扑咬；清杀兵光锥里出现狂暴者会瞄准 0.5s 击毙并留下血迹 → **借刀杀人**；枪声 10m 又会引来下一只。声纹三色：灰白=你 / 暗红=狂暴者 / 冷蓝=清杀队（淡琥珀=半人的呻吟） |
 | **道德抉择** | 两个回退半人（0388 缩在蒸汽管下、0507 在煤水塔东侧）：还有瞳孔、不咬人，但清杀队分不清 —— 光锥里一律开枪（误杀 良知 −4）。他们会被罐头声吸引，所以借刀杀人可能把他们一起引进光锥。靠近按 `E` 抉择：① 阿司匹林 + 热水退烧（良知 +7，他睡着后清杀队认不出，送你一张调度单）② 绕开（良知 −2）③ 撬棍灭口（良知 −10、卌 +1）。热水壶随身带，阿司匹林在西院木箱（旁边就是狂暴者）。口径与战役抉择 A 一致，结算显示良知 / 救下 / 误杀 / 卌 |
 
-**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · **左键 攻击（撬棍连挥 / 枪械单发）** · **`R` 装填** · **`1~4` 换家伙** · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `F5` 重来（原 `R` 让位给装填）· `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园 / `F5` 3 号矿坑（开发直开）。测试：`tests/night_explore_smoke.gd`（**109 项**，已加进 `run_smoke_tests.bat`）。
+**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · **左键 攻击（撬棍连挥 / 枪械单发）** · **`R` 装填** · **`1~4` 换家伙** · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `F5` 重来（原 `R` 让位给装填）· `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园 / `F5` 3 号矿坑 / `F6` 铁路黑市（开发直开）。测试：`tests/night_explore_smoke.gd`（**109 项**，已加进 `run_smoke_tests.bat`）。
 
 **美术管线**（`godot_project/tools/art_gen/`，Python 3 + numpy + Pillow，无需外部服务，**多关卡**）：
 
 ```text
-levels/<id>.py   关卡布局（米）—— 地面烘焙和场景生成共用的唯一数据源（yard / marshalling / manor / mine / …）
+levels/<id>.py   关卡布局（米）—— 地面烘焙和场景生成共用的唯一数据源（yard / marshalling / manor / mine / market / …）
 layout.py        兼容入口：把「当前关卡」的数据灌进老代码用的 LY.* 名字空间
 gen_assets.py    生成 PNG/WAV 到 godot_project/art/ 并写 art/night_<id>_manifest.json（尺寸 + pivot）
 build_scene.py   由布局 + manifest 生成 scenes/night_<id>.tscn（会覆盖场景，之后建议直接在编辑器里维护）
@@ -230,7 +231,29 @@ v4.2 七幕结构第四幕的舞台（L07M）：危险度 5 / 夜长 100 分钟�
 `PRP_Detonator_Rig` / `PRP_SporeFace` / `PRP_DummyTower_Mannequin`。
 美术设计与摆位表：`docs/zh/Z年纪事_3号矿坑场景美术设计.md`；Prompt 见规格书 §7.8，概念图 §7.7 `CON_08`。
 测试：`tests/night_level_smoke.gd` 增补 mine 段 + `tests/campaign_smoke.gd`（14 地点）+
-`tests/night_zones_smoke.gd`（`LEVEL_RULES`：环境杀关尸少、无黑市）+ `check_levels.py`（4 关）。
+`tests/night_zones_smoke.gd`（`LEVEL_RULES`：环境杀关尸少、无黑市）+ `check_levels.py`（5 关）。
+
+---
+
+## 🏪 第五张节点化地图 · 铁路黑市 · 废弃工人镇（`scenes/night_market.tscn`）
+
+v4.2 七幕结构第三幕 3-3 前半的舞台（L07）：危险度 2 / 夜长 80 分钟（≈192 秒）/ 寒冷 0.9——人比冷可怕，
+但人还肯讲理。46×34 米：工人镇板房立面（新立面种类 `town`：一排互不搭调的棚户 + 镇口壁灯 + 大炉筒）+
+一条铁路 1 道，镇口街 / 棚户巷 / 市集三带（**黑市老家：摊区就是黑区的中心**）。剧本锚点全部落在
+场景里：钉死在 6.66 MHz 的**短波收音机棚**（`PRP_Radio666`，必出 `intel` = 专列调度记录；电子管微绿
+不是魔法绿光）、棚后巷的**烙铁烫鳞炭炉**（`PRP_QuackForge`，只有工具和痕迹：烧红马蹄铁 + 折叠凳 +
+烫焦绷带）、**药棚铁门**（`PRP_MedShed`，C2 的锁点：磁卡读头 + 可锁挂环；门里冷柜必出 `abx` =
+盘尼西林）、**真假药对照**（`PRP_MedCache` ×2：真药朴素白瓶、假药花哨商标——辨药三分法的全部信息
+在道具画里）、**老谢苗**（重伤幸存者，守在药棚门外）与**拾荒老妇**（角落里快冻死）、冻死在铁轨上的
+拾荒者。市集摊区（MARKET 集群：摊主 + 幸存者 + 马灯）在黑区，2 组清杀队（棚户巷 + 铁路哨兵）、
+2 只感染者、无半人；无探照灯。
+
+新增资产：`TIL_Ground_NightMarket_Baked`（2944×1349）、`TIL_Facade_Town_A`（2944×600）、
+`VFX_Facade_WindowGlow_Town`、`PRP_Radio666` / `PRP_QuackForge` / `PRP_MedShed` / `PRP_MedCache` /
+`PRP_Shanty_Shed`。
+美术设计与摆位表：`docs/zh/Z年纪事_铁路黑市场景美术设计.md`；Prompt 见规格书 §7.9。
+测试：`tests/night_level_smoke.gd` 增补 market 段 + `tests/night_zones_smoke.gd`
+（`LEVEL_RULES`：低危交易关尸少、摊区在黑区）+ `tests/night_beats_smoke.gd` + `check_levels.py`（5 关）。
 
 ---
 
@@ -324,9 +347,9 @@ v4.2 七幕结构第四幕的舞台（L07M）：危险度 5 / 夜长 100 分钟�
 > ⚠️ 沙箱里没有 Godot 引擎：本切片**尚未在装引擎的机器上首跑**，首次运行请按文档的「验收」清单
 > 肉眼核对枪口位置 / 沙袋挡视线不挡子弹 / 同僚反应 / 三张图的弹药箱。
 
-**验收图（无需引擎）** / Acceptance sheets, no engine needed：`docs/ui/verify/` 下 12 张 PNG ——
-`yard|marshalling|manor|mine` 四关各一张中性光 + 一张夜色整关图，`outpost_marshalling|outpost_manor|outpost_mine`
-三张新道具 2× 特写，`combat_readout.png` 一张战斗数值读数（噪声圈 / 撬棍扇形 / 命中半径）。
+**验收图（无需引擎）** / Acceptance sheets, no engine needed：`docs/ui/verify/` 下 15 张 PNG ——
+`yard|marshalling|manor|mine|market` 五关各一张中性光 + 一张夜色整关图，`outpost_marshalling|outpost_manor|outpost_mine|outpost_market`
+四张新道具 2× 特写，`combat_readout.png` 一张战斗数值读数（噪声圈 / 撬棍扇形 / 命中半径）。
 它们由 `godot_project/tools/art_gen/render_preview.py` 直接读 `.tscn` 复合成画面（位置 / 层级 / 夜色一致，不含 shader 与 HUD），
 逐张说明见 `docs/ui/verify/README.md`；想一页看完就开 `docs/ui/acceptance.html`
 （或单文件离线版 `docs/ui/acceptance_standalone.html`，图片已内嵌），界面板仍在 `docs/ui/soviet_ui_board.html`。

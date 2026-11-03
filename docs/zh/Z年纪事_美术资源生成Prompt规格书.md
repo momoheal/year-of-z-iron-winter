@@ -645,6 +645,45 @@ guard post from afar and as a dummy up close,
 （`gen_env._facade_mine()` / `bake_ground()`），不走手工 Prompt；构图基准见 §7.7 `CON_08`
 与场景美术设计文档 §2 平面图。
 
+### 7.9 L07 铁路黑市道具（5 件，2026-11 新增 · 对应《Z年纪事_铁路黑市场景美术设计》）
+
+> 第三幕 3-3 铁路黑市（`night_market.tscn`）的五件新道具。**游戏内版本**由
+> `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4.1）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> 三件叙事核心道具（`PRP_Radio666` / `PRP_QuackForge` / `PRP_MedShed`）出任何版本前先读
+> §7.7 `CON_07`（6.66 MHz 烙铁烫鳞）——**辨药信息必须全在道具画里，不许标注**。
+
+```
+【PRP_Radio666】the deepest stall of a rail-side black market: a plank shack counter
+under a tarpaper awning, and on the shelf an old Soviet shortwave radio, bakelite
+case, dial window with the pointer pinned dead at 6.66 — sickly electron-tube green
+glow on the panel (NOT magical green), a thin antenna pole with a guy wire rising
+from the roof, flashy-labelled antifreeze bottles lined on the counter,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_QuackForge】a quack doctor's back-alley branding setup: an oil-drum charcoal
+forge with orange-red coals, a horseshoe iron glowing red-hot held in black tongs,
+a folding stool, scorched bandage strips and a grey ash smear on the snow — tools
+and traces only, NO people, NO torture scene,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, side three-quarter view, §TECH
+【PRP_MedShed】a plank medicine shed with a heavy grey iron door, a magnetic card
+reader with a small green indicator beside the frame, a lockable hasp on the door,
+a chipped white pharmacy cross painted on the wall, snow along the roof edge,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_MedCache】an open wooden medicine crate: on the left plain white glass vials
+with simple paper labels (real medicine, austere), on the right flashy green
+bottles with loud orange brand stickers (antifreeze fake medicine) — the whole
+colour/smell/feed identification game must be readable from the props alone,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high side view, §TECH
+【PRP_Shanty_Shed】a mismatched workers' shanty: plank walls with visible seams,
+tarpaper roof under snow, a black stovepipe puffing faint smoke, a boarded-up
+window and a dark doorway, tar stains at the base, §CAM_75, §LIGHT_COLD,
+§STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+```
+
+工人镇立面 `TIL_Facade_Town_A` 与地面 `TIL_Ground_NightMarket_Baked` 只走程序化管线
+（`gen_env._facade_town()` / `bake_ground()`），不走手工 Prompt；构图基准见 `CON_05`（黑市商贩群像）
+与场景美术设计文档 §2 / §3 平面图。**6.66 MHz 女声循环**属 P2 音频待办（需配音，不做程序化占位）。
+
 ## 8. 后处理与验收清单（每张图入库前逐条打勾）
 
 - [ ] 去背干净（rembg 之后放大到 400% 检查边缘毛边与半透明雪花残留）

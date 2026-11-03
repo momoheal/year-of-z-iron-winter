@@ -46,6 +46,7 @@ def facade_keys() -> tuple[str, str]:
         "depot": ("TIL_Facade_Depot_A", "VFX_Facade_WindowGlow_Depot"),
         "manor": ("TIL_Facade_Manor_A", "VFX_Facade_WindowGlow_Manor"),
         "mine": ("TIL_Facade_Mine_A", "VFX_Facade_WindowGlow_Mine"),
+        "town": ("TIL_Facade_Town_A", "VFX_Facade_WindowGlow_Town"),
     }[facade_kind()]
 
 
@@ -559,9 +560,107 @@ def bake_facade() -> tuple[Image.Image, Image.Image]:
         return _facade_manor()
     if kind == "mine":
         return _facade_mine()
+    if kind == "town":
+        return _facade_town()
     if kind != "khrushchyovka":
-        raise SystemExit(f"未知的立面种类 '{kind}'（gen_env 里只实现了 khrushchyovka / depot / manor / mine）")
+        raise SystemExit(f"未知的立面种类 '{kind}'（gen_env 里只实现了 khrushchyovka / depot / manor / mine / town）")
     return _facade_khrushchyovka()
+
+
+def _town_shack(L: Layer, x0: int, bw: int, bh: int, seed: int, base: int,
+                warm: bool = False, glow: list | None = None) -> None:
+    """工人镇板房（market 立面单元）：板墙 + 柏油纸顶 + 炉筒 + 钉死的窗（可选暖窗）。"""
+    pal = ["#6b5138", "#5f5647", "#555b62", "#6a5a44", "#5a4a38"]
+    wall_c = pal[seed % len(pal)]
+    wall = L.rect(x0 + 6, base - bh, x0 + bw - 6, base)
+    L.paint(wall, L.tex(wall_c, 0.1, 5, seed))
+    L.shade(wall, L.gy(base - bh, base, 1.08, 0.7))
+    for vx in range(x0 + 14, x0 + bw - 12, 26):        # 板缝
+        L.paint(L.rect(vx, base - bh, vx + 1.6, base), hexc("#3c3122"), 0.5)
+    roof = L.poly([(x0 - 12, base - bh + 4), (x0 + bw + 12, base - bh + 4),
+                   (x0 + bw - 14, base - bh - 26), (x0 + 14, base - bh - 26)])
+    L.paint(roof, L.tex("#3a4048", 0.11, 5, seed + 1))
+    L.snow_cap(x0 - 10, x0 + bw + 10, base - bh - 26, 22, seed + 2, droop=0.3)
+    # 炉筒（每栋都有——工人镇的供暖靠烧）
+    sx = x0 + int(bw * 0.68)
+    L.paint(L.rect(sx, base - bh - 62, sx + 13, base - bh - 22), hexc("#2b2f35"))
+    L.paint(L.rect(sx + 13, base - bh - 62, sx + 16, base - bh - 22), hexc("#1e2126"), 0.7)
+    L.paint(L.rect(sx - 3, base - bh - 66, sx + 16, base - bh - 58), hexc("#23272c"))
+    L.snow_cap(sx - 3, sx + 16, base - bh - 62, 10, seed + 3, droop=0.45)
+    n = (seed * 7919) % 100
+    sm = L.ellipse(sx + 22 + n % 26, base - bh - 96, 30, 15)        # 烟
+    L.paint(sm, hexc("#2c3138"), 0.5)
+    sm2 = L.ellipse(sx + 44 + n % 30, base - bh - 118, 22, 11)
+    L.paint(sm2, hexc("#232830"), 0.35)
+    # 窗（默认钉死；warm=True 时是暖窗，登记窗光斑）
+    wx = x0 + int(bw * 0.24)
+    wy = base - int(bh * 0.62)
+    L.paint(L.rect(wx - 3, wy - 3, wx + 61, wy + 45), hexc("#221a12"))
+    if warm:
+        L.paint(L.rect(wx, wy, wx + 58, wy + 42), hexc("#f2b866"))
+        L.paint(L.rect(wx, wy, wx + 58, wy + 20), hexc("#ffd9a0"), 0.55)
+        L.paint(L.rect(wx + 27, wy, wx + 31, wy + 42), hexc("#2a2420"))
+        L.paint(L.rect(wx, wy + 19, wx + 58, wy + 23), hexc("#2a2420"))
+        if glow is not None:
+            glow.append((wx - 2, wy - 2, wx + 60, wy + 44, hexc("#f2b866"), 1.15))
+    else:
+        L.paint(L.rect(wx, wy, wx + 58, wy + 42), hexc("#181310"))
+        for k in range(3):                                  # 钉板
+            L.paint(L.line([(wx + 1, wy + 4 + k * 15), (wx + 57, wy + 34 - k * 12)], 5),
+                    hexc("#5b452c"))
+    # 门
+    if (seed // 5) % 2 == 0:
+        dx = x0 + int(bw * 0.62)
+        L.paint(L.rect(dx, base - 74, dx + 40, base), hexc("#241c13"))
+        L.paint(L.rect(dx + 4, base - 70, dx + 36, base - 4), hexc("#33261a"))
+        L.paint(L.rect(dx + 10, base - 66, dx + 13, base - 8), hexc("#171009"))
+    L.grime(wall, seed + 5, 0.3)
+    L.rust_streaks(wall, seed + 5, 0.12)
+    L.snow_cap(x0 + 6, x0 + bw - 6, base - 2, 10, seed + 6, droop=0.5)
+
+
+def _facade_town() -> tuple[Image.Image, Image.Image]:
+    """工人镇（market）：一排互不搭调的棚户板房 + 镇口街灯 + 炉筒群——黑市的老家。"""
+    fh = facade_h()
+    w = _gw()
+    img = Image.new("RGBA", (w, fh), (0, 0, 0, 0))
+    L = Layer(w, fh, ss=1)
+    glows: list[tuple] = []
+    base = fh - 6
+    widths = [430, 380, 470, 410, 450, 390, 470, 430, 320]
+    heights = [300, 248, 352, 286, 320, 258, 336, 296, 262]
+    x = -40
+    for i, (bw, bh) in enumerate(zip(widths, heights)):
+        warm = i in (4, 7)                       # 两扇亮窗（窗光在 22 m / 36 m 附近）
+        _town_shack(L, x, bw, bh, 110 + i * 13, base, warm=warm, glow=glows)
+        x += bw - 8
+        if x > w + 40:
+            break
+    F = LY.FACADE_FEATURES
+    # 镇口街灯（灯臂 + 钠灯头）
+    lx = int(F.get("lamp_x", 4.5) * PPM)
+    L.paint(L.rect(lx - 6, base - 300, lx + 6, base), hexc("#2f343a"))
+    L.paint(L.line([(lx, base - 300), (lx + 62, base - 330)], 9), hexc("#2f343a"))
+    L.paint(L.poly([(lx + 44, base - 336), (lx + 84, base - 336), (lx + 76, base - 316),
+                    (lx + 52, base - 316)]), hexc("#3a4046"))
+    L.paint(L.ellipse(lx + 64, base - 314, 12, 5), hexc("#ffcf8a"))
+    glows.append((lx + 44, base - 338, lx + 86, base - 306, hexc("#ffcf8a"), 1.0))
+    # 大炉筒（stove_x 的高烟囱，工人镇的天际线）
+    sx = int(F.get("stove_x", 36.0) * PPM)
+    L.paint(L.rect(sx - 12, base - 430, sx + 14, base - 60), hexc("#2b2f35"))
+    L.paint(L.rect(sx + 14, base - 430, sx + 20, base - 60), hexc("#1e2126"), 0.7)
+    L.paint(L.rect(sx - 18, base - 438, sx + 20, base - 422), hexc("#23272c"))
+    L.snow_cap(sx - 18, sx + 20, base - 430, 12, 1411, droop=0.4)
+    # 墙脚积雪
+    L2 = Layer(w, 60, ss=1)
+    n = vnoise(1, w, 60, 1, 1421)[0]
+    top = 60 - (18 + 22 * n)
+    m = (L2.Y >= top[None, :]).astype(np.float32)
+    L2.paint(m, lerp(hexc("#eef3f8"), hexc("#b8c6d4"), L2.gy(10, 60, 0, 1)))
+    _paste(img, L.finish(outline=None), 0, 0)
+    _paste(img, L2.finish(outline=None), 0, fh - 60)
+    img = _darken_top(img, fh)
+    return _facade_glow(img, glows, fh)
 
 
 def _facade_khrushchyovka() -> tuple[Image.Image, Image.Image]:

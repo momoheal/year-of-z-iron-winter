@@ -1,7 +1,7 @@
 # 验收图 / Acceptance Sheets
 
 > 新增 **三区分野**（白 / 红 / 黑）与黑市：`zones_market.png` 是这一轮的主图；
-> 八张整关图上都能直接看到分区色带与雪面标签。规则与坐标见 `docs/zh/Z年纪事_三区与黑市.md`。
+> 十张整关图上都能直接看到分区色带与雪面标签。规则与坐标见 `docs/zh/Z年纪事_三区与黑市.md`。
 
 > 这个目录里的 PNG **不是引擎截图**。本机跑不了 Godot，所以由
 > `godot_project/tools/art_gen/render_preview.py` 直接读 `godot_project/scenes/*.tscn`，
@@ -20,7 +20,7 @@
 
 | # | 文件 / File | 场景 / Scene | 画面区域 / Area | 看什么 / What to check |
 |---|---|---|---|---|
-| 0 | `zones_market.png` | `NightZones.gd` + `NightZoneField.gd`<br>L03–L05 通用 / all three night levels | 三关各一格黑市 2× + 三区色标 / market per level + zone legend | 三条带的分界数字（货场 12 / 21.5 · 调车场 9 / 20 · 庄园 10 / 22）；每格都有「摊位 + 摊主 + 2 名幸存者」且就在自己的光源旁边；油桶火只到桶口以上一小截 |
+| 0 | `zones_market.png` | `NightZones.gd` + `NightZoneField.gd`<br>L03–L05 通用 / all three night levels | 三关各一格黑市 2× + 三区色标 / market per level + zone legend | 三条带的分界数字（货场 12 / 21.5 · 调车场 9 / 20 · 庄园 10 / 22）；每格都有「摊位 + 摊主 + 2 名幸存者」且就在自己的光源旁边；油桶火只到桶口以上一小截；黑市老家（market 关）的摊区见 market_grey / market_night |
 | 1 | `yard_grey.png` | `res://scenes/night_explore.tscn`<br>L03 · ШИРОКАЯ КОЛЕЯ · 宽轨货场（48×40 m） | 整关、中性光 / full level, neutral light | 街面是否连成一片：五层赫鲁晓夫楼立面 + 亮窗、配电箱、告示板、钠路灯、铁网、扳道房、水塔、雪堆；角色站位是否压在雪地上而不是浮空 |
 | 2 | `yard_night.png` | 同上 / same | 整关、夜色 / full level, night grade | `CanvasModulate` 冷调是否压得住；钠灯黄色光斑半径是否合理；两处油桶火的暖光有没有烧掉细节；三条色带（白 / 红虚线 / 青虚线）与前一轮比是否更好认 |
 | 3 | `marshalling_grey.png` | `res://scenes/night_marshalling.tscn`<br>L04 · ЗАПАДНЫЙ СОРТИРОВОЧНЫЙ ПАРК · 西调车场（44×36 m） | 整关、中性光 | 砖砌调度楼 + 站台雨棚 + 驼峰线 + 4 节车皮 + 水塔 + 铁网；新加的三件哨位道具（沙袋 / 弹药箱 / 枪架）是否落在车站逻辑位置上 |
@@ -29,12 +29,18 @@
 | 6 | `manor_night.png` | 同上 | 整关、夜色 | 最暗的一关：庄园车道那条深色沥青带是否太生硬；松林是否把玩家淹没在黑里；瞭望塔探照灯位置 |
 | 7 | `mine_grey.png` | `res://scenes/night_mine.tscn`<br>L07M · ШАХТА №3 · 3 号矿坑（46×34 m） | 整关、中性光 | 矿山岩壁立面次序：斜井坑木门脸 / 工棚 / 矿仓 / 井架 / 爆破断面；假人哨塔（38.5, 13.4 m）远看是哨位近看是塑料模特；铝热剂堆（33.5 / 37.2 m）与起爆器（29.5, 26.8 m）是否一眼可辨；色带白 0–11 / 红 11–21 / 黑 21–34，出生点与目标物都在黑区 |
 | 8 | `mine_night.png` | 同上 | 整关、夜色 | **无探照灯**的一关：两盏钠灯 + 两处火堆够不够把黑区照出可走的边界；孢子断面的暗哑微光（灰绿）要看得见、又不能像魔法 |
-| 9 | `outpost_marshalling.png` | `res://scenes/night_marshalling.tscn` | 三个新哨位 2× 特写 / three outpost props, zoomed | 沙袋 (33.0, 9.2 m) · 弹药箱 (24.2, 5.6 m) · 枪架 (12.4, 4.1 m)：虚线框 = 精灵本体外框，十字准星 = 落地锚点（碰撞/遮蔽都以锚点为准）。枪架上只剩一把撬棍，是这一关撬棍的来源 |
-| 10 | `outpost_manor.png` | `res://scenes/night_manor.tscn` | 三个新哨位 2× 特写 | 沙袋 (27.0, 12.6 m) · 弹药箱 (21.0, 6.2 m) · 枪架 (9.2, 4.2 m)：看特写里有没有穿帮（道具压在雪脊上、挡住必经路线、和 Batch-409 托盘挤在一起） |
-| 11 | `outpost_mine.png` | `res://scenes/night_mine.tscn` | 三件新道具 2× 特写 | 假人哨塔 (38.5, 13.4 m)（脚手架 + 防化服模特 + 猪嘴面具 + 扩音器，**不许有一盏灯**）· 孢子断面 (36.5, 28.4 m)（千层糕层理 + 灰黑孢子带的暗哑微光）· 起爆器 (29.5, 26.8 m)（仪表 + 手摇柄 + 电缆盘 + 斜靠的台账夹板，必出 intel） |
-| 12 | `combat_readout.png` | L03–L07M 通用 / all night levels | 俯视读数 / top-down readout | 撬棍扇形 ±49°/1.9 m 是否够"贴身才有用"；TT-33 26 m、锯短 38 m、莫辛 44 m 的噪声圈是否真的"一枪就把人拽过来"；右下命中半径（0.40/0.46/0.52 m）与左下数值表 |
+| 9 | `market_grey.png` | `res://scenes/night_market.tscn`<br>L07 · БАРАХОЛКА · 铁路黑市（46×34 m） | 整关、中性光 | 工人镇板房立面 + 镇口街灯 + 破损供暖管 + 棚户巷板房是否连成一条「人住的街」；市集摊区（24.5, 24.4 m）与 6.66 电台棚（36.5, 25.0 m）的社会距离；辨药对照（真药 10.6, 24.6 / 假药 19.2, 24.0）；色带白 0–11 / 红 11–21 / 黑 21–34；铁路 1 道（27.0 m）离围栏 6.2 m，轨道完整不糊 |
+| 10 | `market_night.png` | 同上 | 整关、夜色 | 三团光一眼分得开：摊区最暖（马灯 / 篝火）、6.66 棚最病（电子管微绿）、后巷最恶（炭炉橙红）；药棚铁门暗得刚好——C2 的戏发生在暗里；铁轨反光不能糊成黑带 |
+| 11 | `market_grey.png` | `night_market.tscn` — L07 Rail Black Market (46×34 m) | Whole level, neutral light: workers' plank-shack facade, street lamps, steam pipe, shanty row; bazaar (24.5, 24.4) and Radio-666 stall (36.5, 25.0); medicine contrast (true 10.6, 24.6 / fake 19.2, 24.0); bands white 0-11 / red 11-21 / black 21-34; rail 1 (27.0) keeps 6.2 m from the fence |
+| `market_night.png` | same | Three glows must separate: warmest bazaar, sickliest 6.66 (tube green), evilest alley (forge orange-red); the med-shed door sits in the dark |
+| `outpost_marshalling.png` | `res://scenes/night_marshalling.tscn` | 三个新哨位 2× 特写 / three outpost props, zoomed | 沙袋 (33.0, 9.2 m) · 弹药箱 (24.2, 5.6 m) · 枪架 (12.4, 4.1 m)：虚线框 = 精灵本体外框，十字准星 = 落地锚点（碰撞/遮蔽都以锚点为准）。枪架上只剩一把撬棍，是这一关撬棍的来源 |
+| 12 | `outpost_manor.png` | `res://scenes/night_manor.tscn` | 三个新哨位 2× 特写 | 沙袋 (27.0, 12.6 m) · 弹药箱 (21.0, 6.2 m) · 枪架 (9.2, 4.2 m)：看特写里有没有穿帮（道具压在雪脊上、挡住必经路线、和 Batch-409 托盘挤在一起） |
+| 13 | `outpost_mine.png` | `res://scenes/night_mine.tscn` | 三件新道具 2× 特写 | 假人哨塔 (38.5, 13.4 m)（脚手架 + 防化服模特 + 猪嘴面具 + 扩音器，**不许有一盏灯**）· 孢子断面 (36.5, 28.4 m)（千层糕层理 + 灰黑孢子带的暗哑微光）· 起爆器 (29.5, 26.8 m)（仪表 + 手摇柄 + 电缆盘 + 斜靠的台账夹板，必出 intel） |
+| 14 | `outpost_market.png` | `res://scenes/night_market.tscn` | 三件新道具 2× 特写 | 6.66 电台棚 (36.5, 25.0 m)（指针钉死 6.66、电子管微绿、柜台花哨假药瓶）· 烫鳞炭炉 (7.0, 24.9 m)（炭炉 + 烧红马蹄铁 + 折叠凳 + 烫焦绷带——只有工具和痕迹）· 药棚铁门 (12.0, 23.2 m)（磁卡读头 + 可锁挂环；门里冷柜必出 abx） |
+| 15 | `outpost_market.png` | `night_market.tscn` | 2× close-ups of Radio-666 stall (36.5, 25.0 m, dial pinned at 6.66), quack forge (7.0, 24.9 m, red-hot horseshoe — tools and traces only), med-shed iron door (12.0, 23.2 m, card reader + guaranteed abx) |
+| `combat_readout.png` | L03–L07M 通用 / all night levels | 俯视读数 / top-down readout | 撬棍扇形 ±49°/1.9 m 是否够"贴身才有用"；TT-33 26 m、锯短 38 m、莫辛 44 m 的噪声圈是否真的"一枪就把人拽过来"；右下命中半径（0.40/0.46/0.52 m）与左下数值表 |
 
-> 特写图（9–11）里**故意不画角色**，避免路过的兵挡住道具；整关图（1–8）保留角色，用来看人／环境比例。
+> 特写图（11–14）里**故意不画角色**，避免路过的兵挡住道具；整关图（1–10）保留角色，用来看人／环境比例。
 
 ### Index (EN, condensed)
 
@@ -54,8 +60,8 @@
 | `outpost_mine.png` | `night_mine.tscn` | 2× close-ups of dummy tower (38.5, 13.4 m, mannequin + pig-snout respirator, no light), spore face (36.5, 28.4 m), detonator rig (29.5, 26.8 m, guaranteed intel) |
 | `combat_readout.png` | L03–L07M (shared) | Top-down noise radii (TT-33 26 m / sawn-off 38 m / Mosin 44 m), crowbar cone ±49° at 1.9 m, hit radii 0.40 / 0.46 / 0.52 m, arsenal table |
 
-Close-up sheets (7, 8) deliberately omit actors so a passing soldier cannot hide the prop;
-the full-level sheets (1–6) keep them for scale.
+Close-up sheets (11–14) deliberately omit actors so a passing soldier cannot hide the prop;
+the full-level sheets (1–10) keep them for scale.
 
 ---
 
@@ -76,13 +82,13 @@ python3 godot_project/tools/art_gen/build_acceptance_page.py      # 改了图之
 
 ```bash
 cd godot_project/tools/art_gen
-python3 render_preview.py            # 6 张整关图（3 关 × 中性光 / 夜色）+ 4 张辅助图（含 zones_market）
+python3 render_preview.py            # 10 张整关图（5 关 × 中性光 / 夜色）+ 5 张特写与读数（含 zones_market）
 python3 render_preview.py --crops    # 只重出特写与战斗读数
 python3 render_preview.py --level manor
 ```
 
 - 比例：1 m = 64 px，地面纵向压扁 ×0.62；整关图默认再缩到 0.62 输出。
-- 底层数据：`godot_project/scenes/night_{explore,marshalling,manor}.tscn` 与 `godot_project/art/`。
+- 底层数据：`godot_project/scenes/night_{explore,marshalling,manor,mine,market}.tscn` 与 `godot_project/art/`。
 - 改场景后**必须重跑**，这些图不会自动更新。
 
 ---

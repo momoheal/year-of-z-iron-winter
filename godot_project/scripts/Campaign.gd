@@ -162,6 +162,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			# 开发 / QA 直开第四张节点化地图（战役里要等 lana_car3 解锁）
 			get_tree().change_scene_to_file("res://scenes/night_mine.tscn")
 			return
+		if k == KEY_F6:
+			# 开发 / QA 直开第五张节点化地图（战役里 market 是常驻可去的黑市）
+			get_tree().change_scene_to_file("res://scenes/night_market.tscn")
+			return
 		if k == KEY_M:
 			hud.toggle_sound()         # 顶栏那个「音效：开 (M)」按钮终于对得起自己的提示
 			return

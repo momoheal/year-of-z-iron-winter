@@ -53,6 +53,7 @@ func _run() -> void:
 	_marshalling()
 	_manor()
 	_mine()
+	_market()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -159,6 +160,13 @@ func _mine() -> void:
 	var g: Node = _scene("res://scenes/night_mine.tscn")
 	_assert(g.beats.get("events", []).is_empty(), "mine 没有环境节拍（危险就是环境：塌方 / 粉尘 / 起爆）")
 	_common(g, "mine")
+
+
+func _market() -> void:
+	var g: Node = _scene("res://scenes/night_market.tscn")
+	_assert(g.beats.get("events", []).is_empty(),
+			"market 没有环境节拍（危险就是人：交易 / 辨药 / 抉择 C）")
+	_common(g, "market")
 
 
 # ---------------------------------------------------------------------------

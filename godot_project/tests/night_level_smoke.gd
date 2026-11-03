@@ -49,6 +49,7 @@ func _run() -> void:
 	_marshalling()
 	_manor()
 	_mine()
+	_market()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -65,7 +66,7 @@ func _registry() -> void:
 			continue
 		with_scene += 1
 		_assert(ResourceLoader.exists(sc), "LOCS[%s].scene 存在 (%s)" % [L.id, sc])
-	_assert(with_scene >= 4, "至少四关有节点化场景（yard/marshalling/manor/mine）", str(with_scene))
+	_assert(with_scene >= 5, "至少五关有节点化场景（yard/marshalling/manor/mine/market）", str(with_scene))
 	# 每个带 scene 的地点：CampaignData 的 loot 类别都得在表里（夜潜掉落读同一张表）
 	for L in Data.LOCS:
 		for cat in L.loot:
@@ -311,6 +312,79 @@ func _mine() -> void:
 	_assert(is_equal_approx(g.dawn_progress(), 0.5), "mine 最后 20% 的一半 dawn=0.5",
 			str(g.dawn_progress()))
 	_shared(g, "mine")
+
+# ---------------------------------------------------------------------------
+func _market() -> void:
+	var g: Node = _scene("res://scenes/night_market.tscn")
+	_assert(g.level_id == "market", "market metadata.level_id", g.level_id)
+	_assert(g.level_zh == "铁路黑市（废弃工人镇）", "market metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "Rail Black Market", "market metadata.level_en", g.level_en)
+	_assert(g.prize == "intel", "market prize = intel（6.66 电台棚的专列调度记录）", g.prize)
+	_assert(g.objective_zh.contains("6.66"), "market objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("豁口"), "market extract 元数据（铁路侧豁口）", g.extract_zh)
+	_assert(g.rail_y.size() == 1, "market 铁路 1 道", str(g.rail_y))
+	# 装配：2 组清杀队（棚户巷 + 铁路哨兵）/ 2 只感染者 / 无半人（老谢苗是幸存者）/ 10 个容器 / 4 块冻雪泥
+	_assert(g.soldiers.size() == 2, "market 2 组清杀队", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 2, "market 2 只感染者", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 0, "market 没有壮硕感染者（低危交易关）", str(brutes))
+	_assert(g.halfs.size() == 0, "market 没有回退半人", str(g.halfs.size()))
+	_assert(g.containers.size() == 10, "market 10 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 4, "market 4 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（市集篝火 + 烫鳞炭炉）；无探照灯——这里是人和人互相看着的地方
+	_assert(g.warm_lights.size() == 2, "market 两个回温点（篝火 + 炭炉）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/BrazierBazaar") != null, "market 市集篝火")
+	_assert(g.get_node_or_null("Lights/BrazierForge") != null, "market 烫鳞炭炉")
+	_assert(g.get_node_or_null("Lights/LampNw") != null and g.get_node_or_null("Lights/LampSe") != null,
+			"market 两盏钠灯")
+	_assert(g.get_node_or_null("Searchlight") == null, "market 没有探照灯")
+	# 黑市摊区在黑区（夜潜区划烟测口径：黑市只在黑区）
+	var mk: Node = g.get_node_or_null("World/Market")
+	_assert(mk != null and mk.position.y >= 21.0 * GY, "market 摊区在黑区",
+			str(mk.position.y if mk else -1.0))
+	_assert(mk != null and String(mk.get_meta("zh", "")) != "", "market 摊区元数据在")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightMarket_Baked.png"), "market 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_Town_A.png"), "market 工人镇立面",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 剧本锚点：6.66 电台棚（必出 intel）/ 盘尼西林冷柜（必出 abx）/ 真假药对照 / 烫鳞炭炉 / 药棚铁门
+	var radio: Node = g.get_node_or_null("World/Props/Radio666")
+	_assert(radio != null and String(radio.get_meta("guaranteed", "")) == "intel",
+			"6.66 电台棚必出 intel（专列调度记录）")
+	var fridge: Node = g.get_node_or_null("World/Props/MedFridge")
+	_assert(fridge != null and String(fridge.get_meta("guaranteed", "")) == "abx",
+			"药棚冷柜必出盘尼西林（abx）")
+	_assert(g.get_node_or_null("World/Props/MedCache") != null
+			and g.get_node_or_null("World/Props/FakeMeds") != null, "真药与假药摆在同一个摊区")
+	_assert(g.get_node_or_null("World/Props/QuackForge") != null, "烫鳞炭炉（只有工具和痕迹）")
+	_assert(g.get_node_or_null("World/Props/MedShed") != null, "药棚铁门（C2 的锁点）")
+	# 地表 → 脚步材质：铁路是铁轨，市集是雪地
+	_assert(g.step_sound(_m(23.0, 27.0), false) == "step_rail", "踩在铁路 1 道 = 铁轨脚步",
+			g.step_sound(_m(23.0, 27.0), false))
+	_assert(g.step_sound(_m(24.5, 24.4), false) == "step_snow", "市集摊区 = 雪地脚步",
+			g.step_sound(_m(24.5, 24.4), false))
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(46.0 * PPM), "market limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(34.0 * GY), "market limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "market limit_top（工人镇屋顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 蒸汽 + 钠灯嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "market 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（market 夜长 80 分钟）
+	g.in_campaign = true
+	g.night_max = 80.0
+	g.night_left = 80.0
+	_assert(g.dawn_progress() == 0.0, "market 夜刚开始 dawn=0")
+	g.night_left = 8.0
+	_assert(is_equal_approx(g.dawn_progress(), 0.5), "market 最后 20% 的一半 dawn=0.5",
+			str(g.dawn_progress()))
+	_shared(g, "market")
 
 # ---------------------------------------------------------------------------
 func _shared(s: Node, tag: String) -> void:

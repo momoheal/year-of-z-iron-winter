@@ -39,6 +39,7 @@ SCENES = {
     "marshalling": dict(path="res://scenes/night_marshalling.tscn", title="L04 · ЗАПАДНЫЙ СОРТИРОВОЧНЫЙ ПАРК"),
     "manor": dict(path="res://scenes/night_manor.tscn", title="L05 · СОСНОВАЯ УСАДЬБА · MANOR"),
     "mine": dict(path="res://scenes/night_mine.tscn", title="L07M · ШАХТА №3 · MINE SHAFT No.3"),
+    "market": dict(path="res://scenes/night_market.tscn", title="L07 · БАРАХОЛКА · RAIL BLACK MARKET"),
 }
 
 
@@ -380,6 +381,14 @@ CROPS = {
              note="permafrost strata + the grey spore band", win=(3.8, 5.0, 1.6)),
         dict(m=(29.5, 26.8), art="PRP_Detonator_Rig.png", title="3 · DETONATOR RIG",
              note="guaranteed intel: core + blast ledger", win=(1.9, 1.9, 1.3)),
+    ]),
+    "market": dict(level="L07 RAIL BLACK MARKET", items=[
+        dict(m=(36.5, 25.0), art="PRP_Radio666.png", title="1 · RADIO 666",
+             note="shortwave set pinned at 6.66, antifreeze bottles", win=(4.2, 3.4, 1.8)),
+        dict(m=(7.0, 24.9), art="PRP_QuackForge.png", title="2 · QUACK FORGE",
+             note="charcoal + red-hot horseshoe, tools and traces only", win=(3.2, 2.8, 1.6)),
+        dict(m=(12.0, 23.2), art="PRP_MedShed.png", title="3 · MED SHED IRON DOOR",
+             note="C2 lock point: card reader + penicillin inside", win=(4.4, 3.8, 1.5)),
     ]),
 }
 
