@@ -48,6 +48,7 @@ func _run() -> void:
 	_yard()
 	_marshalling()
 	_manor()
+	_mine()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -64,7 +65,7 @@ func _registry() -> void:
 			continue
 		with_scene += 1
 		_assert(ResourceLoader.exists(sc), "LOCS[%s].scene 存在 (%s)" % [L.id, sc])
-	_assert(with_scene >= 3, "至少三关有节点化场景（yard/marshalling/manor）", str(with_scene))
+	_assert(with_scene >= 4, "至少四关有节点化场景（yard/marshalling/manor/mine）", str(with_scene))
 	# 每个带 scene 的地点：CampaignData 的 loot 类别都得在表里（夜潜掉落读同一张表）
 	for L in Data.LOCS:
 		for cat in L.loot:
@@ -243,6 +244,73 @@ func _manor() -> void:
 	_assert(is_equal_approx(g.dawn_progress(), 0.5), "manor 最后 20% 的一半 dawn=0.5",
 			str(g.dawn_progress()))
 	_shared(g, "manor")
+
+# ---------------------------------------------------------------------------
+func _mine() -> void:
+	var g: Node = _scene("res://scenes/night_mine.tscn")
+	_assert(g.level_id == "mine", "mine metadata.level_id", g.level_id)
+	_assert(g.level_zh == "3 号矿坑 · 温压爆破作业面", "mine metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "Mine Shaft No.3 · Blast Face", "mine metadata.level_en", g.level_en)
+	_assert(g.prize == "intel", "mine prize = intel（孢子岩芯与爆破台账）", g.prize)
+	_assert(g.objective_zh.contains("起爆器"), "mine objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("豁口"), "mine extract 元数据（南侧运矸专线豁口）", g.extract_zh)
+	_assert(g.rail_y.size() == 1, "mine 一条运矸专线", str(g.rail_y))
+	# 装配：2 组清杀队换岗 / 2 只感染掘进工（1 壮硕）/ 1 个回退半人 / 10 个容器 / 4 块冻雪泥
+	_assert(g.soldiers.size() == 2, "mine 2 组清杀队换岗", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 2, "mine 2 只感染掘进工", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 1, "其中 1 只壮硕（守断面的 Rabid_Cut）", str(brutes))
+	_assert(g.halfs.size() == 1, "mine 1 个回退半人（博伊科 0417）", str(g.halfs.size()))
+	_assert(g.containers.size() == 10, "mine 10 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 4, "mine 4 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（240s 长夜）；无探照灯——黑暗是这张图的第一属性
+	_assert(g.warm_lights.size() == 2, "mine 两个回温点（火堆×2）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/Brazier") != null, "mine 装药队火堆")
+	_assert(g.get_node_or_null("Lights/BrazierCut") != null, "mine 看守断面火堆")
+	_assert(g.get_node_or_null("Lights/Signal") != null, "mine 信号机灯")
+	_assert(g.get_node_or_null("Searchlight") == null, "mine 没有探照灯（假人哨塔是空壳）")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightMine_Baked.png"), "mine 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_Mine_A.png"), "mine 矿山岩壁立面",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 剧本锚点：起爆器旁的爆破台账（必出 intel）/ 铝热剂装药 / 木箱堆阿司匹林 / 假人哨塔
+	var rig: Node = g.get_node_or_null("World/Props/DetonatorRig")
+	_assert(rig != null and String(rig.get_meta("guaranteed", "")) == "intel",
+			"起爆器必出 intel（孢子岩芯与爆破台账）")
+	var th: Node = g.get_node_or_null("World/Props/Thermite01")
+	_assert(th != null and String(th.get_meta("container", "")) == "crate",
+			"铝热剂装药堆在断面根上")
+	var crates: Node = g.get_node_or_null("World/Props/CrateStack")
+	_assert(crates != null and String(crates.get_meta("guaranteed", "")) == "asp",
+			"木箱堆必出阿司匹林（喂博伊科退烧）")
+	_assert(g.get_node_or_null("World/Props/DummyTower") != null, "假人哨塔第二座（无灯）")
+	# 地表 → 脚步材质：运矸专线是铁轨，装卸台外是雪地
+	_assert(g.step_sound(_m(20.0, 15.5), false) == "step_rail", "踩在运矸专线中心 = 铁轨脚步",
+			g.step_sound(_m(20.0, 15.5), false))
+	_assert(g.step_sound(_m(20.0, 8.0), false) == "step_snow", "装卸台外 = 雪地脚步",
+			g.step_sound(_m(20.0, 8.0), false))
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(46.0 * PPM), "mine limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(34.0 * GY), "mine limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "mine limit_top（岩壁顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 压风管蒸汽 + 钠灯嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "mine 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（mine 夜长 100 分钟）
+	g.in_campaign = true
+	g.night_max = 100.0
+	g.night_left = 100.0
+	_assert(g.dawn_progress() == 0.0, "mine 夜刚开始 dawn=0")
+	g.night_left = 10.0
+	_assert(is_equal_approx(g.dawn_progress(), 0.5), "mine 最后 20% 的一半 dawn=0.5",
+			str(g.dawn_progress()))
+	_shared(g, "mine")
 
 # ---------------------------------------------------------------------------
 func _shared(s: Node, tag: String) -> void:

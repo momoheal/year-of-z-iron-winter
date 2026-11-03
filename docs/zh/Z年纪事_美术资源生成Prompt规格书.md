@@ -522,7 +522,128 @@ pen nib, paper fibre tearing, extreme close-up, transparent background
 色彩与衰减参考（三个 Shader 的需求见《灰盒规格书》第三章）。
 ```
 
+### 7.7 v4.2 待补图（5 张，2026-11 新增 · 对应《美术风格参考 v4.2》§五）
+
+> 以下 5 张是 v4.2 新增剧情（第零幕 / 第一幕 1-4 / 第三幕 3-3 / 第四幕 / 第五幕 5-1、5-2）的专属概念图，此前仅在《美术风格参考 v4.2》列为待补。出图后存入 `assets/concept_art/`，编号顺延 CON_04 起。**每张都是「设定图 / 剧照式概念图」而非游戏资产**（与 01–11 号图同性质），构图允许人物与文字并存，但**文字一律出无字底图 + 矢量补写**（见 §10.4）。
+
+#### `CON_04` 帕沙与假人哨塔 　★P1（第一幕 1-4 · 红区隐喻）
+```
+【Prompt】A night concept sheet, two panels: (left) a fake sentry tower on a snowy
+railway yard — a plastic mannequin wearing an oversized lead-grey GP-5 hazmat suit
+and pig-snout gas mask standing on the platform, a small loudspeaker taped to its
+helmet broadcasting, searchlight beam crossing behind; (right) an 18-year-old
+village conscript soldier, fever-flushed boyish face, pig-snout mask removed and
+hanging at his chest, kneeling and shivering under the icy iron ladder of the tower,
+begging with one frostbitten hand, an AKM pushed aside muzzle-down in the snow.
+Blizzard night, yellow-white searchlight hard light, cold grey-blue palette, low
+saturation, gritty realistic Soviet industrial winter, cinematic concept art.
+§LIGHT_COLD, §STYLE, §PAL
+【负向追加】no heroic pose, no villain face, no war propaganda, no cartoon
+```
+
+#### `CON_05` 柳德米拉大火托孤 　★P1（第五幕 5-1 · 领粮券闭环）
+```
+【Prompt】A dramatic concept art panel: inside a smoke-flooded Khrushchyovka
+stairwell landing, a 63-year-old Russian grandmother in a burning wool shawl pushes
+a five-year-old girl in a padded winter coat into the arms of a young man in a faded
+railway greatcoat with taped round glasses; her other hand presses a blood- and
+soot-stained ration coupon into his palm; behind her, thick orange smoke rolls down
+the stairs, a welded I-beam blocks the fire door in the background; a wolfdog tugs
+the child's coat hem toward the door gap. Harsh firelight against cold blue smoke,
+tear-streaked soot faces, desperate but not grotesque, cinematic concept art.
+§STYLE, §PAL
+【特写变体】the ration coupon close-up: a paper coupon stained with blood and soot,
+half-burned charcoal handwriting on it, held by a frostbitten hand
+【负向追加】no horror gore, no zombie, no melodrama soap-opera lighting
+```
+
+#### `CON_06` 004 号黄铜铭牌特写 　★P0（第零幕 / 第五幕 5-2 · 全剧视觉钉子）
+```
+【Prompt】Extreme close-up concept art of a brass freight-allocation nameplate
+riveted to the steel door frame of a Soviet armored boxcar, industrial clear varnish
+over an old carbon-copy form, a handwritten signature in blue-black fountain-pen ink
+visible under the varnish, a stamped number 004, frost crystals and snow dust on the
+brass edge, rivets around the plate, one crowbar tip just entering the frame and
+prying at a rivet. Night, flashlight hard beam, cold grey-blue palette with the warm
+brass as the single warm accent, photoreal texture study, cinematic concept art.
+§STYLE, §PAL, §TECH
+【字迹规范】signature must be illegible cursive scribble — NO readable text; final
+Chinese/Cyrillic label added later as vector overlay (§10.4)
+【负向追加】no readable letters, no watermark, no modern signage
+```
+
+#### `CON_07` 6.66 MHz 烙铁烫鳞 　★P1（第三幕 3-3 · 黑市暗面）
+```
+【Prompt】A grim black-market back-alley concept panel: a charlatan healer presses a
+red-hot glowing horseshoe iron against the grey-scaled forearm of a delirious fever
+patient held down on a crate, wisps of smoke; beside them an old shortwave radio with
+the dial needle fixed at 6.66 glowing faintly green; crates of canned food as payment;
+in the shadowed corner, small bottles of fake medicine tinted with blue-green
+antifreeze. Underground survivor camp, tarpaulin roofs, oil-drum brazier warm light
+against deep blue darkness, soot, frost, gritty realistic Soviet winter noir,
+cinematic concept art. §LIGHT_COLD, §STYLE, §PAL
+【负向追加】no cartoon villain, no modern medical equipment, no fantasy glow
+```
+
+#### `CON_08` 3 号矿坑：温压爆破、远古孢子与铝热剂 　★P0（第四幕 · 全剧真相核心画面）
+```
+【Prompt】A wide underground mine concept panel: a thermobaric blast has torn open a
+permafrost wall, exposing a layered frozen-earth cross-section like a mille-feuille
+cake, with one dark grey-black glittering ancient spore dust layer glowing faintly in
+the lamp light, fine dust drifting in the air beam; a worker with scales flaking from
+his hand kneels touching the dust in horror; along the haulage tunnel behind, rows of
+military thermobaric/thermite charges and detonation cables are stacked ready, a
+wooden notice board pinned on the rock. Single headlamp hard light, extreme darkness,
+cold grey-blue palette with faint amber dust glow, geological texture detail,
+cinematic concept art. §LIGHT_COLD, §STYLE, §PAL, §TECH
+【特写变体】a drill-core sample of the grey-black spore dust layer held in a
+frostbitten hand, like evidence in an envelope
+【负向追加】no lava, no fantasy crystals, no glowing magic runes, no cartoon
+```
+
 ---
+
+### 7.8 L07M 矿坑道具（6 件，2026-11 新增 · 对应《Z年纪事_3号矿坑场景美术设计》）
+
+> 第四幕 3 号矿坑（`night_mine.tscn`）的六件新道具。**游戏内版本**由
+> `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4.1）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> `PRP_SporeFace` 是全剧真相的核心视觉（灰黑孢子粉尘层）——出任何版本前先读 §7.7 `CON_08`。
+
+```
+【PRP_OreCart_Rusty】a rusted Soviet mine ore cart, battered steel tub heaped with
+grey gangue spoil, four flanged steel wheels, chipped grey-blue paint under orange
+rust streaks, frost along the rim, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM,
+side three-quarter view, §TECH
+【PRP_Timber_Support】a timber A-frame mine support prop, two thick pine legs and a
+crossbeam bound with black steel bands, fresh saw cuts, bark half stripped, snow on
+the top beam — carried out of the shaft and not yet installed,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, §TECH
+【PRP_Thermite_Charge】a neat stack of three olive-drab military crates packed as
+thermite demolition charges, white skull-and-crossbones stencil on the front slats,
+detonation cord coiled and led away, snow dusted on the lids,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, §TECH
+【PRP_Detonator_Rig】a Soviet military demolition exploder box on the frozen ground:
+dark olive housing, an analogue gauge with a red needle, a crank handle, a steel
+cable drum beside it, a clipboard with the blast ledger leaning against the box,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, §TECH
+【PRP_SporeFace】a freshly blasted permafrost face, layer-cake frozen strata exposed
+in horizontal bands, and running through its middle a dull grey-black band of
+ancient spore dust with a matte mineral sheen (NOT a magic glow), fine dust spilling
+at the foot of the cut, snow crust on the top ledge,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, wide format, straight-on elevation, §TECH
+【负向追加】no glowing runes, no magical particles, no green neon, no fantasy crystal
+【PRP_DummyTower_Mannequin】a fake sentry tower at a mine site: scaffold tube frame
+with an iron ladder, a small platform, and on it a plastic mannequin in an oversized
+lead-grey GP-5 hazmat suit with a pig-snout respirator, a dented loudspeaker
+strapped beside it — NO lamp, NO light of any kind; the silhouette must read as a
+guard post from afar and as a dummy up close,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+```
+
+矿山立面 `TIL_Facade_Mine_A` 与地面 `TIL_Ground_NightMine_Baked` 只走程序化管线
+（`gen_env._facade_mine()` / `bake_ground()`），不走手工 Prompt；构图基准见 §7.7 `CON_08`
+与场景美术设计文档 §2 平面图。
 
 ## 8. 后处理与验收清单（每张图入库前逐条打勾）
 

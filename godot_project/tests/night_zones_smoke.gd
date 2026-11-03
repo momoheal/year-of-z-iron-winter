@@ -22,9 +22,15 @@ const SCENES := {
 	"yard": "res://scenes/night_explore.tscn",
 	"marshalling": "res://scenes/night_marshalling.tscn",
 	"manor": "res://scenes/night_manor.tscn",
+	"mine": "res://scenes/night_mine.tscn",
 }
 ## 每张图的出生点应该在哪个区（涵洞在庄园 / 站场 → 从黑区摸进来；货场从锅炉房 → 白区）
-const SPAWN_ZONE := {"yard": "white", "marshalling": "black", "manor": "black"}
+const SPAWN_ZONE := {"yard": "white", "marshalling": "black", "manor": "black", "mine": "black"}
+## 按关覆盖的尸群/黑市规则：L07M 矿坑是「环境杀」关（塌方 / 粉尘 / 起爆倒计时）——
+## 尸少（感染掘进工只有 2 只，都是孢子源头的注脚）、无黑市（黑市是居民点的生意，不是作业面的）
+const LEVEL_RULES := {
+	"mine": {"black_min": 1, "red_max": 1, "market": false},
+}
 
 
 func _init() -> void:
@@ -127,15 +133,19 @@ func _level(name: String) -> void:
 	var sz: String = Zones.zone_at(zs, NightExplore_to_m(spawn))
 	_assert(sz == String(SPAWN_ZONE[name]), "%s: 出生点在 %s" % [name, SPAWN_ZONE[name]], sz)
 
-	# 尸群按区统计
+	# 尸群按区统计（矿坑按 LEVEL_RULES 放宽：环境杀关，尸是注脚不是主角）
+	var rules: Dictionary = LEVEL_RULES.get(name, {})
+	var red_max: int = int(rules.get("red_max", 3))
+	var black_min: int = int(rules.get("black_min", 6))
+	var has_market: bool = bool(rules.get("market", true))
 	var count := {"white": 0, "red": 0, "black": 0}
 	for r in get_nodes_in_group("night_rabid"):
 		var z := Zones.zone_at(zs, NightExplore_to_m((r as Node2D).global_position))
 		if count.has(z):
 			count[z] += 1
 	_assert(count["white"] == 0, "%s: 白区没有丧尸" % name, str(count["white"]))
-	_assert(count["red"] <= 3, "%s: 红区丧尸 ≤ 3（管制带靠清杀队撑）" % name, str(count["red"]))
-	_assert(count["black"] >= 6, "%s: 黑区丧尸 ≥ 6（尸群不成群就不叫黑区）" % name, str(count["black"]))
+	_assert(count["red"] <= red_max, "%s: 红区丧尸 ≤ %d（管制带靠清杀队撑）" % [name, red_max], str(count["red"]))
+	_assert(count["black"] >= black_min, "%s: 黑区丧尸 ≥ %d（尸群不成群就不叫黑区）" % [name, black_min], str(count["black"]))
 	print("      分布 white=%d red=%d black=%d" % [count["white"], count["red"], count["black"]])
 
 	# 半人也不能在白区（居民区里躺个发烧的人，说不通）
@@ -143,10 +153,10 @@ func _level(name: String) -> void:
 		var hz := Zones.zone_at(zs, NightExplore_to_m((h as Node2D).global_position))
 		_assert(hz != "white", "%s: 半人不在白区" % name, "%s" % hz)
 
-	# 黑市：在黑区，摊主与幸存者都在黑区，且摊子 5 m 内有人
+	# 黑市：在黑区，摊主与幸存者都在黑区，且摊子 5 m 内有人（矿坑没有黑市）
 	var mk := get_nodes_in_group("night_market")
-	_assert(mk.size() == 1, "%s: 有且只有一个黑市" % name, str(mk.size()))
-	if mk.size() == 1:
+	_assert(mk.size() == (1 if has_market else 0), "%s: 黑市数量（矿坑 0，其余关 1）" % name, str(mk.size()))
+	if mk.size() == 1 and has_market:
 		var mpos: Vector2 = (mk[0] as Node2D).global_position
 		var mz := Zones.zone_at(zs, NightExplore_to_m(mpos))
 		_assert(mz == "black", "%s: 黑市在黑区" % name, mz)

@@ -1028,6 +1028,192 @@ def fence_electric(cut: bool = False):
     return L.finish(), (w / 2, base)
 
 
+# ---------------------------------------------------------------------------
+# L07M · 3 号矿坑（mine）专属道具（v4.2）
+# ---------------------------------------------------------------------------
+def ore_cart():
+    """运矸矿车：2.6m 钢制斗车 + 四轮 + 满载矸石 + 锈水流痕。"""
+    w, h = 170, 118
+    L = Layer(w, h, 3)
+    base, cx = 110, 85
+    body = L.poly([(22, base - 78), (148, base - 78), (138, base - 26), (32, base - 26)])
+    L.paint(body, L.tex("#4e555c", 0.09, 4, 301))
+    L.shade(body, np.clip(1.15 - 0.5 * np.abs(L.X - cx + 8) / 70, 0.5, 1.25))
+    L.rust_streaks(body, 302, 0.75, cell=(1.8, 12))
+    L.paint(L.poly([(20, base - 82), (150, base - 82), (148, base - 74), (22, base - 74)]),
+            hexc("#3a4046"))
+    spoil = np.clip(L.ellipse(cx, base - 84, 58, 12) + L.ellipse(cx - 22, base - 90, 26, 8)
+                    + L.ellipse(cx + 26, base - 91, 24, 7), 0, 1)
+    L.paint(spoil, L.tex("#2c2f34", 0.16, 3, 303))
+    L.paint(spoil * smooth(0.55, 0.8, L.noise(2.2, 304)), hexc("#1d2024"), 0.7)
+    L.snow_cap(cx - 52, cx + 52, base - 92, 7, 305, droop=0.4)
+    for wx in (42, 128):
+        L.paint(L.ellipse(wx, base - 12, 15, 13), hexc("#22262b"))
+        L.paint(L.ellipse(wx, base - 12, 10, 8.5), L.tex("#4a5057", 0.1, 3, 306))
+        L.paint(L.ellipse(wx, base - 12, 3.6, 3), hexc("#191c20"))
+    L.paint(L.rect(42, base - 16, 128, base - 10), hexc("#33383e"))
+    L.paint(L.rect(24, base - 30, 146, base - 24), hexc("#2c3137"))
+    L.snow_cap(30, 142, base - 4, 9, 307, droop=0.0)
+    return L.finish(), (cx, base)
+
+
+def timber_support():
+    """坑木 A 架支护：两根斜撑 + 顶梁 + 铁箍 + 雪。"""
+    w, h = 150, 188
+    L = Layer(w, h, 3)
+    base, cx = 180, 75
+    for sgn, sx in ((-1, 30), (1, 120)):
+        leg = L.line([(sx + sgn * 6, base), (cx + sgn * 4, base - 138)], 13, False)
+        L.paint(leg, L.tex("#6b5138", 0.1, 5, 311, cy=14))
+        L.shade(leg, L.gx(sx - 8, sx + 10, 1.25, 0.6))
+        L.rust_streaks(leg, 312, 0.25, color="#3f2f1e", cell=(1.2, 20))
+    beam = L.line([(cx - 34, base - 140), (cx + 34, base - 138)], 14, False)
+    L.paint(beam, L.tex("#75593c", 0.1, 5, 313))
+    L.shade(beam, L.gy(base - 148, base - 130, 1.2, 0.7))
+    for bx in (cx - 22, cx + 20):
+        L.paint(L.rect(bx - 3, base - 150, bx + 3, base - 128), hexc("#2e3338"))
+    L.snow_cap(cx - 38, cx + 38, base - 148, 8, 314, droop=0.3)
+    L.snow_cap(18, 46, base - 2, 10, 315, droop=0.0)
+    L.snow_cap(102, 132, base - 2, 10, 316, droop=0.0)
+    return L.finish(), (cx, base)
+
+
+def thermite_charge():
+    """铝热剂装药堆：军绿木箱 ×3 + 白色骷髅标 + 引出的起爆电缆。"""
+    w, h = 136, 96
+    L = Layer(w, h, 3)
+    base, cx = 90, 68
+    for (x0, y0, x1, y1, seed) in ((22, base - 42, 82, base - 4, 321), (82, base - 40, 132, base - 4, 322),
+                                   (34, base - 78, 94, base - 42, 323)):
+        box = L.rect(x0, y0, x1, y1, 2)
+        L.paint(box, L.tex("#5c6b4e", 0.09, 4, seed))
+        L.shade(box, L.gy(y0, y1, 1.18, 0.72))
+        L.rust_streaks(box, seed + 40, 0.3, color="#46522f", cell=(1.4, 10))
+        L.paint(L.rect(x0, y0, x1, y0 + 3), hexc("#3f4a34"))
+        L.paint(L.rect(x0, y1 - 4, x1, y1 - 1), hexc("#3f4a34"))
+    mx, my = 64, base - 60
+    L.paint(L.ellipse(mx, my - 4, 8, 7), hexc("#d8d1bf"))
+    L.paint(L.ellipse(mx - 3, my - 5, 1.8, 2.2), hexc("#20242a"))
+    L.paint(L.ellipse(mx + 3, my - 5, 1.8, 2.2), hexc("#20242a"))
+    L.paint(L.line([(mx - 9, my + 6), (mx + 9, my + 10)], 2.6), hexc("#d8d1bf"))
+    L.paint(L.line([(mx - 9, my + 10), (mx + 9, my + 6)], 2.6), hexc("#d8d1bf"))
+    L.paint(L.line([(82, base - 8), (108, base - 4), (128, base - 12)], 3.4), hexc("#22262b"))
+    L.paint(L.line([(30, base - 6), (18, base - 2)], 3.0), hexc("#22262b"))
+    L.snow_cap(30, 96, base - 80, 6, 324, droop=0.25)
+    return L.finish(), (cx, base)
+
+
+def detonator_rig():
+    """起爆器与电缆盘：军用起爆箱（仪表 + 手摇柄）+ 电缆盘 + 斜靠的爆破台账木夹板。"""
+    w, h = 124, 92
+    L = Layer(w, h, 3)
+    base, cx = 86, 62
+    L.paint(L.ellipse(96, base - 18, 16, 15), hexc("#33383e"))
+    L.paint(L.ellipse(96, base - 18, 11, 10), L.tex("#4a5057", 0.12, 3, 331))
+    for k in range(4):
+        L.paint(L.ellipse(96, base - 18, 11 - k * 2.4, 10 - k * 2.2), hexc("#20242a"), 0.5)
+    L.paint(L.ellipse(96, base - 18, 3.4, 3), hexc("#14171a"))
+    box = L.rect(20, base - 52, 72, base - 6, 2)
+    L.paint(box, L.tex("#4c5a44", 0.1, 4, 332))
+    L.shade(box, L.gy(base - 52, base - 6, 1.2, 0.7))
+    L.rust_streaks(box, 333, 0.35, color="#3a4632", cell=(1.3, 12))
+    L.paint(L.rect(27, base - 46, 55, base - 28, 1.5), hexc("#d8d1bf"))
+    L.paint(L.rect(29, base - 44, 53, base - 30, 1), hexc("#181c20"))
+    L.paint(L.line([(41, base - 32), (50, base - 41)], 1.8), hexc("#c0392b"))
+    L.paint(L.ellipse(33, base - 18, 3.4, 3.4), hexc("#22262b"))
+    L.paint(L.ellipse(48, base - 18, 3.4, 3.4), hexc("#22262b"))
+    L.paint(L.line([(62, base - 38), (78, base - 46)], 3.2), hexc("#2a2e33"))
+    L.paint(L.ellipse(80, base - 47, 4, 3.4), hexc("#3a4046"))
+    clip = L.poly([(12, base - 8), (26, base - 58), (40, base - 55), (28, base - 6)])
+    L.paint(clip, L.tex("#8a7250", 0.1, 3, 334))
+    L.paint(L.rect(22, base - 52, 33, base - 12), hexc("#e6e0d0"), 0.85)
+    for ly in range(int(base) - 48, int(base) - 16, 6):
+        L.paint(L.rect(24, ly, 31, ly + 1.4), hexc("#7a7466"), 0.8)
+    L.paint(L.ellipse(28, base - 56, 3, 2.4), hexc("#b8b0a0"))
+    L.snow_cap(18, 74, base - 54, 6, 335, droop=0.3)
+    return L.finish(), (cx, base)
+
+
+def spore_face():
+    """孢子断面：温压爆破炸开的永冻层剖面——千层糕式层理 + 灰黑孢子粉尘层（暗哑微光）。"""
+    w, h = 462, 192
+    L = Layer(w, h, 3)
+    base, cx = 184, 231
+    wall = L.poly([(8, base), (18, 40), (70, 18), (180, 8), (300, 12), (400, 22), (452, 48), (456, base)])
+    L.paint(wall, L.tex("#4a545e", 0.1, 8, 341))
+    L.shade(wall, L.gy(0, base, 0.62, 1.12))
+    r = np.random.default_rng(342)
+    yy = 16.0
+    while yy < base - 10:
+        th = r.uniform(9, 22)
+        band = wall * ((L.Y >= yy) & (L.Y < yy + th)).astype(np.float32)
+        tone = r.uniform(-0.10, 0.10)
+        L.paint(band, lerp(hexc("#454f58"), hexc("#5d6670"), 0.5 + tone * 4), 0.55)
+        L.paint(band * ((L.Y >= yy) & (L.Y < yy + 1.8)).astype(np.float32), hexc("#2c333a"), 0.6)
+        yy += th + r.uniform(2, 6)
+    # 孢子粉尘层：灰黑偏绿的暗哑带（全剧真相的核心视觉）——对比要比周围层理更「死」更暗
+    sp = wall * smooth(96, 108, L.Y) * smooth(150, 138, L.Y)
+    L.tint(sp, hexc("#2f343a"), 0.95)
+    L.tint(sp * smooth(0.55, 0.85, L.noise(2.6, 343)), hexc("#1c2024"), 0.75)
+    L.paint(sp * ((L.Y >= 94) & (L.Y < 98)).astype(np.float32), hexc("#8b949c"), 0.5)   # 带顶压痕
+    # 暗哑微光：只在粉尘带凹处，越深越亮一点点（地质微光，不是魔法）
+    L.paint(sp, hexc("#7d8a72"), np.clip((0.55 + 0.6 * L.noise(3.2, 344)) * 0.34, 0, 0.42))
+    spill = np.clip(L.ellipse(cx - 60, base - 8, 150, 16) + L.ellipse(cx + 130, base - 6, 110, 12), 0, 1)
+    L.paint(spill * (1 - wall), L.tex("#34383e", 0.14, 4, 345))
+    L.paint(spill * (1 - wall) * smooth(0.5, 0.8, L.noise(2.4, 346)), hexc("#7d8a72"), 0.22)
+    L.snow_cap(20, 440, base - 2, 12, 347, droop=0.0)
+    L.snow_cap(60, 240, 14, 10, 348, droop=0.45)
+    L.snow_cap(300, 430, 22, 9, 349, droop=0.4)
+    L.grime(wall, 350, 0.2, 7)
+    return L.finish(), (cx, base)
+
+
+def dummy_tower():
+    """假人哨塔：脚手架铁梯 + 平台 + 穿防化服的塑料模特 + 猪嘴面具 + 扩音器（无灯）。"""
+    w, h = 152, 332
+    L = Layer(w, h, 3)
+    base, cx = 324, 76
+    for sx in (38, 114):
+        leg = L.line([(sx, base), (sx + (cx - sx) * 0.22, base - 210)], 7, False)
+        L.paint(leg, L.tex("#4e555c", 0.08, 4, 361, cy=18))
+        L.shade(leg, L.gx(sx - 5, sx + 5, 1.25, 0.65))
+        L.rust_streaks(leg, 362, 0.5, cell=(1.1, 24))
+    for yy in (base - 70, base - 140):
+        L.paint(L.line([(40, yy), (112, yy - 6)], 5), hexc("#454b52"))
+    L.paint(L.poly([(22, base - 218), (130, base - 218), (130, base - 208), (22, base - 208)]),
+            L.tex("#565c63", 0.08, 3, 363))
+    L.paint(L.rect(24, base - 244, 128, base - 238), hexc("#4a5057"))
+    for rx in (28, 56, 84, 112):
+        L.paint(L.rect(rx - 1.6, base - 244, rx + 1.6, base - 216), hexc("#4a5057"))
+    L.paint(L.line([(20, base), (26, base - 212)], 4.5), hexc("#3f454b"))
+    L.paint(L.line([(34, base), (38, base - 212)], 4.5), hexc("#3f454b"))
+    for k in range(7):
+        yy = base - 18 - k * 28
+        L.paint(L.line([(21 + k, yy), (35 + k, yy - 2)], 3), hexc("#3f454b"))
+    # 塑料模特（穿肥大防化服）：躯干 + 猪嘴面具头盔 + 垂袖
+    suit = L.poly([(56, base - 212), (52, base - 286), (66, base - 302), (92, base - 302),
+                   (104, base - 288), (100, base - 212)])
+    L.paint(suit, L.tex("#7a8087", 0.07, 5, 364))
+    L.shade(suit, L.gx(52, 104, 1.3, 0.7))
+    L.paint(L.poly([(56, base - 232), (46, base - 208), (54, base - 206), (62, base - 228)]),
+            hexc("#6d737a"))
+    L.paint(L.poly([(100, base - 230), (110, base - 206), (102, base - 204), (94, base - 228)]),
+            hexc("#6d737a"))
+    L.paint(L.ellipse(cx + 8, base - 312, 17, 16), L.tex("#5c6268", 0.08, 3, 365))
+    L.paint(L.ellipse(cx + 8, base - 304, 9, 7), hexc("#2a2e33"))
+    L.paint(L.ellipse(cx + 8, base - 303, 5, 3.4), hexc("#14171a"))
+    L.paint(L.ellipse(cx + 2, base - 316, 5, 4), hexc("#181c20"))
+    L.paint(L.ellipse(cx + 15, base - 316, 5, 4), hexc("#181c20"))
+    L.paint(L.poly([(112, base - 246), (132, base - 258), (136, base - 246), (118, base - 238)]),
+            L.tex("#6a7076", 0.08, 3, 366))
+    L.paint(L.ellipse(133, base - 252, 4.2, 6), hexc("#2c3137"))
+    L.snow_cap(22, 130, base - 220, 8, 367, droop=0.25)
+    L.snow_cap(60, 96, base - 310, 5, 368, droop=0.3)      # 头盔上的雪要小——不然模特读成雪人
+    L.snow_cap(28, 124, base - 240, 5, 369, droop=0.2)
+    L.snow_cap(26, 126, base - 2, 10, 370, droop=0.0)
+    return L.finish(), (cx, base)
+
+
 ALL = {
     "PRP_Crate_Wood_Stack": crate_stack,
     "PRP_SupplyCrates_Military": supply_crates,
@@ -1052,6 +1238,12 @@ ALL = {
     "PRP_ColdStore_Chest": cold_chest,
     "PRP_Forklift_Parked": forklift,
     "PRP_Incinerator_Feed": incinerator_feed,
+    "PRP_OreCart_Rusty": ore_cart,
+    "PRP_Timber_Support": timber_support,
+    "PRP_Thermite_Charge": thermite_charge,
+    "PRP_Detonator_Rig": detonator_rig,
+    "PRP_SporeFace": spore_face,
+    "PRP_DummyTower_Mannequin": dummy_tower,
 }
 FENCES = {"a": "PRP_Fence_ChainLink_A", "b": "PRP_Fence_ChainLink_B", "torn": "PRP_Fence_ChainLink_Torn",
           "torn_l": "PRP_Fence_ChainLink_TornL",

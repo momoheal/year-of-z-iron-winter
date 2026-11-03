@@ -83,7 +83,7 @@
     </div>
     <div style="margin-top:12px">在线版 / served: 图片走相对路径，原尺寸 PNG 点图可看。</div>
   </div>
-  <nav><a href="#zone">00 · 三区分野与黑市 / Three zones & black market</a><a href="#level">01 · 三关整图 / Full levels</a><a href="#crop">02 · 哨位特写 / Outpost close-ups</a><a href="#read">03 · 战斗读数 / Combat readout</a><a href="soviet_ui_board.html">04 · 界面板 / UI board</a>
+  <nav><a href="#zone">00 · 三区分野与黑市 / Three zones & black market</a><a href="#level">01 · 四关整图 / Full levels</a><a href="#crop">02 · 哨位特写 / Outpost close-ups</a><a href="#read">03 · 战斗读数 / Combat readout</a><a href="soviet_ui_board.html">04 · 界面板 / UI board</a>
     <a href="verify/README.md">README.md</a></nav>
   <h2 id="zone">00 · 三区分野与黑市 / Three zones & black market</h2>
 <section class="grid">  <article class="card">
@@ -100,7 +100,7 @@
       <ul><li>白 / 红 / 黑三条带的分界（米）写在同一张图上：货场 12 / 21.5 · 调车场 9 / 20 · 庄园 10 / 22</li><li>每格都能看到「摊位 + 摊主 + 2 名幸存者」：黑市只在黑区，且紧着自己的光源（火堆 / 马灯）</li><li>白区没有丧尸；红区 0~3 只 + 清杀队巡逻（白区居民禁止进入：3.5 s 警告、7 s 盘问）；黑区 7~8 只、每箱多翻一件</li></ul>
       <ul class="en"><li>Band boundaries (m) are printed on the sheet: yard 12 / 21.5 · park 9 / 20 · manor 10 / 22</li><li>Every panel shows the stall + trader + 2 survivors: the market only exists in the black zone, always by its own light</li><li>White: no infected. Red: 0-3 + OSK patrols (residents forbidden: 3.5 s warn, 7 s challenge). Black: 7-8, +1 loot roll</li></ul>
     </div>
-  </article></section><h2 id="level">01 · 三关整图 / Full levels</h2>
+  </article></section><h2 id="level">01 · 四关整图 / Full levels</h2>
 <section class="grid">  <article class="card">
     <header>
       <span class="chip">L03 · ШИРОКАЯ КОЛЕЯ · 宽轨货场</span>
@@ -185,6 +185,34 @@
       <ul><li>最暗的一关：松林会不会把玩家整个吃掉</li><li>两处火盆是否给出可用的导航锚点</li><li>瞭望塔探照灯位置与地面光斑</li></ul>
       <ul class="en"><li>Darkest level: do the pines swallow the player?</li><li>Do the two braziers work as navigation anchors?</li><li>Watchtower searchlight position vs its ground pool</li></ul>
     </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L07M · ШАХТА №3 · 3 号矿坑</span>
+      <span class="meta mono">1825×1049</span>
+    </header>
+    <a class="shot" href="verify/mine_grey.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/mine_grey.jpg" alt="mine_grey.png">
+    </a>
+    <div class="sub mono">res://scenes/night_mine.tscn</div>
+    <div class="sub dim">整关 46×34 m · 中性光 · mine_grey.png</div>
+    <div class="checks">
+      <ul><li>矿山岩壁立面：斜井坑木门脸 / 工棚 / 矿仓 / 井架 / 爆破断面的次序读不读得出来</li><li>假人哨塔（38.5, 13.4 m）：远看是哨位、近看是塑料模特 + 猪嘴面具——轮廓必须骗得到人</li><li>铝热剂堆（33.5 / 37.2 m）与起爆器（29.5, 26.8 m）：作案工具一眼可辨；起爆器旁斜靠爆破台账木夹板</li><li>色带：白 0–11 / 红 11–21 / 黑 21–34；出生点与目标物都在黑区（本关无探照灯）</li></ul>
+      <ul class="en"><li>Does the rock facade read in order: timber portal / shack / ore bin / headframe / blast cut?</li><li>Dummy tower (38.5, 13.4): from afar an outpost, up close a mannequin — does the silhouette fool you?</li><li>Thermite (33.5 / 37.2) and detonator (29.5, 26.8): legible tools; the blast ledger leans on the rig</li><li>Bands: white 0-11 / red 11-21 / black 21-34; spawn and objective both sit in the black (no searchlight)</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L07M · ШАХТА №3 · 3 号矿坑</span>
+      <span class="meta mono">1825×1049</span>
+    </header>
+    <a class="shot" href="verify/mine_night.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/mine_night.jpg" alt="mine_night.png">
+    </a>
+    <div class="sub mono">res://scenes/night_mine.tscn</div>
+    <div class="sub dim">整关 · 夜色 · mine_night.png</div>
+    <div class="checks">
+      <ul><li>没有探照灯的一关：两盏钠灯 + 两处火堆够不够把黑区照出「可走」的边界</li><li>孢子断面的暗哑微光（灰绿）：要看得见、又不能像魔法——它是地质微光</li><li>井架绞车房小窗与斜井洞口暖光是不是全场唯一的「活气」</li></ul>
+      <ul class="en"><li>The no-searchlight level: two lamps + two fires — is the black zone still navigable?</li><li>The spore face's dull grey-green sheen: visible, but geological — not magical</li><li>Are the headframe cabin window and portal glow the only signs of life?</li></ul>
+    </div>
   </article></section><h2 id="crop">02 · 哨位特写 / Outpost close-ups</h2>
 <section class="grid">  <article class="card">
     <header>
@@ -214,10 +242,24 @@
       <ul><li>沙袋 (27.0, 12.6 m)：与停着的叉车互为掩体</li><li>弹药箱 (21.0, 6.2 m)：卫兵哨位；枪架 (9.2, 4.2 m)：409 批托盘旁</li><li>有没有穿帮：压在雪脊上、堵死必经路线、和托盘挤在一起</li></ul>
       <ul class="en"><li>Sandbags (27.0, 12.6 m): pairs with the parked forklift</li><li>Ammo box (21.0, 6.2 m): guard post; rack (9.2, 4.2 m): beside the Batch-409 pallet</li><li>Clipping: sunk into snow ridges, blocking the only route, jammed against the pallet</li></ul>
     </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L07M · 哨位特写</span>
+      <span class="meta mono">1600×518</span>
+    </header>
+    <a class="shot" href="verify/outpost_mine.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/outpost_mine.jpg" alt="outpost_mine.png">
+    </a>
+    <div class="sub mono">res://scenes/night_mine.tscn</div>
+    <div class="sub dim">三件新道具 2× · 假人哨塔 / 孢子断面 / 起爆器 · outpost_mine.png</div>
+    <div class="checks">
+      <ul><li>假人哨塔 (38.5, 13.4 m)：脚手架 + 防化服模特 + 猪嘴面具 + 扩音器——不许有一盏灯</li><li>孢子断面 (36.5, 28.4 m)：千层糕层理里那条灰黑孢子带的「暗哑微光」对不对</li><li>起爆器 (29.5, 26.8 m)：仪表 + 手摇柄 + 电缆盘 + 斜靠的台账夹板；必出 intel</li></ul>
+      <ul class="en"><li>Dummy tower (38.5, 13.4): scaffold + hazmat mannequin + pig-snout respirator — no light allowed</li><li>Spore face (36.5, 28.4): is the dull sheen on the grey-black spore band right?</li><li>Detonator (29.5, 26.8): dial + crank + cable reel + leaning ledger; guarantees intel</li></ul>
+    </div>
   </article></section><h2 id="read">03 · 战斗读数 / Combat readout</h2>
 <section class="grid">  <article class="card">
     <header>
-      <span class="chip">战斗读数 · L03–L05 通用</span>
+      <span class="chip">战斗读数 · L03–L07M 通用</span>
       <span class="meta mono">1344×1344</span>
     </header>
     <a class="shot" href="verify/combat_readout.png" target="_blank" rel="noopener">

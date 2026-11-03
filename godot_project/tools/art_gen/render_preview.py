@@ -38,6 +38,7 @@ SCENES = {
     "yard": dict(path="res://scenes/night_explore.tscn", title="L03 · ШИРОКАЯ КОЛЕЯ · FREIGHT YARD"),
     "marshalling": dict(path="res://scenes/night_marshalling.tscn", title="L04 · ЗАПАДНЫЙ СОРТИРОВОЧНЫЙ ПАРК"),
     "manor": dict(path="res://scenes/night_manor.tscn", title="L05 · СОСНОВАЯ УСАДЬБА · MANOR"),
+    "mine": dict(path="res://scenes/night_mine.tscn", title="L07M · ШАХТА №3 · MINE SHAFT No.3"),
 }
 
 
@@ -372,6 +373,14 @@ CROPS = {
         dict(m=(9.2, 4.2), art="PRP_WeaponRack.png", title="3 · WEAPON RACK",
              note="beside the Batch-409 pallet", win=(2.0, 2.4, 1.4)),
     ]),
+    "mine": dict(level="L07M SHAFT No.3 · BLAST FACE", items=[
+        dict(m=(38.5, 13.4), art="PRP_DummyTower_Mannequin.png", title="1 · DUMMY TOWER",
+             note="mannequin + pig-snout respirator, no light", win=(2.8, 8.8, 2.4)),
+        dict(m=(36.5, 28.4), art="PRP_SporeFace.png", title="2 · SPORE FACE",
+             note="permafrost strata + the grey spore band", win=(3.8, 5.0, 1.6)),
+        dict(m=(29.5, 26.8), art="PRP_Detonator_Rig.png", title="3 · DETONATOR RIG",
+             note="guaranteed intel: core + blast ledger", win=(1.9, 1.9, 1.3)),
+    ]),
 }
 
 
@@ -435,7 +444,7 @@ def crop_mark(level: str, out_path: str) -> None:
     for i, it in enumerate(spec["items"]):
         mx, my = it["m"]
         half_w, up, down = it["win"]
-        ox_, oy_ = ZONE_CROP.get(lv, (0.0, 0.0))
+        ox_, oy_ = ZONE_CROP.get(level, (0.0, 0.0))
         cx, cy = (mx + ox_) * PPM, (my + oy_) * GY + PAD
         box = (int(cx - half_w * PPM), int(cy - up * GY),
                int(cx + half_w * PPM), int(cy + down * GY))
@@ -584,7 +593,7 @@ def combat_diagram(out_path: str) -> None:
     d.rectangle([0, 0, W - 1, 34], fill=(9, 11, 12))
     d.text((14, 10), "COMBAT READOUT · NOISE RADII vs RANGE (top-down, 1 m = 14 px)",
            font=f16, fill=(216, 209, 191))
-    d.text((W - 300, 11), "L03-L05 · NIGHT SCENES", font=f12, fill=(110, 108, 100))
+    d.text((W - 300, 11), "L03-L07M · NIGHT SCENES", font=f12, fill=(110, 108, 100))
     d.text((14, H - 16), "gunfire alerts every OSK inside 80% of the ring radius · "
                          "crowbar is quiet but must touch 1.9 m",
            font=f12, fill=(146, 140, 124))
