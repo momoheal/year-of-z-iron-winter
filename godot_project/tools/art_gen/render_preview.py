@@ -35,6 +35,8 @@ FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONT_B = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
 SCENES = {
+    "coldstore": dict(path="res://scenes/night_coldstore.tscn",
+                      title="L02 · ХОЛОДИЛЬНИК №4 · RAIL COLD STORAGE"),
     "yard": dict(path="res://scenes/night_explore.tscn", title="L03 · ШИРОКАЯ КОЛЕЯ · FREIGHT YARD"),
     "marshalling": dict(path="res://scenes/night_marshalling.tscn", title="L04 · ЗАПАДНЫЙ СОРТИРОВОЧНЫЙ ПАРК"),
     "manor": dict(path="res://scenes/night_manor.tscn", title="L05 · СОСНОВАЯ УСАДЬБА · MANOR"),
@@ -358,6 +360,14 @@ def _vstack(a: Image.Image, b: Image.Image) -> Image.Image:
 # 哨位特写（新道具 + 编号标注）
 # ---------------------------------------------------------------------------
 CROPS = {
+    "coldstore": dict(level="L02 RAIL COLD STORAGE No.4", items=[
+        dict(m=(14.5, 5.2), art="PRP_CardTerminal.png", title="1 · CARD TERMINAL",
+             note="red text: roster headcount 0 (all the red on this map)", win=(3.2, 2.8, 1.8)),
+        dict(m=(11.5, 25.2), art="PRP_SealedMedCrate.png", title="2 · SEALED MED CRATE",
+             note="guaranteed abx: seals intact, the real drugs", win=(3.2, 2.8, 1.6)),
+        dict(m=(37.5, 23.6), art="PRP_ColdVaultDoor.png", title="3 · COLD VAULT DOOR",
+             note="wedge point: jam it with the crowbar, lead them there", win=(4.6, 3.8, 1.6)),
+    ]),
     "marshalling": dict(level="L04 WEST SORTING PARK", items=[
         dict(m=(33.0, 9.2), art="PRP_Sandbag_Line.png", title="1 · SANDBAGS",
              note="low cover (layer 2)", win=(3.4, 2.6, 1.8)),

@@ -59,7 +59,7 @@ year-of-z-iron-winter/
 │   ├── Z年纪事_结局分支与双线汇聚流程图.html                     # 俄式“卌”字划痕与五结局交互模拟器 (ZH)
 │   ├── Year_of_Z_Iron_Winter_Ending_Simulator_EN.html            # Dual-Anchor & 5-Ending Tally Simulator (EN)
 │   └── Z年纪事_核心关卡俯视角平面动线图.html                     # v4.0 核心关卡俯视角平面动线与战术沙盘，中英双语切换 (Tactical Blueprints)
-└── godot_project/                                                # ★ Godot 4.7.2 场景集：探索循环 + 5合1灰盒测试场 + Room A 夜潜切片 + 节点化夜潜五图（货场/调车场/庄园/矿坑/铁路黑市）
+└── godot_project/                                                # ★ Godot 4.7.2 场景集：探索循环 + 5合1灰盒测试场 + Room A 夜潜切片 + 节点化夜潜六图（货场/调车场/庄园/矿坑/铁路黑市/冷库）
     ├── project.godot                                             # 8 Physics Layers, 24 input actions, 1920x1080, main_scene = campaign.tscn
     ├── scenes/
     │   ├── campaign.tscn                                         # ★ 主场景：「一夜」探索循环（基地/地图/夜潜/结算/结局）
@@ -68,6 +68,7 @@ year-of-z-iron-winter/
     │   ├── night_manor.tscn                                      # ★ L05 松林庄园 · 二号恒温库（同管线）
     │   ├── night_mine.tscn                                       # ★ L07M 3 号矿坑 · 温压爆破作业面（同管线）
     │   ├── night_market.tscn                                     # ★ L07 铁路黑市 · 废弃工人镇（同管线）
+    │   ├── night_coldstore.tscn                                  # ★ L02 城北四号铁路冷库 · 账面死人（同管线）
     │   ├── gym.tscn                                              # 5合1 灰盒测试场（Rooms A–E）
     │   └── main.tscn                                             # Room A 夜潜垂直切片
     ├── scripts/

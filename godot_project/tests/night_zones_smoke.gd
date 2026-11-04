@@ -24,16 +24,19 @@ const SCENES := {
 	"manor": "res://scenes/night_manor.tscn",
 	"mine": "res://scenes/night_mine.tscn",
 	"market": "res://scenes/night_market.tscn",
+	"coldstore": "res://scenes/night_coldstore.tscn",
 }
 ## 每张图的出生点应该在哪个区（涵洞在庄园 / 站场 → 从黑区摸进来；货场从锅炉房 → 白区）
 const SPAWN_ZONE := {"yard": "white", "marshalling": "black", "manor": "black", "mine": "black",
-		"market": "white"}
+		"market": "white", "coldstore": "white"}
 ## 按关覆盖的尸群/黑市规则：L07M 矿坑是「环境杀」关（塌方 / 粉尘 / 起爆倒计时）——
 ## 尸少（感染掘进工只有 2 只，都是孢子源头的注脚）、无黑市（黑市是居民点的生意，不是作业面的）；
 ## market 是黑市老家（低危交易关：尸是注脚，摊区就在黑区中心）
 const LEVEL_RULES := {
 	"mine": {"black_min": 1, "red_max": 1, "market": false},
 	"market": {"black_min": 2, "red_max": 1, "market": true},
+	# coldstore：低危账目关（2 只感染者都是专用线上的注脚）；没有黑市——冷库里没有生意，只有账
+	"coldstore": {"black_min": 2, "red_max": 1, "market": false},
 }
 
 
@@ -66,6 +69,7 @@ func _run() -> void:
 	for name in SCENES.keys():
 		_level(name)
 	_market()
+	_coldstore()
 	_fire()
 	print("")
 	if failures.is_empty():
@@ -247,6 +251,33 @@ func _market() -> void:
 	_assert(not s.trade_market(mk), "没罐头 → 摊主不换")
 	_assert(int(s.reserve["rifle"]) == 0, "没成交就不该到账")
 
+	for c in root.get_children():
+		if c.name == "NightExplore":
+			root.remove_child(c)
+			c.free()
+
+
+# ---------------------------------------------------------------------------
+# coldstore 专用：「账面 vs 活人」——红字说在册 0 人，柱后缩着 2 个活人
+# ---------------------------------------------------------------------------
+func _coldstore() -> void:
+	print("[coldstore 专用]")
+	var s := _scene(SCENES["coldstore"])
+	var zs: Array = s.zones
+	var sv := get_nodes_in_group("night_survivor")
+	_assert(sv.size() == 2, "coldstore 3 号柱后的母子 2 人（账面在册 0 人）", str(sv.size()))
+	var near_col := 0
+	var col_px := Vector2(25.0 * PPM, 23.5 * PPM * SQ)
+	for p in sv:
+		var pz := Zones.zone_at(zs, NightExplore_to_m((p as Node2D).global_position))
+		_assert(pz == "black", "coldstore 幸存者住在黑区（账面死人的地方）", pz)
+		if NightExplore_dist_m((p as Node2D).global_position, col_px) <= 4.0:
+			near_col += 1
+	_assert(near_col == 2, "coldstore 母子贴着 3 号立柱（柱后 4 米内）", str(near_col))
+	# 磁卡终端在白区——「在册」的地方；两处对照摆在同一张图上
+	var term: Node = s.get_node_or_null("World/Props/CardTerminal")
+	_assert(term != null and Zones.zone_at(zs, NightExplore_to_m(term.global_position)) == "white",
+			"coldstore 磁卡终端站在白区（账面在册的地方）")
 	for c in root.get_children():
 		if c.name == "NightExplore":
 			root.remove_child(c)

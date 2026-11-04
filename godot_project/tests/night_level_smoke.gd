@@ -50,6 +50,7 @@ func _run() -> void:
 	_manor()
 	_mine()
 	_market()
+	_coldstore()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -66,7 +67,7 @@ func _registry() -> void:
 			continue
 		with_scene += 1
 		_assert(ResourceLoader.exists(sc), "LOCS[%s].scene 存在 (%s)" % [L.id, sc])
-	_assert(with_scene >= 5, "至少五关有节点化场景（yard/marshalling/manor/mine/market）", str(with_scene))
+	_assert(with_scene >= 6, "至少六关有节点化场景（yard/marshalling/manor/mine/market/coldstore）", str(with_scene))
 	# 每个带 scene 的地点：CampaignData 的 loot 类别都得在表里（夜潜掉落读同一张表）
 	for L in Data.LOCS:
 		for cat in L.loot:
@@ -385,6 +386,73 @@ func _market() -> void:
 	_assert(is_equal_approx(g.dawn_progress(), 0.5), "market 最后 20% 的一半 dawn=0.5",
 			str(g.dawn_progress()))
 	_shared(g, "market")
+
+
+func _coldstore() -> void:
+	var g: Node = _scene("res://scenes/night_coldstore.tscn")
+	_assert(g.level_id == "coldstore", "coldstore metadata.level_id", g.level_id)
+	_assert(g.level_zh == "城北四号铁路冷库", "coldstore metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "Rail Cold Storage No.4", "coldstore metadata.level_en", g.level_en)
+	_assert(g.prize == "abx", "coldstore prize = abx（封存医疗耗材——真药的另一半答案）", g.prize)
+	_assert(g.objective_zh.contains("0892"), "coldstore objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("豁口"), "coldstore extract 元数据（铁路专用线侧豁口）", g.extract_zh)
+	_assert(g.rail_y.size() == 1, "coldstore 铁路专用线 1 道", str(g.rail_y))
+	# 装配：2 组清杀队 / 2 只感染者 / 无半人（半人在 yard）/ 9 个容器 / 4 块冻雪泥
+	_assert(g.soldiers.size() == 2, "coldstore 2 组清杀队", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 2, "coldstore 2 只感染者", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 0, "coldstore 没有壮硕感染者（低危账目关）", str(brutes))
+	_assert(g.halfs.size() == 0, "coldstore 没有回退半人", str(g.halfs.size()))
+	_assert(g.containers.size() == 9, "coldstore 9 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 4, "coldstore 4 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（值班炉 + 幸存者火桶）；两盏灯（月台钠灯 + 南库冷白吊灯）；无探照灯
+	_assert(g.warm_lights.size() == 2, "coldstore 两个回温点（值班炉 + 火桶）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/BrazierDuty") != null, "coldstore 值班炉")
+	_assert(g.get_node_or_null("Lights/BrazierWorker") != null, "coldstore 幸存者火桶")
+	_assert(g.get_node_or_null("Lights/LampDock") != null and g.get_node_or_null("Lights/LampHall") != null,
+			"coldstore 两盏灯（月台灯 + 南库吊灯）")
+	_assert(g.get_node_or_null("Searchlight") == null, "coldstore 没有探照灯")
+	# 剧本锚点（1-3「账面死人」）：磁卡终端 / 排水窄缝 / 封存耗材（必出 abx）/ 冷库铁门 / 3 号柱母子
+	_assert(g.get_node_or_null("World/Props/CardTerminal") != null, "coldstore 磁卡终端（红字：在册人数 0）")
+	_assert(g.get_node_or_null("World/Props/DrainSlit") != null, "coldstore 12cm 排水窄缝（只有痕迹）")
+	var meds: Node = g.get_node_or_null("World/Props/SealedMeds")
+	_assert(meds != null and String(meds.get_meta("guaranteed", "")) == "abx",
+			"coldstore 封存医疗耗材必出 abx")
+	_assert(g.get_node_or_null("World/Props/ColdVaultDoor") != null, "coldstore 冷库铁门（wedge 机关载体）")
+	_assert(g.get_node_or_null("World/Props/Column03") != null, "coldstore 3 号立柱在场")
+	_assert(g.get_node_or_null("World/Survivor_0") != null and g.get_node_or_null("World/Survivor_1") != null,
+			"coldstore 3 号柱后的母子在场（账面在册 0 人，实际 2 人）")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightColdStore_Baked.png"), "coldstore 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_ColdStore_A.png"), "coldstore 冷库立面",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 地表 → 脚步材质：专用线是铁轨，南库空地是雪地
+	_assert(g.step_sound(_m(23.0, 27.0), false) == "step_rail", "踩在专用线 = 铁轨脚步",
+			g.step_sound(_m(23.0, 27.0), false))
+	_assert(g.step_sound(_m(2.0, 30.0), false) == "step_snow", "南库空地 = 雪地脚步",
+			g.step_sound(_m(2.0, 30.0), false))
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(46.0 * PPM), "coldstore limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(34.0 * GY), "coldstore limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "coldstore limit_top（冷库主楼顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "coldstore 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（coldstore 夜长 80 分钟）
+	g.in_campaign = true
+	g.night_max = 80.0
+	g.night_left = 80.0
+	_assert(g.dawn_progress() == 0.0, "coldstore 夜刚开始 dawn=0")
+	g.night_left = 8.0
+	_assert(is_equal_approx(g.dawn_progress(), 0.5), "coldstore 最后 20% 的一半 dawn=0.5",
+			str(g.dawn_progress()))
+	_shared(g, "coldstore")
 
 # ---------------------------------------------------------------------------
 func _shared(s: Node, tag: String) -> void:

@@ -91,7 +91,7 @@ def check_spec(name: str) -> dict:
         ok(k in M, f"{name}: META 缺字段 {k}")
     ok(M["id"] == name, f"{name}: META.id != 文件名")
     ok(M["prize"] in ITEMS, f"{name}: prize '{M['prize']}' 不在 CampaignData.ITEMS")
-    ok(M["facade"] in ("khrushchyovka", "depot", "manor", "mine", "town"), f"{name}: 未知立面种类 {M['facade']}")
+    ok(M["facade"] in ("khrushchyovka", "depot", "manor", "mine", "town", "coldstore"), f"{name}: 未知立面种类 {M['facade']}")
     W, H = spec.W, spec.H
     fy = spec.FENCE_Y
 

@@ -684,6 +684,45 @@ window and a dark doorway, tar stains at the base, §CAM_75, §LIGHT_COLD,
 （`gen_env._facade_town()` / `bake_ground()`），不走手工 Prompt；构图基准见 `CON_05`（黑市商贩群像）
 与场景美术设计文档 §2 / §3 平面图。**6.66 MHz 女声循环**属 P2 音频待办（需配音，不做程序化占位）。
 
+### 7.10 L02 冷库道具（5 件，2026-11 新增 · 对应《Z年纪事_铁路冷库场景美术设计》）
+
+> 第一幕 1-3「账面死人」冷库（`night_coldstore.tscn`）的五件新道具。**游戏内版本**由
+> `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4.1）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> `PRP_CardTerminal` 的红字屏是**全图唯一的红**（账面 vs 活人的对照轴），`PRP_DrainSlit`
+> **只画痕迹不画胳膊**（北雨棚那只胳膊在剧本里，不在画里）——两条都是不许违反的硬约束。
+
+```
+【PRP_CardTerminal】a Soviet industrial magnetic-card terminal on a steel pedestal:
+small amber-grey CRT display glowing blood-red with blocky status rows (no legible
+letters, just red text blocks), a card slot, a rubber keypad, a green power
+indicator, frost blooming along the top edge, cable conduit into the snow —
+the red display is the only red object allowed on this map,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_VaultColumn】a cold-store concrete pillar: square column with a wide base
+plate, grey-green paint worn to concrete, a small enamel number plate with a red
+border at eye height, frost rime creeping down the edges, icy drips at the foot,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_SealedMedCrate】a sealed medical supply crate: pale steel box with paper
+seal strips taped in a cross (untouched, official), a red pharmacy cross painted
+on the lid, frost haze on the metal, snow cap on top — sealed cold, the real
+medicine (guaranteed antibiotics),
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high side view, §TECH
+【PRP_ColdVaultDoor】an insulated cold-store sliding door: two thick grey-blue
+panels on an overhead rail with trolley wheels, heavy pull handles, a crowbar
+notch with rust marks at the seam, ice glaze along the bottom, icicle fringe on
+the lintel, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_DrainSlit】a wall-base drainage slit (12 cm) in frosted concrete: a dark
+narrow opening with claw scratches on the lip, a battered aluminium lunchbox
+scraped flat beside it, ice smear on the snow — traces only, NO arms, NO bodies,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, side three-quarter view, §TECH
+```
+
+冷库立面 `TIL_Facade_ColdStore_A` 与地面 `TIL_Ground_NightColdstore_Baked` 只走程序化管线
+（`gen_env._facade_coldstore()` / `bake_ground()`），不走手工 Prompt；构图基准见
+`CON_01`（工业冷链：保温板 + 冷风机 + 铁路大门 + 值班暖窗——全图唯一暖窗）与场景美术设计文档 §2 / §3。
+南库吊灯的**冷白光**由 `levels/coldstore.py` 的 `LIGHT_COLORS` 覆盖（其余灯位仍是琥珀），不改贴图。
+
 ## 8. 后处理与验收清单（每张图入库前逐条打勾）
 
 - [ ] 去背干净（rembg 之后放大到 400% 检查边缘毛边与半透明雪花残留）

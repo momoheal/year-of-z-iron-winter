@@ -306,6 +306,13 @@ if LY.has("MARKET", None):
             metadata__role='"survivor"')
 
 
+# 平民幸存者：不带黑市的关卡用这个通用钩子（coldstore 的 3 号柱母子）。
+# 命名沿用 Survivor_<i>；MARKET 关卡继续走上面 MARKET.survivors，别两边同时写。
+for _i, _sv in enumerate(LY.has("SURVIVORS", [])):
+    npc(f"Survivor_{_i}", "PRP_Survivor_Stand", _sv, ["night_survivor"],
+        metadata__role='"survivor"')
+
+
 # ===========================================================================
 # 灯光
 # ===========================================================================
@@ -361,9 +368,12 @@ def _rig_lamp(key):
     lr = S.node(key.title().replace("_", ""), "Node2D", lights, position=v2((lx + 64, ly)),
                 script=SCRIPT("NightFlicker"), mode='"sodium"',
                 flicker_seed=str(LY.LIGHT_SEEDS.get(key, 3)))
-    light_pair(lr, "VFX_Light_Radial", col(1, 0.7, 0.4), 1.2, 0.85, 1.35, shadow_mask=3)
+    # 关卡可用 LIGHT_COLORS[key] = (r,g,b) 覆盖默认琥珀（如冷库的冷白吊灯）；不定义 = 照旧
+    _lc = tuple(LY.has("LIGHT_COLORS", {}).get(key, (1.0, 0.7, 0.4)))
+    light_pair(lr, "VFX_Light_Radial", col(*_lc), 1.2, 0.85, 1.35, shadow_mask=3)
     S.node("Head", "PointLight2D", lr, position=v2((6, -347)), texture=S.tex("VFX_Light_Radial"),
-           texture_scale="0.22", color=col(1, 0.8, 0.5), energy="2.2", range_item_cull_mask="1")
+           texture_scale="0.22", color=col(*[min(1.0, c * 1.12) for c in _lc]),
+           energy="2.2", range_item_cull_mask="1")
 
 
 def _rig_terminal():

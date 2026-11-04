@@ -54,6 +54,7 @@ func _run() -> void:
 	_manor()
 	_mine()
 	_market()
+	_coldstore()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -167,6 +168,21 @@ func _market() -> void:
 	_assert(g.beats.get("events", []).is_empty(),
 			"market 没有环境节拍（危险就是人：交易 / 辨药 / 抉择 C）")
 	_common(g, "market")
+
+
+func _coldstore() -> void:
+	var g: Node = _scene("res://scenes/night_coldstore.tscn")
+	_assert(g.beats.get("events", []).is_empty(),
+			"coldstore 没有环境节拍（危险就是账：红字 / 铁门 / 把它们引过去）")
+	# wedge 机关：LOCS hint2「冷库铁门可以撬棍卡死」→ 挂在真实节点上
+	var mech: Array = g.beats.get("mechanisms", [])
+	_assert(mech.size() == 1 and String(mech[0].get("kind", "")) == "wedge",
+			"coldstore 一个 wedge 机关（卡死铁门）", str(mech.size()))
+	if mech.size() == 1:
+		_assert(g.get_node_or_null(String(mech[0].get("node", ""))) != null,
+				"coldstore 机关挂在真实节点上", String(mech[0].get("node", "")))
+		_assert(String(mech[0].get("prompt", "")) != "", "coldstore 机关有操作提示")
+	_common(g, "coldstore")
 
 
 # ---------------------------------------------------------------------------

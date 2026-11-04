@@ -1,7 +1,7 @@
 # 验收图 / Acceptance Sheets
 
 > 新增 **三区分野**（白 / 红 / 黑）与黑市：`zones_market.png` 是这一轮的主图；
-> 十张整关图上都能直接看到分区色带与雪面标签。规则与坐标见 `docs/zh/Z年纪事_三区与黑市.md`。
+> 十二张整关图上都能直接看到分区色带与雪面标签。规则与坐标见 `docs/zh/Z年纪事_三区与黑市.md`。
 
 > 这个目录里的 PNG **不是引擎截图**。本机跑不了 Godot，所以由
 > `godot_project/tools/art_gen/render_preview.py` 直接读 `godot_project/scenes/*.tscn`，
@@ -38,6 +38,9 @@
 | 13 | `outpost_mine.png` | `res://scenes/night_mine.tscn` | 三件新道具 2× 特写 | 假人哨塔 (38.5, 13.4 m)（脚手架 + 防化服模特 + 猪嘴面具 + 扩音器，**不许有一盏灯**）· 孢子断面 (36.5, 28.4 m)（千层糕层理 + 灰黑孢子带的暗哑微光）· 起爆器 (29.5, 26.8 m)（仪表 + 手摇柄 + 电缆盘 + 斜靠的台账夹板，必出 intel） |
 | 14 | `outpost_market.png` | `res://scenes/night_market.tscn` | 三件新道具 2× 特写 | 6.66 电台棚 (36.5, 25.0 m)（指针钉死 6.66、电子管微绿、柜台花哨假药瓶）· 烫鳞炭炉 (7.0, 24.9 m)（炭炉 + 烧红马蹄铁 + 折叠凳 + 烫焦绷带——只有工具和痕迹）· 药棚铁门 (12.0, 23.2 m)（磁卡读头 + 可锁挂环；门里冷柜必出 abx） |
 | 15 | `outpost_market.png` | `night_market.tscn` | 2× close-ups of Radio-666 stall (36.5, 25.0 m, dial pinned at 6.66), quack forge (7.0, 24.9 m, red-hot horseshoe — tools and traces only), med-shed iron door (12.0, 23.2 m, card reader + guaranteed abx) |
+| 16 | `coldstore_grey.png` | `res://scenes/night_coldstore.tscn`<br>L02 · ХОЛОДИЛЬНИК №4 · 城北四号铁路冷库（46×34 m） | 整关、中性光 | 冷库主楼立面（保温板 + 冷风机 + 值班暖窗 + 铁路大门 26 m）；**账面 vs 活人**一眼可读：磁卡终端红字块（14.5, 5.2）+ 封存药箱 vs 3 号柱后母子（24.2 / 25.8, 24.8 / 25.0）；排水窄缝（33.5, 3.9）只有痕迹不画胳膊；色带白 0–11 / 红 11–21 / 黑 21–34；铁路专用线（27.0 m）离围栏 6.2 m |
+| 17 | `coldstore_night.png` | 同上 | 整关、夜色 | 「月台暖、南库冷白、终端血红」三团色一眼分得开；南库吊灯冷白（LIGHT_COLORS）照着柱后母子；两处火桶（值班炉 9.2 / 幸存者火桶 41.0）= 有人给自己烧火的暖色注脚；无探照灯 |
+| 18 | `outpost_coldstore.png` | `res://scenes/night_coldstore.tscn` | 三件新道具 2× 特写 | 磁卡终端 (14.5, 5.2)（红字屏是全图唯一的红：【当前南库坐标在册人数：0】）· 封存药箱 (11.5, 25.2)（钢印封条 + 红十字 + 霜挂，必出 abx）· 冷库铁门 (37.5, 23.6)（滑轨双扇门 + 撬棍卡口——wedge 机关载体） |
 | `combat_readout.png` | L03–L07M 通用 / all night levels | 俯视读数 / top-down readout | 撬棍扇形 ±49°/1.9 m 是否够"贴身才有用"；TT-33 26 m、锯短 38 m、莫辛 44 m 的噪声圈是否真的"一枪就把人拽过来"；右下命中半径（0.40/0.46/0.52 m）与左下数值表 |
 
 > 特写图（11–14）里**故意不画角色**，避免路过的兵挡住道具；整关图（1–10）保留角色，用来看人／环境比例。
@@ -82,13 +85,13 @@ python3 godot_project/tools/art_gen/build_acceptance_page.py      # 改了图之
 
 ```bash
 cd godot_project/tools/art_gen
-python3 render_preview.py            # 10 张整关图（5 关 × 中性光 / 夜色）+ 5 张特写与读数（含 zones_market）
+python3 render_preview.py            # 12 张整关图（6 关 × 中性光 / 夜色）+ 6 张特写与读数（含 zones_market）
 python3 render_preview.py --crops    # 只重出特写与战斗读数
-python3 render_preview.py --level manor
+python3 render_preview.py --level coldstore
 ```
 
 - 比例：1 m = 64 px，地面纵向压扁 ×0.62；整关图默认再缩到 0.62 输出。
-- 底层数据：`godot_project/scenes/night_{explore,marshalling,manor,mine,market}.tscn` 与 `godot_project/art/`。
+- 底层数据：`godot_project/scenes/night_{explore,marshalling,manor,mine,market,coldstore}.tscn` 与 `godot_project/art/`。
 - 改场景后**必须重跑**，这些图不会自动更新。
 
 ---

@@ -106,8 +106,9 @@ func _run_tests() -> void:
 	_assert(Data.STORY.size() >= 5, "10. story beats present", str(Data.STORY.size()))
 	_assert(Data.weapon("cleaver")["dmg"] == 46.0 and Data.weapon("shotgun")["dmg"] == 95.0 \
 		and Data.weapon("mosin")["dmg"] == 150.0, "11. weapon damage 46 / 95 / 150")
-	_assert(Data.loc("coldstore")["cold"] == 0.9 and Data.loc("manor")["dg"] == 5,
-		"12. location stats match the prototype")
+	_assert(Data.loc("coldstore")["cold"] == 0.9 and Data.loc("manor")["dg"] == 5 \
+		and String(Data.loc("coldstore").get("scene", "")) == "res://scenes/night_coldstore.tscn",
+		"12. location stats match the prototype（coldstore 接夜潜场景「账面死人」）")
 
 	# --- 3. 新游戏初始状态 -------------------------------------------------
 	sim.new_game()

@@ -1416,6 +1416,151 @@ def radio666():
     return L.finish(), (w / 2, base)
 
 
+def card_terminal():
+    """磁卡终端：读卡器 + 血红显示屏（在册人数 0 的载体）+ 键盘——全图唯一的红。"""
+    w, h = 170, 176
+    L = Layer(w, h, 3)
+    base = 168
+    # 立柱 + 机箱
+    L.paint(L.rect(66, 92, 104, base), L.tex("#4e555c", 0.09, 4, 21))
+    L.paint(L.ellipse(85, base - 2, 26, 7), hexc("#3a4046"))
+    body = L.rect(30, 26, 140, 100, 3)
+    L.paint(body, L.tex("#5a6169", 0.09, 4, 23))
+    L.shade(body, L.gy(26, 100, 1.1, 0.78))
+    L.paint(L.rect(36, 32, 134, 94, 2), hexc("#3f464d"))
+    # 血红显示屏（辉光晕 + 红字块——不写字，避免乱码）
+    L.paint(L.rect(44, 38, 126, 72), hexc("#2a1210"))
+    L.paint(L.rect(40, 34, 130, 76), hexc("#e0442e"), 0.14)     # 辉光晕
+    L.paint(L.rect(48, 42, 122, 68), hexc("#e0442e"), 0.9)
+    for k in range(4):                                          # 「红字」行
+        L.paint(L.rect(52, 45 + k * 6, 52 + (96 if k < 3 else 58), 48 + k * 6),
+                hexc("#2a1210"), 0.85)
+    # 读卡槽 + 键盘 + 指示灯
+    L.paint(L.rect(44, 78, 126, 84), hexc("#22262b"))
+    L.paint(L.rect(44, 78, 74, 82), hexc("#0d0f12"))
+    for r in range(2):
+        for c in range(6):
+            L.paint(L.rect(48 + c * 12, 88 + r * 6, 56 + c * 12, 92 + r * 6), hexc("#2b3036"))
+    L.paint(L.ellipse(128, 40, 2.4, 2.4), hexc("#9fd08a"))
+    # 霜挂
+    L.paint(L.rect(30, 26, 140, 30), hexc("#dfe8f0"), 0.5)
+    L.paint(L.rect(32, 96, 60, 100), hexc("#dfe8f0"), 0.4)
+    L.grime(body, 27, 0.2)
+    L.rust_streaks(body, 27, 0.3)
+    return L.finish(), (w / 2, base)
+
+
+def vault_column():
+    """冷库立柱：混凝土方柱 + 柱号牌 + 霜挂——3 号柱是全关的证人席。"""
+    w, h = 110, 182
+    L = Layer(w, h, 3)
+    base = 174
+    col = L.rect(32, 10, 78, base - 6)
+    L.paint(col, L.tex("#7a8590", 0.1, 4, 31))
+    L.shade(col, L.gy(10, base - 6, 1.12, 0.74))
+    L.paint(L.rect(32, 10, 38, base - 6), hexc("#95a2ad"), 0.5)      # 亮面
+    L.paint(L.rect(72, 10, 78, base - 6), hexc("#4c565f"), 0.5)      # 暗面
+    # 柱帽 / 柱脚
+    L.paint(L.rect(24, 6, 86, 16), hexc("#68737d"))
+    L.paint(L.rect(22, base - 14, 88, base - 4), hexc("#68737d"))
+    L.paint(L.ellipse(55, base - 2, 34, 7), hexc("#5b6670"))
+    # 柱号牌（无字底牌 + 红框——3 号柱由摆位区分）
+    L.paint(L.rect(42, 40, 68, 66), hexc("#22262b"))
+    L.paint(L.rect(45, 43, 65, 63), hexc("#c9c2a8"))
+    L.paint(L.rect(48, 46, 62, 60), hexc("#a03428"), 0.75)
+    L.paint(L.rect(51, 49, 59, 57), hexc("#c9c2a8"))
+    # 霜挂
+    L.paint(L.rect(32, 10, 78, 22), hexc("#dfe8f0"), 0.55)
+    for xx in (38, 52, 66, 74):
+        L.paint(L.rect(xx, base - 22, xx + 3, base - 8), hexc("#dfe8f0"), 0.4)
+    L.grime(col, 33, 0.16)
+    return L.finish(), (w / 2, base)
+
+
+def sealed_med_crate():
+    """封存医疗耗材箱：封条 + 红十字 + 霜——「据说封着一批医疗耗材」。"""
+    w, h = 150, 118
+    L = Layer(w, h, 3)
+    base = 110
+    top, front = obox(L, 26, base, 88, 24, 32, "#7d8590", "#69727c", 41)
+    L.paint(L.rect(30, base - 24, 110, base - 22), hexc("#4e565e"))
+    # 封条（十字贴）
+    L.paint(L.rect(34, base - 52, 106, base - 44), hexc("#c9c2a8"))
+    L.paint(L.rect(64, base - 78, 76, base - 26), hexc("#c9c2a8"))
+    L.paint(L.rect(38, base - 50, 102, base - 46), hexc("#a03428"), 0.8)
+    L.paint(L.rect(66, base - 74, 74, base - 30), hexc("#a03428"), 0.8)
+    # 红十字（漆）
+    L.paint(L.rect(44, base - 96, 58, base - 76), hexc("#a03428"))
+    L.paint(L.rect(38, base - 90, 64, base - 82), hexc("#a03428"))
+    # 霜
+    L.paint(L.rect(30, base - 30, 110, base - 24), hexc("#dfe8f0"), 0.35)
+    L.grime(front, 43, 0.22)
+    L.rust_streaks(front, 43, 0.12)
+    L.snow_cap(26, 114, base - 32, 8, 45, droop=0.4)
+    return L.finish(), (w / 2, base)
+
+
+def cold_vault_door():
+    """冷库铁门：保温双扇滑门 + 滑轨 + 冰壳——wedge 机关的载体（LOCS：可以撬棍卡死）。"""
+    w, h = 300, 226
+    L = Layer(w, h, 3)
+    base = 218
+    # 门框
+    L.paint(L.rect(16, 18, 284, base - 2), L.tex("#5a636c", 0.09, 5, 51))
+    # 双扇门
+    for x0, x1 in ((22, 150), (150, 278)):
+        door = L.rect(x0, 26, x1, base - 6)
+        L.paint(door, L.tex("#7a8894", 0.11, 5, 53))
+        L.shade(door, L.gy(26, base - 6, 1.1, 0.76))
+        L.paint(L.rect(x0 + 6, 32, x1 - 6, base - 12), hexc("#8b99a6"), 0.5)
+    L.paint(L.rect(146, 26, 154, base - 6), hexc("#4c565f"))           # 中缝
+    # 滑轨 + 滑轮
+    L.paint(L.rect(10, 12, 290, 22), hexc("#3f464d"))
+    for xx in (60, 120, 180, 240):
+        L.paint(L.ellipse(xx, 22, 7, 7), hexc("#2b3036"))
+        L.paint(L.ellipse(xx, 22, 3, 3), hexc("#6a747d"))
+    # 拉手 + 撬棍卡口（wedge 的痕迹位）
+    L.paint(L.rect(120, 110, 132, 150), hexc("#3a4046"))
+    L.paint(L.rect(168, 110, 180, 150), hexc("#3a4046"))
+    L.paint(L.rect(132, 122, 168, 132), hexc("#22262b"))
+    L.paint(L.rect(134, 118, 166, 124), hexc("#8a2f22"))               # 卡口的锈痕
+    # 冰壳
+    L.paint(L.rect(16, 18, 284, 34), hexc("#dfe8f0"), 0.55)
+    for xx in range(24, 284, 34):
+        L.paint(L.rect(xx, base - 16, xx + 8, base - 4), hexc("#dfe8f0"), 0.35)
+    L.rust_streaks(L.rect(16, 18, 284, base - 2), 55, 0.14)
+    L.snow_cap(10, 290, base - 4, 10, 57, droop=0.5)
+    return L.finish(), (w / 2, base)
+
+
+def drain_slit():
+    """12cm 排水窄缝：墙脚黑缝 + 霜 + 被刮烂的铝饭盒——只有痕迹，不画胳膊。"""
+    w, h = 240, 96
+    L = Layer(w, h, 3)
+    base = 88
+    # 墙脚压条
+    L.paint(L.rect(8, 18, 232, base - 2), L.tex("#5f6a74", 0.1, 4, 61))
+    L.paint(L.rect(8, 18, 232, 26), hexc("#48525b"))
+    # 窄缝（12cm 的黑暗）
+    L.paint(L.rect(30, 46, 150, 62), hexc("#0c0e11"))
+    L.paint(L.rect(30, 42, 150, 48), hexc("#2b3239"))
+    # 缝边刮痕（那只胳膊留下的）
+    for k in range(4):
+        L.paint(L.line([(36 + k * 28, 44), (52 + k * 28, 30)], 2.2), hexc("#95a2ad"), 0.7)
+    # 刮烂的铝饭盒
+    L.paint(L.rect(170, 52, 216, 80), hexc("#8a919a"))
+    L.paint(L.rect(174, 56, 212, 64), hexc("#b9c2cb"))
+    L.paint(L.rect(170, 66, 216, 70), hexc("#5b646d"))
+    L.paint(L.line([(176, 58), (210, 78)], 2.4), hexc("#4e565e"))
+    L.paint(L.line([(184, 54), (206, 76)], 2.0), hexc("#4e565e"))
+    L.paint(L.ellipse(193, 66, 4, 3), hexc("#3a4046"))
+    # 霜
+    L.paint(L.rect(8, base - 12, 232, base - 2), hexc("#dfe8f0"), 0.5)
+    L.paint(L.ellipse(90, 70, 60, 8), hexc("#dfe8f0"), 0.35)
+    L.grime(L.rect(8, 18, 232, base - 2), 63, 0.22)
+    return L.finish(), (w / 2, base)
+
+
 ALL = {
     "PRP_Crate_Wood_Stack": crate_stack,
     "PRP_SupplyCrates_Military": supply_crates,
@@ -1433,6 +1578,11 @@ ALL = {
     "PRP_MedCache": med_cache,
     "PRP_QuackForge": quack_forge,
     "PRP_Radio666": radio666,
+    "PRP_CardTerminal": card_terminal,
+    "PRP_VaultColumn": vault_column,
+    "PRP_SealedMedCrate": sealed_med_crate,
+    "PRP_ColdVaultDoor": cold_vault_door,
+    "PRP_DrainSlit": drain_slit,
     "PRP_Buran_Boxcar03": boxcar,
     "PRP_WaterTower": water_tower,
     "PRP_Watchtower_Searchlight": watchtower,
