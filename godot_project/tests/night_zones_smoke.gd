@@ -26,10 +26,11 @@ const SCENES := {
 	"market": "res://scenes/night_market.tscn",
 	"coldstore": "res://scenes/night_coldstore.tscn",
 	"canteen": "res://scenes/night_canteen.tscn",
+	"sanitarium": "res://scenes/night_sanitarium.tscn",
 }
 ## 每张图的出生点应该在哪个区（涵洞在庄园 / 站场 → 从黑区摸进来；货场从锅炉房 → 白区）
 const SPAWN_ZONE := {"yard": "white", "marshalling": "black", "manor": "black", "mine": "black",
-		"market": "white", "coldstore": "white", "canteen": "white"}
+		"market": "white", "coldstore": "white", "canteen": "white", "sanitarium": "white"}
 ## 按关覆盖的尸群/黑市规则：L07M 矿坑是「环境杀」关（塌方 / 粉尘 / 起爆倒计时）——
 ## 尸少（感染掘进工只有 2 只，都是孢子源头的注脚）、无黑市（黑市是居民点的生意，不是作业面的）；
 ## market 是黑市老家（低危交易关：尸是注脚，摊区就在黑区中心）
@@ -40,6 +41,8 @@ const LEVEL_RULES := {
 	"coldstore": {"black_min": 2, "red_max": 1, "market": false},
 	# canteen：狭窄空间肉搏关（瓦西里 + 后角 1 只都在黑区窄门一带）；没有黑市——食堂里只有账和碗
 	"canteen": {"black_min": 2, "red_max": 1, "market": false},
+	# sanitarium：地底铁笼关（3 只都在黑区笼列）；没有黑市——疗养院里没有生意，只有病
+	"sanitarium": {"black_min": 3, "red_max": 1, "market": false},
 }
 
 
@@ -74,6 +77,7 @@ func _run() -> void:
 	_market()
 	_coldstore()
 	_canteen()
+	_sanitarium()
 	_fire()
 	print("")
 	if failures.is_empty():
@@ -264,6 +268,31 @@ func _market() -> void:
 # ---------------------------------------------------------------------------
 # coldstore 专用：「账面 vs 活人」——红字说在册 0 人，柱后缩着 2 个活人
 # ---------------------------------------------------------------------------
+func _sanitarium() -> void:
+	print("[sanitarium 专用]")
+	var s := _scene(SCENES["sanitarium"])
+	var zs: Array = s.zones
+	var sv := get_nodes_in_group("night_survivor")
+	_assert(sv.size() == 3, "sanitarium 安娜 0419 + 梁诺夫 + 古丽娅 3 人", str(sv.size()))
+	# 安娜在黑区铁架床边（熬过第四天的人），两位医生在白区工作区
+	var anna: Node2D = sv[0] as Node2D
+	_assert(Zones.zone_at(zs, NightExplore_to_m(anna.global_position)) == "black",
+			"安娜在黑区铁架床边（掉鳞屑的地方）")
+	_assert(Zones.zone_at(zs, NightExplore_to_m((sv[1] as Node2D).global_position)) == "white",
+			"梁诺夫医生在白区工作区")
+	# 药柜在白区（照顾人的地方），回退半人在黑区笼里
+	var meds: Node = s.get_node_or_null("World/Props/MedCabinet")
+	_assert(meds != null and Zones.zone_at(zs, NightExplore_to_m(meds.global_position)) == "white",
+			"药柜站在白区医生工作区")
+	for h in get_nodes_in_group("night_half"):
+		var hz := Zones.zone_at(zs, NightExplore_to_m((h as Node2D).global_position))
+		_assert(hz == "black", "回退半人关在黑区笼里", hz)
+	for c in root.get_children():
+		if c.name == "NightExplore":
+			root.remove_child(c)
+			c.free()
+
+
 func _canteen() -> void:
 	print("[canteen 专用]")
 	var s := _scene(SCENES["canteen"])

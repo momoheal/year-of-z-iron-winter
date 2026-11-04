@@ -1666,6 +1666,191 @@ def canteen_bench_table():
     return _canteen_table(False)
 
 
+# ---------------------------------------------------------------------------
+# sanitarium：旧传染病疗养院 · 地下室（PRP_IronCage / PRP_CageBed / PRP_CageGate /
+# PRP_MedCabinet / PRP_XrayLightbox / PRP_ChemDrum）
+# ---------------------------------------------------------------------------
+
+def iron_cage():
+    """钢筋铁笼（灰鳞病回退区的关人笼）：竖栏 + 顶框 + 底座 + 挂链锁。"""
+    w, h = 176, 136
+    L = Layer(w, h, 3)
+    base = 128
+    # 底座
+    L.paint(L.rect(10, base - 12, 166, base), hexc("#3c4148"))
+    L.paint(L.rect(14, base - 8, 162, base - 4), hexc("#2b3036"))
+    # 顶框
+    L.paint(L.rect(10, base - 116, 166, base - 104), hexc("#5a636c"))
+    L.paint(L.rect(10, base - 116, 166, base - 112), hexc("#8a919a"))
+    # 竖栏
+    for bx in range(18, 166, 14):
+        L.paint(L.rect(bx, base - 104, bx + 5, base - 12), hexc("#6a747d"))
+        L.paint(L.rect(bx + 4, base - 104, bx + 5, base - 12), hexc("#48525b"))
+    # 中横撑
+    L.paint(L.rect(10, base - 72, 166, base - 66), hexc("#5a636c"))
+    # 门缝（中开双扇）
+    L.paint(L.rect(84, base - 104, 92, base - 12), hexc("#3c4148"))
+    # 挂链锁
+    L.paint(L.rect(86, base - 58, 98, base - 44), hexc("#8a919a"))
+    L.paint(L.rect(88, base - 56, 96, base - 46), hexc("#241a10"))
+    for cy in (base - 44, base - 38, base - 32):
+        L.paint(L.ellipse(92, cy, 4, 3), hexc("#6a747d"))
+    # 锈痕
+    for rx in (30, 72, 120, 150):
+        L.paint(L.rect(rx, base - 100, rx + 6, base - 40), hexc("#5c4432"), 0.28)
+    L.grime(L.rect(10, base - 12, 166, base), 40, 0.3)
+    L.snow_cap(10, 166, base - 116, 5, 90, droop=0.12)
+    return L.finish(), (w / 2, base)
+
+
+def cage_bed():
+    """铁架床 + 两根旧皮带（安娜 0419 把自己捆在这里熬过神经风暴）。"""
+    w, h = 190, 124
+    L = Layer(w, h, 3)
+    base = 116
+    # 床头竖栏（北）
+    L.paint(L.rect(14, base - 84, 24, base - 20), hexc("#6a747d"))
+    L.paint(L.rect(166, base - 70, 176, base - 20), hexc("#6a747d"))
+    for bx in (30, 46, 62):
+        L.paint(L.rect(bx, base - 80, bx + 5, base - 46), hexc("#5a636c"))
+    for bx in (126, 142, 158):
+        L.paint(L.rect(bx, base - 66, bx + 5, base - 46), hexc("#5a636c"))
+    # 床架 + 垫
+    L.paint(L.rect(14, base - 46, 176, base - 32), hexc("#48525b"))
+    L.paint(L.rect(18, base - 58, 172, base - 42), L.tex("#7a7466", 0.14, 4, 41))
+    L.paint(L.rect(18, base - 58, 172, base - 52), hexc("#8a8474"))
+    # 破毯
+    L.paint(L.rect(60, base - 62, 120, base - 44), hexc("#4a3f36"))
+    L.paint(L.poly([(110, base - 62), (132, base - 54), (126, base - 44), (104, base - 46)]),
+            hexc("#3c332c"))
+    # 床腿
+    for lx in (18, 168):
+        L.paint(L.rect(lx, base - 32, lx + 8, base), hexc("#5a636c"))
+    # ★ 两根旧皮带（捆在栏杆上——钱道具的细节）
+    for sx, sy in ((40, base - 62), (40, base - 52)):
+        L.paint(L.rect(sx, sy, sx + 46, sy + 6), hexc("#6b4a2c"))
+        L.paint(L.rect(sx + 42, sy - 1, sx + 50, sy + 7), hexc("#8a6438"))  # 扣头
+    L.paint(L.rect(36, base - 66, 48, base - 48), hexc("#7a5634"))         # 缠绕的带头
+    L.paint(L.rect(84, base - 68, 96, base - 50), hexc("#7a5634"))
+    L.grime(L.rect(14, base - 46, 176, base - 32), 36, 0.22)
+    return L.finish(), (w / 2, base)
+
+
+def cage_gate():
+    """笼区铁栅门（wedge 机关载体）：对开栅门 + 插销 + 撬棍卡口。"""
+    w, h = 220, 150
+    L = Layer(w, h, 3)
+    base = 142
+    # 门框
+    L.paint(L.rect(8, base - 132, 24, base), hexc("#48525b"))
+    L.paint(L.rect(196, base - 132, 212, base), hexc("#48525b"))
+    L.paint(L.rect(8, base - 132, 212, base - 118), hexc("#5a636c"))
+    # 栅扇
+    for bx in range(32, 196, 16):
+        L.paint(L.rect(bx, base - 118, bx + 6, base - 8), hexc("#6a747d"))
+        L.paint(L.rect(bx + 5, base - 118, bx + 6, base - 8), hexc("#48525b"))
+    # 中缝双扇
+    L.paint(L.rect(104, base - 118, 116, base - 8), hexc("#3c4148"))
+    # 横撑两道
+    L.paint(L.rect(24, base - 92, 196, base - 86), hexc("#5a636c"))
+    L.paint(L.rect(24, base - 40, 196, base - 34), hexc("#5a636c"))
+    # 插销 + 锁
+    L.paint(L.rect(88, base - 84, 132, base - 72), hexc("#8a919a"))
+    L.paint(L.rect(92, base - 82, 128, base - 74), hexc("#241a10"))
+    L.paint(L.rect(112, base - 100, 128, base - 86), hexc("#8a919a"))
+    # 撬棍卡口（底横梁上的缺口）
+    L.paint(L.poly([(150, base - 22), (174, base - 22), (168, base - 8), (156, base - 8)]),
+            hexc("#241a10"))
+    L.paint(L.poly([(152, base - 20), (172, base - 20), (167, base - 11), (157, base - 11)]),
+            hexc("#5c4432"))
+    L.grime(L.rect(8, base - 8, 212, base), 30, 0.3)
+    L.snow_cap(8, 212, base - 132, 5, 90, droop=0.12)
+    return L.finish(), (w / 2, base)
+
+
+def med_cabinet():
+    """药柜（guaranteed asp）：钢药柜 + 开着的柜门 + 药瓶层板 + 红十字。"""
+    w, h = 150, 156
+    L = Layer(w, h, 3)
+    base = 148
+    # 柜体
+    L.paint(L.rect(16, base - 128, 134, base), L.tex("#8a919a", 0.09, 4, 61))
+    L.shade(L.rect(16, base - 128, 134, base), L.gy(base - 128, base, 1.06, 0.78))
+    # 顶檐
+    L.paint(L.rect(12, base - 134, 138, base - 126), hexc("#6a747d"))
+    # 左门（关）+ 红十字
+    L.paint(L.rect(20, base - 122, 66, base - 8), hexc("#9aa1a8"))
+    L.paint(L.rect(40, base - 100, 48, base - 60), hexc("#b0472c"))
+    L.paint(L.rect(30, base - 88, 58, base - 72), hexc("#b0472c"))
+    L.paint(L.rect(58, base - 62, 64, base - 56), hexc("#241a10"))   # 拉手
+    # 右门（开）+ 内层板与药瓶
+    L.paint(L.poly([(70, base - 122), (128, base - 114), (128, base - 2), (70, base - 8)]),
+            hexc("#2b3036"))
+    for py_ in (base - 108, base - 74, base - 40):
+        L.paint(L.rect(74, py_, 124, py_ + 4), hexc("#48525b"))
+        for bx in (80, 96, 112):
+            L.paint(L.rect(bx, py_ - 12, bx + 9, py_), hexc("#c9c2a8"), 0.9)   # 药瓶
+            L.paint(L.rect(bx + 2, py_ - 11, bx + 7, py_ - 5), hexc("#d8b25a"), 0.8)
+            L.paint(L.rect(bx + 2, py_ - 4, bx + 7, py_ - 1), hexc("#b0472c"), 0.7)
+    L.paint(L.poly([(128, base - 114), (142, base - 108), (142, base + 2), (128, base - 2)]),
+            hexc("#7c828a"))                                              # 开着的门板
+    L.grime(L.rect(16, base - 12, 134, base), 30, 0.26)
+    L.snow_cap(12, 138, base - 134, 4, 88, droop=0.1)
+    return L.finish(), (w / 2, base)
+
+
+def xray_lightbox():
+    """读片灯箱（briefcase 类 intel 容器）：灯箱 + 挂着的胸片 + 卡夹 + 病历。"""
+    w, h = 180, 148
+    L = Layer(w, h, 3)
+    base = 140
+    # 箱体
+    L.paint(L.rect(14, base - 116, 166, base - 22), hexc("#48525b"))
+    L.paint(L.rect(22, base - 108, 158, base - 30), hexc("#dfe8f0"))
+    L.paint(L.rect(22, base - 108, 158, base - 68), hexc("#f2f7fb"), 0.7)
+    # 胸片（挂在灯箱上：肋骨条 + 脊柱）
+    L.paint(L.rect(48, base - 102, 132, base - 38), hexc("#2b3036"), 0.92)
+    L.paint(L.rect(52, base - 98, 128, base - 42), hexc("#5a6570"), 0.95)
+    for ry_ in range(base - 94, base - 48, 8):
+        L.paint(L.rect(56, ry_, 124, ry_ + 2), hexc("#8a919a"), 0.8)
+    L.paint(L.rect(84, base - 98, 96, base - 42), hexc("#aab0b6"), 0.85)
+    # 卡夹 + 病历纸
+    L.paint(L.rect(84, base - 116, 96, base - 106), hexc("#8a919a"))
+    L.paint(L.rect(24, base - 30, 70, base - 22), hexc("#c9c2a8"))
+    L.paint(L.rect(24, base - 38, 60, base - 30), hexc("#d8cdb4"))
+    # 支脚
+    for lx in (28, 148):
+        L.paint(L.rect(lx, base - 22, lx + 8, base), hexc("#3c4148"))
+    L.grime(L.rect(14, base - 22, 166, base - 14), 24, 0.24)
+    return L.finish(), (w / 2, base)
+
+
+def chem_drum():
+    """石灰 / 消毒桶：鼓身 + 石灰渍 + 铁勺 + 撒粉。"""
+    w, h = 130, 138
+    L = Layer(w, h, 3)
+    base = 130
+    # 鼓身
+    L.paint(L.rect(24, base - 102, 106, base), L.tex("#6a747d", 0.11, 4, 71))
+    L.shade(L.rect(24, base - 102, 106, base), L.gy(base - 102, base, 1.1, 0.72))
+    # 桶沿 + 环箍
+    L.paint(L.ellipse(65, base - 102, 42, 10), hexc("#8a919a"))
+    L.paint(L.ellipse(65, base - 102, 36, 7), hexc("#c9c2a8"))       # 石灰面
+    L.paint(L.ellipse(65, base - 100, 22, 4), hexc("#eef3f8"), 0.8)
+    for hy_ in (base - 78, base - 40):
+        L.paint(L.rect(24, hy_, 106, hy_ + 5), hexc("#48525b"))
+    # 字标（色块，不写可读字）
+    L.paint(L.rect(38, base - 70, 52, base - 52), hexc("#b0472c"), 0.85)
+    L.paint(L.rect(43, base - 66, 47, base - 56), hexc("#e8e0cc"), 0.9)
+    # 铁勺 + 撒粉
+    L.paint(L.rect(88, base - 118, 94, base - 96), hexc("#8a919a"))
+    L.paint(L.ellipse(91, base - 120, 8, 5), hexc("#c9c2a8"))
+    L.paint(L.ellipse(40, base - 8, 18, 6), hexc("#eef3f8"), 0.75)
+    L.paint(L.ellipse(96, base - 6, 12, 4), hexc("#eef3f8"), 0.6)
+    L.grime(L.rect(24, base - 20, 106, base), 26, 0.28)
+    return L.finish(), (w / 2, base)
+
+
 def narrow_door():
     """杂物间单向窄门：门框新裂 + 门板内倾——wedge 机关的载体（「窄门会被冲开」）。"""
     w, h = 180, 196
@@ -1748,6 +1933,12 @@ ALL = {
     "PRP_Canteen_Stove": canteen_stove,
         "PRP_Canteen_Table": canteen_table,
         "PRP_Canteen_BenchTable": canteen_bench_table,
+        "PRP_IronCage": iron_cage,
+        "PRP_CageBed": cage_bed,
+        "PRP_CageGate": cage_gate,
+        "PRP_MedCabinet": med_cabinet,
+        "PRP_XrayLightbox": xray_lightbox,
+        "PRP_ChemDrum": chem_drum,
     "PRP_NarrowDoor": narrow_door,
     "PRP_RyeVat": rye_vat,
     "PRP_Buran_Boxcar03": boxcar,

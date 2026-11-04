@@ -109,8 +109,10 @@ func _run_tests() -> void:
 	_assert(Data.loc("coldstore")["cold"] == 0.9 and Data.loc("manor")["dg"] == 5 \
 		and String(Data.loc("coldstore").get("scene", "")) == "res://scenes/night_coldstore.tscn" \
 		and String(Data.loc("canteen").get("scene", "")) == "res://scenes/night_canteen.tscn" \
-		and int(Data.loc("canteen")["dg"]) == 3 and float(Data.loc("canteen")["cold"]) == 0.5,
-		"12. location stats match the prototype（coldstore 接夜潜场景「账面死人」/ canteen 接「锁骨」）")
+		and int(Data.loc("canteen")["dg"]) == 3 and float(Data.loc("canteen")["cold"]) == 0.5 \
+		and String(Data.loc("sanitarium").get("scene", "")) == "res://scenes/night_sanitarium.tscn" \
+		and int(Data.loc("sanitarium")["dg"]) == 4 and int(Data.loc("sanitarium")["req"]["med"]) == 1,
+		"12. location stats match the prototype（coldstore「账面死人」/ canteen「锁骨」/ sanitarium「地底铁笼」）")
 
 	# --- 3. 新游戏初始状态 -------------------------------------------------
 	sim.new_game()

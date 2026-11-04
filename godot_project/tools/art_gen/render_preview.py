@@ -44,6 +44,8 @@ SCENES = {
     "market": dict(path="res://scenes/night_market.tscn", title="L07 · БАРАХОЛКА · RAIL BLACK MARKET"),
     "canteen": dict(path="res://scenes/night_canteen.tscn",
                     title="L05 · ВОСТОЧНАЯ СТОЛОВАЯ · EAST STREET CANTEEN"),
+    "sanitarium": dict(path="res://scenes/night_sanitarium.tscn",
+                       title="L06 · САНАТОРИЙ · OLD SANATORIUM BASEMENT"),
 }
 
 
@@ -409,6 +411,14 @@ CROPS = {
              note="enamel bowls in a circle, chipped rims outward", win=(4.6, 3.2, 1.5)),
         dict(m=(32.0, 4.6), art="PRP_NarrowDoor.png", title="3 · NARROW DOOR",
              note="wedge point: 40°C delirium behind it, jam it shut", win=(3.4, 3.2, 1.6)),
+    ]),
+    "sanitarium": dict(level="L06 OLD SANATORIUM BASEMENT", items=[
+        dict(m=(23.0, 5.0), art="PRP_CageBed.png", title="1 · IRON BED & TWO STRAPS",
+             note="Anna 0419 strapped herself here through the fourth day", win=(3.2, 2.6, 1.8)),
+        dict(m=(10.0, 23.5), art="PRP_MedCabinet.png", title="2 · MED CABINET",
+             note="guaranteed asp: the echo of the last half-tablet", win=(2.6, 2.8, 1.7)),
+        dict(m=(22.0, 11.0), art="PRP_CageGate.png", title="3 · CAGE GATE",
+             note="wedge point: jam it shut, keep them inside", win=(4.0, 3.0, 1.5)),
     ]),
 }
 

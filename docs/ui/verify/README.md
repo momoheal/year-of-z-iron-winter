@@ -1,7 +1,7 @@
 # 验收图 / Acceptance Sheets
 
 > 新增 **三区分野**（白 / 红 / 黑）与黑市：`zones_market.png` 是这一轮的主图；
-> 十四张整关图上都能直接看到分区色带与雪面标签。规则与坐标见 `docs/zh/Z年纪事_三区与黑市.md`。
+> 十六张整关图上都能直接看到分区色带与雪面标签。规则与坐标见 `docs/zh/Z年纪事_三区与黑市.md`。
 
 > 这个目录里的 PNG **不是引擎截图**。本机跑不了 Godot，所以由
 > `godot_project/tools/art_gen/render_preview.py` 直接读 `godot_project/scenes/*.tscn`，
@@ -44,6 +44,9 @@
 | 19 | `canteen_grey.png` | `res://scenes/night_canteen.tscn`<br>L05 · ВОСТОЧНАЯ СТОЛОВАЯ · 东街工人食堂 · 后厨（44×32 m） | 整关、中性光 | 瓷砖后厨立面（炉罩 12 m + 出餐口 22 m + 磨砂高窗 33 m）；**十九只碗**一眼可读：主桌 (22, 25) 一排搪瓷碗缺口朝外 vs 砧板宽背砍骨刀 (24, 8.2)；窄门 (32, 4.6) 是 wedge 机关载体；色带白 22–32 / 红 12–22 / 黑 0–12；室内关无铁丝网、无铁轨——混凝土地面 + 冻雪泥 + 漆线 |
 | 20 | `canteen_night.png` | 同上 | 整关、夜色 | 灶火橙（炉罩下）+ 磨砂窗冷蓝 + 两盏吊灯下暖黄 + 黑区深灰四团色一眼分得开；礼堂火炉 (39.5, 27.5) = 十九个人的余温；**窄门缝的那点暖光 = 危险提示**（门后 40 度高烧的瓦西里）；无探照灯 |
 | 21 | `outpost_canteen.png` | `res://scenes/night_canteen.tscn` | 三件新道具 2× 特写 | 砧板砍骨刀 (24, 8.2)（宽背生锈、刃有豁口、柄上黑麦糊和血的干渍——「东街锁骨」的凶器，必出 blade）· 十九只碗长条桌 (22, 25)（一排搪瓷碗缺口朝外，黑麦糊桶 (18, 9.8) 还温着）· 杂物间窄门 (32, 4.6)（门框新裂、单向门 + 撬棍卡口——别让他冲出来） |
+| 22 | `sanitarium_grey.png` | `res://scenes/night_sanitarium.tscn`<br>L06 · САНАТОРИЙ · 旧传染病疗养院 · 地下室（44×30 m） | 整关、中性光 | 地下室北墙立面（带栏换气铁窗簇 22 m + 重型铁门 8 m + 管道束 36 m）；**铁架床 + 两根皮带** (23, 5) 是钱道具（安娜 0419 熬过第四天）；药柜 (10, 23.5) 必出 asp；笼3 回退半人 (31, 6.2) 掉鳞屑；色带白 21–30 / 红 12–21 / 黑 0–12；室内关混凝土地面，无铁丝网、无铁轨 |
+| 23 | `sanitarium_night.png` | 同上 | 整关、夜色 | 三团色一眼分得开：笼区冷白吊灯（LIGHT_COLORS）/ 医生工作区暖灯 + 火炉橙 / 换气铁窗冷蓝（与铁壳号的唯一联系）；铁架床上皮带的那点反光 = 冷白深处唯一一点暖；无探照灯 |
+| 24 | `outpost_sanitarium.png` | `res://scenes/night_sanitarium.tscn` | 三件新道具 2× 特写 | 铁架床 + 两根皮带 (23, 5)（铁架床栏杆 + 破毯 + 两根磨亮的旧皮带——安娜的刑具与救生索）· 药柜 (10, 23.5)（钢柜 + 开着的柜门 + 药瓶层板 + 红十字，必出 asp）· 笼区铁栅门 (22, 11)（对开栅扇 + 插销 + 底梁撬棍卡口——把它们关在里面） |
 | `combat_readout.png` | L03–L07M 通用 / all night levels | 俯视读数 / top-down readout | 撬棍扇形 ±49°/1.9 m 是否够"贴身才有用"；TT-33 26 m、锯短 38 m、莫辛 44 m 的噪声圈是否真的"一枪就把人拽过来"；右下命中半径（0.40/0.46/0.52 m）与左下数值表 |
 
 > 特写图（11–14）里**故意不画角色**，避免路过的兵挡住道具；整关图（1–10）保留角色，用来看人／环境比例。
@@ -55,6 +58,8 @@
 | `zones_market.png` | all three night levels | 2× market close-up per level + the three-zone legend with band boundaries (12/21.5, 9/20, 10/22 m) |
 | `canteen_grey.png` | `night_canteen.tscn` — L05 East Street Canteen (44×32 m) | Whole level, neutral light: tile-wall kitchen facade (hood 12 m + hatch 22 m + frosted windows 33 m); nineteen bowls on the main table (22, 25) vs the cleaver block (24, 8.2); narrow door (32, 4.6) is the wedge point; interior level — concrete floor, no fence, no rails |
 | `canteen_night.png` | same | Four glows: hood-fire orange, frosted-window blue, warm lamp pools, dark black zone; the warm seam under the narrow door is the danger cue (40°C behind it) |
+| `sanitarium_grey.png` | `night_sanitarium.tscn` — L06 Old Sanatorium Basement (44×30 m) | Whole level, neutral light: barred vent windows + heavy iron door + pipes; iron bed with two straps (23, 5) — Anna 0419's money prop; med cabinet (10, 23.5) guarantees asp; regressing half in cage 3 (31, 6.2); interior concrete floor, no fence, no rails |
+| `sanitarium_night.png` | same | Three colors separate: cold-white cage lamp (LIGHT_COLORS), warm office + fire orange, cold-blue vent light (the only contact with the Iron Shell); the strap glint is the one warm point in the cold |
 | `yard_grey.png` | `night_explore.tscn` — L03 Freight Yard (48×40 m) | Whole level, neutral light: block facade, lit windows, fuse box, notice board, sodium lamps, fence, switch cabin, water tower |
 | `yard_night.png` | same | Same layout with the `CanvasModulate` night grade + lamp/brazier glow |
 | `marshalling_grey.png` | `night_marshalling.tscn` — L04 West Sorting Park (44×36 m) | Brick dispatch hall, platform canopy, hump tracks, boxcars, water tower, the three new outpost props |

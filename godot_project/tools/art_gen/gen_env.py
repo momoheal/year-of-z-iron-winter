@@ -49,6 +49,7 @@ def facade_keys() -> tuple[str, str]:
         "town": ("TIL_Facade_Town_A", "VFX_Facade_WindowGlow_Town"),
         "coldstore": ("TIL_Facade_ColdStore_A", "VFX_Facade_WindowGlow_ColdStore"),
         "canteen": ("TIL_Facade_Canteen_A", "VFX_Facade_WindowGlow_Canteen"),
+        "sanitarium": ("TIL_Facade_Sanitarium_A", "VFX_Facade_WindowGlow_Sanitarium"),
     }[facade_kind()]
 
 
@@ -572,8 +573,10 @@ def bake_facade() -> tuple[Image.Image, Image.Image]:
         return _facade_coldstore()
     if kind == "canteen":
         return _facade_canteen()
+    if kind == "sanitarium":
+        return _facade_sanitarium()
     if kind != "khrushchyovka":
-        raise SystemExit(f"未知的立面种类 '{kind}'（gen_env 里只实现了 khrushchyovka / depot / manor / mine / town / coldstore / canteen）")
+        raise SystemExit(f"未知的立面种类 '{kind}'（gen_env 里只实现了 khrushchyovka / depot / manor / mine / town / coldstore / canteen / sanitarium）")
     return _facade_khrushchyovka()
 
 
@@ -704,6 +707,76 @@ def _facade_canteen() -> tuple[Image.Image, Image.Image]:
     top = 60 - (10 + 12 * n)
     m = (L2.Y >= top[None, :]).astype(np.float32)
     L2.paint(m, lerp(hexc("#7c828a"), hexc("#4e565e"), L2.gy(10, 60, 0, 1)))
+    _paste(img, L.finish(outline=None), 0, 0)
+    _paste(img, L2.finish(outline=None), 0, fh - 60)
+    img = _darken_top(img, fh)
+    return _facade_glow(img, glows, fh)
+
+
+def _facade_sanitarium() -> tuple[Image.Image, Image.Image]:
+    """旧传染病疗养院（sanitarium）· 地下室北墙：带栏换气铁窗 + 铁门 + 管道 + 霉斑墙皮。"""
+    fh = facade_h()
+    w = _gw()
+    img = Image.new("RGBA", (w, fh), (0, 0, 0, 0))
+    L = Layer(w, fh, ss=1)
+    glows: list[tuple] = []
+    base = fh - 6
+    F = LY.FACADE_FEATURES
+    # 地下室墙：深灰混凝土 + 霉斑 + 水渍
+    wall = L.rect(0, base - 380, w, base)
+    L.paint(wall, L.tex("#6b7076", 0.09, 7, 1711))
+    L.shade(wall, L.gy(base - 380, base, 1.12, 0.68))
+    L.grime(wall, 230, 0.22)
+    # 墙皮剥落片
+    for px_ in (180, 760, 1420, 2100, 2660):
+        L.paint(L.poly([(px_, base - 300), (px_ + 150, base - 316), (px_ + 210, base - 240),
+                        (px_ + 60, base - 216)]), hexc("#4c5257"), 0.8)
+        L.paint(L.poly([(px_ + 12, base - 296), (px_ + 138, base - 308), (px_ + 192, base - 248),
+                        (px_ + 66, base - 228)]), hexc("#5c6167"), 0.7)
+    # ★ 带栏换气铁窗一排（贴近路基的高窗——铁壳号从窗外过）
+    vx = int(F.get("vent_x", 22.0) * PPM)
+    for k in range(5):
+        wx = vx - 640 + k * 320
+        if wx < 60 or wx > w - 320:
+            continue
+        L.paint(L.rect(wx, base - 330, wx + 260, base - 240), hexc("#241a10"))
+        L.paint(L.rect(wx + 10, base - 320, wx + 250, base - 250), hexc("#b8cfe0"), 0.42)
+        L.paint(L.rect(wx + 10, base - 320, wx + 250, base - 292), hexc("#dfe8f0"), 0.3)
+        # 竖栏 + 横栏
+        for bx in range(wx + 14, wx + 248, 34):
+            L.paint(L.rect(bx, base - 320, bx + 6, base - 250), hexc("#2b3036"), 0.92)
+        L.paint(L.rect(wx + 10, base - 290, wx + 250, base - 284), hexc("#2b3036"), 0.92)
+        L.paint(L.rect(wx, base - 244, wx + 260, base - 236), hexc("#3c4148"))
+        glows.append((wx + 10, base - 322, wx + 250, base - 248, hexc("#b8cfe0"), 0.75))
+    # 重型铁门（医生通道）
+    dx = int(F.get("door_x", 8.0) * PPM)
+    L.paint(L.rect(dx - 90, base - 300, dx + 90, base), hexc("#3a4046"))
+    L.paint(L.rect(dx - 78, base - 288, dx + 78, base - 12), hexc("#555c63"))
+    L.paint(L.rect(dx - 78, base - 288, dx + 78, base - 278), hexc("#6a747d"))
+    for hy_ in (base - 240, base - 150):
+        L.paint(L.rect(dx - 78, hy_, dx + 78, hy_ + 6), hexc("#3c4148"))
+    L.paint(L.rect(dx + 44, base - 160, dx + 60, base - 140), hexc("#8a919a"))
+    # 门上小观察窗（暗红）
+    L.paint(L.rect(dx - 30, base - 262, dx + 30, base - 216), hexc("#241a10"))
+    L.paint(L.rect(dx - 24, base - 256, dx + 24, base - 222), hexc("#6b2c22"), 0.7)
+    glows.append((dx - 32, base - 264, dx + 32, base - 214, hexc("#b0472c"), 0.4))
+    # 管道束（竖管 + 横管）
+    px2 = int(F.get("pipe_x", 36.0) * PPM)
+    for off in (0, 26, 52):
+        L.paint(L.rect(px2 + off, base - 360, px2 + off + 14, base - 30), hexc("#6a747d"))
+        L.paint(L.rect(px2 + off + 11, base - 360, px2 + off + 14, base - 30), hexc("#48525b"))
+    L.paint(L.rect(0, base - 200, w, base - 190), hexc("#6a747d"))
+    L.paint(L.rect(0, base - 200, w, base - 196), hexc("#8a919a"))
+    for px3 in range(80, w, 340):
+        L.paint(L.rect(px3, base - 190, px3 + 10, base - 168), hexc("#555c63"))
+    # 漂白粉消毒带（墙脚白圈——防疫刷的）
+    L.paint(L.rect(0, base - 22, w, base - 6), hexc("#c9c2a8"), 0.35)
+    # 霉斑水渍
+    L2 = Layer(w, 60, ss=1)
+    n = vnoise(1, w, 60, 1, 1721)[0]
+    top = 60 - (12 + 14 * n)
+    m = (L2.Y >= top[None, :]).astype(np.float32)
+    L2.paint(m, lerp(hexc("#5c6167"), hexc("#33383d"), L2.gy(10, 60, 0, 1)))
     _paste(img, L.finish(outline=None), 0, 0)
     _paste(img, L2.finish(outline=None), 0, fh - 60)
     img = _darken_top(img, fh)

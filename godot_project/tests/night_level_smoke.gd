@@ -52,6 +52,7 @@ func _run() -> void:
 	_market()
 	_coldstore()
 	_canteen()
+	_sanitarium()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -68,7 +69,7 @@ func _registry() -> void:
 			continue
 		with_scene += 1
 		_assert(ResourceLoader.exists(sc), "LOCS[%s].scene 存在 (%s)" % [L.id, sc])
-	_assert(with_scene >= 7, "至少七关有节点化场景（yard/marshalling/manor/mine/market/coldstore/canteen）", str(with_scene))
+	_assert(with_scene >= 8, "至少八关有节点化场景（yard/marshalling/manor/mine/market/coldstore/canteen/sanitarium）", str(with_scene))
 	# 每个带 scene 的地点：CampaignData 的 loot 类别都得在表里（夜潜掉落读同一张表）
 	for L in Data.LOCS:
 		for cat in L.loot:
@@ -387,6 +388,70 @@ func _market() -> void:
 	_assert(is_equal_approx(g.dawn_progress(), 0.5), "market 最后 20% 的一半 dawn=0.5",
 			str(g.dawn_progress()))
 	_shared(g, "market")
+
+
+func _sanitarium() -> void:
+	var g: Node = _scene("res://scenes/night_sanitarium.tscn")
+	_assert(g.level_id == "sanitarium", "sanitarium metadata.level_id", g.level_id)
+	_assert(g.level_zh == "旧传染病疗养院 · 地下室", "sanitarium metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "Old Sanatorium · Basement", "sanitarium metadata.level_en", g.level_en)
+	_assert(g.prize == "asp", "sanitarium prize = asp（半片阿司匹林的回声）", g.prize)
+	_assert(g.objective_zh.contains("第四天"), "sanitarium objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("楼梯"), "sanitarium extract 元数据（南侧楼梯间）", g.extract_zh)
+	_assert(g.rail_y.size() == 0, "sanitarium 没有铁轨（室内关——铁壳号只在换气铁窗外）", str(g.rail_y))
+	# 装配：2 组清杀队 / 3 只感染者（1 壮硕）/ 1 回退半人 / 12 个容器 / 2 块冻雪泥
+	_assert(g.soldiers.size() == 2, "sanitarium 2 组清杀队（收集班）", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 3, "sanitarium 3 只感染者", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 1, "sanitarium 笼4 那只壮硕感染者（一直撞栏杆）", str(brutes))
+	_assert(g.halfs.size() == 1, "sanitarium 1 个回退半人（笼3 · 0442）", str(g.halfs.size()))
+	_assert(g.containers.size() == 12, "sanitarium 12 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 2, "sanitarium 2 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（火炉 + 火桶）；两盏灯（笼区冷白吊灯 + 工作区灯）；无探照灯
+	_assert(g.warm_lights.size() == 2, "sanitarium 两个回温点（医生的火炉 + 火桶）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/BrazierClinic") != null, "sanitarium 火炉")
+	_assert(g.get_node_or_null("Lights/BrazierHeater") != null, "sanitarium 火桶")
+	_assert(g.get_node_or_null("Lights/LampCage") != null and g.get_node_or_null("Lights/LampOffice") != null,
+			"sanitarium 两盏灯（笼区冷白 + 工作区）")
+	_assert(g.get_node_or_null("Searchlight") == null, "sanitarium 没有探照灯")
+	# 剧本锚点（3-2「地底铁笼」）：铁架床+皮带 / 回退半人 / 药柜（必出 asp）/ 换气铁窗 / 铁栅门
+	_assert(g.get_node_or_null("World/Props/CageBed") != null, "sanitarium 安娜的铁架床 + 两根皮带")
+	_assert(g.get_node_or_null("World/Half_Cage0442") != null, "sanitarium 笼3 回退半人（掉鳞屑、瞳孔回色）")
+	var meds: Node = g.get_node_or_null("World/Props/MedCabinet")
+	_assert(meds != null and String(meds.get_meta("guaranteed", "")) == "asp",
+			"sanitarium 药柜必出 asp")
+	_assert(g.get_node_or_null("World/Props/CageGate") != null, "sanitarium 笼区铁栅门（wedge 机关载体）")
+	_assert(g.get_node_or_null("World/Props/XrayBoard") != null, "sanitarium 读片灯箱 + 病历")
+	_assert(g.get_node_or_null("World/Survivor_0") != null and g.get_node_or_null("World/Survivor_1") != null
+			and g.get_node_or_null("World/Survivor_2") != null,
+			"sanitarium 安娜（0419）+ 梁诺夫 + 古丽娅在场")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightSanitarium_Baked.png"), "sanitarium 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_Sanitarium_A.png"), "sanitarium 地下室北墙立面（换气铁窗）",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(44.0 * PPM), "sanitarium limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(30.0 * GY), "sanitarium limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "sanitarium limit_top（疗养院楼顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "sanitarium 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（sanitarium 夜长 110 分钟）
+	g.in_campaign = true
+	g.night_max = 110.0
+	g.night_left = 110.0
+	_assert(g.dawn_progress() == 0.0, "sanitarium 夜刚开始 dawn=0")
+	g.night_left = 11.0
+	_assert(g.dawn_progress() == 0.5, "sanitarium 夜最后 10% = 亮一半", str(g.dawn_progress()))
+	g.night_left = 0.0
+	_assert(g.dawn_progress() == 1.0, "sanitarium 天亮 dawn=1", str(g.dawn_progress()))
+	g.queue_free()
 
 
 func _canteen() -> void:

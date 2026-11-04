@@ -769,6 +769,50 @@ rising (still warm), scrap of sacking, §CAM_75, §LIGHT_COLD, §STYLE, §PAL,
 后厨吊灯是暖琥珀、餐厅吊灯更暖（对着十九只碗那一桌），出餐口暖窗是立面唯一暖块——
 磨砂高窗保持**冷雾蓝**（`LIGHT_COLORS` 不动），冷暖对比就是这一关的视觉叙事。
 
+### 7.12 L06 疗养院道具（6 件，2026-11 新增 · 对应《Z年纪事_旧传染病疗养院场景美术设计》）
+
+> 第三幕 3-2「灰鳞病回退」旧传染病疗养院地下室（`night_sanitarium.tscn`）的六件新道具。
+> **游戏内版本**由 `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> `PRP_CageBed` 的**两根磨亮的旧皮带**是这一关的钱道具（安娜 0419 的刑具与救生索），
+> `PRP_MedCabinet` 必出 **asp**（半片阿司匹林的回声），`PRP_CageGate` 必须带**撬棍卡口**
+> （wedge 机关载体）——三条都是不许违反的硬约束。
+
+```
+【PRP_IronCage】a Soviet hospital iron-bar quarantine cage: welded steel frame with
+vertical bars, heavy top rail and base slab, a chain and padlock on the double
+leaf, rust runs down the bars, frost rime on the top edge — the place where the
+regressing patients are kept, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM,
+straight-on elevation, §TECH
+【PRP_CageBed】an iron-frame hospital bed with TWO OLD LEATHER STRAPS tied to the
+rails: barred headboard, thin stained mattress, torn blanket, two worn leather
+straps knotted around the side rails with polished buckles — Anna 0419 strapped
+herself here through the fourth day, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM,
+high three-quarter view, §TECH
+【PRP_CageGate】a twin-leaf barred gate to the cage ward: welded frame, vertical
+bars, heavy sliding latch and padlock, a crowbar notch worn into the bottom rail,
+dirty snow at the foot — the wedge mechanism, jam it and keep them inside,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_MedCabinet】a Soviet steel medicine cabinet, one door open: grey-white
+enamel body, a red pharmacy cross on the closed door, open leaf showing shelves of
+vials and blister packs, frost haze on the metal — guarantees asp, the echo of
+the last half-tablet, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high side
+view, §TECH
+【PRP_XrayLightbox】a wall X-ray lightbox with a hung film and case papers: pale
+glowing panel, a chest film clipped on top (rib shadows, no legible text), a metal
+clip, paper case files on the ledge, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM,
+straight-on elevation, §TECH
+【PRP_ChemDrum】a dented lime/disinfectant drum: steel drum with chalky white
+residue down the side, a painted hazard block (no legible letters), an iron scoop
+on the rim, spilled lime powder at the foot, §CAM_75, §LIGHT_COLD, §STYLE, §PAL,
+§BG_ITEM, high three-quarter view, §TECH
+```
+
+疗养院立面 `TIL_Facade_Sanitarium_A` 与地面 `TIL_Ground_NightSanitarium_Baked` 只走程序化管线
+（`gen_env._facade_sanitarium()` / `bake_ground()` + `INTERIOR=True`），不走手工 Prompt；
+构图基准见场景美术设计文档 §2 / §3。**带栏换气高窗**是立面的钱（窗外冷蓝 = 铁壳号的唯一联系），
+笼区吊灯的**冷白光**由 `levels/sanitarium.py` 的 `LIGHT_COLORS` 覆盖，不改贴图。
+
 ## 8. 后处理与验收清单（每张图入库前逐条打勾）
 
 - [ ] 去背干净（rembg 之后放大到 400% 检查边缘毛边与半透明雪花残留）
