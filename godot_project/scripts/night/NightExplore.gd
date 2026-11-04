@@ -1930,7 +1930,7 @@ func use_mechanism(m: Dictionary) -> void:
 			emit_noise(node.global_position, 12.0, "can")
 			add_shake(0.22)
 			spawn_float(player.global_position + Vector2(0, -138),
-				"铁门被撬棍卡死了 —— 它们会往那边去", SovietUI.OCHRE)
+				"%s 被撬棍卡死了" % String(m.get("label", "铁门")), SovietUI.OCHRE)
 
 
 # ============================================================================

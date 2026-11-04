@@ -107,8 +107,10 @@ func _run_tests() -> void:
 	_assert(Data.weapon("cleaver")["dmg"] == 46.0 and Data.weapon("shotgun")["dmg"] == 95.0 \
 		and Data.weapon("mosin")["dmg"] == 150.0, "11. weapon damage 46 / 95 / 150")
 	_assert(Data.loc("coldstore")["cold"] == 0.9 and Data.loc("manor")["dg"] == 5 \
-		and String(Data.loc("coldstore").get("scene", "")) == "res://scenes/night_coldstore.tscn",
-		"12. location stats match the prototype（coldstore 接夜潜场景「账面死人」）")
+		and String(Data.loc("coldstore").get("scene", "")) == "res://scenes/night_coldstore.tscn" \
+		and String(Data.loc("canteen").get("scene", "")) == "res://scenes/night_canteen.tscn" \
+		and int(Data.loc("canteen")["dg"]) == 3 and float(Data.loc("canteen")["cold"]) == 0.5,
+		"12. location stats match the prototype（coldstore 接夜潜场景「账面死人」/ canteen 接「锁骨」）")
 
 	# --- 3. 新游戏初始状态 -------------------------------------------------
 	sim.new_game()

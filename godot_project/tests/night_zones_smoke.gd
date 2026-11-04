@@ -25,10 +25,11 @@ const SCENES := {
 	"mine": "res://scenes/night_mine.tscn",
 	"market": "res://scenes/night_market.tscn",
 	"coldstore": "res://scenes/night_coldstore.tscn",
+	"canteen": "res://scenes/night_canteen.tscn",
 }
 ## 每张图的出生点应该在哪个区（涵洞在庄园 / 站场 → 从黑区摸进来；货场从锅炉房 → 白区）
 const SPAWN_ZONE := {"yard": "white", "marshalling": "black", "manor": "black", "mine": "black",
-		"market": "white", "coldstore": "white"}
+		"market": "white", "coldstore": "white", "canteen": "white"}
 ## 按关覆盖的尸群/黑市规则：L07M 矿坑是「环境杀」关（塌方 / 粉尘 / 起爆倒计时）——
 ## 尸少（感染掘进工只有 2 只，都是孢子源头的注脚）、无黑市（黑市是居民点的生意，不是作业面的）；
 ## market 是黑市老家（低危交易关：尸是注脚，摊区就在黑区中心）
@@ -37,6 +38,8 @@ const LEVEL_RULES := {
 	"market": {"black_min": 2, "red_max": 1, "market": true},
 	# coldstore：低危账目关（2 只感染者都是专用线上的注脚）；没有黑市——冷库里没有生意，只有账
 	"coldstore": {"black_min": 2, "red_max": 1, "market": false},
+	# canteen：狭窄空间肉搏关（瓦西里 + 后角 1 只都在黑区窄门一带）；没有黑市——食堂里只有账和碗
+	"canteen": {"black_min": 2, "red_max": 1, "market": false},
 }
 
 
@@ -70,6 +73,7 @@ func _run() -> void:
 		_level(name)
 	_market()
 	_coldstore()
+	_canteen()
 	_fire()
 	print("")
 	if failures.is_empty():
@@ -260,6 +264,29 @@ func _market() -> void:
 # ---------------------------------------------------------------------------
 # coldstore 专用：「账面 vs 活人」——红字说在册 0 人，柱后缩着 2 个活人
 # ---------------------------------------------------------------------------
+func _canteen() -> void:
+	print("[canteen 专用]")
+	var s := _scene(SCENES["canteen"])
+	var zs: Array = s.zones
+	var sv := get_nodes_in_group("night_survivor")
+	_assert(sv.size() == 2, "canteen 独眼老炊事员 + 老铁路工 2 人（十九只碗 = 十九个人）", str(sv.size()))
+	for p in sv:
+		var pz := Zones.zone_at(zs, NightExplore_to_m((p as Node2D).global_position))
+		_assert(pz == "black" or pz == "white", "canteen 幸存者在灶边或碗旁", pz)
+	# 费奥多尔守在黑区的灶边（和他烧到 40 度的儿子在同一片黑区）
+	var fyodor: Node2D = sv[0] as Node2D
+	_assert(Zones.zone_at(zs, NightExplore_to_m(fyodor.global_position)) == "black",
+			"老炊事员守在黑区灶边（窄门就在这一片）")
+	# 砧板在黑区——锁骨的故事从这里开始
+	var board: Node = s.get_node_or_null("World/Props/PrepBoard")
+	_assert(board != null and Zones.zone_at(zs, NightExplore_to_m(board.global_position)) == "black",
+			"砧板砍骨刀站在黑区（狭窄后厨的深处）")
+	for c in root.get_children():
+		if c.name == "NightExplore":
+			root.remove_child(c)
+			c.free()
+
+
 func _coldstore() -> void:
 	print("[coldstore 专用]")
 	var s := _scene(SCENES["coldstore"])

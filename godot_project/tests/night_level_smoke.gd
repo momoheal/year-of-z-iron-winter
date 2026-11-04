@@ -51,6 +51,7 @@ func _run() -> void:
 	_mine()
 	_market()
 	_coldstore()
+	_canteen()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -67,7 +68,7 @@ func _registry() -> void:
 			continue
 		with_scene += 1
 		_assert(ResourceLoader.exists(sc), "LOCS[%s].scene 存在 (%s)" % [L.id, sc])
-	_assert(with_scene >= 6, "至少六关有节点化场景（yard/marshalling/manor/mine/market/coldstore）", str(with_scene))
+	_assert(with_scene >= 7, "至少七关有节点化场景（yard/marshalling/manor/mine/market/coldstore/canteen）", str(with_scene))
 	# 每个带 scene 的地点：CampaignData 的 loot 类别都得在表里（夜潜掉落读同一张表）
 	for L in Data.LOCS:
 		for cat in L.loot:
@@ -386,6 +387,74 @@ func _market() -> void:
 	_assert(is_equal_approx(g.dawn_progress(), 0.5), "market 最后 20% 的一半 dawn=0.5",
 			str(g.dawn_progress()))
 	_shared(g, "market")
+
+
+func _canteen() -> void:
+	var g: Node = _scene("res://scenes/night_canteen.tscn")
+	_assert(g.level_id == "canteen", "canteen metadata.level_id", g.level_id)
+	_assert(g.level_zh == "东街工人食堂 · 后厨", "canteen metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "East Street Canteen · Kitchen", "canteen metadata.level_en", g.level_en)
+	_assert(g.prize == "blade", "canteen prize = blade（砧板上的宽背砍骨刀）", g.prize)
+	_assert(g.objective_zh.contains("十九只碗"), "canteen objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("南门"), "canteen extract 元数据（南门礼堂入口）", g.extract_zh)
+	_assert(g.rail_y.size() == 0, "canteen 没有铁轨（室内关）", str(g.rail_y))
+	# 装配：2 组清杀队 / 2 只感染者（1 壮硕）/ 无半人 / 10 个容器 / 2 块冻雪泥
+	_assert(g.soldiers.size() == 2, "canteen 2 组清杀队", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 2, "canteen 2 只感染者", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 1, "canteen 瓦西里是壮硕感染者（锁骨也能被撞断的那块头）", str(brutes))
+	_assert(g.halfs.size() == 0, "canteen 没有回退半人", str(g.halfs.size()))
+	_assert(g.containers.size() == 11, "canteen 11 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 2, "canteen 2 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（灶火 + 礼堂火炉）；两盏灯（后厨吊灯 + 餐厅吊灯）；无探照灯
+	_assert(g.warm_lights.size() == 2, "canteen 两个回温点（灶 + 礼堂火炉）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/BrazierStove") != null, "canteen 灶火")
+	_assert(g.get_node_or_null("Lights/BrazierHall") != null, "canteen 礼堂火炉")
+	_assert(g.get_node_or_null("Lights/LampKitchen") != null and g.get_node_or_null("Lights/LampDining") != null,
+			"canteen 两盏灯（后厨 + 餐厅）")
+	_assert(g.get_node_or_null("Searchlight") == null, "canteen 没有探照灯")
+	# 剧本锚点（2-1「锁骨」）：砧板砍骨刀（必出 blade）/ 十九只碗 / 窄门（wedge 机关载体）/ 黑麦糊桶 / 灶
+	var board: Node = g.get_node_or_null("World/Props/PrepBoard")
+	_assert(board != null and String(board.get_meta("guaranteed", "")) == "blade",
+			"canteen 砧板必出 blade（宽背生锈砍骨刀）")
+	_assert(g.get_node_or_null("World/Props/Table2") != null, "canteen 十九只碗的长条桌")
+	_assert(g.get_node_or_null("World/Props/NarrowDoor") != null, "canteen 杂物间窄门（wedge 机关载体）")
+	_assert(g.get_node_or_null("World/Props/RyeVat") != null, "canteen 黑麦糊桶")
+	_assert(g.get_node_or_null("World/Props/Stove") != null, "canteen 独眼老炊事员的灶")
+	_assert(g.get_node_or_null("World/Survivor_0") != null and g.get_node_or_null("World/Survivor_1") != null,
+			"canteen 独眼老炊事员费奥多尔 + 老铁路工在场（十九只碗 = 十九个人）")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightCanteen_Baked.png"), "canteen 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_Canteen_A.png"), "canteen 瓷砖后厨立面",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 地表 → 脚步材质：室内关没有铁轨——冻雪泥上是冰壳声，其余是雪地声
+	_assert(g.step_sound(_m(22.0, 28.2), true) == "step_ice", "canteen 冻雪泥 = 冰壳脚步",
+			g.step_sound(_m(22.0, 28.2), true))
+	_assert(g.step_sound(_m(22.0, 25.0), false) == "step_snow", "canteen 后厨地面 = 雪地脚步",
+			g.step_sound(_m(22.0, 25.0), false))
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(44.0 * PPM), "canteen limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(30.0 * GY), "canteen limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "canteen limit_top（食堂楼顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "canteen 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（canteen 夜长 90 分钟）
+	g.in_campaign = true
+	g.night_max = 90.0
+	g.night_left = 90.0
+	_assert(g.dawn_progress() == 0.0, "canteen 夜刚开始 dawn=0")
+	g.night_left = 9.0
+	_assert(g.dawn_progress() == 0.5, "canteen 夜最后 10% = 亮一半", str(g.dawn_progress()))
+	g.night_left = 0.0
+	_assert(g.dawn_progress() == 1.0, "canteen 天亮 dawn=1", str(g.dawn_progress()))
+	g.queue_free()
 
 
 func _coldstore() -> void:

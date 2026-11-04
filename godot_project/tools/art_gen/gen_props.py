@@ -1561,6 +1561,167 @@ def drain_slit():
     return L.finish(), (w / 2, base)
 
 
+def cleaver_board():
+    """油腻砧板 + 宽背生锈砍骨刀插在上面——「东街锁骨里的砍骨刀」，全关唯一的冷铁高光。"""
+    w, h = 170, 124
+    L = Layer(w, h, 3)
+    base = 116
+    # 砧板墩
+    L.paint(L.rect(26, base - 34, 144, base - 6), L.tex("#6b4a2c", 0.14, 4, 71))
+    L.paint(L.rect(26, base - 40, 144, base - 32), L.tex("#7d5832", 0.12, 4, 73))
+    L.paint(L.ellipse(85, base - 4, 60, 8), hexc("#4e381f"))
+    # 油腻（深渍 + 反光油斑）
+    L.paint(L.ellipse(70, base - 36, 26, 6), hexc("#3c2a16"), 0.7)
+    L.paint(L.ellipse(108, base - 35, 14, 4), hexc("#2e2113"), 0.6)
+    L.paint(L.ellipse(58, base - 37, 8, 3), hexc("#8a6a3c"), 0.5)
+    # 宽背生锈砍骨刀（刀刃向下插进墩面）
+    L.paint(L.poly([(66, base - 96), (104, base - 100), (108, base - 40), (70, base - 36)]),
+            L.tex("#7a5236", 0.2, 3, 77))                       # 锈板
+    L.paint(L.poly([(70, base - 44), (104, base - 48), (102, base - 38), (72, base - 34)]),
+            hexc("#9aa4ad"))                                     # 刃口冷光
+    L.paint(L.line([(72, base - 42), (102, base - 46)], 2.2), hexc("#c8d2da"))
+    L.paint(L.rect(78, 5, 92, base - 92), hexc("#3a2a1a"))  # 木柄
+    L.paint(L.rect(80, 7, 90, 11), hexc("#5a442c"))
+    L.paint(L.ellipse(85, 9, 3, 3), hexc("#241a10"))
+    # 干渍（麦糊与血的混合）
+    L.paint(L.ellipse(120, base - 40, 10, 4), hexc("#5a2c1c"), 0.55)
+    L.grime(L.rect(26, base - 40, 144, base - 6), 40, 0.3)
+    L.rust_streaks(L.rect(26, base - 40, 144, base - 6), 41, 0.14)
+    return L.finish(), (w / 2, base)
+
+
+def canteen_stove():
+    """铸铁食堂灶：灶台 + 两口大锅 + 火口——费奥多尔守着的那口气。"""
+    w, h = 220, 186
+    L = Layer(w, h, 3)
+    base = 178
+    body = L.rect(24, 66, 196, base - 6)
+    L.paint(body, L.tex("#4a4e54", 0.12, 5, 81))
+    L.shade(body, L.gy(66, base - 6, 1.1, 0.76))
+    # 灶面
+    L.paint(L.rect(16, 56, 204, 70), hexc("#5b6067"))
+    L.paint(L.rect(16, 56, 204, 60), hexc("#6d747c"))
+    # 两口锅
+    for cx, r in ((66, 30), (140, 26)):
+        L.paint(L.ellipse(cx, 52, r, 12), hexc("#2b3036"))
+        L.paint(L.ellipse(cx, 46, r - 4, 10), hexc("#3f464d"))
+        L.paint(L.ellipse(cx, 42, r - 10, 7), hexc("#8a6a3c"))      # 锅里的糊
+        L.paint(L.ellipse(cx - r + 6, 40, 5, 4), hexc("#5b6067"))   # 锅耳
+        L.paint(L.ellipse(cx + r - 6, 40, 5, 4), hexc("#5b6067"))
+    # 火口（暖光核心——sprite 自带，灯光由 rig 补）
+    L.paint(L.rect(60, 96, 150, 132), hexc("#181a1d"))
+    L.paint(L.ellipse(105, 118, 34, 12), hexc("#c96a24"))
+    L.paint(L.ellipse(105, 116, 22, 8), hexc("#e8a44e"))
+    L.paint(L.ellipse(105, 114, 10, 4), hexc("#f6d9a0"))
+    # 炉门 / 灰坑 / 烟囱
+    L.paint(L.rect(32, 138, 96, 168), hexc("#2b3036"))
+    for k in range(3):
+        L.paint(L.rect(38, 144 + k * 8, 90, 148 + k * 8), hexc("#101214"))
+    L.paint(L.rect(160, 6, 190, 60), hexc("#3a4046"))
+    L.paint(L.rect(160, 6, 166, 60), hexc("#555c63"))
+    # 油污渍
+    L.grime(body, 85, 0.3)
+    L.paint(L.ellipse(150, base - 12, 22, 5), hexc("#2e2113"), 0.5)
+    return L.finish(), (w / 2, base)
+
+
+def _canteen_table(with_bowls: bool):
+    """长条桌 + 长凳。with_bowls=True → 一排 19 只搪瓷碗（「十九只碗」的载体 = 主桌）；
+    False → 光板桌（另两条桌——碗都端在主桌那一排）。"""
+    w, h = 340, 132
+    L = Layer(w, h, 3)
+    base = 124
+    # 长凳（北侧一条在桌后、南侧一条在桌前 + 南凳腿）
+    L.paint(L.rect(18, base - 68, 322, base - 60), L.tex("#6b4a2c", 0.13, 4, 91))
+    L.paint(L.rect(18, base - 22, 322, base - 14), L.tex("#6b4a2c", 0.13, 4, 91))
+    for lx in (34, 160, 296):
+        L.paint(L.rect(lx, base - 14, lx + 10, base), hexc("#4e381f"))
+    # 桌面
+    top = L.rect(10, base - 58, 330, base - 30)
+    L.paint(top, L.tex("#7d5832", 0.12, 4, 93))
+    L.shade(top, L.gy(base - 58, base - 30, 1.08, 0.82))
+    L.paint(L.rect(10, base - 58, 330, base - 54), hexc("#8a6438"))
+    for lx in (34, 160, 296):
+        L.paint(L.rect(lx, base - 30, lx + 10, base), hexc("#5b4226"))
+    if with_bowls:
+        # 搪瓷碗一排 19 只（缺口朝外）——「账面已清空的老楼，可里面还有十九只碗」
+        for i in range(19):
+            bx = 18 + i * 17
+            L.paint(L.ellipse(bx, base - 44, 7, 5), hexc("#c9c2a8"))
+            L.paint(L.ellipse(bx, base - 46, 5, 3), hexc("#2b3036"))
+            L.paint(L.ellipse(bx, base - 46, 5, 3), hexc("#5a4a34"), 0.85)   # 碗里的糊
+            L.paint(L.rect(bx - 7, base - 45, bx - 5, base - 42), hexc("#2b3036"))  # 缺口
+    L.grime(top, 55, 0.18)
+    L.snow_cap(10, 330, base - 58, 6, 95, droop=0.2)
+    return L.finish(), (w / 2, base)
+
+
+def canteen_table():
+    """十九只碗的长条桌（主桌 Table2——碗全在这一排）。"""
+    return _canteen_table(True)
+
+
+def canteen_bench_table():
+    """光板长条桌 + 长凳（Table1 / Table3——十九只碗都端在主桌那一排）。"""
+    return _canteen_table(False)
+
+
+def narrow_door():
+    """杂物间单向窄门：门框新裂 + 门板内倾——wedge 机关的载体（「窄门会被冲开」）。"""
+    w, h = 180, 196
+    L = Layer(w, h, 3)
+    base = 188
+    # 门框（裂）
+    L.paint(L.rect(22, 12, 158, base - 4), L.tex("#5b4226", 0.14, 4, 97))
+    L.paint(L.rect(22, 12, 34, base - 4), hexc("#4e381f"))
+    L.paint(L.rect(146, 12, 158, base - 4), hexc("#4e381f"))
+    L.paint(L.poly([(22, 12), (158, 12), (152, 22), (28, 22)]), hexc("#3c2a16"))
+    # 门板（向内倾 = 被撞过）
+    door = L.rect(40, 24, 140, base - 10)
+    L.paint(door, L.tex("#6b4a2c", 0.16, 4, 99))
+    L.shade(door, L.gy(24, base - 10, 1.06, 0.8))
+    for k in range(3):
+        L.paint(L.line([(44, 44 + k * 42), (136, 40 + k * 42)], 3), hexc("#4e381f"), 0.7)
+    # 裂缝 + 破洞（撞出来的）
+    L.paint(L.line([(96, 26), (88, 90), (100, 120), (92, base - 12)], 3), hexc("#241a10"))
+    L.paint(L.ellipse(104, 96, 16, 12), hexc("#181a1d"))
+    L.paint(L.ellipse(104, 96, 12, 9), hexc("#0c0e11"))
+    # 门闩（已被撬棍卡过的位置）
+    L.paint(L.rect(118, 92, 146, 102), hexc("#3a4046"))
+    L.paint(L.rect(118, 92, 124, 102), hexc("#22262b"))
+    L.grime(door, 60, 0.26)
+    L.rust_streaks(door, 61, 0.12)
+    L.snow_cap(22, 158, base - 4, 8, 101, droop=0.5)
+    return L.finish(), (w / 2, base)
+
+
+def rye_vat():
+    """黑麦糊大桶：木桶 + 铁箍 + 长柄勺——十九个人的晚饭，还温着。"""
+    w, h = 140, 148
+    L = Layer(w, h, 3)
+    base = 140
+    body = L.rect(30, 36, 110, base - 6)
+    L.paint(body, L.tex("#6b4a2c", 0.14, 4, 103))
+    L.shade(body, L.gy(36, base - 6, 1.1, 0.78))
+    for y0 in (52, 96):
+        L.paint(L.rect(26, y0, 114, y0 + 8), hexc("#3a4046"))
+        L.paint(L.rect(26, y0, 114, y0 + 3), hexc("#555c63"))
+    # 桶口（糊面）
+    L.paint(L.ellipse(70, 38, 42, 13), hexc("#4e381f"))
+    L.paint(L.ellipse(70, 34, 36, 10), hexc("#2b2418"))
+    L.paint(L.ellipse(70, 32, 30, 8), hexc("#5a4a34"))
+    L.paint(L.ellipse(58, 30, 9, 4), hexc("#6b5a3e"))     # 糊面反光
+    # 长柄勺
+    L.paint(L.line([(96, 30), (122, 8)], 5), hexc("#5b4226"))
+    L.paint(L.ellipse(124, 8, 8, 6), hexc("#3a4046"))
+    # 热气痕（画两笔淡雾）
+    L.paint(L.ellipse(60, 14, 12, 6), hexc("#c9c2a8"), 0.18)
+    L.paint(L.ellipse(84, 10, 10, 5), hexc("#c9c2a8"), 0.14)
+    L.grime(body, 75, 0.24)
+    L.snow_cap(30, 110, base - 6, 7, 105, droop=0.4)
+    return L.finish(), (w / 2, base)
+
+
 ALL = {
     "PRP_Crate_Wood_Stack": crate_stack,
     "PRP_SupplyCrates_Military": supply_crates,
@@ -1583,6 +1744,12 @@ ALL = {
     "PRP_SealedMedCrate": sealed_med_crate,
     "PRP_ColdVaultDoor": cold_vault_door,
     "PRP_DrainSlit": drain_slit,
+    "PRP_CleaverBoard": cleaver_board,
+    "PRP_Canteen_Stove": canteen_stove,
+        "PRP_Canteen_Table": canteen_table,
+        "PRP_Canteen_BenchTable": canteen_bench_table,
+    "PRP_NarrowDoor": narrow_door,
+    "PRP_RyeVat": rye_vat,
     "PRP_Buran_Boxcar03": boxcar,
     "PRP_WaterTower": water_tower,
     "PRP_Watchtower_Searchlight": watchtower,

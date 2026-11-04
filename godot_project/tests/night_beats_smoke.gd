@@ -55,6 +55,7 @@ func _run() -> void:
 	_mine()
 	_market()
 	_coldstore()
+	_canteen()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -183,6 +184,21 @@ func _coldstore() -> void:
 				"coldstore 机关挂在真实节点上", String(mech[0].get("node", "")))
 		_assert(String(mech[0].get("prompt", "")) != "", "coldstore 机关有操作提示")
 	_common(g, "coldstore")
+
+
+func _canteen() -> void:
+	var g: Node = _scene("res://scenes/night_canteen.tscn")
+	_assert(g.beats.get("events", []).is_empty(),
+			"canteen 没有环境节拍（危险就是窄门：锁骨 / 十九只碗 / 撬棍卡门）")
+	# wedge 机关：LOCS hint2「窄门会被冲开」→ 挂在真实节点上
+	var mech: Array = g.beats.get("mechanisms", [])
+	_assert(mech.size() == 1 and String(mech[0].get("kind", "")) == "wedge",
+			"canteen 一个 wedge 机关（撬棍卡住窄门）", str(mech.size()))
+	if mech.size() == 1:
+		_assert(g.get_node_or_null(String(mech[0].get("node", ""))) != null,
+				"canteen 机关挂在真实节点上", String(mech[0].get("node", "")))
+		_assert(String(mech[0].get("prompt", "")) != "", "canteen 机关有操作提示")
+	_common(g, "canteen")
 
 
 # ---------------------------------------------------------------------------

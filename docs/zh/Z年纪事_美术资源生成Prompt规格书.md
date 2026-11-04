@@ -723,6 +723,52 @@ scraped flat beside it, ice smear on the snow — traces only, NO arms, NO bodie
 `CON_01`（工业冷链：保温板 + 冷风机 + 铁路大门 + 值班暖窗——全图唯一暖窗）与场景美术设计文档 §2 / §3。
 南库吊灯的**冷白光**由 `levels/coldstore.py` 的 `LIGHT_COLORS` 覆盖（其余灯位仍是琥珀），不改贴图。
 
+### 7.11 L05 东街工人食堂道具（6 件，2026-11 新增 · 对应《Z年纪事_东街工人食堂场景美术设计》）
+
+> 第二幕 2-1「锁骨」东街工人食堂（`night_canteen.tscn`）的六件新道具。**游戏内版本**由
+> `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> `PRP_CleaverBoard` 的砍骨刀是**锁骨的凶器**（宽背、生锈、刃有豁口），`PRP_Canteen_Table`
+> 的搪瓷碗必须是**十九只、缺口朝外一排**（「账面已清空的老楼，可里面还有十九只碗」），
+> `PRP_NarrowDoor` 必须带**撬棍卡口**（wedge 机关载体）——三条都是不许违反的硬约束。
+
+```
+【PRP_CleaverBoard】a battered wooden chopping block with a wide-backed cleaver
+stuck into it: thick round block, blackened grain and old grease, a heavy rusted
+cleaver with a chipped edge standing blade-first in the wood, worn wooden handle,
+rye-and-blood grime dried on the grip, small dish with dark rye paste beside it,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high side view, §TECH
+【PRP_Canteen_Stove】a Soviet canteen cast-iron stove with an exhaust hood: pot
+stove with two steel pots on top, a dark iron hood and flue above it, orange fire
+glow from the grate, kettle spout steaming, warm light spill on the floor,
+scorched tile floor, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on
+elevation, §TECH
+【PRP_Canteen_Table】a long canteen table with NINETEEN enamel bowls: plank
+tabletop worn shiny, two long benches, a single row of nineteen chipped white
+enamel bowls with brown rims, chips facing outward, a little rye paste left in
+each bowl, snow dust on the north edge, §CAM_75, §LIGHT_COLD, §STYLE, §PAL,
+§BG_ITEM, high three-quarter view, §TECH
+【PRP_Canteen_BenchTable】a bare long canteen table with two benches: plank
+tabletop worn shiny, long benches on both sides, dust and grease stains, no
+dishes (the bowls all sit on the main table), snow dust on the north edge,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high three-quarter view, §TECH
+【PRP_NarrowDoor】a narrow one-way pantry door, frame freshly split: battered
+wooden door with a diagonal crack, iron kick plate and a dark round hole, heavy
+frame split at the hinge side, a crowbar notch at the base, dirty snow drift at
+the foot, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation,
+§TECH
+【PRP_RyeVat】a wooden vat of black rye paste: oval vat on a small platform with
+iron hoops, dark rye paste inside, a wooden ladle across the rim, faint steam
+rising (still warm), scrap of sacking, §CAM_75, §LIGHT_COLD, §STYLE, §PAL,
+§BG_ITEM, high three-quarter view, §TECH
+```
+
+食堂立面 `TIL_Facade_Canteen_A` 与地面 `TIL_Ground_NightCanteen_Baked` 只走程序化管线
+（`gen_env._facade_canteen()` / `bake_ground()` + `INTERIOR=True` 室内混凝土地面），
+不走手工 Prompt；构图基准见场景美术设计文档 §2 / §3。
+后厨吊灯是暖琥珀、餐厅吊灯更暖（对着十九只碗那一桌），出餐口暖窗是立面唯一暖块——
+磨砂高窗保持**冷雾蓝**（`LIGHT_COLORS` 不动），冷暖对比就是这一关的视觉叙事。
+
 ## 8. 后处理与验收清单（每张图入库前逐条打勾）
 
 - [ ] 去背干净（rembg 之后放大到 400% 检查边缘毛边与半透明雪花残留）

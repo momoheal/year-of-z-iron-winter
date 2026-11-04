@@ -42,6 +42,8 @@ SCENES = {
     "manor": dict(path="res://scenes/night_manor.tscn", title="L05 · СОСНОВАЯ УСАДЬБА · MANOR"),
     "mine": dict(path="res://scenes/night_mine.tscn", title="L07M · ШАХТА №3 · MINE SHAFT No.3"),
     "market": dict(path="res://scenes/night_market.tscn", title="L07 · БАРАХОЛКА · RAIL BLACK MARKET"),
+    "canteen": dict(path="res://scenes/night_canteen.tscn",
+                    title="L05 · ВОСТОЧНАЯ СТОЛОВАЯ · EAST STREET CANTEEN"),
 }
 
 
@@ -399,6 +401,14 @@ CROPS = {
              note="charcoal + red-hot horseshoe, tools and traces only", win=(3.2, 2.8, 1.6)),
         dict(m=(12.0, 23.2), art="PRP_MedShed.png", title="3 · MED SHED IRON DOOR",
              note="C2 lock point: card reader + penicillin inside", win=(4.4, 3.8, 1.5)),
+    ]),
+    "canteen": dict(level="L05 EAST STREET CANTEEN", items=[
+        dict(m=(24.0, 8.2), art="PRP_CleaverBoard.png", title="1 · CLEAVER ON THE BLOCK",
+             note="guaranteed blade: wide-backed rusty cleaver (prize)", win=(3.0, 2.6, 1.8)),
+        dict(m=(22.0, 25.0), art="PRP_Canteen_Table.png", title="2 · NINETEEN BOWLS",
+             note="enamel bowls in a circle, chipped rims outward", win=(4.6, 3.2, 1.5)),
+        dict(m=(32.0, 4.6), art="PRP_NarrowDoor.png", title="3 · NARROW DOOR",
+             note="wedge point: 40°C delirium behind it, jam it shut", win=(3.4, 3.2, 1.6)),
     ]),
 }
 

@@ -69,6 +69,7 @@ year-of-z-iron-winter/
     │   ├── night_mine.tscn                                       # ★ L07M 3 号矿坑 · 温压爆破作业面（同管线）
     │   ├── night_market.tscn                                     # ★ L07 铁路黑市 · 废弃工人镇（同管线）
     │   ├── night_coldstore.tscn                                  # ★ L02 城北四号铁路冷库 · 账面死人（同管线）
+    │   ├── night_canteen.tscn                                    # ★ L05 东街工人食堂 · 后厨（同管线）
     │   ├── gym.tscn                                              # 5合1 灰盒测试场（Rooms A–E）
     │   └── main.tscn                                             # Room A 夜潜垂直切片
     ├── scripts/
@@ -348,9 +349,11 @@ v4.2 七幕结构第三幕 3-3 前半的舞台（L07）：危险度 2 / 夜长 8
 > ⚠️ 沙箱里没有 Godot 引擎：本切片**尚未在装引擎的机器上首跑**，首次运行请按文档的「验收」清单
 > 肉眼核对枪口位置 / 沙袋挡视线不挡子弹 / 同僚反应 / 三张图的弹药箱。
 
-**验收图（无需引擎）** / Acceptance sheets, no engine needed：`docs/ui/verify/` 下 15 张 PNG ——
-`yard|marshalling|manor|mine|market` 五关各一张中性光 + 一张夜色整关图，`outpost_marshalling|outpost_manor|outpost_mine|outpost_market`
-四张新道具 2× 特写，`combat_readout.png` 一张战斗数值读数（噪声圈 / 撬棍扇形 / 命中半径）。
+**验收图（无需引擎）** / Acceptance sheets, no engine needed：`docs/ui/verify/` 下 22 张 PNG ——
+`yard|marshalling|manor|mine|market|coldstore|canteen` 七关各一张中性光 + 一张夜色整关图（14 张），
+`outpost_marshalling|outpost_manor|outpost_mine|outpost_market|outpost_coldstore|outpost_canteen`
+六张新道具 2× 特写，`zones_market.png` 一张三区分野带与黑市图，
+`combat_readout.png` 一张战斗数值读数（噪声圈 / 撬棍扇形 / 命中半径）。
 它们由 `godot_project/tools/art_gen/render_preview.py` 直接读 `.tscn` 复合成画面（位置 / 层级 / 夜色一致，不含 shader 与 HUD），
 逐张说明见 `docs/ui/verify/README.md`；想一页看完就开 `docs/ui/acceptance.html`
 （或单文件离线版 `docs/ui/acceptance_standalone.html`，图片已内嵌），界面板仍在 `docs/ui/soviet_ui_board.html`。

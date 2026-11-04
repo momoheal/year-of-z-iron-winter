@@ -231,21 +231,22 @@ for p in LY.PROPS:
                    gravity="Vector3(10, -25, 0)", scale_min="0.6", scale_max="1.3",
                    color=col(1, 0.78, 0.45, 0.95)))
 
-# ---- 铁丝网 ----
-fence = S.node("Fence", "Node2D", "World", y_sort_enabled="true")
-for x0, kind in LY.FENCE_SEGMENTS:
-    key = {"a": "PRP_Fence_ChainLink_A", "b": "PRP_Fence_ChainLink_B", "torn": "PRP_Fence_ChainLink_Torn",
-           "torn_l": "PRP_Fence_ChainLink_TornL",
-           # manor：带电的高墙（elec_cut = 被剪开垂丝的那一格）
-           "elec": "PRP_Fence_Electric_A", "elec_cut": "PRP_Fence_Electric_Cut"}[kind]
-    seg = S.node(f"Seg_{x0:g}".replace(".", "_"), "Node2D", fence, position=v2(px(x0, LY.FENCE_Y)))
-    sprite(seg, key)
-fl = S.node("FenceLine", "StaticBody2D", "World", position=v2((0, round(LY.FENCE_Y * GY, 2))),
-            collision_layer="4", collision_mask="0")
-g0, g1 = LY.FENCE_GAP
-for nm, a, b in (("West", 0.0, g0), ("East", g1, LY.W)):
-    S.node(nm, "CollisionShape2D", fl, position=v2(((a + b) / 2 * PPM, -5)),
-           shape=rect_shape((b - a) * PPM, 10))
+# ---- 铁丝网（FENCE_Y = None 的室内关跳过整段）----
+if LY.FENCE_Y is not None:
+    fence = S.node("Fence", "Node2D", "World", y_sort_enabled="true")
+    for x0, kind in LY.FENCE_SEGMENTS:
+        key = {"a": "PRP_Fence_ChainLink_A", "b": "PRP_Fence_ChainLink_B", "torn": "PRP_Fence_ChainLink_Torn",
+               "torn_l": "PRP_Fence_ChainLink_TornL",
+               # manor：带电的高墙（elec_cut = 被剪开垂丝的那一格）
+               "elec": "PRP_Fence_Electric_A", "elec_cut": "PRP_Fence_Electric_Cut"}[kind]
+        seg = S.node(f"Seg_{x0:g}".replace(".", "_"), "Node2D", fence, position=v2(px(x0, LY.FENCE_Y)))
+        sprite(seg, key)
+    fl = S.node("FenceLine", "StaticBody2D", "World", position=v2((0, round(LY.FENCE_Y * GY, 2))),
+                collision_layer="4", collision_mask="0")
+    g0, g1 = LY.FENCE_GAP
+    for nm, a, b in (("West", 0.0, g0), ("East", g1, LY.W)):
+        S.node(nm, "CollisionShape2D", fl, position=v2(((a + b) / 2 * PPM, -5)),
+               shape=rect_shape((b - a) * PPM, 10))
 
 # ---- 场景边界 ----
 bd = S.node("Bounds", "StaticBody2D", ".", collision_layer="1", collision_mask="0")
