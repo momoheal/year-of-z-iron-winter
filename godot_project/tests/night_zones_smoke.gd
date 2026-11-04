@@ -22,9 +22,28 @@ const SCENES := {
 	"yard": "res://scenes/night_explore.tscn",
 	"marshalling": "res://scenes/night_marshalling.tscn",
 	"manor": "res://scenes/night_manor.tscn",
+	"mine": "res://scenes/night_mine.tscn",
+	"market": "res://scenes/night_market.tscn",
+	"coldstore": "res://scenes/night_coldstore.tscn",
+	"canteen": "res://scenes/night_canteen.tscn",
+	"sanitarium": "res://scenes/night_sanitarium.tscn",
 }
 ## 每张图的出生点应该在哪个区（涵洞在庄园 / 站场 → 从黑区摸进来；货场从锅炉房 → 白区）
-const SPAWN_ZONE := {"yard": "white", "marshalling": "black", "manor": "black"}
+const SPAWN_ZONE := {"yard": "white", "marshalling": "black", "manor": "black", "mine": "black",
+		"market": "white", "coldstore": "white", "canteen": "white", "sanitarium": "white"}
+## 按关覆盖的尸群/黑市规则：L07M 矿坑是「环境杀」关（塌方 / 粉尘 / 起爆倒计时）——
+## 尸少（感染掘进工只有 2 只，都是孢子源头的注脚）、无黑市（黑市是居民点的生意，不是作业面的）；
+## market 是黑市老家（低危交易关：尸是注脚，摊区就在黑区中心）
+const LEVEL_RULES := {
+	"mine": {"black_min": 1, "red_max": 1, "market": false},
+	"market": {"black_min": 2, "red_max": 1, "market": true},
+	# coldstore：低危账目关（2 只感染者都是专用线上的注脚）；没有黑市——冷库里没有生意，只有账
+	"coldstore": {"black_min": 2, "red_max": 1, "market": false},
+	# canteen：狭窄空间肉搏关（瓦西里 + 后角 1 只都在黑区窄门一带）；没有黑市——食堂里只有账和碗
+	"canteen": {"black_min": 2, "red_max": 1, "market": false},
+	# sanitarium：地底铁笼关（3 只都在黑区笼列）；没有黑市——疗养院里没有生意，只有病
+	"sanitarium": {"black_min": 3, "red_max": 1, "market": false},
+}
 
 
 func _init() -> void:
@@ -56,6 +75,9 @@ func _run() -> void:
 	for name in SCENES.keys():
 		_level(name)
 	_market()
+	_coldstore()
+	_canteen()
+	_sanitarium()
 	_fire()
 	print("")
 	if failures.is_empty():
@@ -127,15 +149,19 @@ func _level(name: String) -> void:
 	var sz: String = Zones.zone_at(zs, NightExplore_to_m(spawn))
 	_assert(sz == String(SPAWN_ZONE[name]), "%s: 出生点在 %s" % [name, SPAWN_ZONE[name]], sz)
 
-	# 尸群按区统计
+	# 尸群按区统计（矿坑按 LEVEL_RULES 放宽：环境杀关，尸是注脚不是主角）
+	var rules: Dictionary = LEVEL_RULES.get(name, {})
+	var red_max: int = int(rules.get("red_max", 3))
+	var black_min: int = int(rules.get("black_min", 6))
+	var has_market: bool = bool(rules.get("market", true))
 	var count := {"white": 0, "red": 0, "black": 0}
 	for r in get_nodes_in_group("night_rabid"):
 		var z := Zones.zone_at(zs, NightExplore_to_m((r as Node2D).global_position))
 		if count.has(z):
 			count[z] += 1
 	_assert(count["white"] == 0, "%s: 白区没有丧尸" % name, str(count["white"]))
-	_assert(count["red"] <= 3, "%s: 红区丧尸 ≤ 3（管制带靠清杀队撑）" % name, str(count["red"]))
-	_assert(count["black"] >= 6, "%s: 黑区丧尸 ≥ 6（尸群不成群就不叫黑区）" % name, str(count["black"]))
+	_assert(count["red"] <= red_max, "%s: 红区丧尸 ≤ %d（管制带靠清杀队撑）" % [name, red_max], str(count["red"]))
+	_assert(count["black"] >= black_min, "%s: 黑区丧尸 ≥ %d（尸群不成群就不叫黑区）" % [name, black_min], str(count["black"]))
 	print("      分布 white=%d red=%d black=%d" % [count["white"], count["red"], count["black"]])
 
 	# 半人也不能在白区（居民区里躺个发烧的人，说不通）
@@ -143,10 +169,10 @@ func _level(name: String) -> void:
 		var hz := Zones.zone_at(zs, NightExplore_to_m((h as Node2D).global_position))
 		_assert(hz != "white", "%s: 半人不在白区" % name, "%s" % hz)
 
-	# 黑市：在黑区，摊主与幸存者都在黑区，且摊子 5 m 内有人
+	# 黑市：在黑区，摊主与幸存者都在黑区，且摊子 5 m 内有人（矿坑没有黑市）
 	var mk := get_nodes_in_group("night_market")
-	_assert(mk.size() == 1, "%s: 有且只有一个黑市" % name, str(mk.size()))
-	if mk.size() == 1:
+	_assert(mk.size() == (1 if has_market else 0), "%s: 黑市数量（矿坑 0，其余关 1）" % name, str(mk.size()))
+	if mk.size() == 1 and has_market:
 		var mpos: Vector2 = (mk[0] as Node2D).global_position
 		var mz := Zones.zone_at(zs, NightExplore_to_m(mpos))
 		_assert(mz == "black", "%s: 黑市在黑区" % name, mz)
@@ -233,6 +259,81 @@ func _market() -> void:
 	_assert(not s.trade_market(mk), "没罐头 → 摊主不换")
 	_assert(int(s.reserve["rifle"]) == 0, "没成交就不该到账")
 
+	for c in root.get_children():
+		if c.name == "NightExplore":
+			root.remove_child(c)
+			c.free()
+
+
+# ---------------------------------------------------------------------------
+# coldstore 专用：「账面 vs 活人」——红字说在册 0 人，柱后缩着 2 个活人
+# ---------------------------------------------------------------------------
+func _sanitarium() -> void:
+	print("[sanitarium 专用]")
+	var s := _scene(SCENES["sanitarium"])
+	var zs: Array = s.zones
+	var sv := get_nodes_in_group("night_survivor")
+	_assert(sv.size() == 3, "sanitarium 安娜 0419 + 梁诺夫 + 古丽娅 3 人", str(sv.size()))
+	# 安娜在黑区铁架床边（熬过第四天的人），两位医生在白区工作区
+	var anna: Node2D = sv[0] as Node2D
+	_assert(Zones.zone_at(zs, NightExplore_to_m(anna.global_position)) == "black",
+			"安娜在黑区铁架床边（掉鳞屑的地方）")
+	_assert(Zones.zone_at(zs, NightExplore_to_m((sv[1] as Node2D).global_position)) == "white",
+			"梁诺夫医生在白区工作区")
+	# 药柜在白区（照顾人的地方），回退半人在黑区笼里
+	var meds: Node = s.get_node_or_null("World/Props/MedCabinet")
+	_assert(meds != null and Zones.zone_at(zs, NightExplore_to_m(meds.global_position)) == "white",
+			"药柜站在白区医生工作区")
+	for h in get_nodes_in_group("night_half"):
+		var hz := Zones.zone_at(zs, NightExplore_to_m((h as Node2D).global_position))
+		_assert(hz == "black", "回退半人关在黑区笼里", hz)
+	for c in root.get_children():
+		if c.name == "NightExplore":
+			root.remove_child(c)
+			c.free()
+
+
+func _canteen() -> void:
+	print("[canteen 专用]")
+	var s := _scene(SCENES["canteen"])
+	var zs: Array = s.zones
+	var sv := get_nodes_in_group("night_survivor")
+	_assert(sv.size() == 2, "canteen 独眼老炊事员 + 老铁路工 2 人（十九只碗 = 十九个人）", str(sv.size()))
+	for p in sv:
+		var pz := Zones.zone_at(zs, NightExplore_to_m((p as Node2D).global_position))
+		_assert(pz == "black" or pz == "white", "canteen 幸存者在灶边或碗旁", pz)
+	# 费奥多尔守在黑区的灶边（和他烧到 40 度的儿子在同一片黑区）
+	var fyodor: Node2D = sv[0] as Node2D
+	_assert(Zones.zone_at(zs, NightExplore_to_m(fyodor.global_position)) == "black",
+			"老炊事员守在黑区灶边（窄门就在这一片）")
+	# 砧板在黑区——锁骨的故事从这里开始
+	var board: Node = s.get_node_or_null("World/Props/PrepBoard")
+	_assert(board != null and Zones.zone_at(zs, NightExplore_to_m(board.global_position)) == "black",
+			"砧板砍骨刀站在黑区（狭窄后厨的深处）")
+	for c in root.get_children():
+		if c.name == "NightExplore":
+			root.remove_child(c)
+			c.free()
+
+
+func _coldstore() -> void:
+	print("[coldstore 专用]")
+	var s := _scene(SCENES["coldstore"])
+	var zs: Array = s.zones
+	var sv := get_nodes_in_group("night_survivor")
+	_assert(sv.size() == 2, "coldstore 3 号柱后的母子 2 人（账面在册 0 人）", str(sv.size()))
+	var near_col := 0
+	var col_px := Vector2(25.0 * PPM, 23.5 * PPM * SQ)
+	for p in sv:
+		var pz := Zones.zone_at(zs, NightExplore_to_m((p as Node2D).global_position))
+		_assert(pz == "black", "coldstore 幸存者住在黑区（账面死人的地方）", pz)
+		if NightExplore_dist_m((p as Node2D).global_position, col_px) <= 4.0:
+			near_col += 1
+	_assert(near_col == 2, "coldstore 母子贴着 3 号立柱（柱后 4 米内）", str(near_col))
+	# 磁卡终端在白区——「在册」的地方；两处对照摆在同一张图上
+	var term: Node = s.get_node_or_null("World/Props/CardTerminal")
+	_assert(term != null and Zones.zone_at(zs, NightExplore_to_m(term.global_position)) == "white",
+			"coldstore 磁卡终端站在白区（账面在册的地方）")
 	for c in root.get_children():
 		if c.name == "NightExplore":
 			root.remove_child(c)

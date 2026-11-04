@@ -48,6 +48,11 @@ func _run() -> void:
 	_yard()
 	_marshalling()
 	_manor()
+	_mine()
+	_market()
+	_coldstore()
+	_canteen()
+	_sanitarium()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -64,7 +69,7 @@ func _registry() -> void:
 			continue
 		with_scene += 1
 		_assert(ResourceLoader.exists(sc), "LOCS[%s].scene 存在 (%s)" % [L.id, sc])
-	_assert(with_scene >= 3, "至少三关有节点化场景（yard/marshalling/manor）", str(with_scene))
+	_assert(with_scene >= 8, "至少八关有节点化场景（yard/marshalling/manor/mine/market/coldstore/canteen/sanitarium）", str(with_scene))
 	# 每个带 scene 的地点：CampaignData 的 loot 类别都得在表里（夜潜掉落读同一张表）
 	for L in Data.LOCS:
 		for cat in L.loot:
@@ -243,6 +248,345 @@ func _manor() -> void:
 	_assert(is_equal_approx(g.dawn_progress(), 0.5), "manor 最后 20% 的一半 dawn=0.5",
 			str(g.dawn_progress()))
 	_shared(g, "manor")
+
+# ---------------------------------------------------------------------------
+func _mine() -> void:
+	var g: Node = _scene("res://scenes/night_mine.tscn")
+	_assert(g.level_id == "mine", "mine metadata.level_id", g.level_id)
+	_assert(g.level_zh == "3 号矿坑 · 温压爆破作业面", "mine metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "Mine Shaft No.3 · Blast Face", "mine metadata.level_en", g.level_en)
+	_assert(g.prize == "intel", "mine prize = intel（孢子岩芯与爆破台账）", g.prize)
+	_assert(g.objective_zh.contains("起爆器"), "mine objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("豁口"), "mine extract 元数据（南侧运矸专线豁口）", g.extract_zh)
+	_assert(g.rail_y.size() == 1, "mine 一条运矸专线", str(g.rail_y))
+	# 装配：2 组清杀队换岗 / 2 只感染掘进工（1 壮硕）/ 1 个回退半人 / 10 个容器 / 4 块冻雪泥
+	_assert(g.soldiers.size() == 2, "mine 2 组清杀队换岗", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 2, "mine 2 只感染掘进工", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 1, "其中 1 只壮硕（守断面的 Rabid_Cut）", str(brutes))
+	_assert(g.halfs.size() == 1, "mine 1 个回退半人（博伊科 0417）", str(g.halfs.size()))
+	_assert(g.containers.size() == 10, "mine 10 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 4, "mine 4 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（240s 长夜）；无探照灯——黑暗是这张图的第一属性
+	_assert(g.warm_lights.size() == 2, "mine 两个回温点（火堆×2）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/Brazier") != null, "mine 装药队火堆")
+	_assert(g.get_node_or_null("Lights/BrazierCut") != null, "mine 看守断面火堆")
+	_assert(g.get_node_or_null("Lights/Signal") != null, "mine 信号机灯")
+	_assert(g.get_node_or_null("Searchlight") == null, "mine 没有探照灯（假人哨塔是空壳）")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightMine_Baked.png"), "mine 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_Mine_A.png"), "mine 矿山岩壁立面",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 剧本锚点：起爆器旁的爆破台账（必出 intel）/ 铝热剂装药 / 木箱堆阿司匹林 / 假人哨塔
+	var rig: Node = g.get_node_or_null("World/Props/DetonatorRig")
+	_assert(rig != null and String(rig.get_meta("guaranteed", "")) == "intel",
+			"起爆器必出 intel（孢子岩芯与爆破台账）")
+	var th: Node = g.get_node_or_null("World/Props/Thermite01")
+	_assert(th != null and String(th.get_meta("container", "")) == "crate",
+			"铝热剂装药堆在断面根上")
+	var crates: Node = g.get_node_or_null("World/Props/CrateStack")
+	_assert(crates != null and String(crates.get_meta("guaranteed", "")) == "asp",
+			"木箱堆必出阿司匹林（喂博伊科退烧）")
+	_assert(g.get_node_or_null("World/Props/DummyTower") != null, "假人哨塔第二座（无灯）")
+	# 地表 → 脚步材质：运矸专线是铁轨，装卸台外是雪地
+	_assert(g.step_sound(_m(20.0, 15.5), false) == "step_rail", "踩在运矸专线中心 = 铁轨脚步",
+			g.step_sound(_m(20.0, 15.5), false))
+	_assert(g.step_sound(_m(20.0, 8.0), false) == "step_snow", "装卸台外 = 雪地脚步",
+			g.step_sound(_m(20.0, 8.0), false))
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(46.0 * PPM), "mine limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(34.0 * GY), "mine limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "mine limit_top（岩壁顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 压风管蒸汽 + 钠灯嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "mine 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（mine 夜长 100 分钟）
+	g.in_campaign = true
+	g.night_max = 100.0
+	g.night_left = 100.0
+	_assert(g.dawn_progress() == 0.0, "mine 夜刚开始 dawn=0")
+	g.night_left = 10.0
+	_assert(is_equal_approx(g.dawn_progress(), 0.5), "mine 最后 20% 的一半 dawn=0.5",
+			str(g.dawn_progress()))
+	_shared(g, "mine")
+
+# ---------------------------------------------------------------------------
+func _market() -> void:
+	var g: Node = _scene("res://scenes/night_market.tscn")
+	_assert(g.level_id == "market", "market metadata.level_id", g.level_id)
+	_assert(g.level_zh == "铁路黑市（废弃工人镇）", "market metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "Rail Black Market", "market metadata.level_en", g.level_en)
+	_assert(g.prize == "intel", "market prize = intel（6.66 电台棚的专列调度记录）", g.prize)
+	_assert(g.objective_zh.contains("6.66"), "market objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("豁口"), "market extract 元数据（铁路侧豁口）", g.extract_zh)
+	_assert(g.rail_y.size() == 1, "market 铁路 1 道", str(g.rail_y))
+	# 装配：2 组清杀队（棚户巷 + 铁路哨兵）/ 2 只感染者 / 无半人（老谢苗是幸存者）/ 10 个容器 / 4 块冻雪泥
+	_assert(g.soldiers.size() == 2, "market 2 组清杀队", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 2, "market 2 只感染者", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 0, "market 没有壮硕感染者（低危交易关）", str(brutes))
+	_assert(g.halfs.size() == 0, "market 没有回退半人", str(g.halfs.size()))
+	_assert(g.containers.size() == 10, "market 10 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 4, "market 4 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（市集篝火 + 烫鳞炭炉）；无探照灯——这里是人和人互相看着的地方
+	_assert(g.warm_lights.size() == 2, "market 两个回温点（篝火 + 炭炉）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/BrazierBazaar") != null, "market 市集篝火")
+	_assert(g.get_node_or_null("Lights/BrazierForge") != null, "market 烫鳞炭炉")
+	_assert(g.get_node_or_null("Lights/LampNw") != null and g.get_node_or_null("Lights/LampSe") != null,
+			"market 两盏钠灯")
+	_assert(g.get_node_or_null("Searchlight") == null, "market 没有探照灯")
+	# 黑市摊区在黑区（夜潜区划烟测口径：黑市只在黑区）
+	var mk: Node = g.get_node_or_null("World/Market")
+	_assert(mk != null and mk.position.y >= 21.0 * GY, "market 摊区在黑区",
+			str(mk.position.y if mk else -1.0))
+	_assert(mk != null and String(mk.get_meta("zh", "")) != "", "market 摊区元数据在")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightMarket_Baked.png"), "market 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_Town_A.png"), "market 工人镇立面",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 剧本锚点：6.66 电台棚（必出 intel）/ 盘尼西林冷柜（必出 abx）/ 真假药对照 / 烫鳞炭炉 / 药棚铁门
+	var radio: Node = g.get_node_or_null("World/Props/Radio666")
+	_assert(radio != null and String(radio.get_meta("guaranteed", "")) == "intel",
+			"6.66 电台棚必出 intel（专列调度记录）")
+	var fridge: Node = g.get_node_or_null("World/Props/MedFridge")
+	_assert(fridge != null and String(fridge.get_meta("guaranteed", "")) == "abx",
+			"药棚冷柜必出盘尼西林（abx）")
+	_assert(g.get_node_or_null("World/Props/MedCache") != null
+			and g.get_node_or_null("World/Props/FakeMeds") != null, "真药与假药摆在同一个摊区")
+	_assert(g.get_node_or_null("World/Props/QuackForge") != null, "烫鳞炭炉（只有工具和痕迹）")
+	_assert(g.get_node_or_null("World/Props/MedShed") != null, "药棚铁门（C2 的锁点）")
+	# 地表 → 脚步材质：铁路是铁轨，市集是雪地
+	_assert(g.step_sound(_m(23.0, 27.0), false) == "step_rail", "踩在铁路 1 道 = 铁轨脚步",
+			g.step_sound(_m(23.0, 27.0), false))
+	_assert(g.step_sound(_m(24.5, 24.4), false) == "step_snow", "市集摊区 = 雪地脚步",
+			g.step_sound(_m(24.5, 24.4), false))
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(46.0 * PPM), "market limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(34.0 * GY), "market limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "market limit_top（工人镇屋顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 蒸汽 + 钠灯嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "market 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（market 夜长 80 分钟）
+	g.in_campaign = true
+	g.night_max = 80.0
+	g.night_left = 80.0
+	_assert(g.dawn_progress() == 0.0, "market 夜刚开始 dawn=0")
+	g.night_left = 8.0
+	_assert(is_equal_approx(g.dawn_progress(), 0.5), "market 最后 20% 的一半 dawn=0.5",
+			str(g.dawn_progress()))
+	_shared(g, "market")
+
+
+func _sanitarium() -> void:
+	var g: Node = _scene("res://scenes/night_sanitarium.tscn")
+	_assert(g.level_id == "sanitarium", "sanitarium metadata.level_id", g.level_id)
+	_assert(g.level_zh == "旧传染病疗养院 · 地下室", "sanitarium metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "Old Sanatorium · Basement", "sanitarium metadata.level_en", g.level_en)
+	_assert(g.prize == "asp", "sanitarium prize = asp（半片阿司匹林的回声）", g.prize)
+	_assert(g.objective_zh.contains("第四天"), "sanitarium objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("楼梯"), "sanitarium extract 元数据（南侧楼梯间）", g.extract_zh)
+	_assert(g.rail_y.size() == 0, "sanitarium 没有铁轨（室内关——铁壳号只在换气铁窗外）", str(g.rail_y))
+	# 装配：2 组清杀队 / 3 只感染者（1 壮硕）/ 1 回退半人 / 12 个容器 / 2 块冻雪泥
+	_assert(g.soldiers.size() == 2, "sanitarium 2 组清杀队（收集班）", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 3, "sanitarium 3 只感染者", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 1, "sanitarium 笼4 那只壮硕感染者（一直撞栏杆）", str(brutes))
+	_assert(g.halfs.size() == 1, "sanitarium 1 个回退半人（笼3 · 0442）", str(g.halfs.size()))
+	_assert(g.containers.size() == 12, "sanitarium 12 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 2, "sanitarium 2 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（火炉 + 火桶）；两盏灯（笼区冷白吊灯 + 工作区灯）；无探照灯
+	_assert(g.warm_lights.size() == 2, "sanitarium 两个回温点（医生的火炉 + 火桶）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/BrazierClinic") != null, "sanitarium 火炉")
+	_assert(g.get_node_or_null("Lights/BrazierHeater") != null, "sanitarium 火桶")
+	_assert(g.get_node_or_null("Lights/LampCage") != null and g.get_node_or_null("Lights/LampOffice") != null,
+			"sanitarium 两盏灯（笼区冷白 + 工作区）")
+	_assert(g.get_node_or_null("Searchlight") == null, "sanitarium 没有探照灯")
+	# 剧本锚点（3-2「地底铁笼」）：铁架床+皮带 / 回退半人 / 药柜（必出 asp）/ 换气铁窗 / 铁栅门
+	_assert(g.get_node_or_null("World/Props/CageBed") != null, "sanitarium 安娜的铁架床 + 两根皮带")
+	_assert(g.get_node_or_null("World/Half_Cage0442") != null, "sanitarium 笼3 回退半人（掉鳞屑、瞳孔回色）")
+	var meds: Node = g.get_node_or_null("World/Props/MedCabinet")
+	_assert(meds != null and String(meds.get_meta("guaranteed", "")) == "asp",
+			"sanitarium 药柜必出 asp")
+	_assert(g.get_node_or_null("World/Props/CageGate") != null, "sanitarium 笼区铁栅门（wedge 机关载体）")
+	_assert(g.get_node_or_null("World/Props/XrayBoard") != null, "sanitarium 读片灯箱 + 病历")
+	_assert(g.get_node_or_null("World/Survivor_0") != null and g.get_node_or_null("World/Survivor_1") != null
+			and g.get_node_or_null("World/Survivor_2") != null,
+			"sanitarium 安娜（0419）+ 梁诺夫 + 古丽娅在场")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightSanitarium_Baked.png"), "sanitarium 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_Sanitarium_A.png"), "sanitarium 地下室北墙立面（换气铁窗）",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(44.0 * PPM), "sanitarium limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(30.0 * GY), "sanitarium limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "sanitarium limit_top（疗养院楼顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "sanitarium 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（sanitarium 夜长 110 分钟）
+	g.in_campaign = true
+	g.night_max = 110.0
+	g.night_left = 110.0
+	_assert(g.dawn_progress() == 0.0, "sanitarium 夜刚开始 dawn=0")
+	g.night_left = 11.0
+	_assert(g.dawn_progress() == 0.5, "sanitarium 夜最后 10% = 亮一半", str(g.dawn_progress()))
+	g.night_left = 0.0
+	_assert(g.dawn_progress() == 1.0, "sanitarium 天亮 dawn=1", str(g.dawn_progress()))
+	g.queue_free()
+
+
+func _canteen() -> void:
+	var g: Node = _scene("res://scenes/night_canteen.tscn")
+	_assert(g.level_id == "canteen", "canteen metadata.level_id", g.level_id)
+	_assert(g.level_zh == "东街工人食堂 · 后厨", "canteen metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "East Street Canteen · Kitchen", "canteen metadata.level_en", g.level_en)
+	_assert(g.prize == "blade", "canteen prize = blade（砧板上的宽背砍骨刀）", g.prize)
+	_assert(g.objective_zh.contains("十九只碗"), "canteen objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("南门"), "canteen extract 元数据（南门礼堂入口）", g.extract_zh)
+	_assert(g.rail_y.size() == 0, "canteen 没有铁轨（室内关）", str(g.rail_y))
+	# 装配：2 组清杀队 / 2 只感染者（1 壮硕）/ 无半人 / 10 个容器 / 2 块冻雪泥
+	_assert(g.soldiers.size() == 2, "canteen 2 组清杀队", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 2, "canteen 2 只感染者", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 1, "canteen 瓦西里是壮硕感染者（锁骨也能被撞断的那块头）", str(brutes))
+	_assert(g.halfs.size() == 0, "canteen 没有回退半人", str(g.halfs.size()))
+	_assert(g.containers.size() == 11, "canteen 11 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 2, "canteen 2 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（灶火 + 礼堂火炉）；两盏灯（后厨吊灯 + 餐厅吊灯）；无探照灯
+	_assert(g.warm_lights.size() == 2, "canteen 两个回温点（灶 + 礼堂火炉）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/BrazierStove") != null, "canteen 灶火")
+	_assert(g.get_node_or_null("Lights/BrazierHall") != null, "canteen 礼堂火炉")
+	_assert(g.get_node_or_null("Lights/LampKitchen") != null and g.get_node_or_null("Lights/LampDining") != null,
+			"canteen 两盏灯（后厨 + 餐厅）")
+	_assert(g.get_node_or_null("Searchlight") == null, "canteen 没有探照灯")
+	# 剧本锚点（2-1「锁骨」）：砧板砍骨刀（必出 blade）/ 十九只碗 / 窄门（wedge 机关载体）/ 黑麦糊桶 / 灶
+	var board: Node = g.get_node_or_null("World/Props/PrepBoard")
+	_assert(board != null and String(board.get_meta("guaranteed", "")) == "blade",
+			"canteen 砧板必出 blade（宽背生锈砍骨刀）")
+	_assert(g.get_node_or_null("World/Props/Table2") != null, "canteen 十九只碗的长条桌")
+	_assert(g.get_node_or_null("World/Props/NarrowDoor") != null, "canteen 杂物间窄门（wedge 机关载体）")
+	_assert(g.get_node_or_null("World/Props/RyeVat") != null, "canteen 黑麦糊桶")
+	_assert(g.get_node_or_null("World/Props/Stove") != null, "canteen 独眼老炊事员的灶")
+	_assert(g.get_node_or_null("World/Survivor_0") != null and g.get_node_or_null("World/Survivor_1") != null,
+			"canteen 独眼老炊事员费奥多尔 + 老铁路工在场（十九只碗 = 十九个人）")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightCanteen_Baked.png"), "canteen 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_Canteen_A.png"), "canteen 瓷砖后厨立面",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 地表 → 脚步材质：室内关没有铁轨——冻雪泥上是冰壳声，其余是雪地声
+	_assert(g.step_sound(_m(22.0, 28.2), true) == "step_ice", "canteen 冻雪泥 = 冰壳脚步",
+			g.step_sound(_m(22.0, 28.2), true))
+	_assert(g.step_sound(_m(22.0, 25.0), false) == "step_snow", "canteen 后厨地面 = 雪地脚步",
+			g.step_sound(_m(22.0, 25.0), false))
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(44.0 * PPM), "canteen limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(30.0 * GY), "canteen limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "canteen limit_top（食堂楼顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "canteen 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（canteen 夜长 90 分钟）
+	g.in_campaign = true
+	g.night_max = 90.0
+	g.night_left = 90.0
+	_assert(g.dawn_progress() == 0.0, "canteen 夜刚开始 dawn=0")
+	g.night_left = 9.0
+	_assert(g.dawn_progress() == 0.5, "canteen 夜最后 10% = 亮一半", str(g.dawn_progress()))
+	g.night_left = 0.0
+	_assert(g.dawn_progress() == 1.0, "canteen 天亮 dawn=1", str(g.dawn_progress()))
+	g.queue_free()
+
+
+func _coldstore() -> void:
+	var g: Node = _scene("res://scenes/night_coldstore.tscn")
+	_assert(g.level_id == "coldstore", "coldstore metadata.level_id", g.level_id)
+	_assert(g.level_zh == "城北四号铁路冷库", "coldstore metadata.level_zh", g.level_zh)
+	_assert(g.level_en == "Rail Cold Storage No.4", "coldstore metadata.level_en", g.level_en)
+	_assert(g.prize == "abx", "coldstore prize = abx（封存医疗耗材——真药的另一半答案）", g.prize)
+	_assert(g.objective_zh.contains("0892"), "coldstore objective 元数据", g.objective_zh)
+	_assert(g.extract_zh.contains("豁口"), "coldstore extract 元数据（铁路专用线侧豁口）", g.extract_zh)
+	_assert(g.rail_y.size() == 1, "coldstore 铁路专用线 1 道", str(g.rail_y))
+	# 装配：2 组清杀队 / 2 只感染者 / 无半人（半人在 yard）/ 9 个容器 / 4 块冻雪泥
+	_assert(g.soldiers.size() == 2, "coldstore 2 组清杀队", str(g.soldiers.size()))
+	_assert(g.rabids.size() == 2, "coldstore 2 只感染者", str(g.rabids.size()))
+	var brutes := 0
+	for r in g.rabids:
+		if r.brute:
+			brutes += 1
+	_assert(brutes == 0, "coldstore 没有壮硕感染者（低危账目关）", str(brutes))
+	_assert(g.halfs.size() == 0, "coldstore 没有回退半人", str(g.halfs.size()))
+	_assert(g.containers.size() == 9, "coldstore 9 个可搜刮容器", str(g.containers.size()))
+	_assert(g.slush.size() == 4, "coldstore 4 块冻雪泥", str(g.slush.size()))
+	# 两个回温点（值班炉 + 幸存者火桶）；两盏灯（月台钠灯 + 南库冷白吊灯）；无探照灯
+	_assert(g.warm_lights.size() == 2, "coldstore 两个回温点（值班炉 + 火桶）", str(g.warm_lights.size()))
+	_assert(g.get_node_or_null("Lights/BrazierDuty") != null, "coldstore 值班炉")
+	_assert(g.get_node_or_null("Lights/BrazierWorker") != null, "coldstore 幸存者火桶")
+	_assert(g.get_node_or_null("Lights/LampDock") != null and g.get_node_or_null("Lights/LampHall") != null,
+			"coldstore 两盏灯（月台灯 + 南库吊灯）")
+	_assert(g.get_node_or_null("Searchlight") == null, "coldstore 没有探照灯")
+	# 剧本锚点（1-3「账面死人」）：磁卡终端 / 排水窄缝 / 封存耗材（必出 abx）/ 冷库铁门 / 3 号柱母子
+	_assert(g.get_node_or_null("World/Props/CardTerminal") != null, "coldstore 磁卡终端（红字：在册人数 0）")
+	_assert(g.get_node_or_null("World/Props/DrainSlit") != null, "coldstore 12cm 排水窄缝（只有痕迹）")
+	var meds: Node = g.get_node_or_null("World/Props/SealedMeds")
+	_assert(meds != null and String(meds.get_meta("guaranteed", "")) == "abx",
+			"coldstore 封存医疗耗材必出 abx")
+	_assert(g.get_node_or_null("World/Props/ColdVaultDoor") != null, "coldstore 冷库铁门（wedge 机关载体）")
+	_assert(g.get_node_or_null("World/Props/Column03") != null, "coldstore 3 号立柱在场")
+	_assert(g.get_node_or_null("World/Survivor_0") != null and g.get_node_or_null("World/Survivor_1") != null,
+			"coldstore 3 号柱后的母子在场（账面在册 0 人，实际 2 人）")
+	# 资产指向本关的大图
+	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
+			"TIL_Ground_NightColdStore_Baked.png"), "coldstore 地面大图",
+			g.get_node("Ground").texture.resource_path)
+	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
+			"TIL_Facade_ColdStore_A.png"), "coldstore 冷库立面",
+			g.get_node("World/Facade/Sprite").texture.resource_path)
+	# 地表 → 脚步材质：专用线是铁轨，南库空地是雪地
+	_assert(g.step_sound(_m(23.0, 27.0), false) == "step_rail", "踩在专用线 = 铁轨脚步",
+			g.step_sound(_m(23.0, 27.0), false))
+	_assert(g.step_sound(_m(2.0, 30.0), false) == "step_snow", "南库空地 = 雪地脚步",
+			g.step_sound(_m(2.0, 30.0), false))
+	# 镜头边界 = 本关 W/H + 立面顶
+	_assert(g.cam.limit_right == int(46.0 * PPM), "coldstore limit_right", str(g.cam.limit_right))
+	_assert(g.cam.limit_bottom == int(34.0 * GY), "coldstore limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == int(3.0 * GY - 600), "coldstore limit_top（冷库主楼顶）", str(g.cam.limit_top))
+	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
+	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+		_assert(g.get_node_or_null(nm) != null, "coldstore 环境音 " + nm)
+	# 天亮窗口同样是最后 20%（coldstore 夜长 80 分钟）
+	g.in_campaign = true
+	g.night_max = 80.0
+	g.night_left = 80.0
+	_assert(g.dawn_progress() == 0.0, "coldstore 夜刚开始 dawn=0")
+	g.night_left = 8.0
+	_assert(is_equal_approx(g.dawn_progress(), 0.5), "coldstore 最后 20% 的一半 dawn=0.5",
+			str(g.dawn_progress()))
+	_shared(g, "coldstore")
 
 # ---------------------------------------------------------------------------
 func _shared(s: Node, tag: String) -> void:

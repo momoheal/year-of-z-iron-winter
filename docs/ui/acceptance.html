@@ -83,7 +83,7 @@
     </div>
     <div style="margin-top:12px">在线版 / served: 图片走相对路径，原尺寸 PNG 点图可看。</div>
   </div>
-  <nav><a href="#zone">00 · 三区分野与黑市 / Three zones & black market</a><a href="#level">01 · 三关整图 / Full levels</a><a href="#crop">02 · 哨位特写 / Outpost close-ups</a><a href="#read">03 · 战斗读数 / Combat readout</a><a href="soviet_ui_board.html">04 · 界面板 / UI board</a>
+  <nav><a href="#zone">00 · 三区分野与黑市 / Three zones & black market</a><a href="#level">01 · 六关整图 / Full levels</a><a href="#crop">02 · 哨位特写 / Outpost close-ups</a><a href="#read">03 · 战斗读数 / Combat readout</a><a href="soviet_ui_board.html">04 · 界面板 / UI board</a>
     <a href="verify/README.md">README.md</a></nav>
   <h2 id="zone">00 · 三区分野与黑市 / Three zones & black market</h2>
 <section class="grid">  <article class="card">
@@ -97,10 +97,10 @@
     <div class="sub mono">NightZones.gd + NightZoneField.gd · levels/*.py 的 ZONES</div>
     <div class="sub dim">三关各一格黑市 2× · 加三区色标 · zones_market.png</div>
     <div class="checks">
-      <ul><li>白 / 红 / 黑三条带的分界（米）写在同一张图上：货场 12 / 21.5 · 调车场 9 / 20 · 庄园 10 / 22</li><li>每格都能看到「摊位 + 摊主 + 2 名幸存者」：黑市只在黑区，且紧着自己的光源（火堆 / 马灯）</li><li>白区没有丧尸；红区 0~3 只 + 清杀队巡逻（白区居民禁止进入：3.5 s 警告、7 s 盘问）；黑区 7~8 只、每箱多翻一件</li></ul>
-      <ul class="en"><li>Band boundaries (m) are printed on the sheet: yard 12 / 21.5 · park 9 / 20 · manor 10 / 22</li><li>Every panel shows the stall + trader + 2 survivors: the market only exists in the black zone, always by its own light</li><li>White: no infected. Red: 0-3 + OSK patrols (residents forbidden: 3.5 s warn, 7 s challenge). Black: 7-8, +1 loot roll</li></ul>
+      <ul><li>白 / 红 / 黑三条带的分界（米）写在同一张图上：货场 12 / 21.5 · 调车场 9 / 20 · 庄园 10 / 22</li><li>每格都能看到「摊位 + 摊主 + 2 名幸存者」：黑市只在黑区，且紧着自己的光源（火堆 / 马灯）</li><li>白区没有丧尸；红区 0~3 只 + 清杀队巡逻（白区居民禁止进入：3.5 s 警告、7 s 盘问）；黑区 7~8 只、每箱多翻一件</li><li>黑市的老家（market 关）摊区就是黑区的中心——见 market_grey / market_night 两张全图</li></ul>
+      <ul class="en"><li>Band boundaries (m) are printed on the sheet: yard 12 / 21.5 · park 9 / 20 · manor 10 / 22</li><li>Every panel shows the stall + trader + 2 survivors: the market only exists in the black zone, always by its own light</li><li>White: no infected. Red: 0-3 + OSK patrols (residents forbidden: 3.5 s warn, 7 s challenge). Black: 7-8, +1 loot roll</li><li>In the market's home level the bazaar IS the center of the black zone — see market_grey / market_night</li></ul>
     </div>
-  </article></section><h2 id="level">01 · 三关整图 / Full levels</h2>
+  </article></section><h2 id="level">01 · 六关整图 / Full levels</h2>
 <section class="grid">  <article class="card">
     <header>
       <span class="chip">L03 · ШИРОКАЯ КОЛЕЯ · 宽轨货场</span>
@@ -185,6 +185,146 @@
       <ul><li>最暗的一关：松林会不会把玩家整个吃掉</li><li>两处火盆是否给出可用的导航锚点</li><li>瞭望塔探照灯位置与地面光斑</li></ul>
       <ul class="en"><li>Darkest level: do the pines swallow the player?</li><li>Do the two braziers work as navigation anchors?</li><li>Watchtower searchlight position vs its ground pool</li></ul>
     </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L07M · ШАХТА №3 · 3 号矿坑</span>
+      <span class="meta mono">1825×1049</span>
+    </header>
+    <a class="shot" href="verify/mine_grey.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/mine_grey.jpg" alt="mine_grey.png">
+    </a>
+    <div class="sub mono">res://scenes/night_mine.tscn</div>
+    <div class="sub dim">整关 46×34 m · 中性光 · mine_grey.png</div>
+    <div class="checks">
+      <ul><li>矿山岩壁立面：斜井坑木门脸 / 工棚 / 矿仓 / 井架 / 爆破断面的次序读不读得出来</li><li>假人哨塔（38.5, 13.4 m）：远看是哨位、近看是塑料模特 + 猪嘴面具——轮廓必须骗得到人</li><li>铝热剂堆（33.5 / 37.2 m）与起爆器（29.5, 26.8 m）：作案工具一眼可辨；起爆器旁斜靠爆破台账木夹板</li><li>色带：白 0–11 / 红 11–21 / 黑 21–34；出生点与目标物都在黑区（本关无探照灯）</li></ul>
+      <ul class="en"><li>Does the rock facade read in order: timber portal / shack / ore bin / headframe / blast cut?</li><li>Dummy tower (38.5, 13.4): from afar an outpost, up close a mannequin — does the silhouette fool you?</li><li>Thermite (33.5 / 37.2) and detonator (29.5, 26.8): legible tools; the blast ledger leans on the rig</li><li>Bands: white 0-11 / red 11-21 / black 21-34; spawn and objective both sit in the black (no searchlight)</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L07M · ШАХТА №3 · 3 号矿坑</span>
+      <span class="meta mono">1825×1049</span>
+    </header>
+    <a class="shot" href="verify/mine_night.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/mine_night.jpg" alt="mine_night.png">
+    </a>
+    <div class="sub mono">res://scenes/night_mine.tscn</div>
+    <div class="sub dim">整关 · 夜色 · mine_night.png</div>
+    <div class="checks">
+      <ul><li>没有探照灯的一关：两盏钠灯 + 两处火堆够不够把黑区照出「可走」的边界</li><li>孢子断面的暗哑微光（灰绿）：要看得见、又不能像魔法——它是地质微光</li><li>井架绞车房小窗与斜井洞口暖光是不是全场唯一的「活气」</li></ul>
+      <ul class="en"><li>The no-searchlight level: two lamps + two fires — is the black zone still navigable?</li><li>The spore face's dull grey-green sheen: visible, but geological — not magical</li><li>Are the headframe cabin window and portal glow the only signs of life?</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L07 · БАРАХОЛКА · 铁路黑市</span>
+      <span class="meta mono">1825×1049</span>
+    </header>
+    <a class="shot" href="verify/market_grey.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/market_grey.jpg" alt="market_grey.png">
+    </a>
+    <div class="sub mono">res://scenes/night_market.tscn</div>
+    <div class="sub dim">整关 46×34 m · 中性光 · market_grey.png</div>
+    <div class="checks">
+      <ul><li>工人镇板房立面 + 镇口街灯 + 破损供暖管 + 棚户巷板房：一条「人住的街」读不读得出来</li><li>市集摊区（24.5, 24.4 m）与 6.66 电台棚（36.5, 25.0 m）：摊位 / 摊主 / 幸存者的社会距离对不对</li><li>辨药对照：真药（10.6, 24.6）朴素白瓶、假药（19.2, 24.0）花哨商标，摆在同一个摊区里</li><li>色带：白 0–11 / 红 11–21 / 黑 21–34；摊区、烫鳞后巷、药棚铁门全在黑区；铁路 1 道（27.0 m）离围栏 6 m，不能糊成黑带</li></ul>
+      <ul class="en"><li>Do the plank-shack facade + street lamp + steam pipe + shanty row read as one inhabited street?</li><li>Bazaar (24.5, 24.4) and Radio-666 stall (36.5, 25.0): is the social spacing of stall/trader/survivors right?</li><li>Medicine contrast: plain white vials (10.6, 24.6) vs flashy labels (19.2, 24.0), same bazaar</li><li>Bands: white 0-11 / red 11-21 / black 21-34; bazaar, quack alley and iron door all in the black; rail 1 (27.0) keeps 6 m from the fence — it must not smear into a black band</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L07 · БАРАХОЛКА · 铁路黑市</span>
+      <span class="meta mono">1825×1049</span>
+    </header>
+    <a class="shot" href="verify/market_night.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/market_night.jpg" alt="market_night.png">
+    </a>
+    <div class="sub mono">res://scenes/night_market.tscn</div>
+    <div class="sub dim">整关 · 夜色 · market_night.png</div>
+    <div class="checks">
+      <ul><li>三团光要一眼分得开：摊区最暖（马灯 / 篝火）、6.66 棚最病（电子管微绿）、后巷最恶（炭炉橙红）</li><li>药棚铁门那片是不是暗得刚好——C2 的戏发生在暗里</li><li>铁路 1 道的雪面与铁轨反光：不能糊成一条黑带</li></ul>
+      <ul class="en"><li>Three glows must separate at a glance: warmest bazaar (lanterns/fire), sickliest 6.66 (tube green), evilest alley (forge orange-red)</li><li>Is the med-shed iron door just dark enough — C2's drama happens in the dark</li><li>Rail 1: snow and rail sheen must not fuse into one black band</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L02 · ХОЛОДИЛЬНИК №4 · 城北四号铁路冷库</span>
+      <span class="meta mono">1825×1049</span>
+    </header>
+    <a class="shot" href="verify/coldstore_grey.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/coldstore_grey.jpg" alt="coldstore_grey.png">
+    </a>
+    <div class="sub mono">res://scenes/night_coldstore.tscn</div>
+    <div class="sub dim">整关 46×34 m · 中性光 · coldstore_grey.png</div>
+    <div class="checks">
+      <ul><li>冷库主楼立面：保温板 + 冷风机 + 值班暖窗 + 铁路大门（26 m）读不读得出「冷链设施」</li><li>账面 vs 活人一眼可读：磁卡终端红字块（14.5, 5.2）+ 封存药箱冷光 vs 3 号柱后的人形（24.2 / 25.8, 24.8 / 25.0）</li><li>排水窄缝 (33.5, 3.9)：只有痕迹（刮烂的铝饭盒 + 抓痕），不画胳膊</li><li>色带：白 0–11 / 红 11–21 / 黑 21–34；铁路专用线 1 道（27.0）离围栏 6.2 m，不许糊成黑带</li></ul>
+      <ul class="en"><li>Does the cold-store facade read as a cold-chain facility: panels + condensers + warm duty window + rail door (26 m)?</li><li>Books vs the living at a glance: red terminal block (14.5, 5.2) + cold-lit med crate vs the two figures behind column 3</li><li>Drain slit (33.5, 3.9): traces only (mangled lunchbox + scratches) — no arms drawn</li><li>Bands: white 0-11 / red 11-21 / black 21-34; the rail spur (27.0) keeps 6.2 m from the fence — no black smear</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L02 · ХОЛОДИЛЬНИК №4 · 城北四号铁路冷库</span>
+      <span class="meta mono">1825×1049</span>
+    </header>
+    <a class="shot" href="verify/coldstore_night.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/coldstore_night.jpg" alt="coldstore_night.png">
+    </a>
+    <div class="sub mono">res://scenes/night_coldstore.tscn</div>
+    <div class="sub dim">整关 · 夜色 · coldstore_night.png</div>
+    <div class="checks">
+      <ul><li>「月台暖、南库冷白、终端血红」三团色要一眼分得开</li><li>南库吊灯是冷白（LIGHT_COLORS），照着 3 号柱后的母子——账面死人 vs 活人的唯一对证</li><li>两处火桶（值班炉 9.2 / 幸存者火桶 41.0）=「有人给自己烧火」的暖色注脚；无探照灯</li></ul>
+      <ul class="en"><li>Three colors must separate at a glance: warm platform, cold-white south hall, blood-red terminal</li><li>The hall lamp is cold white (LIGHT_COLORS) over the mother and child behind column 3 — the only witness against the ledger</li><li>Two braziers (duty 9.2 / worker 41.0) are the warm footnotes of people burning fire; no searchlight</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L05 · ВОСТОЧНАЯ СТОЛОВАЯ · 东街工人食堂 · 后厨</span>
+      <span class="meta mono">1745×1000</span>
+    </header>
+    <a class="shot" href="verify/canteen_grey.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/canteen_grey.jpg" alt="canteen_grey.png">
+    </a>
+    <div class="sub mono">res://scenes/night_canteen.tscn</div>
+    <div class="sub dim">整关 44×32 m · 中性光 · canteen_grey.png</div>
+    <div class="checks">
+      <ul><li>瓷砖后厨立面：炉罩（12 m）+ 出餐口（22 m）+ 一排磨砂高窗（33 m）读不读得出「工人食堂后厨」</li><li>十九只碗 (22, 25)：长条桌一圈搪瓷碗、缺口朝外——账面清空 vs 十九个老铁路工一眼可读</li><li>砧板上的宽背砍骨刀 (24, 8.2)：2-1 锁骨的起点（必出 blade）；窄门 (32, 4.6) 是 wedge 机关载体</li><li>色带：白 22–32 / 红 12–22 / 黑 0–12；室内关无铁丝网、无铁轨——地面是混凝土预制板 + 油毡补丁 + 漆线</li></ul>
+      <ul class="en"><li>Does the tile-wall kitchen facade read as a workers' canteen kitchen: hood (12 m) + hatch (22 m) + frosted windows (33 m)?</li><li>Nineteen bowls (22, 25): enamel bowls in a circle, chips outward — the books say empty, the bowls disagree</li><li>Wide-backed cleaver on the block (24, 8.2): the 2-1 collarbone starts here (guaranteed blade); the narrow door (32, 4.6) is the wedge point</li><li>Bands: white 22-32 / red 12-22 / black 0-12; interior level — no fence, no rails: concrete slab + lino patches + paint lines</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L05 · ВОСТОЧНАЯ СТОЛОВАЯ · 东街工人食堂 · 后厨</span>
+      <span class="meta mono">1745×1000</span>
+    </header>
+    <a class="shot" href="verify/canteen_night.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/canteen_night.jpg" alt="canteen_night.png">
+    </a>
+    <div class="sub mono">res://scenes/night_canteen.tscn</div>
+    <div class="sub dim">整关 · 夜色 · canteen_night.png</div>
+    <div class="checks">
+      <ul><li>灶火橙（炉罩下）+ 磨砂窗冷蓝 + 两盏吊灯下暖黄 + 黑区深灰，四团色要一眼分得开</li><li>礼堂火炉 (39.5, 27.5) =「十九个人的余温」的暖色注脚；无探照灯</li><li>窄门缝的那点暖光 = 危险提示（门后 40 度高烧的瓦西里）——它必须是最勾眼又最让人不敢靠近的一点</li></ul>
+      <ul class="en"><li>Four colors must separate: hood-fire orange, frosted-window blue, warm lamp pools, dark black zone</li><li>The hall stove (39.5, 27.5) is the warm footnote of nineteen people's last warmth; no searchlight</li><li>The warm seam under the narrow door is the danger cue (40°C delirium behind it) — eye-catching, but you don't want to approach</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L06 · САНАТОРИЙ · 旧传染病疗养院 · 地下室</span>
+      <span class="meta mono">1745×951</span>
+    </header>
+    <a class="shot" href="verify/sanitarium_grey.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/sanitarium_grey.jpg" alt="sanitarium_grey.png">
+    </a>
+    <div class="sub mono">res://scenes/night_sanitarium.tscn</div>
+    <div class="sub dim">整关 44×30 m · 中性光 · sanitarium_grey.png</div>
+    <div class="checks">
+      <ul><li>地下室北墙立面：一排带栏换气铁窗（22 m 簇）+ 重型铁门（8 m）+ 管道束（36 m）读不读得出「贴近路基的地下科室」</li><li>铁架床 + 两根皮带 (23, 5)：安娜（0419）把自己捆在这里熬过第四天——皮带磨亮的痕迹是钱道具</li><li>药柜 (10, 23.5) 必出 asp（半片阿司匹林的回声）；笼3 回退半人 (31, 6.2) 掉鳞屑、瞳孔回色</li><li>色带：白 21–30（医生工作区）/ 红 12–21（走廊）/ 黑 0–12（铁笼区）；室内关无铁丝网、无铁轨</li></ul>
+      <ul class="en"><li>Does the basement north wall read as a sanatorium undercroft: barred vent windows (22 m cluster) + heavy iron door (8 m) + pipe run (36 m)?</li><li>Iron bed + two straps (23, 5): Anna (0419) tied herself here through the fourth day — the polished strap wear is the money detail</li><li>Med cabinet (10, 23.5) guarantees asp (the echo of the last half-tablet); the regressing half in cage 3 (31, 6.2) sheds scale, pupils clearing</li><li>Bands: white 21-30 (doctors' area) / red 12-21 (corridor) / black 0-12 (cage rows); interior level — no fence, no rails</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L06 · САНАТОРИЙ · 旧传染病疗养院 · 地下室</span>
+      <span class="meta mono">1745×951</span>
+    </header>
+    <a class="shot" href="verify/sanitarium_night.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/sanitarium_night.jpg" alt="sanitarium_night.png">
+    </a>
+    <div class="sub mono">res://scenes/night_sanitarium.tscn</div>
+    <div class="sub dim">整关 · 夜色 · sanitarium_night.png</div>
+    <div class="checks">
+      <ul><li>笼区冷白吊灯（LIGHT_COLORS）vs 医生工作区暖灯 vs 火炉橙——三团色要一眼分得开</li><li>铁架床那一格是冷白最深处的一点暖（皮带反光）——「有人熬过了第四天」的唯一证词</li><li>换气铁窗透进来的冷蓝是与外界（铁壳号）的唯一联系；无探照灯</li></ul>
+      <ul class="en"><li>Three colors must separate: cold-white cage lamp (LIGHT_COLORS), warm office lamp, fire-orange braziers</li><li>The bed cell holds one warm glint deep in the cold white (strap shine) — the only testimony that someone survived the fourth day</li><li>Cold blue through the vents is the only contact with the outside (the Iron Shell on the curve); no searchlight</li></ul>
+    </div>
   </article></section><h2 id="crop">02 · 哨位特写 / Outpost close-ups</h2>
 <section class="grid">  <article class="card">
     <header>
@@ -214,10 +354,80 @@
       <ul><li>沙袋 (27.0, 12.6 m)：与停着的叉车互为掩体</li><li>弹药箱 (21.0, 6.2 m)：卫兵哨位；枪架 (9.2, 4.2 m)：409 批托盘旁</li><li>有没有穿帮：压在雪脊上、堵死必经路线、和托盘挤在一起</li></ul>
       <ul class="en"><li>Sandbags (27.0, 12.6 m): pairs with the parked forklift</li><li>Ammo box (21.0, 6.2 m): guard post; rack (9.2, 4.2 m): beside the Batch-409 pallet</li><li>Clipping: sunk into snow ridges, blocking the only route, jammed against the pallet</li></ul>
     </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L07M · 哨位特写</span>
+      <span class="meta mono">1600×518</span>
+    </header>
+    <a class="shot" href="verify/outpost_mine.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/outpost_mine.jpg" alt="outpost_mine.png">
+    </a>
+    <div class="sub mono">res://scenes/night_mine.tscn</div>
+    <div class="sub dim">三件新道具 2× · 假人哨塔 / 孢子断面 / 起爆器 · outpost_mine.png</div>
+    <div class="checks">
+      <ul><li>假人哨塔 (38.5, 13.4 m)：脚手架 + 防化服模特 + 猪嘴面具 + 扩音器——不许有一盏灯</li><li>孢子断面 (36.5, 28.4 m)：千层糕层理里那条灰黑孢子带的「暗哑微光」对不对</li><li>起爆器 (29.5, 26.8 m)：仪表 + 手摇柄 + 电缆盘 + 斜靠的台账夹板；必出 intel</li></ul>
+      <ul class="en"><li>Dummy tower (38.5, 13.4): scaffold + hazmat mannequin + pig-snout respirator — no light allowed</li><li>Spore face (36.5, 28.4): is the dull sheen on the grey-black spore band right?</li><li>Detonator (29.5, 26.8): dial + crank + cable reel + leaning ledger; guarantees intel</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L07 · 哨位特写</span>
+      <span class="meta mono">1600×518</span>
+    </header>
+    <a class="shot" href="verify/outpost_market.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/outpost_market.jpg" alt="outpost_market.png">
+    </a>
+    <div class="sub mono">res://scenes/night_market.tscn</div>
+    <div class="sub dim">三件新道具 2× · 6.66 电台棚 / 烫鳞炭炉 / 药棚铁门 · outpost_market.png</div>
+    <div class="checks">
+      <ul><li>6.66 电台棚 (36.5, 25.0 m)：指针钉死在 6.66；电子管微绿不是魔法绿光；柜台摆花哨假药瓶</li><li>烫鳞炭炉 (7.0, 24.9 m)：炭炉 + 烧红马蹄铁 + 折叠凳 + 烫焦绷带——只有工具和痕迹，不画行刑现场</li><li>药棚铁门 (12.0, 23.2 m)：磁卡读头 + 可锁挂环（C2 的锁点）；门里的冷柜必出 abx</li></ul>
+      <ul class="en"><li>Radio-666 (36.5, 25.0): dial pinned at 6.66; tube-green is not magic green; flashy fake bottles on the counter</li><li>Quack forge (7.0, 24.9): charcoal + red-hot horseshoe + stool + scorched bandages — tools and traces only</li><li>Med-shed iron door (12.0, 23.2): card reader + lockable hasp (C2's lock point); the fridge inside guarantees abx</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L02 · 哨位特写</span>
+      <span class="meta mono">1600×518</span>
+    </header>
+    <a class="shot" href="verify/outpost_coldstore.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/outpost_coldstore.jpg" alt="outpost_coldstore.png">
+    </a>
+    <div class="sub mono">res://scenes/night_coldstore.tscn</div>
+    <div class="sub dim">三件新道具 2× · 磁卡终端 / 封存药箱 / 冷库铁门 · outpost_coldstore.png</div>
+    <div class="checks">
+      <ul><li>磁卡终端 (14.5, 5.2)：红字屏是全图唯一的红——【当前南库坐标在册人数：0】</li><li>封存药箱 (11.5, 25.2)：钢印封条 + 红十字 + 霜挂；必出 abx（真药的另一半答案）</li><li>冷库铁门 (37.5, 23.6)：滑轨双扇门 + 撬棍卡口——wedge 机关的载体（把它们引过去）</li></ul>
+      <ul class="en"><li>Card terminal (14.5, 5.2): the red display is the only red on the map — roster headcount: 0</li><li>Sealed med crate (11.5, 25.2): steel seals + red cross + frost; guarantees abx (the other half of the real drugs)</li><li>Cold vault door (37.5, 23.6): sliding double door + crowbar notch — the wedge mechanism (lead them there)</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L05 · 哨位特写</span>
+      <span class="meta mono">1600×518</span>
+    </header>
+    <a class="shot" href="verify/outpost_canteen.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/outpost_canteen.jpg" alt="outpost_canteen.png">
+    </a>
+    <div class="sub mono">res://scenes/night_canteen.tscn</div>
+    <div class="sub dim">三件新道具 2× · 砧板砍骨刀 / 十九只碗长条桌 / 杂物间窄门 · outpost_canteen.png</div>
+    <div class="checks">
+      <ul><li>砧板砍骨刀 (24, 8.2)：宽背生锈、刃有豁口、柄上是黑麦糊和血的干渍——「东街锁骨」的凶器</li><li>十九只碗长条桌 (22, 25)：桌面油亮包浆，搪瓷碗一圈缺口朝外；黑麦糊桶 (18, 9.8) 还温着</li><li>杂物间窄门 (32, 4.6)：门框新裂、单向门 + 撬棍卡口——wedge 机关的载体（别让他冲出来）</li></ul>
+      <ul class="en"><li>Cleaver on the block (24, 8.2): wide back, rust, a chipped edge, rye-and-blood grime on the handle — the weapon of the collarbone</li><li>Nineteen-bowl table (22, 25): worn tabletop, enamel bowls chipped outward; the rye vat (18, 9.8) is still warm</li><li>Narrow door (32, 4.6): fresh-split frame, one-way door + crowbar notch — the wedge mechanism (don't let him out)</li></ul>
+    </div>
+  </article>  <article class="card">
+    <header>
+      <span class="chip">L06 · 哨位特写</span>
+      <span class="meta mono">1600×518</span>
+    </header>
+    <a class="shot" href="verify/outpost_sanitarium.png" target="_blank" rel="noopener">
+      <img loading="lazy" src="verify/web/outpost_sanitarium.jpg" alt="outpost_sanitarium.png">
+    </a>
+    <div class="sub mono">res://scenes/night_sanitarium.tscn</div>
+    <div class="sub dim">三件新道具 2× · 铁架床皮带 / 药柜 / 笼区铁栅门 · outpost_sanitarium.png</div>
+    <div class="checks">
+      <ul><li>铁架床 + 两根皮带 (23, 5)：铁架床栏杆 + 破毯 + 两根磨亮的旧皮带（缠绕带头）——安娜的刑具与救生索</li><li>药柜 (10, 23.5)：钢柜 + 开着的柜门 + 药瓶层板 + 红十字；必出 asp（半片阿司匹林的回声）</li><li>笼区铁栅门 (22, 11)：对开栅扇 + 插销 + 底梁撬棍卡口——wedge 机关的载体（把它们关在里面）</li></ul>
+      <ul class="en"><li>Iron bed + two straps (23, 5): barred frame, torn blanket, two polished old straps — Anna's instrument and lifeline</li><li>Med cabinet (10, 23.5): steel cabinet, open door, vial shelves, red cross; guarantees asp (the echo of the last half-tablet)</li><li>Cage gate (22, 11): twin barred leaves + latch + crowbar notch on the bottom rail — the wedge mechanism (keep them inside)</li></ul>
+    </div>
   </article></section><h2 id="read">03 · 战斗读数 / Combat readout</h2>
 <section class="grid">  <article class="card">
     <header>
-      <span class="chip">战斗读数 · L03–L05 通用</span>
+      <span class="chip">战斗读数 · L03–L07M 通用</span>
       <span class="meta mono">1344×1344</span>
     </header>
     <a class="shot" href="verify/combat_readout.png" target="_blank" rel="noopener">

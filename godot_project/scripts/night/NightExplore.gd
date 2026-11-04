@@ -205,6 +205,7 @@ var beat_shoved := false               # 本次溜放是否已经被刮倒过
 var _rake_rumble := 0.0                # 车皮轮轨声的节拍
 var switch_thrown := false             # 转辙器是否已经扳到另一股
 var forklift_used := false             # 叉车只能发动一次
+var door_wedged := false               # 冷库铁门已被撬棍卡死（coldstore 的 wedge 机关）
 var _flare_light: PointLight2D = null   # 炉口爆燃用的补光灯（不抢 NightFlicker 的火苗）
 var _furnace_px := Vector2.ZERO
 
@@ -1642,6 +1643,7 @@ func _init_beats() -> void:
 	beat_rake = null
 	switch_thrown = false
 	forklift_used = false
+	door_wedged = false
 	objective_px = _find_objective_point()
 	_gather_furnace_lights()
 
@@ -1889,6 +1891,8 @@ func nearest_mechanism() -> Dictionary:
 	for m in beats.get("mechanisms", []):
 		if String(m.get("kind", "")) == "forklift" and forklift_used:
 			continue
+		if String(m.get("kind", "")) == "wedge" and door_wedged:
+			continue
 		var node := get_node_or_null(String(m.get("node", ""))) as Node2D
 		if node == null:
 			continue
@@ -1918,6 +1922,15 @@ func use_mechanism(m: Dictionary) -> void:
 			add_shake(0.28)
 			spawn_float(player.global_position + Vector2(0, -138),
 				"叉车轰的一声窜出去 —— 16 米内的东西都朝那边去了", SovietUI.SIGNAL)
+		"wedge":
+			door_wedged = true
+			var node := m["node2d"] as Node2D
+			sfx.play_at("crowbar_hit", node.global_position, 0.0)
+			sfx.play_at("wedge", node.global_position, -2.0)
+			emit_noise(node.global_position, 12.0, "can")
+			add_shake(0.22)
+			spawn_float(player.global_position + Vector2(0, -138),
+				"%s 被撬棍卡死了" % String(m.get("label", "铁门")), SovietUI.OCHRE)
 
 
 # ============================================================================

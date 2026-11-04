@@ -52,6 +52,11 @@ func _run() -> void:
 	_yard()
 	_marshalling()
 	_manor()
+	_mine()
+	_market()
+	_coldstore()
+	_canteen()
+	_sanitarium()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
@@ -151,6 +156,65 @@ func _yard() -> void:
 	var y: Node = _scene("res://scenes/night_explore.tscn")
 	_assert(y.beats.get("events", []).is_empty(), "yard 没有环境节拍（回归基准别动它）")
 	_common(y, "yard")
+
+
+# ---------------------------------------------------------------------------
+func _mine() -> void:
+	var g: Node = _scene("res://scenes/night_mine.tscn")
+	_assert(g.beats.get("events", []).is_empty(), "mine 没有环境节拍（危险就是环境：塌方 / 粉尘 / 起爆）")
+	_common(g, "mine")
+
+
+func _market() -> void:
+	var g: Node = _scene("res://scenes/night_market.tscn")
+	_assert(g.beats.get("events", []).is_empty(),
+			"market 没有环境节拍（危险就是人：交易 / 辨药 / 抉择 C）")
+	_common(g, "market")
+
+
+func _coldstore() -> void:
+	var g: Node = _scene("res://scenes/night_coldstore.tscn")
+	_assert(g.beats.get("events", []).is_empty(),
+			"coldstore 没有环境节拍（危险就是账：红字 / 铁门 / 把它们引过去）")
+	# wedge 机关：LOCS hint2「冷库铁门可以撬棍卡死」→ 挂在真实节点上
+	var mech: Array = g.beats.get("mechanisms", [])
+	_assert(mech.size() == 1 and String(mech[0].get("kind", "")) == "wedge",
+			"coldstore 一个 wedge 机关（卡死铁门）", str(mech.size()))
+	if mech.size() == 1:
+		_assert(g.get_node_or_null(String(mech[0].get("node", ""))) != null,
+				"coldstore 机关挂在真实节点上", String(mech[0].get("node", "")))
+		_assert(String(mech[0].get("prompt", "")) != "", "coldstore 机关有操作提示")
+	_common(g, "coldstore")
+
+
+func _sanitarium() -> void:
+	var g: Node = _scene("res://scenes/night_sanitarium.tscn")
+	_assert(g.beats.get("events", []).is_empty(),
+			"sanitarium 没有环境节拍（危险就是铁笼：皮带 / 回退 / 撬棍卡门）")
+	# wedge 机关：LOCS hint「铁笼区」的门可以撬棍卡死——挂在真实节点上
+	var mech: Array = g.beats.get("mechanisms", [])
+	_assert(mech.size() == 1 and String(mech[0].get("kind", "")) == "wedge",
+			"sanitarium 一个 wedge 机关（卡死笼区铁栅门）", str(mech.size()))
+	if mech.size() == 1:
+		_assert(g.get_node_or_null(String(mech[0].get("node", ""))) != null,
+				"sanitarium 机关挂在真实节点上", String(mech[0].get("node", "")))
+		_assert(String(mech[0].get("prompt", "")) != "", "sanitarium 机关有操作提示")
+	_common(g, "sanitarium")
+
+
+func _canteen() -> void:
+	var g: Node = _scene("res://scenes/night_canteen.tscn")
+	_assert(g.beats.get("events", []).is_empty(),
+			"canteen 没有环境节拍（危险就是窄门：锁骨 / 十九只碗 / 撬棍卡门）")
+	# wedge 机关：LOCS hint2「窄门会被冲开」→ 挂在真实节点上
+	var mech: Array = g.beats.get("mechanisms", [])
+	_assert(mech.size() == 1 and String(mech[0].get("kind", "")) == "wedge",
+			"canteen 一个 wedge 机关（撬棍卡住窄门）", str(mech.size()))
+	if mech.size() == 1:
+		_assert(g.get_node_or_null(String(mech[0].get("node", ""))) != null,
+				"canteen 机关挂在真实节点上", String(mech[0].get("node", "")))
+		_assert(String(mech[0].get("prompt", "")) != "", "canteen 机关有操作提示")
+	_common(g, "canteen")
 
 
 # ---------------------------------------------------------------------------

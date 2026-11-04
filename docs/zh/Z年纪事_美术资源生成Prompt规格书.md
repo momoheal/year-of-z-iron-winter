@@ -522,7 +522,296 @@ pen nib, paper fibre tearing, extreme close-up, transparent background
 色彩与衰减参考（三个 Shader 的需求见《灰盒规格书》第三章）。
 ```
 
+### 7.7 v4.2 待补图（5 张，2026-11 新增 · 对应《美术风格参考 v4.2》§五）
+
+> 以下 5 张是 v4.2 新增剧情（第零幕 / 第一幕 1-4 / 第三幕 3-3 / 第四幕 / 第五幕 5-1、5-2）的专属概念图，此前仅在《美术风格参考 v4.2》列为待补。出图后存入 `assets/concept_art/`，编号顺延 CON_04 起。**每张都是「设定图 / 剧照式概念图」而非游戏资产**（与 01–11 号图同性质），构图允许人物与文字并存，但**文字一律出无字底图 + 矢量补写**（见 §10.4）。
+
+#### `CON_04` 帕沙与假人哨塔 　★P1（第一幕 1-4 · 红区隐喻）
+```
+【Prompt】A night concept sheet, two panels: (left) a fake sentry tower on a snowy
+railway yard — a plastic mannequin wearing an oversized lead-grey GP-5 hazmat suit
+and pig-snout gas mask standing on the platform, a small loudspeaker taped to its
+helmet broadcasting, searchlight beam crossing behind; (right) an 18-year-old
+village conscript soldier, fever-flushed boyish face, pig-snout mask removed and
+hanging at his chest, kneeling and shivering under the icy iron ladder of the tower,
+begging with one frostbitten hand, an AKM pushed aside muzzle-down in the snow.
+Blizzard night, yellow-white searchlight hard light, cold grey-blue palette, low
+saturation, gritty realistic Soviet industrial winter, cinematic concept art.
+§LIGHT_COLD, §STYLE, §PAL
+【负向追加】no heroic pose, no villain face, no war propaganda, no cartoon
+```
+
+#### `CON_05` 柳德米拉大火托孤 　★P1（第五幕 5-1 · 领粮券闭环）
+```
+【Prompt】A dramatic concept art panel: inside a smoke-flooded Khrushchyovka
+stairwell landing, a 63-year-old Russian grandmother in a burning wool shawl pushes
+a five-year-old girl in a padded winter coat into the arms of a young man in a faded
+railway greatcoat with taped round glasses; her other hand presses a blood- and
+soot-stained ration coupon into his palm; behind her, thick orange smoke rolls down
+the stairs, a welded I-beam blocks the fire door in the background; a wolfdog tugs
+the child's coat hem toward the door gap. Harsh firelight against cold blue smoke,
+tear-streaked soot faces, desperate but not grotesque, cinematic concept art.
+§STYLE, §PAL
+【特写变体】the ration coupon close-up: a paper coupon stained with blood and soot,
+half-burned charcoal handwriting on it, held by a frostbitten hand
+【负向追加】no horror gore, no zombie, no melodrama soap-opera lighting
+```
+
+#### `CON_06` 004 号黄铜铭牌特写 　★P0（第零幕 / 第五幕 5-2 · 全剧视觉钉子）
+```
+【Prompt】Extreme close-up concept art of a brass freight-allocation nameplate
+riveted to the steel door frame of a Soviet armored boxcar, industrial clear varnish
+over an old carbon-copy form, a handwritten signature in blue-black fountain-pen ink
+visible under the varnish, a stamped number 004, frost crystals and snow dust on the
+brass edge, rivets around the plate, one crowbar tip just entering the frame and
+prying at a rivet. Night, flashlight hard beam, cold grey-blue palette with the warm
+brass as the single warm accent, photoreal texture study, cinematic concept art.
+§STYLE, §PAL, §TECH
+【字迹规范】signature must be illegible cursive scribble — NO readable text; final
+Chinese/Cyrillic label added later as vector overlay (§10.4)
+【负向追加】no readable letters, no watermark, no modern signage
+```
+
+#### `CON_07` 6.66 MHz 烙铁烫鳞 　★P1（第三幕 3-3 · 黑市暗面）
+```
+【Prompt】A grim black-market back-alley concept panel: a charlatan healer presses a
+red-hot glowing horseshoe iron against the grey-scaled forearm of a delirious fever
+patient held down on a crate, wisps of smoke; beside them an old shortwave radio with
+the dial needle fixed at 6.66 glowing faintly green; crates of canned food as payment;
+in the shadowed corner, small bottles of fake medicine tinted with blue-green
+antifreeze. Underground survivor camp, tarpaulin roofs, oil-drum brazier warm light
+against deep blue darkness, soot, frost, gritty realistic Soviet winter noir,
+cinematic concept art. §LIGHT_COLD, §STYLE, §PAL
+【负向追加】no cartoon villain, no modern medical equipment, no fantasy glow
+```
+
+#### `CON_08` 3 号矿坑：温压爆破、远古孢子与铝热剂 　★P0（第四幕 · 全剧真相核心画面）
+```
+【Prompt】A wide underground mine concept panel: a thermobaric blast has torn open a
+permafrost wall, exposing a layered frozen-earth cross-section like a mille-feuille
+cake, with one dark grey-black glittering ancient spore dust layer glowing faintly in
+the lamp light, fine dust drifting in the air beam; a worker with scales flaking from
+his hand kneels touching the dust in horror; along the haulage tunnel behind, rows of
+military thermobaric/thermite charges and detonation cables are stacked ready, a
+wooden notice board pinned on the rock. Single headlamp hard light, extreme darkness,
+cold grey-blue palette with faint amber dust glow, geological texture detail,
+cinematic concept art. §LIGHT_COLD, §STYLE, §PAL, §TECH
+【特写变体】a drill-core sample of the grey-black spore dust layer held in a
+frostbitten hand, like evidence in an envelope
+【负向追加】no lava, no fantasy crystals, no glowing magic runes, no cartoon
+```
+
 ---
+
+### 7.8 L07M 矿坑道具（6 件，2026-11 新增 · 对应《Z年纪事_3号矿坑场景美术设计》）
+
+> 第四幕 3 号矿坑（`night_mine.tscn`）的六件新道具。**游戏内版本**由
+> `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4.1）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> `PRP_SporeFace` 是全剧真相的核心视觉（灰黑孢子粉尘层）——出任何版本前先读 §7.7 `CON_08`。
+
+```
+【PRP_OreCart_Rusty】a rusted Soviet mine ore cart, battered steel tub heaped with
+grey gangue spoil, four flanged steel wheels, chipped grey-blue paint under orange
+rust streaks, frost along the rim, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM,
+side three-quarter view, §TECH
+【PRP_Timber_Support】a timber A-frame mine support prop, two thick pine legs and a
+crossbeam bound with black steel bands, fresh saw cuts, bark half stripped, snow on
+the top beam — carried out of the shaft and not yet installed,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, §TECH
+【PRP_Thermite_Charge】a neat stack of three olive-drab military crates packed as
+thermite demolition charges, white skull-and-crossbones stencil on the front slats,
+detonation cord coiled and led away, snow dusted on the lids,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, §TECH
+【PRP_Detonator_Rig】a Soviet military demolition exploder box on the frozen ground:
+dark olive housing, an analogue gauge with a red needle, a crank handle, a steel
+cable drum beside it, a clipboard with the blast ledger leaning against the box,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, §TECH
+【PRP_SporeFace】a freshly blasted permafrost face, layer-cake frozen strata exposed
+in horizontal bands, and running through its middle a dull grey-black band of
+ancient spore dust with a matte mineral sheen (NOT a magic glow), fine dust spilling
+at the foot of the cut, snow crust on the top ledge,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, wide format, straight-on elevation, §TECH
+【负向追加】no glowing runes, no magical particles, no green neon, no fantasy crystal
+【PRP_DummyTower_Mannequin】a fake sentry tower at a mine site: scaffold tube frame
+with an iron ladder, a small platform, and on it a plastic mannequin in an oversized
+lead-grey GP-5 hazmat suit with a pig-snout respirator, a dented loudspeaker
+strapped beside it — NO lamp, NO light of any kind; the silhouette must read as a
+guard post from afar and as a dummy up close,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+```
+
+矿山立面 `TIL_Facade_Mine_A` 与地面 `TIL_Ground_NightMine_Baked` 只走程序化管线
+（`gen_env._facade_mine()` / `bake_ground()`），不走手工 Prompt；构图基准见 §7.7 `CON_08`
+与场景美术设计文档 §2 平面图。
+
+### 7.9 L07 铁路黑市道具（5 件，2026-11 新增 · 对应《Z年纪事_铁路黑市场景美术设计》）
+
+> 第三幕 3-3 铁路黑市（`night_market.tscn`）的五件新道具。**游戏内版本**由
+> `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4.1）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> 三件叙事核心道具（`PRP_Radio666` / `PRP_QuackForge` / `PRP_MedShed`）出任何版本前先读
+> §7.7 `CON_07`（6.66 MHz 烙铁烫鳞）——**辨药信息必须全在道具画里，不许标注**。
+
+```
+【PRP_Radio666】the deepest stall of a rail-side black market: a plank shack counter
+under a tarpaper awning, and on the shelf an old Soviet shortwave radio, bakelite
+case, dial window with the pointer pinned dead at 6.66 — sickly electron-tube green
+glow on the panel (NOT magical green), a thin antenna pole with a guy wire rising
+from the roof, flashy-labelled antifreeze bottles lined on the counter,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_QuackForge】a quack doctor's back-alley branding setup: an oil-drum charcoal
+forge with orange-red coals, a horseshoe iron glowing red-hot held in black tongs,
+a folding stool, scorched bandage strips and a grey ash smear on the snow — tools
+and traces only, NO people, NO torture scene,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, side three-quarter view, §TECH
+【PRP_MedShed】a plank medicine shed with a heavy grey iron door, a magnetic card
+reader with a small green indicator beside the frame, a lockable hasp on the door,
+a chipped white pharmacy cross painted on the wall, snow along the roof edge,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_MedCache】an open wooden medicine crate: on the left plain white glass vials
+with simple paper labels (real medicine, austere), on the right flashy green
+bottles with loud orange brand stickers (antifreeze fake medicine) — the whole
+colour/smell/feed identification game must be readable from the props alone,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high side view, §TECH
+【PRP_Shanty_Shed】a mismatched workers' shanty: plank walls with visible seams,
+tarpaper roof under snow, a black stovepipe puffing faint smoke, a boarded-up
+window and a dark doorway, tar stains at the base, §CAM_75, §LIGHT_COLD,
+§STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+```
+
+工人镇立面 `TIL_Facade_Town_A` 与地面 `TIL_Ground_NightMarket_Baked` 只走程序化管线
+（`gen_env._facade_town()` / `bake_ground()`），不走手工 Prompt；构图基准见 `CON_05`（黑市商贩群像）
+与场景美术设计文档 §2 / §3 平面图。**6.66 MHz 女声循环**属 P2 音频待办（需配音，不做程序化占位）。
+
+### 7.10 L02 冷库道具（5 件，2026-11 新增 · 对应《Z年纪事_铁路冷库场景美术设计》）
+
+> 第一幕 1-3「账面死人」冷库（`night_coldstore.tscn`）的五件新道具。**游戏内版本**由
+> `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4.1）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> `PRP_CardTerminal` 的红字屏是**全图唯一的红**（账面 vs 活人的对照轴），`PRP_DrainSlit`
+> **只画痕迹不画胳膊**（北雨棚那只胳膊在剧本里，不在画里）——两条都是不许违反的硬约束。
+
+```
+【PRP_CardTerminal】a Soviet industrial magnetic-card terminal on a steel pedestal:
+small amber-grey CRT display glowing blood-red with blocky status rows (no legible
+letters, just red text blocks), a card slot, a rubber keypad, a green power
+indicator, frost blooming along the top edge, cable conduit into the snow —
+the red display is the only red object allowed on this map,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_VaultColumn】a cold-store concrete pillar: square column with a wide base
+plate, grey-green paint worn to concrete, a small enamel number plate with a red
+border at eye height, frost rime creeping down the edges, icy drips at the foot,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_SealedMedCrate】a sealed medical supply crate: pale steel box with paper
+seal strips taped in a cross (untouched, official), a red pharmacy cross painted
+on the lid, frost haze on the metal, snow cap on top — sealed cold, the real
+medicine (guaranteed antibiotics),
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high side view, §TECH
+【PRP_ColdVaultDoor】an insulated cold-store sliding door: two thick grey-blue
+panels on an overhead rail with trolley wheels, heavy pull handles, a crowbar
+notch with rust marks at the seam, ice glaze along the bottom, icicle fringe on
+the lintel, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_DrainSlit】a wall-base drainage slit (12 cm) in frosted concrete: a dark
+narrow opening with claw scratches on the lip, a battered aluminium lunchbox
+scraped flat beside it, ice smear on the snow — traces only, NO arms, NO bodies,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, side three-quarter view, §TECH
+```
+
+冷库立面 `TIL_Facade_ColdStore_A` 与地面 `TIL_Ground_NightColdstore_Baked` 只走程序化管线
+（`gen_env._facade_coldstore()` / `bake_ground()`），不走手工 Prompt；构图基准见
+`CON_01`（工业冷链：保温板 + 冷风机 + 铁路大门 + 值班暖窗——全图唯一暖窗）与场景美术设计文档 §2 / §3。
+南库吊灯的**冷白光**由 `levels/coldstore.py` 的 `LIGHT_COLORS` 覆盖（其余灯位仍是琥珀），不改贴图。
+
+### 7.11 L05 东街工人食堂道具（6 件，2026-11 新增 · 对应《Z年纪事_东街工人食堂场景美术设计》）
+
+> 第二幕 2-1「锁骨」东街工人食堂（`night_canteen.tscn`）的六件新道具。**游戏内版本**由
+> `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> `PRP_CleaverBoard` 的砍骨刀是**锁骨的凶器**（宽背、生锈、刃有豁口），`PRP_Canteen_Table`
+> 的搪瓷碗必须是**十九只、缺口朝外一排**（「账面已清空的老楼，可里面还有十九只碗」），
+> `PRP_NarrowDoor` 必须带**撬棍卡口**（wedge 机关载体）——三条都是不许违反的硬约束。
+
+```
+【PRP_CleaverBoard】a battered wooden chopping block with a wide-backed cleaver
+stuck into it: thick round block, blackened grain and old grease, a heavy rusted
+cleaver with a chipped edge standing blade-first in the wood, worn wooden handle,
+rye-and-blood grime dried on the grip, small dish with dark rye paste beside it,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high side view, §TECH
+【PRP_Canteen_Stove】a Soviet canteen cast-iron stove with an exhaust hood: pot
+stove with two steel pots on top, a dark iron hood and flue above it, orange fire
+glow from the grate, kettle spout steaming, warm light spill on the floor,
+scorched tile floor, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on
+elevation, §TECH
+【PRP_Canteen_Table】a long canteen table with NINETEEN enamel bowls: plank
+tabletop worn shiny, two long benches, a single row of nineteen chipped white
+enamel bowls with brown rims, chips facing outward, a little rye paste left in
+each bowl, snow dust on the north edge, §CAM_75, §LIGHT_COLD, §STYLE, §PAL,
+§BG_ITEM, high three-quarter view, §TECH
+【PRP_Canteen_BenchTable】a bare long canteen table with two benches: plank
+tabletop worn shiny, long benches on both sides, dust and grease stains, no
+dishes (the bowls all sit on the main table), snow dust on the north edge,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high three-quarter view, §TECH
+【PRP_NarrowDoor】a narrow one-way pantry door, frame freshly split: battered
+wooden door with a diagonal crack, iron kick plate and a dark round hole, heavy
+frame split at the hinge side, a crowbar notch at the base, dirty snow drift at
+the foot, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation,
+§TECH
+【PRP_RyeVat】a wooden vat of black rye paste: oval vat on a small platform with
+iron hoops, dark rye paste inside, a wooden ladle across the rim, faint steam
+rising (still warm), scrap of sacking, §CAM_75, §LIGHT_COLD, §STYLE, §PAL,
+§BG_ITEM, high three-quarter view, §TECH
+```
+
+食堂立面 `TIL_Facade_Canteen_A` 与地面 `TIL_Ground_NightCanteen_Baked` 只走程序化管线
+（`gen_env._facade_canteen()` / `bake_ground()` + `INTERIOR=True` 室内混凝土地面），
+不走手工 Prompt；构图基准见场景美术设计文档 §2 / §3。
+后厨吊灯是暖琥珀、餐厅吊灯更暖（对着十九只碗那一桌），出餐口暖窗是立面唯一暖块——
+磨砂高窗保持**冷雾蓝**（`LIGHT_COLORS` 不动），冷暖对比就是这一关的视觉叙事。
+
+### 7.12 L06 疗养院道具（6 件，2026-11 新增 · 对应《Z年纪事_旧传染病疗养院场景美术设计》）
+
+> 第三幕 3-2「灰鳞病回退」旧传染病疗养院地下室（`night_sanitarium.tscn`）的六件新道具。
+> **游戏内版本**由 `godot_project/tools/art_gen/gen_props.py` 程序化出图（规格见场景美术设计文档 §4）；
+> 以下是手工 / AI 重制版的 Prompt（替换 `30_props/` 里同名 PNG 时用），宏照抄 §7.4 通用尾缀。
+> `PRP_CageBed` 的**两根磨亮的旧皮带**是这一关的钱道具（安娜 0419 的刑具与救生索），
+> `PRP_MedCabinet` 必出 **asp**（半片阿司匹林的回声），`PRP_CageGate` 必须带**撬棍卡口**
+> （wedge 机关载体）——三条都是不许违反的硬约束。
+
+```
+【PRP_IronCage】a Soviet hospital iron-bar quarantine cage: welded steel frame with
+vertical bars, heavy top rail and base slab, a chain and padlock on the double
+leaf, rust runs down the bars, frost rime on the top edge — the place where the
+regressing patients are kept, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM,
+straight-on elevation, §TECH
+【PRP_CageBed】an iron-frame hospital bed with TWO OLD LEATHER STRAPS tied to the
+rails: barred headboard, thin stained mattress, torn blanket, two worn leather
+straps knotted around the side rails with polished buckles — Anna 0419 strapped
+herself here through the fourth day, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM,
+high three-quarter view, §TECH
+【PRP_CageGate】a twin-leaf barred gate to the cage ward: welded frame, vertical
+bars, heavy sliding latch and padlock, a crowbar notch worn into the bottom rail,
+dirty snow at the foot — the wedge mechanism, jam it and keep them inside,
+§CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, straight-on elevation, §TECH
+【PRP_MedCabinet】a Soviet steel medicine cabinet, one door open: grey-white
+enamel body, a red pharmacy cross on the closed door, open leaf showing shelves of
+vials and blister packs, frost haze on the metal — guarantees asp, the echo of
+the last half-tablet, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM, high side
+view, §TECH
+【PRP_XrayLightbox】a wall X-ray lightbox with a hung film and case papers: pale
+glowing panel, a chest film clipped on top (rib shadows, no legible text), a metal
+clip, paper case files on the ledge, §CAM_75, §LIGHT_COLD, §STYLE, §PAL, §BG_ITEM,
+straight-on elevation, §TECH
+【PRP_ChemDrum】a dented lime/disinfectant drum: steel drum with chalky white
+residue down the side, a painted hazard block (no legible letters), an iron scoop
+on the rim, spilled lime powder at the foot, §CAM_75, §LIGHT_COLD, §STYLE, §PAL,
+§BG_ITEM, high three-quarter view, §TECH
+```
+
+疗养院立面 `TIL_Facade_Sanitarium_A` 与地面 `TIL_Ground_NightSanitarium_Baked` 只走程序化管线
+（`gen_env._facade_sanitarium()` / `bake_ground()` + `INTERIOR=True`），不走手工 Prompt；
+构图基准见场景美术设计文档 §2 / §3。**带栏换气高窗**是立面的钱（窗外冷蓝 = 铁壳号的唯一联系），
+笼区吊灯的**冷白光**由 `levels/sanitarium.py` 的 `LIGHT_COLORS` 覆盖，不改贴图。
 
 ## 8. 后处理与验收清单（每张图入库前逐条打勾）
 

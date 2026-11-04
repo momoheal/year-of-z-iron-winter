@@ -231,21 +231,22 @@ for p in LY.PROPS:
                    gravity="Vector3(10, -25, 0)", scale_min="0.6", scale_max="1.3",
                    color=col(1, 0.78, 0.45, 0.95)))
 
-# ---- 铁丝网 ----
-fence = S.node("Fence", "Node2D", "World", y_sort_enabled="true")
-for x0, kind in LY.FENCE_SEGMENTS:
-    key = {"a": "PRP_Fence_ChainLink_A", "b": "PRP_Fence_ChainLink_B", "torn": "PRP_Fence_ChainLink_Torn",
-           "torn_l": "PRP_Fence_ChainLink_TornL",
-           # manor：带电的高墙（elec_cut = 被剪开垂丝的那一格）
-           "elec": "PRP_Fence_Electric_A", "elec_cut": "PRP_Fence_Electric_Cut"}[kind]
-    seg = S.node(f"Seg_{x0:g}".replace(".", "_"), "Node2D", fence, position=v2(px(x0, LY.FENCE_Y)))
-    sprite(seg, key)
-fl = S.node("FenceLine", "StaticBody2D", "World", position=v2((0, round(LY.FENCE_Y * GY, 2))),
-            collision_layer="4", collision_mask="0")
-g0, g1 = LY.FENCE_GAP
-for nm, a, b in (("West", 0.0, g0), ("East", g1, LY.W)):
-    S.node(nm, "CollisionShape2D", fl, position=v2(((a + b) / 2 * PPM, -5)),
-           shape=rect_shape((b - a) * PPM, 10))
+# ---- 铁丝网（FENCE_Y = None 的室内关跳过整段）----
+if LY.FENCE_Y is not None:
+    fence = S.node("Fence", "Node2D", "World", y_sort_enabled="true")
+    for x0, kind in LY.FENCE_SEGMENTS:
+        key = {"a": "PRP_Fence_ChainLink_A", "b": "PRP_Fence_ChainLink_B", "torn": "PRP_Fence_ChainLink_Torn",
+               "torn_l": "PRP_Fence_ChainLink_TornL",
+               # manor：带电的高墙（elec_cut = 被剪开垂丝的那一格）
+               "elec": "PRP_Fence_Electric_A", "elec_cut": "PRP_Fence_Electric_Cut"}[kind]
+        seg = S.node(f"Seg_{x0:g}".replace(".", "_"), "Node2D", fence, position=v2(px(x0, LY.FENCE_Y)))
+        sprite(seg, key)
+    fl = S.node("FenceLine", "StaticBody2D", "World", position=v2((0, round(LY.FENCE_Y * GY, 2))),
+                collision_layer="4", collision_mask="0")
+    g0, g1 = LY.FENCE_GAP
+    for nm, a, b in (("West", 0.0, g0), ("East", g1, LY.W)):
+        S.node(nm, "CollisionShape2D", fl, position=v2(((a + b) / 2 * PPM, -5)),
+               shape=rect_shape((b - a) * PPM, 10))
 
 # ---- 场景边界 ----
 bd = S.node("Bounds", "StaticBody2D", ".", collision_layer="1", collision_mask="0")
@@ -306,6 +307,13 @@ if LY.has("MARKET", None):
             metadata__role='"survivor"')
 
 
+# 平民幸存者：不带黑市的关卡用这个通用钩子（coldstore 的 3 号柱母子）。
+# 命名沿用 Survivor_<i>；MARKET 关卡继续走上面 MARKET.survivors，别两边同时写。
+for _i, _sv in enumerate(LY.has("SURVIVORS", [])):
+    npc(f"Survivor_{_i}", "PRP_Survivor_Stand", _sv, ["night_survivor"],
+        metadata__role='"survivor"')
+
+
 # ===========================================================================
 # 灯光
 # ===========================================================================
@@ -361,9 +369,12 @@ def _rig_lamp(key):
     lr = S.node(key.title().replace("_", ""), "Node2D", lights, position=v2((lx + 64, ly)),
                 script=SCRIPT("NightFlicker"), mode='"sodium"',
                 flicker_seed=str(LY.LIGHT_SEEDS.get(key, 3)))
-    light_pair(lr, "VFX_Light_Radial", col(1, 0.7, 0.4), 1.2, 0.85, 1.35, shadow_mask=3)
+    # 关卡可用 LIGHT_COLORS[key] = (r,g,b) 覆盖默认琥珀（如冷库的冷白吊灯）；不定义 = 照旧
+    _lc = tuple(LY.has("LIGHT_COLORS", {}).get(key, (1.0, 0.7, 0.4)))
+    light_pair(lr, "VFX_Light_Radial", col(*_lc), 1.2, 0.85, 1.35, shadow_mask=3)
     S.node("Head", "PointLight2D", lr, position=v2((6, -347)), texture=S.tex("VFX_Light_Radial"),
-           texture_scale="0.22", color=col(1, 0.8, 0.5), energy="2.2", range_item_cull_mask="1")
+           texture_scale="0.22", color=col(*[min(1.0, c * 1.12) for c in _lc]),
+           energy="2.2", range_item_cull_mask="1")
 
 
 def _rig_terminal():

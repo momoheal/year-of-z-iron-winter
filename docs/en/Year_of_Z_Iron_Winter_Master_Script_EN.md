@@ -1,7 +1,8 @@
-# Year of Z: Iron Winter — Complete Master Screenplay (v4.0 Russian Winter Edition)
+# Year of Z: Iron Winter — Complete Master Screenplay (v4.2 Definitive Master)
 
 > **Project Title**: *Year of Z: Iron Winter* (`Хроники Года Z: Железная Зима` / 《Z年纪事：凛冬铁轨》)
-> **Version**: v4.0 Master — Post-Soviet Siberian Industrial Realism
+> **Version**: v4.2 Definitive Master — Post-Soviet Siberian Industrial Realism (White / Red / Black Three-Zone Partition · The Original-Sin Nameplate · Deep Human-Nature Loop)
+> **v4.2 Additions**: new Act 0 (the 004 wagon allocation order), new Act IV (Mine Shaft No. 3 — ancient spores & the cover-up blast), Pasha & the dummy sentry tower, Lyudmila's fire-entrustment, the 6.66 MHz fake-medicine radio, and the brass nameplate scene. Former Acts IV–V are now Acts V–VI. Concept art: `assets/concept_art/` images 01–11 + `ART_STYLE_REFERENCE_v4.2.md`.
 > **Aesthetic Benchmarks**: *Metro Exodus*, *Papers, Please*, *Chernobyl (HBO)*, *Pathologic 2*, *Darkwood*
 > **Core Premise**:
 > *"By day, you are a railway dispatcher bowing to the District Rationing Committee for a single bag of dialysis fluid to keep your mother alive in Room 602. By night, you pry open the boiler-room vent and stalk the frozen broad-gauge tracks searching for your sister locked inside the armored train 'Buran' (The Iron Shell). When the clinical truth that Grey-Scale Fever naturally regresses is burned to keep the ledgers balanced, every person you kill in the dark is someone who would have woken up tomorrow."*
@@ -38,7 +39,14 @@
 
 ---
 
-## II. Five-Act Master Screenplay
+## II. Seven-Act Master Screenplay (v4.2)
+
+### Act 0: Wagon Allocation Order No. 004 (The Original Sin — Prologue, Nov 7, NEW in v4.2)
+
+* **Location**: Ural Railway Freight Center, Grade-3 Dispatch Office.
+* **Action**: Ten days before the main story. The Central Mainframe quota board reads `61%` with a red warning: heating steam will be throttled. Dispatch Chief puts a blank **Wagon Allocation Order** in front of Aleksei: allocate boxcar **004** to the MVD "epidemic-zone personnel transfer" plan aboard *"Buran"*. Reward for exceeding quota: **Swiss Batch-409 dialysis fluid** for Mama Katya. Old Rail Ivan passes by: *"Boy, don't sign too eagerly over a wagon that carries people."*
+* Aleksei signs. The teletype glows green. The carbon copy is riveted into the wagon's door frame under clear varnish — the **brass nameplate** that will haunt the finale. **Ten days later, his sister Lana is locked inside this very wagon: Carriage No. 3.**
+* **Choice E0 (Sign / Hesitate / Refuse)** — tutorial-only choice, no tally strokes; it sets the **`[Sin_004]`** flashback variable resolved in Act V Scene 5-2.
 
 ### Act I: Black Holes and Green Lights (Prologue – Chapter 3)
 
@@ -60,12 +68,18 @@
   * **Choice A2 (Bypass in Shadow)**: Saves medicine; O.S.K. gunfire echoes behind (**Neutral**, `+0 Strokes`).
   * **Choice A3 (Crowbar Execution & Loot)**: Kills him to prevent noise and loots his buckwheat tin (**Conscience ▼**, Aleksei carves the first blood-red vertical stroke **`|`** on the right page of his logbook).
 
+#### Scene 1-4: The Dummy Sentry Tower & 39.2 Degrees (Pasha — NEW in v4.2)
+* Deep in the Red Zone stands a "sentry tower" whose guard never moves — a **plastic mannequin** in a hazmat suit with a looped tape recorder (the regime's fake defense line). Under its icy ladder, a **real** O.S.K. conscript, **Pasha** (18, village boy, ill-fitting suit), is shivering with a **39.2°C** fever, mask off, begging for antipyretics.
+* **Choice A′ (Pasha's 39.2)**: **A′1 give medicine** (**Conscience ▲**, +1 spare filter canister; Pasha "forgets" to chamber his rifle at Eagle's Crag) / **A′2 walk away** (neutral; a muffled shot at shift change) / **A′3 rob him** (**Conscience ▼**, `+1 Stroke`).
+* Art discipline: Pasha is **not** a villain and **not** a veteran — he is a feverish child in an oversized suit; the dummy tower (shell) vs. Pasha (living person) is the whole metaphor of the Red Zone.
+
 ---
 
 ### Act II: Cracks and the Regression Manuscript (Chapters 4 – 9)
 
 #### Scene 2-1: The 4 PM Welded Hatch & The Cleaver in the Collarbone
 * **Birch Grove Apt Hatch (Ch. 4)**: Aleksei races against an 8-minute countdown (`15:52–16:00`) carrying a tin of hypoallergenic infant formula for **Liliya (Room 402)**. Because the teletype database only lists `[Standard Whole Milk Powder]`, the clerk attempts to pour Lysol into the tin. At `15:59`, Aleksei jams his railway crowbar into the electric shutter track and shoves the formula through the icy gutter. Dozens of neighbors film her from upper balconies; that night the hallway denunciation box overflows with anonymous letters accusing Room 402 of hoarding "foreign poisoned powder." Three days later, Liliya leaps from the 6th floor, leaving her mother scraping frozen white milk-ice from beneath the welded hatch every afternoon before four.
+* **Room 601 & the Denunciation Coupon (NEW in v4.2 — the Lyudmila line)**: District 3 rolls out the **"Denounce-for-Rations Coupon"** program. Grandmother **Lyudmila** (63) denounces a neighbor to obtain a milk coupon for her five-year-old granddaughter **Dyana**. The coupon arrives; the milk tin is branded "informer" in charcoal. The woman who denounced to save a child is now trapped by her own coupon. (This line pays off in Act V Scene 5-1: Lyudmila entrusts Dyana and the blood-stained coupon to Aleksei in the fire.)
 * **East Street Canteen Kitchen (Ch. 7)**: While delivering buckwheat paste to 19 "administratively cleared" retirees, the pantry door explodes. Cook Fyodor's 20-year-old son **Vasily**, delirious with `40°C` fever after delivering bread in the blizzard, knocks down his one-eyed father and corners Aleksei against the butcher block. Aleksei swings a rusty **wide-backed butcher cleaver** into Vasily's left collarbone! The blade **jams fast in the bone** (`1.5s` struggle). As hot blood spills, the purple haze vanishes from Vasily's eyes, revealing clear, terrified blue pupils as he whispers a single Russian word:
   ***"…Пить (Thirsty / Water)…"***
   Aleksei suffers permanent **PTSD Thirst Tinnitus** and writes Vasily's name in blood-streaked ink in his logbook.
@@ -89,27 +103,39 @@
 * At the railway black market, Aleksei meets wounded survivor **Old Semyon** (**Choice C**):
   * **Choice C1 / C3 (Cooperate or Share Penicillin)**: **Conscience ▲**, `+0 Strokes`.
   * **Choice C2 (Lock Door & Betray Semyon for Antibiotics)**: **Conscience ▼**, **`+1 Stroke`** on the logbook tally (`卌`).
-* Guided by **Yelena**, Aleksei and Pavel infiltrate **Pine Manor Depot No. 2** (`26°C` warmth), photographing Logistics Chief **Viktor** and **Commissioner Zhukov** shoveling pallets of prime beef and **Swiss Batch-409 dialysis fluid** into a `2000°C` industrial furnace, sending greasy **"Tar-Black Snow"** drifting over the starving city. At the railyard, **Old Ivan** reveals that tonight at `23:00`, *"Buran"* will take the **Eagle's Crag (`Орлиный Утёс`)** cliff line to bury Carriage No. 3 in Mine Shaft No. 3.
+* **The 6.66 MHz Dark Side (NEW in v4.2)**: A shortwave radio pinned at **6.66 MHz** hawks "miracle fever powder" (cut with antifreeze) while a back-alley "healer" burns grey scales off patients with a **red-hot horseshoe iron** — the "cautery cure" scam. Old Semyon stops Aleksei from paying: *"That radio is an O.S.K. fishhook. Real medicine rides in Old Ivan's coal boxes."* (A drug-identification mini-game; also the supply source of antipyretics for Pasha's line.)
+* Guided by **Yelena**, Aleksei and Pavel infiltrate **Pine Manor Depot No. 2** (`26°C` warmth), photographing Logistics Chief **Viktor** and **Commissioner Zhukov** shoveling pallets of prime beef and **Swiss Batch-409 dialysis fluid** into a `2000°C` industrial furnace, sending greasy **"Tar-Black Snow"** drifting over the starving city. At the railyard, **Old Ivan** reveals that in two nights at `23:00`, *"Buran"* will take the **Eagle's Crag (`Орлиный Утёс`)** cliff line to bury Carriage No. 3 in Mine Shaft No. 3.
 
 ---
 
-### Act IV: Carriage No. 3 at Eagle's Crag (Chapters 15 – 16 · Endgame Gate D)
+### Act IV: Mine Shaft No. 3 — Thermobaric Blast & Ancient Spores (48h Before the Finale · NEW in v4.2)
 
-* After cutting open the welded fire exit during the District 3 apartment fire (where 5th-floor Auntie Klara falls clutching a burned red bedsheet), Aleksei races to **Eagle's Crag**. Old Ivan pulls the emergency air brake, derailing **Carriage No. 3** into the snowy ravine!
-* Aleksei pries open the overturned boxcar. Inside are **176 waking human beings** whose grey scales are flaking off, handcuffed alongside their healthy relatives. In Row 14, a thin girl with a last fading patch of grey scale on her wrist looks up and cries out:
+* To bring hard proof of where Grey-Scale Fever came from, Aleksei infiltrates the sealed **Mine Shaft No. 3**. The thermobaric blast has torn the **permafrost wide open**, exposing a glittering **ancient spore dust layer** in the frozen cross-section; the pit ledger records "post-blast flu-like clusters — archived as seasonal flu."
+* In the haulage tunnel, rows of **thermite charges** are rigged to collapse the mountain — mission codename `CLEAN LEDGER`: bury the spore evidence and the arriving batches of living people inside the mountain so "physical count matches ledger count." The留守 technician **Boiko** (himself a regressing half-human) guards the detonator.
+* **Choice E (Mine Evidence)**: **E1 take spore core samples & blast ledgers** (`[Mine_Evidence]` — unlocks the spore-evidence broadcast segment in Act VI) / **E2 disarm the detonation network** (regime switches to thermite incendiary grenades at Eagle's Crag in Act V) / **E3 take only medicine and explosives** (neutral). E1+E2 together doom Boiko — you cannot save both the man and the proof.
+* New mechanic: **Ancient-Spore Zone** — filter-canister breathing timer; a cough at the wrong moment is noise that brings the mountain down. Ash cannot smell "rabid" here — because the source itself is dust, not a curse.
+
+---
+
+### Act V: Carriage No. 3 at Eagle's Crag (Chapters 15 – 16 · Endgame Gate D · formerly Act IV)
+
+* The night before departure, a District 3 apartment fire: the I-beam welded across the fire exit five days earlier blocks over a hundred residents. **Grandmother Lyudmila** pushes her granddaughter **Dyana** and a blood-stained **denunciation coupon** into Aleksei's arms before the smoke takes her (the Room-601 coupon line pays off). Pavel cuts the beam with an oxy-acetylene torch as 5th-floor Auntie Klara falls clutching a burned red bedsheet. Aleksei races to **Eagle's Crag**. Old Ivan pulls the emergency air brake, derailing **Carriage No. 3** into the snowy ravine!
+* Prying open the buckled door, Aleksei's flashlight sweeps the door frame: the **brass nameplate — Wagon Allocation Order No. 004, signed by dispatcher A. Morozov himself.** He signed the very wagon that carries his sister. He unscrews the plate and pockets it beside Lana's photo (Act 0 flashback; `[Sin_004]` flips to `[Sin_Faced]`).
+* Inside the overturned boxcar are **176 waking human beings** whose grey scales are flaking off, handcuffed alongside their healthy relatives. In Row 14, a thin girl with a last fading patch of grey scale on her wrist looks up and cries out:
   ***"…Alyosha…? Brother!! My fever broke… I didn't turn into a monster… Brother, take me home…"***
 * Above the ravine, the **O.S.K. Purge Commander** raises his megaphone: *"Verify File Nos. 0401 to 0576! On the master ledger these 176 numbers are marked 'Liquidated.' Deploy thermite grenades—ensure physical destruction matches the ledger!"*
 * **Endgame Gate D (Three-Way Final Choice)**:
-  * **👉 Choice D1 (Smash Windows, Rescue Lana & Storm Hill 302 Radio Tower)**: Sergeant Chernov shoots out the main searchlight; Aleksei carries Lana toward Hill 302 for the citywide broadcast (proceeds to Act V and the **Conscience Tally Check**).
+  * **👉 Choice D1 (Smash Windows, Rescue Lana & Storm Hill 302 Radio Tower)**: Sergeant Chernov shoots out the main searchlight; Aleksei carries Lana toward Hill 302 for the citywide broadcast (proceeds to Act VI and the **Conscience Tally Check**).
   * **👉 Choice D2 (Comply with Purge Squad & Lock Carriage No. 3)**: Triggers **Ending A**.
   * **👉 Choice D3 (Flee Silently into the Blizzard Drainage Culvert)**: Triggers **Ending C**.
 
 ---
 
-### Act V: The Flesh Switch & Five Endings (Chapters 17 – Finale)
+### Act VI: The Flesh Switch & Five Endings (Chapters 17 – Finale · formerly Act V)
 
 * At **Hill 302 Radio Tower**, when an armor-piercing round shatters the 10,000-volt transformer insulator, Grade-7 machinist **Old Pavel** jams his heavy insulated pipe wrench between the contacts and braces it with his own chest, conducting 10,000 volts through his body until his dying breath!
 * **Lana (`0420`)**, **Anna (`0419`)**, and a wounded **Aleksei** broadcast every real name from the back of the Work Logbook across 3,000 loudspeakers: *"The 'Received' green light on the teletype is a lie! Carriage No. 3 is full of living people! Pick up your hammers and prybars and smash open the gates yourselves!!"*
+* **v4.2 broadcast additions**: Aleksei holds the **004 nameplate** against the microphone — *"The signature on this plate is mine. This system doesn't want obedience; it wants accomplices. Today this accomplice reads you the real ledger!"* — and, if **`[Mine_Evidence]` (E1)** was secured, the spore core sample: *"Grey-Scale Fever was blown out of the mountain by their own thermobaric blast! They rigged the mine with thermite to bury the evidence and the people together!"*
 
 | Ending Code & Title | Trigger Condition | Cutscene Resolution |
 | :--- | :--- | :--- |

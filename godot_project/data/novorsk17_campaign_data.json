@@ -57,19 +57,19 @@
       "id": "L08",
       "name_zh": "焊死的消防门",
       "name_en": "The Welded Fire Exit",
-      "act": 4
+      "act": 5
     },
     {
       "id": "L09",
       "name_zh": "鹰嘴崖底的第三节车厢",
       "name_en": "Carriage No. 3 at Eagle's Crag",
-      "act": 4
+      "act": 5
     },
     {
       "id": "L10",
       "name_zh": "302高地血肉闸刀",
       "name_en": "Hill 302 Flesh Switch & Polar Dawn",
-      "act": 5
+      "act": 6
     }
   ]
 }

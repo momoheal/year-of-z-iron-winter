@@ -101,13 +101,18 @@ func _run_tests() -> void:
 	_assert(Data.BAG == 12 and Data.SIGHT == 12.0 and is_equal_approx(Data.SIGHT_CRACKED, 7.2),
 		"7. bag 12, sight 12m / 7.2m cracked")
 	_assert(Data.ITEMS.size() == 24, "8. 24 item types", str(Data.ITEMS.size()))
-	_assert(Data.WEAPONS.size() == 5 and Data.MATES.size() == 5 and Data.LOCS.size() == 13,
-		"9. 5 weapons / 5 mates / 13 locations")
+	_assert(Data.WEAPONS.size() == 5 and Data.MATES.size() == 5 and Data.LOCS.size() == 14,
+		"9. 5 weapons / 5 mates / 14 locations")
 	_assert(Data.STORY.size() >= 5, "10. story beats present", str(Data.STORY.size()))
 	_assert(Data.weapon("cleaver")["dmg"] == 46.0 and Data.weapon("shotgun")["dmg"] == 95.0 \
 		and Data.weapon("mosin")["dmg"] == 150.0, "11. weapon damage 46 / 95 / 150")
-	_assert(Data.loc("coldstore")["cold"] == 0.9 and Data.loc("manor")["dg"] == 5,
-		"12. location stats match the prototype")
+	_assert(Data.loc("coldstore")["cold"] == 0.9 and Data.loc("manor")["dg"] == 5 \
+		and String(Data.loc("coldstore").get("scene", "")) == "res://scenes/night_coldstore.tscn" \
+		and String(Data.loc("canteen").get("scene", "")) == "res://scenes/night_canteen.tscn" \
+		and int(Data.loc("canteen")["dg"]) == 3 and float(Data.loc("canteen")["cold"]) == 0.5 \
+		and String(Data.loc("sanitarium").get("scene", "")) == "res://scenes/night_sanitarium.tscn" \
+		and int(Data.loc("sanitarium")["dg"]) == 4 and int(Data.loc("sanitarium")["req"]["med"]) == 1,
+		"12. location stats match the prototype（coldstore「账面死人」/ canteen「锁骨」/ sanitarium「地底铁笼」）")
 
 	# --- 3. 新游戏初始状态 -------------------------------------------------
 	sim.new_game()
@@ -117,7 +122,7 @@ func _run_tests() -> void:
 		"14. new game: conscience 50, no strokes, no names")
 	_assert(int(sim.stash.get("rye", 0)) == 3 and int(sim.stash.get("band", 0)) == 1,
 		"15. starting stash rye 3 / bandage 1")
-	_assert(sim.nodes.size() == 13, "16. 13 node states")
+	_assert(sim.nodes.size() == 14, "16. 14 node states")
 	_assert(sim.unlocked_count() == 10, "17. 10 locations unlocked at start",
 		str(sim.unlocked_count()))
 
