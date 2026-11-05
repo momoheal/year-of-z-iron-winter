@@ -669,5 +669,38 @@
    105,
    144
   ]
+ },
+ "PRP_Anna_Stand": {
+  "path": "res://art/30_props/PRP_Anna_Stand.png",
+  "size": [
+   72,
+   112
+  ],
+  "pivot": [
+   36,
+   108
+  ]
+ },
+ "PRP_Leonov_Stand": {
+  "path": "res://art/30_props/PRP_Leonov_Stand.png",
+  "size": [
+   72,
+   112
+  ],
+  "pivot": [
+   36,
+   108
+  ]
+ },
+ "PRP_Gulya_Stand": {
+  "path": "res://art/30_props/PRP_Gulya_Stand.png",
+  "size": [
+   72,
+   112
+  ],
+  "pivot": [
+   36,
+   108
+  ]
  }
 }

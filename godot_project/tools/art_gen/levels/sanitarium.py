@@ -185,9 +185,9 @@ SEARCHLIGHT = None
 # 平民幸存者（build_scene 的 SURVIVORS 钩子 → World/Survivor_<i>，night_survivor 组）：
 # 安娜（0419，铁架床边）+ 梁诺夫医生 + 古丽娅（工作区）。
 SURVIVORS = [
-    (22.3, 5.8),   # 安娜（Survivor_0）：档案号 0419，熬过第四天
-    (13.5, 23.8),  # 梁诺夫医生（Survivor_1）：老眼科主任
-    (17.5, 24.2),  # 古丽娅（Survivor_2）：女流调医师
+    (22.3, 5.8, "PRP_Anna_Stand"),      # 安娜（Survivor_0）：档案号 0419，熬过第四天
+    (13.5, 23.8, "PRP_Leonov_Stand"),   # 梁诺夫医生（Survivor_1）：老眼科主任
+    (17.5, 24.2, "PRP_Gulya_Stand"),    # 古丽娅（Survivor_2）：女流调医师
 ]
 
 # 立面关键点（x 米，供 gen_env._facade_sanitarium 取用；不设 terminal / vent / tower 灯位）

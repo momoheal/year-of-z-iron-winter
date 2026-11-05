@@ -310,7 +310,9 @@ if LY.has("MARKET", None):
 # 平民幸存者：不带黑市的关卡用这个通用钩子（coldstore 的 3 号柱母子）。
 # 命名沿用 Survivor_<i>；MARKET 关卡继续走上面 MARKET.survivors，别两边同时写。
 for _i, _sv in enumerate(LY.has("SURVIVORS", [])):
-    npc(f"Survivor_{_i}", "PRP_Survivor_Stand", _sv, ["night_survivor"],
+    # 支持 (x, y) 或 (x, y, art)：剧情 NPC 用专属立绘，普通平民仍用 PRP_Survivor_Stand
+    _art = _sv[2] if len(_sv) > 2 else "PRP_Survivor_Stand"
+    npc(f"Survivor_{_i}", _art, (_sv[0], _sv[1]), ["night_survivor"],
         metadata__role='"survivor"')
 
 
