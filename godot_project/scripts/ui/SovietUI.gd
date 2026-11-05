@@ -171,6 +171,15 @@ static func label_font(l: Label, kind: String = "body") -> void:
 			l.add_theme_font_override("font", body_font())
 
 
+## 每帧刷新的 HUD 用它改字色：颜色没变就什么都不做。
+## add_theme_color_override 每调一次都会发 NOTIFICATION_THEME_CHANGED ——
+## 主题缓存作废、文字重新排版（CJK 很贵）、父容器重排。HUD 每帧对十几个 Label 这么干是纯白耗。
+static func font_color(c: Control, col: Color, item: StringName = &"font_color") -> void:
+	if c.has_theme_color_override(item) and c.get_theme_color(item) == col:
+		return
+	c.add_theme_color_override(item, col)
+
+
 # ============================================================================
 # 文本工具 —— 方位、时间、卌、危险度
 # ============================================================================
