@@ -9,7 +9,7 @@ extends Node2D
 ## 物品与容器掉落表直接读 CampaignData，后续可以把本场景接进 CampaignSim 的夜潜阶段。
 ##
 ## 操作：WASD 移动 · 鼠标朝向 · Ctrl 蹲伏 · Shift 冲刺 · 长按 E 搜刮/撤离 · G 扔罐头
-##       F 手电 · M 静音 · R 重来 · Esc 返回战役
+##       F 手电 · M 静音 · F5 重来（仅独立跑）· Esc 暂停菜单（继续 / 音量 / 放弃夜潜 / 退出）
 ##       靠近半人按 E → 抉择面板：1 喂药退烧 / 2 绕开 / 3 撬棍灭口 / Esc 先不决定
 ##
 ## P1.5 天亮：战役里 cfg.night 是这一夜的秒数，最后 DAWN_WINDOW（20%）开始「天色渐变」——
@@ -30,6 +30,7 @@ const TEX_SPARK := preload("res://art/50_vfx/VFX_Impact_Spark.png")
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const SovietMeter := preload("res://scripts/ui/SovietMeter.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
+const PauseMenuScript := preload("res://scripts/ui/PauseMenu.gd")
 
 const PPM := 64.0
 const SQ := 0.62
@@ -60,8 +61,7 @@ var in_campaign := false
 var bag_max := 8
 var night_left := 0.0
 var night_max := 0.0
-var abort_pending := false
-var abort_timer := 0.0
+var _pause: CanvasLayer = null      # Esc 暂停菜单（第一次按 Esc 时才建）
 var cold := 1.0                # cfg.cold：体温下降倍率，同时决定风雪音量（P1.4 / P2.5）
 var day_n := 1                 # cfg.day：HUD 标题里的「第 N 夜」
 
@@ -339,6 +339,9 @@ func _wire_audio() -> void:
 func _exit_tree() -> void:
 	# M 键 / 战役带过来的静音是按主总线做的，别把它留给下一个场景
 	AudioServer.set_bus_mute(0, false)
+	# 暂停菜单开着时切场景 / 退出：别把整棵树留在暂停态
+	if is_inside_tree():
+		get_tree().paused = false
 
 func _loop_audio(p: Node) -> void:
 	var s = p.get("stream")
@@ -373,10 +376,6 @@ func _process(delta: float) -> void:
 	hurt = maxf(0.0, hurt - delta)
 	cam.global_position = player.global_position + Vector2(0, -40)
 	_apply_shake(delta)
-	if abort_pending:
-		abort_timer -= delta
-		if abort_timer <= 0.0:
-			abort_pending = false
 	if state == "play":
 		_update_zone(delta)
 		_update_interact(delta)
@@ -1036,6 +1035,53 @@ func _count_searched() -> int:
 	return n
 
 # ============================================================================
+# 暂停菜单（Esc）：SceneTree.paused 冻结世界；放弃夜潜 / 退出游戏走这里
+# ============================================================================
+func open_pause() -> void:
+	if state != "play":
+		return
+	if _pause == null:
+		_pause = PauseMenuScript.new()
+		_pause.name = "PauseMenu"
+		if in_campaign:
+			_pause.abort_label = "放弃这次夜潜"
+			_pause.abort_hint = "背包清空，活着回 602 室"
+		else:
+			_pause.abort_label = "返回战役"
+			_pause.abort_hint = "F2 独立跑：回到战役标题页"
+		_pause.abort_requested.connect(_on_pause_abort)
+		_pause.quit_requested.connect(_on_pause_quit)
+		add_child(_pause)
+	search_target = null
+	search_prog = 0.0
+	extract_prog = 0.0
+	_pause.open()
+
+
+func close_pause() -> void:
+	if _pause != null:
+		_pause.close()
+
+
+func is_paused() -> bool:
+	return _pause != null and _pause.is_open()
+
+
+func _on_pause_abort() -> void:
+	if in_campaign:
+		_end("abort")
+	else:
+		get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+
+
+## 退出游戏：战役存档停在出发前的 602 室（夜潜中途不存档），这一夜等于没发生。
+func _on_pause_quit() -> void:
+	get_tree().paused = false
+	RaidBridge.clear()
+	get_tree().quit()
+
+
+# ============================================================================
 # 输入
 # ============================================================================
 func _unhandled_input(event: InputEvent) -> void:
@@ -1078,15 +1124,8 @@ func _unhandled_input(event: InputEvent) -> void:
 					get_tree().reload_current_scene()
 			KEY_ESCAPE:
 				if state == "play":
-					if in_campaign:
-						if abort_pending:
-							abort_pending = false
-							_end("abort")
-						else:
-							abort_pending = true
-							abort_timer = 2.5
-					else:
-						get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+					open_pause()
+					get_viewport().set_input_as_handled()
 				elif state != "choice":
 					# 结束画面：战役回写结算，F2 重开
 					if in_campaign:
@@ -2353,9 +2392,7 @@ func _refresh_hud() -> void:
 	# --- 底栏：电传提示 ---
 	var mech := nearest_mechanism()
 	var near_half = nearest_half()
-	if abort_pending:
-		_lbl_hint.text = "再按 Esc 放弃这次夜潜？（背包清空，活着回 602 室）"
-	elif dawn_t > 0.0:
+	if dawn_t > 0.0:
 		_lbl_hint.text = "天要亮了 —— %s（长按 E）" % extract_zh
 	elif has_prize:
 		_lbl_hint.text = "%s到手 —— %s（长按 E）" % [item_name(prize), extract_zh] \
@@ -2367,7 +2404,7 @@ func _refresh_hud() -> void:
 	elif dist_m(player.global_position, exit_px) <= REACH:
 		_lbl_hint.text = "长按 E · " + extract_zh
 	else:
-		_lbl_hint.text = objective_zh + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电"
+		_lbl_hint.text = objective_zh + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电　Esc 暂停"
 
 	# --- 屏幕边框：警报时边缘渗红 ---
 	if _chrome != null:

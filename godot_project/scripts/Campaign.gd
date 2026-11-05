@@ -55,6 +55,7 @@ var font: SystemFont
 var snow: Array[Vector3] = []      # x, y, speed
 var t: float = 0.0
 var shake := 0.0
+var _save_key := ""                # 上次自动存档时的 phase|day；变了才写盘
 
 func _ready() -> void:
 	# P1: 从夜潜场景回来时，RaidBridge 持有原 CampaignSim（含 stash/day/flags），
@@ -110,9 +111,20 @@ func _process(delta: float) -> void:
 		_drain_sfx()
 		if sim.raid.over and sim.phase == "raid":
 			sim.finish_raid(sim.raid.phase)
+	_autosave()
 	shimmy_snow(delta)
 	hud.refresh()
 	queue_redraw()
+
+## 自动存档：进入 602 室（新开局 / 睡觉 / 次日）或结算页时写一次。
+## 夜潜中途不存 —— 退出游戏 = 这一夜没发生过，回到出发前的 602 室。
+func _autosave() -> void:
+	var key := "%s|%d" % [sim.phase, sim.day]
+	if key == _save_key:
+		return
+	_save_key = key
+	if sim.phase == "base" or sim.phase == "report":
+		SaveGame.save(sim)
 
 func _drain_sfx() -> void:
 	if sim.raid == null or sfx == null:
@@ -177,8 +189,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if k == KEY_ENTER or k == KEY_KP_ENTER:
 			if sim.phase == "title":
-				sim.new_game()
-				sim.phase = "base"
+				# 有存档时 Enter = 继续；新开局要点按钮并确认，防止一下把存档盖掉
+				if SaveGame.has_save():
+					hud.continue_game()
+				else:
+					hud.start_new_game()
 			elif sim.phase == "report":
 				sim.to_base()
 				sim.advance_day()
