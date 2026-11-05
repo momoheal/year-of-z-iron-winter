@@ -192,6 +192,31 @@ func _chip(txt: String, col: Color = SovietUI.STEEL_LIT, txt_col: Color = Soviet
 	p.add_child(l)
 	return p
 
+## _label() 默认自动换行，但换行 Label 的最小宽度≈0：放进 HBox / CenterContainer 又没要
+## EXPAND 时，容器按最小宽度排它，于是被挤成「一字一行」、把整行撑高、图标压到字上。
+## 每次重建界面后扫一遍：处在这种位置的 Label 关掉换行；竖排里的、EXPAND 的照旧换行。
+func _unwrap_cramped(node: Node) -> void:
+	for c in node.get_children():
+		if c is Label and (c as Label).autowrap_mode != TextServer.AUTOWRAP_OFF and _is_cramped(c):
+			(c as Label).autowrap_mode = TextServer.AUTOWRAP_OFF
+		_unwrap_cramped(c)
+
+
+## 从 Label 往上找：穿过不 EXPAND 的 Panel / Margin 外壳，碰到横排 / 居中容器 = 会被挤。
+static func _is_cramped(l: Control) -> bool:
+	var n: Control = l
+	while n != null:
+		if n.size_flags_horizontal & Control.SIZE_EXPAND:
+			return false
+		var parent := n.get_parent()
+		if parent is HBoxContainer or parent is CenterContainer:
+			return true
+		if not (parent is PanelContainer or parent is MarginContainer):
+			return false
+		n = parent as Control
+	return false
+
+
 func _clear(node: Node) -> void:
 	if node == null:
 		return
@@ -307,6 +332,7 @@ func _refresh(force: bool) -> void:
 		_sig = sig
 		_rebuild_body()
 		_build_modal()
+		_unwrap_cramped(root)
 	else:
 		_update_live()
 
