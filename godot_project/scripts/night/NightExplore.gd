@@ -27,6 +27,9 @@ const Zones := preload("res://scripts/night/NightZones.gd")
 const TEX_GLOW := preload("res://art/50_vfx/VFX_Light_Radial_Soft.png")
 const TEX_BLOOD := preload("res://art/50_vfx/VFX_Blood_Mist.png")
 const TEX_SPARK := preload("res://art/50_vfx/VFX_Impact_Spark.png")
+const TEX_SPLAT := preload("res://art/50_vfx/VFX_Blood_Splat.png")
+const TEX_MUZZLE := preload("res://art/50_vfx/VFX_MuzzleFlash_Sheet.png")
+const TEX_RAKE := preload("res://art/30_props/PRP_Buran_Boxcar03.png")
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const SovietMeter := preload("res://scripts/ui/SovietMeter.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
@@ -145,6 +148,7 @@ var containers: Array = []
 var slush: Array = []          # [center_m: Vector2, radii_m: Vector2]
 var warm_lights: Array = []    # [pos_px, radius_m]
 var fade_props: Array = []
+var _fade_sprites: Array[Sprite2D] = []   # 与 fade_props 一一对应；_ready 时查一次，别每帧 get_node
 var caught_by := ""
 var muted := false
 var t := 0.0
@@ -264,6 +268,8 @@ func _ready() -> void:
 	for sv in get_tree().get_nodes_in_group("night_survivor"):
 		survivors.append(sv)
 	fade_props = get_tree().get_nodes_in_group("night_fade")
+	for n in fade_props:
+		_fade_sprites.append(n.get_node_or_null("Sprite") as Sprite2D)
 	for z in get_tree().get_nodes_in_group("night_slush"):
 		slush.append([to_m(z.global_position), Vector2(float(z.get_meta("rx", 1.0)), float(z.get_meta("ry", 1.0)))])
 	for w in get_tree().get_nodes_in_group("night_warm"):
@@ -908,7 +914,7 @@ func on_rabid_spotted(r: Node2D) -> void:
 
 func _splat(pos: Vector2) -> void:
 	var splat := Sprite2D.new()
-	splat.texture = load("res://art/50_vfx/VFX_Blood_Splat.png")
+	splat.texture = TEX_SPLAT
 	splat.light_mask = 2
 	splat.position = pos + Vector2(0, -4)
 	splat.rotation = rng.randf() * 0.4 - 0.2
@@ -1157,7 +1163,7 @@ func _init_weapons() -> void:
 
 	_flash_sprite = Sprite2D.new()
 	_flash_sprite.name = "MuzzleFlash"
-	_flash_sprite.texture = load("res://art/50_vfx/VFX_MuzzleFlash_Sheet.png")
+	_flash_sprite.texture = TEX_MUZZLE
 	_flash_sprite.hframes = 4
 	_flash_sprite.light_mask = 2
 	_flash_sprite.z_index = 3
@@ -1536,16 +1542,19 @@ func _update_fx(delta: float) -> void:
 
 func _update_fade() -> void:
 	var p: Vector2 = player.global_position
-	for n in fade_props:
-		var spr := n.get_node_or_null("Sprite") as Sprite2D
+	var step := get_process_delta_time() * 3.0
+	for i in fade_props.size():
+		var spr := _fade_sprites[i]
 		if spr == null:
 			continue
+		var n: Node2D = fade_props[i]
 		var r := spr.get_rect()
 		var top_left: Vector2 = n.global_position + r.position
 		var behind: bool = p.y < n.global_position.y and p.x > top_left.x and p.x < top_left.x + r.size.x \
 			and p.y > top_left.y + 20.0
 		var target := 0.55 if behind else 1.0
-		spr.modulate.a = move_toward(spr.modulate.a, target, get_process_delta_time() * 3.0)
+		if spr.modulate.a != target:
+			spr.modulate.a = move_toward(spr.modulate.a, target, step)
 
 func _update_post() -> void:
 	var g := dawn_grade()
@@ -1791,7 +1800,7 @@ func _tick_beat(ev: Dictionary, delta: float) -> void:
 
 # --- 驼峰溜放 ----------------------------------------------------------------
 func _spawn_rake(ev: Dictionary) -> void:
-	var tex := load("res://art/30_props/PRP_Buran_Boxcar03.png") as Texture2D
+	var tex: Texture2D = TEX_RAKE
 	if tex == null:
 		return
 	beat_rake_lane = float(ev.get("lane_alt" if switch_thrown else "lane", 15.6))
@@ -2241,18 +2250,18 @@ func _refresh_hud() -> void:
 	_m_warm.fill = _warm_color()
 	_lbl_warm_val.text = SovietUI.pct(warmth / 100.0)
 	_lbl_hp_val.text = SovietUI.pct(hp / 100.0)
-	_lbl_warm_val.add_theme_color_override("font_color", _warm_color())
-	_lbl_hp_val.add_theme_color_override("font_color",
+	SovietUI.font_color(_lbl_warm_val, _warm_color())
+	SovietUI.font_color(_lbl_hp_val,
 		SovietUI.BLOOD_LIT if hp <= 35.0 else SovietUI.BONE_DIM)
 
 	# --- 时钟（战役里是离天亮还有多久；F2 独立跑是自由行动） ---
 	if in_campaign:
 		_lbl_clock.text = ("天亮 %s" if dawn_t <= 0.0 else "发白 %s") % SovietUI.clock(night_left)
-		_lbl_clock.add_theme_color_override("font_color",
+		SovietUI.font_color(_lbl_clock,
 			SovietUI.SIGNAL if dawn_t > 0.0 else SovietUI.BONE)
 	else:
 		_lbl_clock.text = "СВОБОДНЫЙ РЕЙД"
-		_lbl_clock.add_theme_color_override("font_color", SovietUI.BONE_DIM)
+		SovietUI.font_color(_lbl_clock, SovietUI.BONE_DIM)
 
 	# --- 姿态 / 读数一行 ---
 	var stance := "蹲伏" if player.crouching else ("冲刺" if player.sprinting else "步行")
@@ -2273,7 +2282,7 @@ func _refresh_hud() -> void:
 			elif zone_id == "black":
 				line += "  ·  尸群无上限"
 			_lbl_zone.text = "所在区  " + line
-			_lbl_zone.add_theme_color_override("font_color", inf.get("hud_col", SovietUI.BONE_DIM))
+			SovietUI.font_color(_lbl_zone, inf.get("hud_col", SovietUI.BONE_DIM))
 
 	# --- 手里的家伙 ---
 	var wspec := cur_w()
@@ -2288,7 +2297,7 @@ func _refresh_hud() -> void:
 	elif cur_is_gun() and int(mag.get(weapon, 0)) == 0:
 		wline += "  空仓 · R 装填"
 	_lbl_weapon.text = "%s\n%s" % [wline, "　".join(slots)]
-	_lbl_weapon.add_theme_color_override("font_color",
+	SovietUI.font_color(_lbl_weapon,
 		SovietUI.SIGNAL if cur_is_gun() and int(mag.get(weapon, 0)) == 0 else SovietUI.BONE)
 
 	var names: Array[String] = []
@@ -2302,11 +2311,11 @@ func _refresh_hud() -> void:
 	if has_prize:
 		_lbl_target.text = "%s 已经在背包里 —— 回撤离点。" % item_name(prize)
 		_lbl_bearing.text = "目标方位  已完成"
-		_lbl_bearing.add_theme_color_override("font_color", SovietUI.ASH)
+		SovietUI.font_color(_lbl_bearing, SovietUI.ASH)
 	else:
 		_lbl_target.text = objective_zh
 		_lbl_bearing.text = "目标方位  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
-		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
+		SovietUI.font_color(_lbl_bearing, SovietUI.OCHRE)
 	_lbl_exit.text = "撤离方位  " + SovietUI.bearing_line(to_m(exit_px - player.global_position))
 
 	var chasing := 0
@@ -2338,7 +2347,7 @@ func _refresh_hud() -> void:
 	elif beat_phase == "live":
 		threats.append("环境警报：正在进行")
 	_lbl_threat.text = "\n".join(threats) if not threats.is_empty() else "没有异常动静。雪在响。"
-	_lbl_threat.add_theme_color_override("font_color",
+	SovietUI.font_color(_lbl_threat,
 		SovietUI.BLOOD_LIT if (chasing > 0 or (near_s != null and near_s.state == "alert")) else SovietUI.SIGNAL)
 
 	var lmk := "勘踏 %d/%d" % [landmark_seen.size(), landmarks.size()]
@@ -2383,19 +2392,19 @@ func _refresh_hud() -> void:
 			_lbl_center.text = ""
 		"caught":
 			_lbl_center.text = "被清杀队发现\nОСК открыл огонь\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", Color("#fca5a5"))
+			SovietUI.font_color(_lbl_center, Color("#fca5a5"))
 		"downed":
 			_lbl_center.text = "被狂暴者扑倒了\n高烧的身体烫得像炉子。\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", Color("#fca5a5"))
+			SovietUI.font_color(_lbl_center, Color("#fca5a5"))
 		"frozen":
 			_lbl_center.text = "体温耗尽，倒在了雪里\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", Color("#bae6fd"))
+			SovietUI.font_color(_lbl_center, Color("#bae6fd"))
 		"dawn":
 			_lbl_center.text = "天亮了\n你连滚带爬回到撤离点——只带得回一半。\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", Color("#bae6fd"))
+			SovietUI.font_color(_lbl_center, Color("#bae6fd"))
 		"abort":
 			_lbl_center.text = "你放弃了这次夜潜\n背包里的东西全留在了雪里。\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", SovietUI.SIGNAL)
+			SovietUI.font_color(_lbl_center, SovietUI.SIGNAL)
 		"extracted":
 			var names2: Array[String] = []
 			for id in pack:
@@ -2412,4 +2421,4 @@ func _refresh_hud() -> void:
 			_lbl_center.text = "撤离成功 · %d 件物资\n%s\n%s\n%s\n%s\n\n%s" % [
 				pack.size(), "、".join(names2), line, moral, lmk_line,
 				"R / Enter 再来一夜　Esc 返回战役" if not in_campaign else "Enter 回 602 室 · 结算"]
-			_lbl_center.add_theme_color_override("font_color", Color("#bbf7d0"))
+			SovietUI.font_color(_lbl_center, Color("#bbf7d0"))

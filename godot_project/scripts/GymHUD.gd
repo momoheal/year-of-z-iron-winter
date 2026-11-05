@@ -544,10 +544,10 @@ func refresh() -> void:
 		var t: Dictionary = SimScript.TASKS[i]
 		var finished: bool = sim.tasks_done[row["id"]]
 		row["mark"].text = "✓" if finished else "○"
-		row["mark"].add_theme_color_override("font_color",
+		SovietUI.font_color(row["mark"],
 			Color("#63d18a") if finished else Color("#6d6f66"))
 		row["text"].text = t["zh"] if zh else t["en"]
-		row["text"].add_theme_color_override("font_color",
+		SovietUI.font_color(row["text"],
 			Color("#a7e8bf") if finished else Color("#928c7c"))
 
 	var room_id: String = sim.current_room()["id"]
@@ -638,7 +638,7 @@ func _update_logbook(zh: bool) -> void:
 	var strokes: int = sim.tally_stroke_marks()
 	for i in _tally_marks.size():
 		var mark: Label = _tally_marks[i]
-		mark.add_theme_color_override("font_color",
+		SovietUI.font_color(mark,
 			Color("b91c1c") if i < strokes else Color(0.35, 0.3, 0.26, 0.35))
 	_logbook_tally_count.text = "%d / 5 STROKES" % strokes
 	if zh:
