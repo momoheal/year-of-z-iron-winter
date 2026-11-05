@@ -146,10 +146,57 @@ def gulya():
     return L.finish(), PIV
 
 
+def survivor():
+    """黑市普通幸存者：褪色军绿棉袄 + 旧围巾 + 拢手 + 背着网兜包袱，一脸疲惫。"""
+    L = Layer(FW, FH, 3)
+    skin = "#b99c82"
+    _legs(L, "#3a3c33", "#241f19")
+    _coat(L, 12.0, 88, "#5c6148", 41)                              # 褪色军绿棉袄
+    _arms(L, 12.0, "#5c6148", skin, "clasp")                        # 拢手在身前
+    _head(L, skin)
+    hair = "#241f18"
+    L.paint(L.ellipse(CX, 21, 8.4, 5.0), hexc(hair))                # 短发顶
+    L.paint(L.rect(CX - 8, 19, CX + 8, 23, 2.5), hexc(hair))        # 刘海
+    L.paint(L.ellipse(CX, 45, 7.5, 3.2), hexc("#6a5c46"))           # 旧围巾
+    L.paint(L.rect(CX - 2, 47, CX + 3, 60), hexc("#5c4f3c"))        # 围巾垂下
+    # 背在右肩后的网兜包袱
+    L.paint(L.poly([(CX + 12, 52), (CX + 22, 54), (CX + 25, 70), (CX + 20, 76), (CX + 11, 72)]),
+            hexc("#6b5f47"))
+    for i in range(4):
+        L.paint(L.line([(CX + 12 + i * 3, 54), (CX + 14 + i * 3, 74)], 0.6), hexc("#4a4132"), 0.5)
+        L.paint(L.line([(CX + 11, 56 + i * 4), (CX + 24, 58 + i * 4)], 0.6), hexc("#4a4132"), 0.5)
+    L.paint(L.line([(CX + 9, 49), (CX + 17, 55)], 1.2), hexc("#7a6c50"))   # 挎带
+    L.paint(L.rect(CX - 5, 35, CX + 5, 40), hexc("#3a2c22"), 0.14)           # 下颌胡茬
+    return L.finish(), PIV
+
+
+def trader():
+    """黑市摊主：深棕皮大衣 + 便帽 + 毛领 + 拢手 + 腰包 + 嘴角叼烟，精明。"""
+    L = Layer(FW, FH, 3)
+    skin = "#c8ab90"
+    _legs(L, "#332f28", "#1e1a14")
+    _coat(L, 12.5, 90, "#4a3f33", 47)                              # 深棕皮大衣
+    _arms(L, 12.5, "#4a3f33", skin, "clasp")
+    _head(L, skin)
+    L.paint(L.ellipse(CX, 20, 9, 4.6), hexc("#3a332a"))            # 便帽
+    L.paint(L.rect(CX - 9, 20, CX + 9, 23.5, 2), hexc("#3a332a"))
+    L.paint(L.ellipse(CX, 45, 8, 3.6), hexc("#6a5a44"))            # 毛领
+    # 腰包（腰前小包 + 包盖 + 扣）
+    L.paint(L.rect(CX + 5, 58, CX + 15, 68, 1), hexc("#2e2620"))
+    L.paint(L.rect(CX + 5, 58, CX + 15, 62), hexc("#3c3228"))
+    L.paint(L.rect(CX + 9, 61, CX + 11, 63), hexc("#8a7a5a"))
+    # 嘴角叼烟（烟条 + 烟头红光）
+    L.paint(L.line([(CX + 1.6, 33.5), (CX + 6, 34.5)], 1.0), hexc("#e6e2d8"))
+    L.paint(L.ellipse(CX + 6, 34.5, 0.9, 0.9), hexc("#c85a3a"))
+    return L.finish(), PIV
+
+
 ALL = {
     "PRP_Anna_Stand": anna,
     "PRP_Leonov_Stand": leonov,
     "PRP_Gulya_Stand": gulya,
+    "PRP_Survivor_Stand": survivor,
+    "PRP_Trader_Stand": trader,
 }
 
 

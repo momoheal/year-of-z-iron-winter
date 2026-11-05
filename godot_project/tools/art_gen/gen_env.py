@@ -851,7 +851,7 @@ def _facade_canteen() -> tuple[Image.Image, Image.Image]:
     F = LY.FACADE_FEATURES
     # 瓷砖墙：下半瓷砖 + 上半涂料 + 油污
     wall = L.rect(0, base - 330, w, base)
-    L.paint(wall, L.tex("#8a8f96", 0.07, 6, 1611))
+    L.paint(wall, L.mat_tex("#8a8f96", "Concrete035", px_h=340, contrast=0.6, seed=1611))
     L.shade(wall, L.gy(base - 330, base, 1.1, 0.74))
     tiles = L.rect(0, base - 170, w, base)
     L.paint(tiles, L.tex("#aab0b6", 0.09, 4, 1613))
@@ -913,7 +913,7 @@ def _facade_sanitarium() -> tuple[Image.Image, Image.Image]:
     F = LY.FACADE_FEATURES
     # 地下室墙：深灰混凝土 + 霉斑 + 水渍
     wall = L.rect(0, base - 380, w, base)
-    L.paint(wall, L.tex("#6b7076", 0.09, 7, 1711))
+    L.paint(wall, L.mat_tex("#6b7076", "Concrete035", px_h=380, contrast=0.7, seed=1711))
     L.shade(wall, L.gy(base - 380, base, 1.12, 0.68))
     L.grime(wall, 230, 0.22)
     # 墙皮剥落片
