@@ -22,6 +22,24 @@ def light_radial(n=512, power=2.0, core=0.0):
     return to_img(np.repeat(f[..., None], 3, -1))
 
 
+def _edge_falloff(w, h, fx=48, fy=80):
+    """四周 smoothstep 羽化到 0 的乘性 mask，返回 (h, w) 数组。
+
+    为什么需要：±30°/±22.5° 的锥角在 1024×512 画布里，光束在到达右边缘之前
+    就先撞到上下边缘（半宽 512·tan30° ≈ 295 px > 半高 256 px），顶点又贴在左边缘，
+    于是上/下/左三条边的亮度不是 0。PointLight2D 用整张矩形贴图参与光照，
+    非零边缘就会在世界里投出带硬边的长方形光带（截图里横贯全屏的灰白带子）。
+    让边缘严格渐变到 0，矩形边界就看不见了。
+    """
+    xs = np.arange(w, dtype=np.float32) + 0.5
+    ys = np.arange(h, dtype=np.float32) + 0.5
+    mx = np.clip(np.minimum(xs, w - xs) / fx, 0, 1)
+    my = np.clip(np.minimum(ys, h - ys) / fy, 0, 1)
+    mx = mx * mx * (3 - 2 * mx)          # smoothstep
+    my = my * my * (3 - 2 * my)
+    return mx[None, :] * my[:, None]
+
+
 def light_cone(half_deg, w=1024, h=512, edge=0.18, power=1.5, spill=0.12, seed=0, hard=False):
     ys, xs = np.mgrid[0:h, 0:w].astype(np.float32)
     dx, dy = xs + 0.5, ys + 0.5 - h / 2
@@ -35,6 +53,7 @@ def light_cone(half_deg, w=1024, h=512, edge=0.18, power=1.5, spill=0.12, seed=0
     glow = smooth(half * 1.9, half * 0.6, ang) * spill * np.clip(1 - r * 1.6, 0, 1) ** 2
     near = np.clip(1 - r * 9, 0, 1) ** 2 * 0.35
     f = np.clip(beam * fall * rings + glow + near, 0, 1)
+    f *= _edge_falloff(w, h)
     return to_img(np.repeat(f[..., None], 3, -1))
 
 

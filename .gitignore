@@ -1,6 +1,8 @@
 # Godot generated / local
 .godot/
-*.import
+# 注意：*.import 记录的是导入设置（res:// 相对路径 + 内容 UID，跨机器一致），
+# 按 Godot 官方建议应纳入版本管理，否则新克隆要重新探测导入参数。
+# .godot/ 里的导入缓存（.ctex 等）仍忽略，首次用 run_tests.bat 或 --import 生成。
 *.translation
 # OS / editor
 .DS_Store

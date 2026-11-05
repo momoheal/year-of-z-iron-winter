@@ -98,7 +98,7 @@ static func loot_bonus(zid: String) -> int:
 static func intro_lines(zones: Array) -> Array:
 	var out: Array = []
 	for z in zones:
-		var inf := INFO.get(String(z["id"]), {})
+		var inf: Dictionary = INFO.get(String(z["id"]), {})
 		if inf.is_empty():
 			continue
 		out.append("%s — %s" % [String(inf["zh"]), String(inf["note_zh"])])

@@ -108,12 +108,12 @@ func _marshalling() -> void:
 	_assert(m.rail_y.size() == 5, "marshalling 五股道 rail_y", str(m.rail_y))
 	# 装配
 	_assert(m.soldiers.size() == 3, "marshalling 3 组清杀队", str(m.soldiers.size()))
-	_assert(m.rabids.size() == 5, "marshalling 5 只狂暴者", str(m.rabids.size()))
+	_assert(m.rabids.size() == 10, "marshalling 10 只狂暴者（红区 2 + 黑区 8）", str(m.rabids.size()))
 	var brutes := 0
 	for r in m.rabids:
 		if r.brute:
 			brutes += 1
-	_assert(brutes == 2, "其中 2 只壮硕（危险度 4）", str(brutes))
+	_assert(brutes == 3, "其中 3 只壮硕（守车 01 / 煤水塔 / 东南车棚）", str(brutes))
 	_assert(m.halfs.size() == 2, "marshalling 2 个回退半人", str(m.halfs.size()))
 	_assert(m.containers.size() >= 10, "marshalling ≥10 个可搜刮容器", str(m.containers.size()))
 	_assert(m.slush.size() == 5, "marshalling 5 块冻雪泥", str(m.slush.size()))
@@ -182,16 +182,16 @@ func _manor() -> void:
 	_assert(g.objective_zh.contains("409"), "manor objective 元数据", g.objective_zh)
 	_assert(g.extract_zh.contains("电网"), "manor extract 元数据（剪开的电网豁口）", g.extract_zh)
 	_assert(g.rail_y.size() == 0, "manor 没有铁轨（rail_y 空串 ≠ 兜底）", str(g.rail_y))
-	# 装配：4 组特勤 / 4 只狂暴者（1 壮硕）/ 2 个半人 / 8 个容器 / 5 块冻雪泥
+	# 装配：4 组特勤 / 8 只狂暴者（2 壮硕）/ 2 个半人 / 9 个容器 / 5 块冻雪泥
 	_assert(g.soldiers.size() == 4, "manor 4 组特勤巡逻", str(g.soldiers.size()))
-	_assert(g.rabids.size() == 4, "manor 4 只狂暴者", str(g.rabids.size()))
+	_assert(g.rabids.size() == 8, "manor 8 只狂暴者（红区 1 + 黑区 7）", str(g.rabids.size()))
 	var brutes := 0
 	for r in g.rabids:
 		if r.brute:
 			brutes += 1
-	_assert(brutes == 1, "其中 1 只壮硕（危险度 5 的焚化院看守）", str(brutes))
+	_assert(brutes == 2, "其中 2 只壮硕（焚化院看守 + 车道尽头）", str(brutes))
 	_assert(g.halfs.size() == 2, "manor 2 个回退半人", str(g.halfs.size()))
-	_assert(g.containers.size() == 8, "manor 8 个可搜刮容器", str(g.containers.size()))
+	_assert(g.containers.size() == 9, "manor 9 个可搜刮容器", str(g.containers.size()))
 	_assert(g.slush.size() == 5, "manor 5 块冻雪泥（冻观赏池等）", str(g.slush.size()))
 	# 三个回温点：两个火堆 + 2000℃ 炉口
 	_assert(g.warm_lights.size() == 3, "manor 三个回温点（火堆×2 + 炉口）", str(g.warm_lights.size()))
@@ -505,7 +505,7 @@ func _canteen() -> void:
 			g.step_sound(_m(22.0, 25.0), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(44.0 * PPM), "canteen limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom == int(30.0 * GY), "canteen limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_bottom == int(32.0 * GY), "canteen limit_bottom", str(g.cam.limit_bottom))
 	_assert(g.cam.limit_top == int(3.0 * GY - 600), "canteen limit_top（食堂楼顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
@@ -561,7 +561,7 @@ func _coldstore() -> void:
 			"coldstore 3 号柱后的母子在场（账面在册 0 人，实际 2 人）")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightColdStore_Baked.png"), "coldstore 地面大图",
+			"TIL_Ground_NightColdstore_Baked.png"), "coldstore 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_ColdStore_A.png"), "coldstore 冷库立面",
