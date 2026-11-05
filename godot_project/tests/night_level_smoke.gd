@@ -399,6 +399,9 @@ func _sanitarium() -> void:
 	_assert(g.objective_zh.contains("第四天"), "sanitarium objective 元数据", g.objective_zh)
 	_assert(g.extract_zh.contains("楼梯"), "sanitarium extract 元数据（南侧楼梯间）", g.extract_zh)
 	_assert(g.rail_y.size() == 0, "sanitarium 没有铁轨（室内关——铁壳号只在换气铁窗外）", str(g.rail_y))
+	# 室内地面 → 脚步材质：地下室湿混凝土 / 地坪漆是闷硬的硬地声，不再是踩雪
+	_assert(g.step_sound(_m(22.0, 16.0), false) == "step_concrete", "sanitarium 地下室地面 = 硬地脚步（不再是踩雪）",
+			g.step_sound(_m(22.0, 16.0), false))
 	# 装配：2 组清杀队 / 3 只感染者（1 壮硕）/ 1 回退半人 / 12 个容器 / 2 块冻雪泥
 	_assert(g.soldiers.size() == 2, "sanitarium 2 组清杀队（收集班）", str(g.soldiers.size()))
 	_assert(g.rabids.size() == 3, "sanitarium 3 只感染者", str(g.rabids.size()))
@@ -498,10 +501,10 @@ func _canteen() -> void:
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Canteen_A.png"), "canteen 瓷砖后厨立面",
 			g.get_node("World/Facade/Sprite").texture.resource_path)
-	# 地表 → 脚步材质：室内关没有铁轨——冻雪泥上是冰壳声，其余是雪地声
+	# 地表 → 脚步材质：室内关没有铁轨——冻雪泥上是冰壳声，瓷砖 / 水磨石是硬地声（不再是踩雪）
 	_assert(g.step_sound(_m(22.0, 28.2), true) == "step_ice", "canteen 冻雪泥 = 冰壳脚步",
 			g.step_sound(_m(22.0, 28.2), true))
-	_assert(g.step_sound(_m(22.0, 25.0), false) == "step_snow", "canteen 后厨地面 = 雪地脚步",
+	_assert(g.step_sound(_m(22.0, 25.0), false) == "step_tile", "canteen 后厨瓷砖地面 = 硬地脚步（不再是踩雪）",
 			g.step_sound(_m(22.0, 25.0), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(44.0 * PPM), "canteen limit_right", str(g.cam.limit_right))
@@ -594,6 +597,8 @@ func _shared(s: Node, tag: String) -> void:
 			str(s.sfx.stream_count() if s.sfx else -1))
 	_assert(s.sfx.has_stream("step_rail") and s.sfx.has_stream("mask_breath")
 			and s.sfx.has_stream("dawn_horn"), tag + " 关键音色在库")
+	_assert(s.sfx.has_stream("step_tile") and s.sfx.has_stream("step_concrete")
+			and s.sfx.has_stream("room_tone"), tag + " 室内音色在库（瓷砖 / 混凝土 / 房间低鸣）")
 	_assert(s.shake == 0.0 and s.cam.offset == Vector2.ZERO, tag + " 静止时镜头不抖")
 	var mat: ShaderMaterial = s.post.material
 	_assert(mat.get_shader_parameter("dawn") == 0.0, tag + " 后处理 dawn 参数在且为 0")

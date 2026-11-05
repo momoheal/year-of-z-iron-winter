@@ -302,6 +302,14 @@ def bake_ground() -> Image.Image:
         col = col * (1 - 0.2 * fpm)[..., None]
         col = _mix(col, fpm * 0.12, hexc("#5f7590"))
 
+    # ---- 冷库：月台与南库的结冰 / 霜（FROST_ZONES = [(y0, y1), …]，只有 coldstore 设）----
+    for fy0, fy1 in LY.has("FROST_ZONES", []):
+        band = ((Y > fy0) & (Y < fy1)).astype(np.float32)
+        ice = smooth(0.45, 0.75, vnoise(h, w, 6, 3, 301)) * band
+        col = _mix(col, ice * 0.5, hexc("#aebfd0"))
+        glaze = smooth(0.72, 0.9, vnoise(h, w, 18, 6, 302)) * band
+        col = _mix(col, glaze * 0.25, hexc("#dfe9f2"))
+
     # ---- 雪面闪点 + 颗粒 ----
     spark = (np.random.default_rng(91).random((h, w)) > 0.9965).astype(np.float32)
     col = col + (spark * 0.14 * (1 - expose))[..., None]
@@ -438,8 +446,8 @@ def _fl_terrazzo(X, Y, h, w, mott, grain, nf, nm, wear, y0, y1):
     lx = np.minimum(X % D, D - X % D) * PPM
     ly = np.minimum((Y - y0) % D, D - (Y - y0) % D) * GY
     strip = ((lx < 1.0) | (ly < 0.8)).astype(np.float32)
-    brass = lerp(hexc("#6f6a4a"), hexc("#b49b5e"), wear[..., None] * 0.9 + 0.1)
-    out = _mix(out, strip * 0.75, brass)
+    brass = lerp(hexc("#5b5640"), hexc("#94845c"), wear[..., None] * 0.9 + 0.1)
+    out = _mix(out, strip * 0.55, brass)
     # 区边一圈深色水磨石边带
     band = (((Y - y0) < 0.45) | ((y1 - Y) < 0.45)).astype(np.float32)
     return _mix(out, band * 0.55, hexc("#3d3f40"))

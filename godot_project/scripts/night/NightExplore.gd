@@ -45,9 +45,11 @@ const CORPSE_CATS := ["med", "val", "intel"]
 # ---- 天亮（P1.5）----
 const DAWN_WINDOW := 0.2                                  # 夜长最后 20% 开始天亮
 const NIGHT_MOD := Color(0.27, 0.32, 0.45)                # 与场景里 CanvasModulate 的初值一致
+const INTERIOR_MOD := Color(0.40, 0.45, 0.58)             # 室内关：抬一点冷色底光，别让地面材质黑成一片
 const DAWN_MOD := Color(0.60, 0.575, 0.565)               # 黎明前的清灰（比夜色亮、比白天冷）
 const DAWN_SNOW_A := 0.5                                  # 天亮时雪粒子留多少
 const INTERIOR_LEVELS := ["canteen", "sanitarium"]        # 室内关：雪只在地面贴图里（破窗飘入），不挂满屏飘雪
+var base_mod := NIGHT_MOD                                 # 夜色基准：室内关换成 INTERIOR_MOD
 # ---- 声音（P2.5）----
 const MASK_BREATH_M := 4.0                                # 面具呼吸的可闻半径（规划 P2.5：4 米）
 const WARMTH_CHILL_AT := [35.0, 20.0, 8.0]                # 失温提示音的三个档
@@ -225,12 +227,16 @@ func _ready() -> void:
 	sfx.name = "NightSfx"
 	add_child(sfx)
 	_read_level_meta()
-	# 室内关（食堂后厨 / 疗养院地下室）：关掉全屏飘雪，否则室内下雪出戏
+	# 室内关（食堂后厨 / 疗养院地下室）：关全屏飘雪、抬底光、风声退到窗外 + 房间低鸣
 	if level_id in INTERIOR_LEVELS:
 		for p in [snow_back, snow_front]:
 			if p != null:
 				p.emitting = false
 				p.visible = false
+		base_mod = INTERIOR_MOD
+		if night_mod != null:
+			night_mod.color = base_mod
+		sfx.set_interior(true)
 	# P1: 战役出发 → 读 cfg 初始化背包 / 携带物 / 天亮倒计时；F2 独立跑用灰盒默认。
 	in_campaign = RaidBridge.active
 	var cfg: Dictionary = RaidBridge.cfg if in_campaign else {}
@@ -872,6 +878,9 @@ func _voice_noise(pos: Vector2, radius_m: float, kind: String) -> void:
 func step_sound(pos: Vector2, on_slush: bool) -> String:
 	if on_slush:
 		return "step_ice"
+	if level_id in INTERIOR_LEVELS:
+		# 室内：瓷砖 / 水磨石是脆的「咔」，湿混凝土与地坪漆是闷硬的一脚，不再是踩雪
+		return "step_tile" if level_id == "canteen" else "step_concrete"
 	var y := to_m(pos).y
 	for band in rail_y:
 		if absf(y - float(band)) <= STEP_RAIL_BAND:
@@ -1633,7 +1642,7 @@ func _update_post() -> void:
 		_flare_light.energy = 3.4 * beat_flare
 	# 天亮：夜色（CanvasModulate）由夜青转黎明清灰，暴风雪变薄
 	if night_mod != null:
-		night_mod.color = NIGHT_MOD.lerp(DAWN_MOD, g)
+		night_mod.color = base_mod.lerp(DAWN_MOD, g)
 	var snow_a := lerpf(1.0, DAWN_SNOW_A, g)
 	if snow_back != null:
 		snow_back.modulate.a = snow_a
