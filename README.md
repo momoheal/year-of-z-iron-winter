@@ -104,8 +104,8 @@ year-of-z-iron-winter/
     │   └── gen_weapons.py                                        # ★ P5 武器 / 弹药 / 靶场道具 / 战斗 VFX（13 件，独立 weapons 步骤）
     ├── tests/
     │   ├── campaign_smoke.gd                                     # ★ 97 项 headless 探索循环测试
-    │   ├── night_explore_smoke.gd                                # ★ 109 项 headless 夜潜货场测试
-    │   ├── night_level_smoke.gd                                  # ★ 58 项 headless 多关卡管线测试
+    │   ├── night_explore_smoke.gd                                # ★ 133 项 headless 夜潜货场测试
+    │   ├── night_level_smoke.gd                                  # ★ 347 项 headless 多关卡管线测试
     │   ├── night_beats_smoke.gd                                  # ★ 界面苏联化 + 关卡档案层 / 节拍状态机测试
     │   ├── night_combat_smoke.gd                                 # ★ 战斗切片：军械库 / 装备 / 命中 / 装填 / 击杀 / 补给
     │   ├── gym_smoke.gd                                          # ★ 61 项 headless 机制冒烟测试
@@ -139,7 +139,7 @@ year-of-z-iron-winter/
 | **三方潜行** | 4 只灰鳞狂暴者（含守在三号车厢门口的壮硕变体）：360° 近距视线 + 循声调查（脚步 / 搜刮 / 罐头 / 枪声），0.45s 起跳预警红圈后扑咬；清杀兵光锥里出现狂暴者会瞄准 0.5s 击毙并留下血迹 → **借刀杀人**；枪声 10m 又会引来下一只。声纹三色：灰白=你 / 暗红=狂暴者 / 冷蓝=清杀队（淡琥珀=半人的呻吟） |
 | **道德抉择** | 两个回退半人（0388 缩在蒸汽管下、0507 在煤水塔东侧）：还有瞳孔、不咬人，但清杀队分不清 —— 光锥里一律开枪（误杀 良知 −4）。他们会被罐头声吸引，所以借刀杀人可能把他们一起引进光锥。靠近按 `E` 抉择：① 阿司匹林 + 热水退烧（良知 +7，他睡着后清杀队认不出，送你一张调度单）② 绕开（良知 −2）③ 撬棍灭口（良知 −10、卌 +1）。热水壶随身带，阿司匹林在西院木箱（旁边就是狂暴者）。口径与战役抉择 A 一致，结算显示良知 / 救下 / 误杀 / 卌 |
 
-**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · **左键 攻击（撬棍连挥 / 枪械单发）** · **`R` 装填** · **`1~4` 换家伙** · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `F5` 重来（原 `R` 让位给装填）· `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园 / `F5` 3 号矿坑 / `F6` 铁路黑市（开发直开）。测试：`tests/night_explore_smoke.gd`（**109 项**，已加进 `run_smoke_tests.bat`）。
+**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · **左键 攻击（撬棍连挥 / 枪械单发）** · **`R` 装填** · **`1~4` 换家伙** · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `F5` 重来（原 `R` 让位给装填）· `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园 / `F5` 3 号矿坑 / `F6` 铁路黑市（开发直开）。测试：`tests/night_explore_smoke.gd`（**133 项**，已加进一键跑批 `run_tests.bat`）。
 
 **美术管线**（`godot_project/tools/art_gen/`，Python 3 + numpy + Pillow，无需外部服务，**多关卡**）：
 
@@ -175,7 +175,7 @@ P4 的第一张新地图：危险度 4 / 夜长 100 分钟（≈240 秒）/ 寒�
 
 新增资产：`TIL_Ground_NightMarshalling_Baked`（2816×1428）、`TIL_Facade_Depot_A`（2816×600）、
 `VFX_Facade_WindowGlow_Depot`、`PRP_BrakeVan_Dead` / `PRP_SwitchStand` / `PRP_DispatchBoard_Tin`。
-测试：`tests/night_level_smoke.gd`（58 项）+ `tools/art_gen/check_levels.py`。
+测试：`tests/night_level_smoke.gd`（347 项）+ `tools/art_gen/check_levels.py`。
 
 ---
 
@@ -468,7 +468,7 @@ All three scenes draw **zero art assets** (pure `_draw()` geometry) and synthesi
 | `scripts/night/NightSfx.gd` | 夜潜场景的音效层：25 种音色 + `AudioStreamPlayer2D` 定位声部 + 实体循环声（面具呼吸）+ 环境层混音（`cfg.cold` / 天亮）+ 紧张度心跳 |
 | `scripts/Sim.gd` / `Main.gd` / `HUD.gd` | Room A 夜潜切片：纯逻辑 / 75° 斜俯视 `_draw()` 渲染 / HUD |
 | `tests/campaign_smoke.gd` | 97 项 headless 探索循环测试（成功打印 `CAMPAIGN_SMOKE_PASS`） |
-| `tests/night_level_smoke.gd` | 58 项 headless 多关卡管线测试（注册表 / metadata / 装配 / 脚步材质 / 边界） |
+| `tests/night_level_smoke.gd` | 347 项 headless 多关卡管线测试（注册表 / metadata / 装配 / 脚步材质 / 边界） |
 | `tests/gym_smoke.gd` | 61 项 headless 冒烟测试（见下方命令；成功打印 `GYM_SMOKE_PASS`） |
 | `tests/room_a_smoke.gd` | 20 项 Room A 冒烟测试（成功打印 `ROOM_A_SMOKE_PASS`） |
 
@@ -515,7 +515,11 @@ Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/room_a_smoke.
 > **灰盒场移植细节**：`docs/zh/Z年纪事_Godot灰盒5合1移植对照表.md` · `docs/en/Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md`
 > **后续节点化架构规范**：`docs/zh/Z年纪事_Godot4引擎迁移技术规范与架构指南.md` · `docs/en/Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md`
 >
-> ⚠️ 本次新增的探索循环与灰盒场都已通过 gdtoolkit GDScript 解析校验，并分别附 97 / 61 项 headless 测试，但**尚未在装有 Godot 的机器上首跑**（本仓库未附新的 campaign / gym 截图）；请先运行上面的 `campaign_smoke` 与 `gym_smoke` 命令完成首次验收，再补拍截图。
+> ✅ **实测状态（2026-11-04，Godot 4.7.2）**：9 套 headless 冒烟测试全部通过，合计 **1148 条断言、0 失败、stderr 无 SCRIPT ERROR**（campaign 97 · 夜潜货场 133 · 多关卡 347 · 档案层/节拍 199 · 三区 162 · 战斗 58 · 灰盒 61 · 数据管线 71 · Room A 20）。生成侧校验 `tools/art_gen/check_levels.py` 8 关全过。
+>
+> 🚀 **一键跑通（推荐）**：新克隆直接双击仓库根的 **`run_tests.bat`**（或 `python godot_project/tools/run_tests.py`）。它会**先自动 `--import` 导入资产**（新克隆没有 `.godot/` 缓存，headless 直接 `-s` 会在 preload 阶段大面积失败），再枚举全部 `tests/*_smoke.gd` 逐个执行并扫 stderr。Godot 路径用环境变量 `GODOT` 或 `--godot` 指定；只跑部分套件用 `run_tests.bat campaign gym`。
+>
+> ⚠️ 历史注记：本次新增的探索循环与灰盒场最初仅通过 gdtoolkit 解析校验、未在引擎首跑；上面的实测结果即首次验收。
 
 ---
 
