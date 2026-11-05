@@ -118,16 +118,16 @@ func _common(s: Node, tag: String) -> void:
 	_assert(s._m_warm != null and s._m_hp != null, tag + " 两条分段仪表")
 	_assert(s._chrome != null and s._chrome.danger >= 0.0, tag + " 金属框读得到危险度")
 	# 关键物资点必须落在「必出 prize」的容器上（HUD 的方位读数不能指错）
+	# 一关可能有多个同 prize 的容器（调车场：发车令 + 水箱手稿），指向其中任意一个都算对
 	var found := false
-	var target := Vector2.ZERO
+	var best_dist := INF
 	for c in s.containers:
 		if String(c.get_meta("guaranteed", "")) == s.prize:
 			found = true
-			target = s.interact_point(c)
+			best_dist = minf(best_dist, s.objective_px.distance_to(s.interact_point(c)))
 	_assert(found, tag + " 场景里有必出 prize 的容器", s.prize)
 	if found:
-		_assert(s.objective_px.distance_to(target) < 1.0, tag + " objective_px 指的就是它",
-			"%s vs %s" % [s.objective_px, target])
+		_assert(best_dist < 1.0, tag + " objective_px 指的就是它", str(best_dist))
 	# 地标：坐标必须在镜头边界内（米）
 	var max_x: float = float(s.cam.limit_right) / PPM
 	var max_y: float = float(s.cam.limit_bottom) / GY
@@ -145,7 +145,7 @@ func _common(s: Node, tag: String) -> void:
 	_assert(s._brief_lbl.text.contains("危险度"), tag + " 档案卡写了危险度")
 	# 走近第一处地标 → 记一笔
 	var first: Dictionary = s.landmarks[0]
-	var fp := s._m_px(first["pos"])
+	var fp: Vector2 = s._m_px(first["pos"])
 	s.player.global_position = fp
 	s._update_landmarks()
 	_assert(s.landmark_seen.size() >= 1, tag + " 走近地标会记一笔", str(s.landmark_seen))

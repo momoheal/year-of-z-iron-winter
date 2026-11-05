@@ -207,7 +207,7 @@ func _run() -> void:
 	# --- 11. 三方潜行：狂暴者 ---
 	s = _scene()
 	await _physics(3)
-	_assert(s.rabids.size() == 4, "four rabids wired", str(s.rabids.size()))
+	_assert(s.rabids.size() == 10, "ten rabids wired（红区 2 + 黑区 8）", str(s.rabids.size()))
 	var brute = _find(s.rabids, "Rabid_Brute")
 	_assert(brute != null and brute.brute and brute.hp > 150.0, "brute variant is tougher")
 	_freeze_soldiers(s)
@@ -426,9 +426,16 @@ func _run() -> void:
 	s.damage_player(9.0, null)
 	_assert(s.shake > 0.4, "a bite kicks the camera", str(s.shake))
 	_assert(s.punch > 0.5, "damage also punches the zoom in", str(s.punch))
-	await _physics(2)
-	_assert(s.cam.offset.length() > 0.5, "shake lands on Camera2D.offset", str(s.cam.offset))
-	_assert(s.cam.zoom.x > 1.0, "the punch-in zooms slightly", str(s.cam.zoom))
+	# offset 随 sin/cos 振荡、会过零，单帧采样容易擦边失败（机器有负载时尤其明显）；
+	# 改为在连续 4 帧里取峰值。zoom 同样取峰值——punch 随时间衰减，不能只看最后一帧。
+	var peak := 0.0
+	var zoom_seen := 1.0
+	for i in 4:
+		await _physics(1)
+		peak = maxf(peak, s.cam.offset.length())
+		zoom_seen = maxf(zoom_seen, s.cam.zoom.x)
+	_assert(peak > 0.5, "shake lands on Camera2D.offset", "peak=%f" % peak)
+	_assert(zoom_seen > 1.0, "the punch-in zooms slightly", "zoom=%f" % zoom_seen)
 	var k0: float = s.shake
 	await _physics(90)
 	_assert(s.shake < k0 * 0.2, "trauma decays", str(s.shake))

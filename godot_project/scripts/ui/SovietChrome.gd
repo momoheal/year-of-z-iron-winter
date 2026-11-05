@@ -102,12 +102,14 @@ func _draw_corners(w: float, h: float) -> void:
 	]
 	for p in pts:
 		var o: Vector2 = p[0]
-		draw_line(o, p[1], col, t)
-		draw_line(o, p[2], col, t)
+		var a: Vector2 = p[1]
+		var b: Vector2 = p[2]
+		draw_line(o, a, col, t)
+		draw_line(o, b, col, t)
 		# 内侧再压一条细钢线，双线才有厚度
-		var inward := (p[1] - o).normalized() * 4.0 + (p[2] - o).normalized() * 4.0
-		draw_line(o + inward, (p[1] as Vector2).lerp(o, 0.08) + inward, dim, 1.0)
-		draw_line(o + inward, (p[2] as Vector2).lerp(o, 0.08) + inward, dim, 1.0)
+		var inward: Vector2 = (a - o).normalized() * 4.0 + (b - o).normalized() * 4.0
+		draw_line(o + inward, a.lerp(o, 0.08) + inward, dim, 1.0)
+		draw_line(o + inward, b.lerp(o, 0.08) + inward, dim, 1.0)
 
 
 ## 上下边框上的铆钉：间距 132px，绕开四角的角码。

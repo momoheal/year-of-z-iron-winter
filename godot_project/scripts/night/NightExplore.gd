@@ -1131,7 +1131,9 @@ func _init_weapons() -> void:
 	_add_weapon("crowbar")
 	var carried: Array[String] = []
 	if in_campaign:
-		var bridged := String(RaidBridge.cfg.get("weapon", "crowbar"))
+		# CampaignSim.depart() 写的是整张武器表（RaidSim 也按 Dictionary 读），F2 单独跑时才可能是 id 字符串
+		var wv: Variant = RaidBridge.cfg.get("weapon", "crowbar")
+		var bridged: String = String(wv.get("id", "crowbar")) if wv is Dictionary else String(wv)
 		carried.append(String(CARRY_MAP.get(bridged, "crowbar")))
 		carried.append("pistol")            # 缴获的 ТТ 是阿列克谢的底牌
 	else:
@@ -1326,7 +1328,7 @@ func shoot() -> void:
 	var reach := float(w.get("reach", 16.0))
 	var dmg := float(w.get("dmg", 40.0))
 	for i in pellets:
-		var ang := player.facing + deg_to_rad(randf_range(-spread, spread))
+		var ang: float = float(player.facing) + deg_to_rad(randf_range(-spread, spread))
 		_cast_shot(origin, Vector2(cos(ang), sin(ang)), reach, dmg)
 
 
@@ -1513,7 +1515,7 @@ func _update_fx(delta: float) -> void:
 	for hm in hit_marks:
 		hm["life"] = float(hm["life"]) - delta
 	hit_marks = hit_marks.filter(func(x): return float(x["life"]) > 0.0)
-	var settled: Array = []
+	var settled: Array[Dictionary] = []
 	for c in casings:
 		c["life"] = float(c["life"]) - delta
 		var v: Vector2 = c["vel"]
