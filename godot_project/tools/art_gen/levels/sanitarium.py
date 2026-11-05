@@ -57,6 +57,8 @@ TRACKS = []                  # 「铁壳号」在墙外的广轨弯道上——�
 BALLAST_W = (1.9, 1.5)
 SLAB_BAND = (3.0, 30.0)      # 室内：混凝土地面
 INTERIOR = True              # 室内关：混凝土地面打底（bake_ground 全片曝光）
+# 室内地面材质（gen_env._interior_floor）：铁笼区是渗水的湿混凝土，走廊 + 医生区是起皮的牛血红地坪漆
+FLOOR = {"zones": [("concrete", 3.0, 13.4), ("painted", 13.4, 30.0)]}
 
 SPAWN = (22.0, 27.5)         # 南侧楼梯间（下地下室）
 EXIT = (22.0, 29.2)          # 撤离点：原路回楼梯
