@@ -47,6 +47,7 @@ const DAWN_WINDOW := 0.2                                  # 夜长最后 20% 开
 const NIGHT_MOD := Color(0.27, 0.32, 0.45)                # 与场景里 CanvasModulate 的初值一致
 const DAWN_MOD := Color(0.60, 0.575, 0.565)               # 黎明前的清灰（比夜色亮、比白天冷）
 const DAWN_SNOW_A := 0.5                                  # 天亮时雪粒子留多少
+const INTERIOR_LEVELS := ["canteen", "sanitarium"]        # 室内关：雪只在地面贴图里（破窗飘入），不挂满屏飘雪
 # ---- 声音（P2.5）----
 const MASK_BREATH_M := 4.0                                # 面具呼吸的可闻半径（规划 P2.5：4 米）
 const WARMTH_CHILL_AT := [35.0, 20.0, 8.0]                # 失温提示音的三个档
@@ -224,6 +225,12 @@ func _ready() -> void:
 	sfx.name = "NightSfx"
 	add_child(sfx)
 	_read_level_meta()
+	# 室内关（食堂后厨 / 疗养院地下室）：关掉全屏飘雪，否则室内下雪出戏
+	if level_id in INTERIOR_LEVELS:
+		for p in [snow_back, snow_front]:
+			if p != null:
+				p.emitting = false
+				p.visible = false
 	# P1: 战役出发 → 读 cfg 初始化背包 / 携带物 / 天亮倒计时；F2 独立跑用灰盒默认。
 	in_campaign = RaidBridge.active
 	var cfg: Dictionary = RaidBridge.cfg if in_campaign else {}
