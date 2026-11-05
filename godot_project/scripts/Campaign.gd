@@ -5,13 +5,14 @@ extends Node2D
 ## 本文件负责三块视觉：
 ##   1. 城市地图（900×520，13 个节点 + 已解锁路径）
 ##   2. 夜潜世界（26px/米、y 轴 0.62 压缩的 75° 斜俯视，程序化街区 + 雾 + 探照锥 + 波纹）
-##   3. 基地 / 结算 / 结局的背景氛围（雪、窗光、暗角）
+##   3. 基地 / 结算 / 结局的背景交给 scripts/ui/CampaignBackdrop.gd（夜景立面 + 窗光 + 钠灯），这里只叠雪
 ## 所有可点击的按钮都在 HUD 里；地图节点本身用鼠标在世界里点选（_unhandled_input）。
 
 const SimScript := preload("res://scripts/CampaignSim.gd")
 const HudScript := preload("res://scripts/CampaignHUD.gd")
 const SfxScript := preload("res://scripts/Sfx.gd")
 const Data := preload("res://scripts/CampaignData.gd")
+const BackdropScript := preload("res://scripts/ui/CampaignBackdrop.gd")
 
 const SCREEN := Vector2(1920, 1080)
 const TOP := 74.0                    # 顶栏高度
@@ -55,7 +56,8 @@ var font: SystemFont
 var snow: Array[Vector3] = []      # x, y, speed
 var t: float = 0.0
 var shake := 0.0
-var _save_key := ""                # 上次自动存档时的 phase|day；变了才写盘
+var _save_key := ""
+var backdrop: Node2D                # 标题 / 602 室 / 地图 / 结算的夜景背景（夜潜灰盒时隐藏）                # 上次自动存档时的 phase|day；变了才写盘
 
 func _ready() -> void:
 	# P1: 从夜潜场景回来时，RaidBridge 持有原 CampaignSim（含 stash/day/flags），
@@ -69,6 +71,9 @@ func _ready() -> void:
 		"Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "SimHei",
 		"PingFang SC", "Segoe UI", "Arial",
 	])
+	backdrop = BackdropScript.new()
+	backdrop.name = "Backdrop"
+	add_child(backdrop)
 	hud = HudScript.new()
 	add_child(hud)
 	hud.bind_campaign(sim, self)
@@ -264,21 +269,15 @@ func project(sim_raid, wx: float, wy: float) -> Vector2:
 func _draw() -> void:
 	if sim == null:
 		return
-	draw_rect(Rect2(Vector2.ZERO, SCREEN), COL["bg"], true)
-	match sim.phase:
-		"title":
-			_draw_title()
-		"base":
-			_draw_base()
-		"map":
-			_draw_base()
-			_draw_city_map()
-		"raid":
-			_draw_raid()
-		"report":
-			_draw_report_bg()
-		"ending":
-			_draw_report_bg()
+	var in_raid: bool = sim.phase == "raid"
+	if backdrop != null:
+		backdrop.visible = not in_raid
+		backdrop.mode = String(sim.phase)
+	if in_raid:
+		draw_rect(Rect2(Vector2.ZERO, SCREEN), COL["bg"], true)
+		_draw_raid()
+	elif sim.phase == "map":
+		_draw_city_map()
 	_draw_snow()
 	if sim.phase == "raid" and sim.raid != null:
 		_draw_raid_overlays()
@@ -287,55 +286,6 @@ func _draw_snow() -> void:
 	var a := 0.05 if sim.phase == "raid" else 0.16
 	for s in snow:
 		draw_circle(Vector2(s.x, s.y), 1.2, Color(0.88, 0.94, 1.0, a))
-
-func _draw_title() -> void:
-	# 602 室的窗：一块冷光，窗外是雪
-	draw_rect(Rect2(0, 0, SCREEN.x, SCREEN.y), Color("#080b11"), true)
-	draw_rect(Rect2(1260, 150, 420, 330), Color("#16202e"), true)
-	draw_rect(Rect2(1272, 162, 396, 306), Color("#0d1520"), true)
-	for i in 5:
-		draw_line(Vector2(1272 + i * 99, 162), Vector2(1272 + i * 99, 468), Color("#1b2735"), 2.0)
-	draw_line(Vector2(1272, 315), Vector2(1668, 315), Color("#1b2735"), 2.0)
-	# 床沿与点滴架
-	draw_rect(Rect2(1150, 600, 520, 120), Color("#121821"), true)
-	draw_rect(Rect2(1150, 600, 520, 10), Color("#1e2836"), true)
-	draw_line(Vector2(1120, 380), Vector2(1120, 610), Color("#2b3a4d"), 3.0)
-	draw_line(Vector2(1120, 392), Vector2(1180, 392), Color("#2b3a4d"), 3.0)
-	draw_circle(Vector2(1180, 402), 9.0, Color("#7dd3fc33"))
-	draw_circle(Vector2(1180, 402), 4.0, Color("#7dd3fc88"))
-	# 地板与门
-	draw_rect(Rect2(0, 780, SCREEN.x, 300), Color("#0b0f15"), true)
-	for i in 12:
-		draw_line(Vector2(i * 160, 780), Vector2(i * 160 - 120, 1080), Color("#0f151d"), 2.0)
-	draw_rect(Rect2(760, 640, 180, 320), Color("#0e141c"), true)
-	draw_rect(Rect2(760, 640, 180, 6), Color("#1d2836"), true)
-
-func _draw_base() -> void:
-	# 基地背景：暖气片 + 结霜的窗 + 母亲的床（左三分之一留给状态栏）
-	draw_rect(Rect2(0, TOP, SCREEN.x, SCREEN.y - TOP), Color("#080b11"), true)
-	draw_rect(Rect2(0, TOP, SCREEN.x, 6), Color("#111a26"), true)
-	# 窗
-	draw_rect(Rect2(120, 150, 300, 210), Color("#141d29"), true)
-	draw_rect(Rect2(130, 160, 280, 190), Color("#0c141e"), true)
-	draw_line(Vector2(270, 160), Vector2(270, 350), Color("#1b2735"), 3.0)
-	draw_line(Vector2(130, 255), Vector2(410, 255), Color("#1b2735"), 3.0)
-	# 床
-	draw_rect(Rect2(90, 780, 560, 130), Color("#11171f"), true)
-	draw_rect(Rect2(90, 780, 560, 8), Color("#1e2836"), true)
-	draw_rect(Rect2(110, 760, 120, 30), Color("#26303e"), true)
-	# 点滴
-	draw_line(Vector2(690, 470), Vector2(690, 790), Color("#2b3a4d"), 3.0)
-	draw_line(Vector2(690, 482), Vector2(650, 482), Color("#2b3a4d"), 3.0)
-	draw_circle(Vector2(648, 494), 8.0, Color("#7dd3fc44"))
-	# 暖气片
-	for i in 14:
-		draw_rect(Rect2(1000 + i * 26, 860, 14, 90), Color("#1a232e"), true)
-	draw_line(Vector2(990, 900), Vector2(1420, 900), Color("#243040"), 3.0)
-	# 桌面 / 地图
-	draw_rect(Rect2(1460, 780, 400, 24), Color("#18202b"), true)
-	draw_rect(Rect2(1470, 700, 380, 80), Color("#1c2a22"), true)
-	for i in 6:
-		draw_line(Vector2(1480 + i * 60, 706), Vector2(1480 + i * 60, 774), Color("#243a2c"), 1.0)
 
 func _draw_city_map() -> void:
 	# 地图底板
@@ -394,19 +344,6 @@ func _draw_city_map() -> void:
 	draw_string(font, MAP_RECT.position + Vector2(16, 30),
 		"НОВОРСК-17 · 第 %d 夜" % sim.day if sim.lang == "zh" else "NOVORSK-17 · NIGHT %d" % sim.day,
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color(0.45, 0.6, 0.55, 0.8))
-
-func _draw_report_bg() -> void:
-	draw_rect(Rect2(0, TOP, SCREEN.x, SCREEN.y - TOP), Color("#080b11"), true)
-	# 一张压在桌上的日志纸
-	draw_rect(Rect2(90, 150, 640, 780), Color("#141a20"), true)
-	draw_rect(Rect2(90, 150, 640, 780), Color("#233040"), false, 2.0)
-	for i in 14:
-		draw_line(Vector2(120, 240 + i * 46), Vector2(700, 240 + i * 46), Color("#1c2530"), 1.0)
-	draw_line(Vector2(120, 210), Vector2(430, 210), Color("#2a3a4a"), 3.0)
-	# 窗光
-	draw_rect(Rect2(1290, 200, 460, 380), Color("#101823"), true)
-	for i in 4:
-		draw_line(Vector2(1290, 200 + i * 95), Vector2(1750, 200 + i * 95), Color("#1a2634"), 3.0)
 
 # ----------------------------------------------------------------------------
 # 夜潜世界

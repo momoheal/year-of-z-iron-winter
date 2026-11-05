@@ -18,19 +18,19 @@ const ORDER := ["white", "red", "black"]
 const INFO := {
 	"white": {
 		"zh": "白区 · 安全区", "en": "WHITE ZONE · SAFE", "rule": "safe",
-		"col": Color("#9fc6e0"), "tint": 0.075, "tag": "ZONE A · SAFE",
+		"col": Color("#9fc6e0"), "tint": 0.075, "tag": "ЗОНА А · ЖИЛАЯ",
 		"note_zh": "居民区：没有丧尸，清杀队也不进来",
 		"hud_col": Color("#bfe0f2"),
 	},
 	"red": {
 		"zh": "红区 · 管制带", "en": "RED ZONE · CURFEW", "rule": "curfew",
-		"col": Color("#c8483a"), "tint": 0.115, "tag": "ZONE B · CURFEW",
+		"col": Color("#c8483a"), "tint": 0.115, "tag": "ЗОНА Б · ПРОХОД ЗАПРЕЩЁН",
 		"note_zh": "白区居民禁止进入 · 清杀队巡逻 · 丧尸较少",
 		"hud_col": Color("#e8836f"),
 	},
 	"black": {
 		"zh": "黑区 · 沉降带", "en": "BLACK ZONE · SUNKEN", "rule": "sunken",
-		"col": Color("#3aa0b4"), "tint": 0.165, "tag": "ZONE C · SUNKEN",
+		"col": Color("#3aa0b4"), "tint": 0.165, "tag": "ЗОНА В · ОТСЕЛЕНИЕ",
 		"note_zh": "丧尸成群 · 资源最多 · 黑市与幸存者",
 		"hud_col": Color("#7fe0ef"),
 	},

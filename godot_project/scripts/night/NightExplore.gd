@@ -1533,8 +1533,25 @@ func on_soldier_killed(s: Node, _by: String) -> void:
 # ============================================================================
 # 表现
 # ============================================================================
+const FLOAT_LINE := 24.0         # 浮字行高：同一处同时冒出几句时往上错开一行
+const FLOAT_MAX := 6             # 屏幕上同时最多几句浮字，多了挤掉最旧的
+
 func spawn_float(pos: Vector2, txt: String, col: Color) -> void:
-	floats.append({"pos": pos, "txt": txt, "col": col, "life": 2.2})
+	# 同一处同时冒出好几句（借刀 + 进区 + 勘踏 + 撤离提示）时逐行往上错开，别糊成一团
+	var p := pos
+	for _i in 8:
+		var clash := false
+		for f in floats:
+			var q: Vector2 = f["pos"]
+			if absf(q.x - p.x) < 320.0 and absf(q.y - p.y) < FLOAT_LINE:
+				clash = true
+				break
+		if not clash:
+			break
+		p.y -= FLOAT_LINE
+	floats.append({"pos": p, "txt": txt, "col": col, "life": 2.2})
+	while floats.size() > FLOAT_MAX:
+		floats.pop_front()
 
 func _update_fx(delta: float) -> void:
 	for r in ripples:

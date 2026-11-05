@@ -6,6 +6,7 @@ extends Node2D
 ## 数据来自场景根节点与自己的 metadata/zones（build_scene.py 写），格式见 NightZones.gd。
 
 const Zones := preload("res://scripts/night/NightZones.gd")
+const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const PPM := 64.0
 const SQ := 0.62
 
@@ -27,7 +28,10 @@ func _zrect(r: Rect2) -> Rect2:
 func _draw() -> void:
 	if zones.is_empty():
 		return
-	var font := ThemeDB.fallback_font
+	# 地面喷字用压缩钢印体（和 HUD 标题同一套），不是引擎默认字体
+	var font: Font = SovietUI.display_font()
+	if font == null:
+		font = ThemeDB.fallback_font
 	for z in zones:
 		var zid := String(z["id"])
 		var inf := Zones.info(zid)
@@ -39,21 +43,22 @@ func _draw() -> void:
 			var rc := _zrect(r as Rect2)
 			# 1) 区带淡染（上沿更浓一点，像纸上的分区线）
 			draw_rect(rc, Color(col.r, col.g, col.b, a), true)
-			# 2) 上沿虚线 + 下沿细线
-			_dash(rc.position.x, rc.position.x + rc.size.x, rc.position.y, Color(col.r, col.g, col.b, 0.80), 26.0, 16.0)
+			# 2) 上沿虚线（像雪地上喷的分界漆，淡一点、细一点，别像调试线）+ 下沿细线
+			_dash(rc.position.x, rc.position.x + rc.size.x, rc.position.y, Color(col.r, col.g, col.b, 0.38), 34.0, 22.0)
 			draw_line(Vector2(rc.position.x, rc.end.y), Vector2(rc.end.x, rc.end.y),
 				Color(col.r, col.g, col.b, 0.22), 2.0)
-			# 3) 地面标签：左右各一处，避免镜头在中间时看不到
+			# 3) 地面喷字（俄文模板字）：左右各一处，避免镜头在中间时看不到；
+			#    很淡，像被雪盖了一半 —— 当前在哪个区以 HUD 为准，这里只是环境叙事
 			var tag := String(inf["tag"])
 			if font != null and tag != "":
-				var ty := rc.position.y + 76.0
+				var ty := rc.position.y + 84.0
 				for tx in [rc.position.x + 40.0, rc.position.x + rc.size.x * 0.62]:
-					draw_string(font, Vector2(tx, ty), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 30,
-						Color(col.r, col.g, col.b, 0.45))
+					draw_string(font, Vector2(tx, ty), tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 40,
+						Color(col.r, col.g, col.b, 0.17))
 
 
 func _dash(x0: float, x1: float, y: float, col: Color, dash: float, gap: float) -> void:
 	var x := x0
 	while x < x1:
-		draw_line(Vector2(x, y), Vector2(minf(x + dash, x1), y), col, 5.0)
+		draw_line(Vector2(x, y), Vector2(minf(x + dash, x1), y), col, 3.0)
 		x += dash + gap
