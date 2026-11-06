@@ -13,6 +13,25 @@ const HudScript := preload("res://scripts/CampaignHUD.gd")
 const SfxScript := preload("res://scripts/Sfx.gd")
 const Data := preload("res://scripts/CampaignData.gd")
 const BackdropScript := preload("res://scripts/ui/CampaignBackdrop.gd")
+const TEX_CITY_MAP := preload("res://art/60_ui/UI_City_Map.png")
+# 支线夜潜（_draw_raid）材质化：可平铺雪 / 灰泥地面、侧视立面、容器贴图。
+# 实体（玩家 / 敌人 / 伙伴）保持与节点化场景一致的程序化风格。
+const TEX_SNOW := preload("res://art/20_tileset/TIL_Snow_Tile.png")
+const TEX_CONCRETE := preload("res://art/20_tileset/TIL_Concrete_Tile.png")
+const TEX_FACADE := preload("res://art/20_tileset/TIL_Facade_Town_A.png")
+const TEX_CONTS := {
+	"crate": preload("res://art/30_props/PRP_Crate_Wood_Stack.png"),
+	"locker": preload("res://art/30_props/PRP_Locker_ElectricCabinet.png"),
+	"medcab": preload("res://art/30_props/PRP_MedCabinet.png"),
+	"briefcase": preload("res://art/30_props/PRP_Locker_ElectricCabinet.png"),
+	"safe": preload("res://art/30_props/PRP_Locker_ElectricCabinet.png"),
+	"hidden": preload("res://art/30_props/PRP_Crate_Wood_Stack.png"),
+	"car": preload("res://art/30_props/PRP_Car_Moskvich_Wreck.png"),
+	"dumpster": preload("res://art/30_props/PRP_Dumpster_Steel.png"),
+	"supply": preload("res://art/30_props/PRP_SupplyCrates_Military.png"),
+	"fridge": preload("res://art/30_props/PRP_ColdStore_Chest.png"),
+	"corpse": preload("res://art/30_props/PRP_Corpse_Tarp.png"),
+}
 
 const SCREEN := Vector2(1920, 1080)
 const TOP := 74.0                    # 顶栏高度
@@ -288,25 +307,10 @@ func _draw_snow() -> void:
 		draw_circle(Vector2(s.x, s.y), 1.2, Color(0.88, 0.94, 1.0, a))
 
 func _draw_city_map() -> void:
-	# 地图底板
-	draw_rect(MAP_RECT, Color("#0a1013"), true)
+	# 地图底板：AI 手绘城区夜景（雪覆街区 / 冰河 / 铁路），替代原色块 + 线条灰盒；
+	# 节点 / 解锁路径 / 地名标签仍在下方用 _draw 叠加，保持交互
+	draw_texture_rect(TEX_CITY_MAP, MAP_RECT, false)
 	draw_rect(MAP_RECT, Color("#1d2a26"), false, 2.0)
-	# 河 / 铁路
-	draw_line(MAP_RECT.position + Vector2(0, 400), MAP_RECT.position + Vector2(900, 360),
-		Color("#123243"), 26.0)
-	for i in 9:
-		var x := MAP_RECT.position.x + 10 + i * 108
-		draw_line(Vector2(x, MAP_RECT.position.y + 372 - i * 4),
-			Vector2(x + 74, MAP_RECT.position.y + 366 - i * 4), Color("#26303c"), 2.0)
-	# 街区网格
-	for i in 13:
-		var gx := MAP_RECT.position.x + i * 70
-		draw_line(Vector2(gx, MAP_RECT.position.y + 8), Vector2(gx - 24, MAP_RECT.end.y - 8),
-			Color("#0f1a1a"), 1.0)
-	for j in 8:
-		var gy := MAP_RECT.position.y + j * 66
-		draw_line(Vector2(MAP_RECT.position.x + 8, gy), Vector2(MAP_RECT.end.x - 8, gy + 12),
-			Color("#0f1a1a"), 1.0)
 	# 路径：从 3 号居住区（基地）连到每个已解锁节点
 	var base_pos := Vector2(150, 330)
 	for L in Data.LOCS:
@@ -364,7 +368,10 @@ func _draw_raid() -> void:
 	var j0: int = maxi(0, int(floor(cam.y - VIEW_C.y / ph)) - 1)
 	var j1: int = mini(H - 1, int(ceil(cam.y + (SCREEN.y - VIEW_C.y) / ph)) + 1)
 
-	# ---- 地面 ----
+	# ---- 地面：真实雪 / 灰泥材质平铺（替代纯色块灰盒），按 tile 类型叠色保留可读性 ----
+	var indoor_locs := ["boiler", "underpass", "workshop", "archive"]
+	var gtex: Texture2D = TEX_CONCRETE if indoor_locs.has(sim.selected_loc) else TEX_SNOW
+	var gsz := Vector2(gtex.get_size())
 	for j in range(j0, j1 + 1):
 		for i in range(i0, i1 + 1):
 			var s: Vector2 = project(R, float(i), float(j))
@@ -372,24 +379,19 @@ func _draw_raid() -> void:
 				draw_rect(Rect2(s, Vector2(pw + 1, ph + 1)), COL["bg"], true)
 				continue
 			var v: int = g[j * W + i]
-			var c: Color = COL["floor"]
+			var reg := Rect2(fmod(i * pw, gsz.x), fmod(j * ph, gsz.y), pw + 1, ph + 1)
+			draw_texture_rect_region(gtex, Rect2(s, Vector2(pw + 1, ph + 1)), reg)
+			var c := Color(1, 1, 1, 0)
 			if v == Data.TT_SLUSH:
-				c = COL["slush"]
-			elif v == Data.TT_COVER:
-				c = Color("#1b222b")
-			elif v == Data.TT_FENCE:
-				c = Color("#171e26")
+				c = Color(0.2, 0.34, 0.42, 0.4)
+			elif v == Data.TT_COVER or v == Data.TT_FENCE:
+				c = Color(0.05, 0.07, 0.1, 0.3)
 			elif v == Data.TT_WALL:
-				c = Color("#111822")
+				c = Color(0.03, 0.05, 0.08, 0.45)
 			elif v == Data.TT_DOOR or v == Data.TT_WEDGED or v == Data.TT_BDOOR:
-				c = Color("#1a212b")
-			if (i * 3 + j * 5) % 11 == 0:
-				c = c.lightened(0.04)
-			draw_rect(Rect2(s, Vector2(pw + 1, ph + 1)), c, true)
-			draw_rect(Rect2(s, Vector2(pw + 1, ph + 1)), COL["grout"], false, 1.0)
-			if v == Data.TT_SLUSH and (i * 3 + j * 5) % 4 == 0:
-				draw_rect(Rect2(s + Vector2(4, 3), Vector2(pw - 10, ph - 8)),
-					Color(0.2, 0.34, 0.42, 0.35), true)
+				c = Color(0.05, 0.07, 0.1, 0.3)
+			if c.a > 0.0:
+				draw_rect(Rect2(s, Vector2(pw + 1, ph + 1)), c, true)
 
 	# ---- 血渍 ----
 	for d in R.decals:
@@ -411,18 +413,16 @@ func _draw_raid() -> void:
 				var inner: bool = R.at(i - 1, j) == Data.TT_WALL and R.at(i + 1, j) == Data.TT_WALL \
 					and R.at(i, j - 1) == Data.TT_WALL and R.at(i, j + 1) == Data.TT_WALL
 				if inner:
-					_draw_box(sp, pw, ph, ht, Color("#232d3b"), Color("#101620"), Color("#38465a"))
+					# 实心内墙：深色材质（正常被外墙遮挡，透视 / 全图时也有纹理而非纯黑块）
+					var ireg := Rect2(fmod(i * pw, gsz.x), fmod(j * ph, gsz.y), pw + 1, ph + ht)
+					draw_texture_rect_region(TEX_CONCRETE,
+						Rect2(sp + Vector2(0, -ht), Vector2(pw + 1, ph + ht)), ireg, Color(0.3, 0.33, 0.4))
 				else:
-					_draw_box(sp, pw, ph, ht, COL["wallTop"], COL["wallFront"], COL["wallEdge"])
-					draw_rect(Rect2(sp + Vector2(1, 1), Vector2(pw - 2, 3)),
-						Color(0.89, 0.91, 0.94, 0.22), true)
-					var wh: float = float((i * 37 + j * 61) % 100) / 100.0
-					if wh < 0.45:
-						draw_rect(Rect2(sp + Vector2(4, ph + 3), Vector2(5, 5)),
-							Color("#f59e0b88"), true)
-					else:
-						draw_rect(Rect2(sp + Vector2(4, ph + 3), Vector2(5, 5)),
-							Color("#1e293b"), true)
+					# 侧视立面贴图（斜俯视 + 立面，替代纯色盒）
+					var fw := float(TEX_FACADE.get_width())
+					var freg := Rect2(fmod(i * pw, maxf(1.0, fw - pw - 1.0)), 0.0, pw + 1, ph + ht)
+					draw_texture_rect_region(TEX_FACADE,
+						Rect2(sp + Vector2(0, -ht), Vector2(pw + 1, ph + ht)), freg)
 			elif vv == Data.TT_BDOOR:
 				_draw_box(sp, pw, ph, ht * 0.9, Color("#6b4a2b"), Color("#2a1e12"), Color("#8a6a3c"))
 				draw_rect(Rect2(sp + Vector2(pw * 0.45, ph * 0.3), Vector2(3, ht * 0.5)),
@@ -554,26 +554,15 @@ func _draw_container(R, c: Dictionary, pw: float, ph: float, ht: float) -> void:
 	var w := pw * 0.85
 	var h := ph * 0.85
 	var hh := ht * 0.55
-	var pal := {
-		"crate": [Color("#6b5232"), Color("#2e2314"), Color("#8a6a3c")],
-		"locker": [Color("#3a4c60"), Color("#161d26"), Color("#4f6478")],
-		"medcab": [Color("#d7dde5"), Color("#6b7280"), Color("#f1f5f9")],
-		"briefcase": [Color("#4b3b2a"), Color("#1e1710"), Color("#6b5540")],
-		"safe": [Color("#4a4f57"), Color("#1b1f26"), Color("#6b7280")],
-		"hidden": [Color("#22303a"), Color("#0e151b"), Color("#2f4654")],
-		"car": [Color("#3b4a3e"), Color("#151c18"), Color("#586e5c")],
-		"dumpster": [Color("#2f4a3a"), Color("#121b16"), Color("#486b54")],
-		"supply": [Color("#5c4a2e"), Color("#241c11"), Color("#7d6a45")],
-		"fridge": [Color("#8fa3b3"), Color("#3b4650"), Color("#c7d4de")],
-		"corpse": [Color("#3a2a28"), Color("#160f0e"), Color("#5a3f3b")],
-	}
 	var t := String(c.get("type", "crate"))
-	var p: Array = pal.get(t, pal["crate"])
-	if bool(c.get("searched", false)):
-		p = [Color("#25292e"), Color("#12151a"), Color("#2f353c")]
-	_draw_box(sp, w, h, hh, p[0], p[1], p[2])
+	var tex: Texture2D = TEX_CONTS.get(t, TEX_CONTS["crate"])
+	# 容器贴图：保持宽高比、底部贴地；已搜刮压暗
+	var th := w * (float(tex.get_height()) / float(tex.get_width()))
+	var tpos := sp + Vector2(0, h - th)
+	var tint := Color(0.42, 0.44, 0.48) if bool(c.get("searched", false)) else Color(1, 1, 1)
+	draw_texture_rect(tex, Rect2(tpos, Vector2(w, th)), false, tint)
 	if t == "medcab" and not bool(c.get("searched", false)):
-		draw_rect(Rect2(sp + Vector2(w * 0.4, -hh * 0.65), Vector2(w * 0.2, hh * 0.2)),
+		draw_rect(Rect2(tpos + Vector2(w * 0.4, th * 0.15), Vector2(w * 0.18, th * 0.18)),
 			Color("#ef4444"), true)
 	if t == "hidden" and not bool(c.get("searched", false)) and sim.mate == "ivan":
 		draw_arc(sp + Vector2(w * 0.5, -hh * 0.6), 12.0, 0.0, TAU, 16,
