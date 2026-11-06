@@ -81,6 +81,82 @@ def _line_mask(w, h, polylines, width, blur_r):
 # ===========================================================================
 # 地面
 # ===========================================================================
+def _snow_albedo(h, w, name="Snow014", px=340.0, strength=0.16):
+    """真实雪材质（ambientCG Snow014，CC0）灰度平铺成乘性细节层，归一到 1±strength。
+    只给雪底加自然雪晶颗粒 / 起伏，不改变配色与布局；素材缺失时返回全 1（不影响离线复现）。"""
+    import os
+    path = os.path.join(os.path.dirname(__file__), "textures", f"{name}_Color.jpg")
+    if not os.path.exists(path):
+        return np.ones((h, w), np.float32)
+    im = Image.open(path).convert("L")
+    th = max(8, int(px))
+    tw = max(8, int(im.width * th / im.height))
+    g = np.asarray(im.resize((tw, th), Image.LANCZOS), np.float32) / 255.0
+    lo, hi = np.percentile(g, 2), np.percentile(g, 98)
+    g = np.clip((g - lo) / max(1e-6, hi - lo), 0, 1)
+    G = np.tile(g, (int(np.ceil(h / th)), int(np.ceil(w / tw))))[:h, :w]
+    return (1.0 - strength + 2.0 * strength * G).astype(np.float32)
+
+
+def _blood_decals(col, X, Y, h, w, seed=77):
+    """雪地暗红血迹贴花：几处不规则喷溅（重叠椭圆 + 噪声侵蚀边缘），暗示清杀 / 饥荒的阴冷。
+    只落在院子活动区（北墙脚以南），纯视觉，不影响布局 / 路线 / 掩体；素材与玩法均无依赖。"""
+    rng = np.random.default_rng(seed)
+    y_lo = float(LY.FACADE_BASE_Y) + 0.6
+    y_hi = float(LY.H) - 0.6
+    if y_hi <= y_lo:
+        return col
+    blood = hexc("#3d1010")[None, None, :]          # 干涸的暗红
+    for _ in range(int(rng.integers(2, 4))):
+        cx = float(rng.uniform(2.0, float(LY.W) - 2.0))
+        cy = float(rng.uniform(y_lo, y_hi))
+        r = float(rng.uniform(0.35, 0.7))            # 主血泊半径（米）
+        pool = np.zeros((h, w), np.float32)
+        for _ in range(int(rng.integers(5, 9))):     # 主血泊 + 卫星飞溅
+            ox = float(rng.uniform(-r, r))
+            oy = float(rng.uniform(-r, r)) * 0.6
+            rr = float(rng.uniform(r * 0.3, r))
+            dd = ((X - cx - ox) / rr) ** 2 + ((Y - cy - oy) / (rr * 0.62)) ** 2
+            pool = np.maximum(pool, smooth(1.1, 0.5, dd))
+        pool *= smooth(0.25, 0.7, vnoise(h, w, 3.0, 2.0, int(rng.integers(0, 999))) + 0.25)
+        col = _mix(col, np.clip(pool, 0, 1) * 0.72, blood)
+    return col
+
+
+def _graffiti(img: Image.Image, seed: int = 5) -> Image.Image:
+    """北墙墙裙喷绘：褪色五角星 + 西里尔标语（МИР=和平 / СССР / 1917），做旧喷漆，苏联废墟感。
+    只喷在立面下段实墙带（墙裙，一般无窗门），暗红半透明 + 噪声斑驳，像多年风霜后的旧标语。"""
+    from PIL import ImageDraw, ImageFont
+    base = img.convert("RGBA")
+    ov = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(ov)
+    W, H = base.size
+    rng = np.random.default_rng(seed)
+    gy = int(H * 0.80)                                # 墙裙带（立面下段实墙）
+    try:
+        font = ImageFont.truetype("arial.ttf", int(H * 0.11))
+    except Exception:
+        font = ImageFont.load_default()
+    for _ in range(int(rng.integers(1, 3))):
+        cx = int(W * rng.uniform(0.12, 0.78))
+        txt = str(rng.choice(["МИР", "СССР", "1917"]))
+        col = (96, 42, 38, int(rng.integers(110, 150)))  # 褪色暗红喷漆
+        d.text((cx, gy), txt, font=font, fill=col)
+        sx = cx - int(H * 0.13)                        # 标语旁的五角星
+        sy = gy + int(H * 0.04)
+        r = int(H * 0.05)
+        pts = []
+        for k in range(10):
+            ang = -np.pi / 2 + k * np.pi / 5
+            rr = r if k % 2 == 0 else r * 0.42
+            pts.append((sx + rr * np.cos(ang), sy + rr * np.sin(ang)))
+        d.polygon(pts, fill=col)
+    ov_arr = np.asarray(ov).astype(np.float32)         # 喷漆斑驳（噪声擦掉一部分）
+    ov_arr[..., 3] *= np.clip(vnoise(H, W, 6, 4, seed + 3) * 1.4, 0, 1)
+    ov = Image.fromarray(ov_arr.astype(np.uint8), "RGBA")
+    return Image.alpha_composite(base, ov)
+
+
 def bake_ground() -> Image.Image:
     w, h = _gw(), _gh()
     xs = (np.arange(w, dtype=np.float32) + 0.5) / PPM
@@ -98,6 +174,7 @@ def bake_ground() -> Image.Image:
     col = lerp(hexc("#95a4b6"), hexc("#d8e1ea"), smooth(0.05, 0.95, nb * 0.55 + nm * 0.45))
     col = col * (0.965 + 0.07 * rip)[..., None]
     col = col * (0.985 + 0.03 * nf)[..., None]
+    col = col * _snow_albedo(h, w)[..., None]   # Snow014 真实雪晶颗粒（雪底细节层）
 
     # ---- 雪径（踩实的灰雪 + 脚印）----
     pathm = _line_mask(w, h, LY.PATHS, 64, 16)
@@ -316,6 +393,7 @@ def bake_ground() -> Image.Image:
     col = col * (0.985 + 0.03 * np.random.default_rng(92).random((h, w)))[..., None]
     # 楼体脚下（被立面盖住的部分）直接压黑
     col = col * np.where(Y < LY.FACADE_BASE_Y - 0.05, 0.25, 1.0)[..., None]
+    col = _blood_decals(col, X, Y, h, w)
     return to_img(col)
 
 
@@ -748,6 +826,12 @@ def _drainpipe(h: int) -> Image.Image:
 
 
 def bake_facade() -> tuple[Image.Image, Image.Image]:
+    """北侧立面 + 墙裙涂鸦贴花。返回 (立面精灵, 窗光灯光贴图)。"""
+    img, glow = _bake_facade_raw()
+    return _graffiti(img), glow
+
+
+def _bake_facade_raw() -> tuple[Image.Image, Image.Image]:
     """北侧立面：按 LY.META["facade"] 选一种墙。返回 (立面精灵, 窗光灯光贴图)。"""
     kind = facade_kind()
     if kind == "depot":
@@ -780,7 +864,7 @@ def _facade_coldstore() -> tuple[Image.Image, Image.Image]:
     F = LY.FACADE_FEATURES
     # 保温板墙：横向大板 + 板缝 + 霜挂
     wall = L.rect(0, base - 330, w, base)
-    L.paint(wall, L.tex("#8a97a4", 0.07, 6, 1511))
+    L.paint(wall, L.mat_tex("#8a97a4", "Metal025", px_h=330, contrast=0.5, seed=1511))
     L.shade(wall, L.gy(base - 330, base, 1.1, 0.72))
     for vy in range(base - 322, base - 8, 64):
         L.paint(L.rect(0, vy, w, vy + 2.4), hexc("#6c7a88"), 0.6)
@@ -978,7 +1062,7 @@ def _town_shack(L: Layer, x0: int, bw: int, bh: int, seed: int, base: int,
     pal = ["#6b5138", "#5f5647", "#555b62", "#6a5a44", "#5a4a38"]
     wall_c = pal[seed % len(pal)]
     wall = L.rect(x0 + 6, base - bh, x0 + bw - 6, base)
-    L.paint(wall, L.tex(wall_c, 0.1, 5, seed))
+    L.paint(wall, L.mat_tex(wall_c, "Metal025", px_h=float(bh), contrast=0.45, seed=seed))
     L.shade(wall, L.gy(base - bh, base, 1.08, 0.7))
     for vx in range(x0 + 14, x0 + bw - 12, 26):        # 板缝
         L.paint(L.rect(vx, base - bh, vx + 1.6, base), hexc("#3c3122"), 0.5)
@@ -1207,7 +1291,7 @@ def _mine_shed(seed: int) -> tuple[Image.Image, tuple]:
     L = Layer(w, h, 1)
     base = h - 2
     wall = L.rect(14, 42, 236, base)
-    L.paint(wall, L.tex("#5a6169", 0.08, 5, seed))
+    L.paint(wall, L.mat_tex("#5a6169", "Metal025", px_h=168.0, contrast=0.45, seed=seed))
     L.shade(wall, L.gy(42, base, 1.15, 0.72))
     for vx in range(18, 236, 16):                 # 波纹板竖缝
         L.paint(L.rect(vx, 42, vx + 1.6, base), hexc("#464c53"), 0.7)
@@ -1738,7 +1822,7 @@ def _facade_manor() -> tuple[Image.Image, Image.Image]:
 
     # ---- 左：恒温库保温板墙 ----
     dep = L.rect(0, wall_top, split, plinth_top)
-    L.paint(dep, L.tex("#79828a", 0.05, 10, 601))
+    L.paint(dep, L.mat_tex("#79828a", "Metal025", px_h=float(plinth_top - wall_top), contrast=0.5, seed=601))
     for xx in np.arange(24, split, 76):        # 保温板竖缝
         L.paint(L.rect(xx, wall_top, xx + 2.4, plinth_top), hexc("#5a626a"), 0.8)
         L.paint(L.rect(xx + 2.4, wall_top, xx + 3.6, plinth_top), hexc("#98a1a9"), 0.5)
@@ -1792,7 +1876,7 @@ def _facade_manor() -> tuple[Image.Image, Image.Image]:
 
     # ---- 右：焚化车间 ----
     hall = L.rect(split, wall_top - 26, w, plinth_top)
-    _depot_brick(L, hall, 650, base="#5e463c")
+    L.paint(hall, L.mat_tex("#5e463c", "Bricks097", px_h=float(plinth_top - wall_top + 26), contrast=0.55, seed=650))
     L.shade(hall, L.gy(wall_top - 26, plinth_top, 1.05, 0.8))
     # 烟囱
     chx = F.get("chimney_x", 40.0) * PPM

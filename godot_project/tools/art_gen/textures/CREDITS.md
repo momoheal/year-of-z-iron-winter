@@ -6,7 +6,10 @@
 | 文件 | 来源 | 用途 |
 |------|------|------|
 | `Concrete035_Color.jpg` | https://ambientcg.com/a/Concrete035 | 真实混凝土纹理，用于食堂 / 疗养院立面墙面（`Layer.mat_tex`） |
-| `Snow014_Color.jpg` | https://ambientcg.com/a/Snow014 | 真实雪纹理，备用（地面细节叠加） |
+| `Snow014_Color.jpg` | https://ambientcg.com/a/Snow014 | 真实雪纹理，户外雪底细节叠加（`gen_env._snow_albedo`） |
+| `Bricks097_Color.jpg` | https://ambientcg.com/a/Bricks097 | 真实老砖纹理，庄园焚化车间立面（`Layer.mat_tex`） |
+| `Metal025_Color.jpg` | https://ambientcg.com/a/Metal025 | 真实金属 / 锈板纹理，冷库保温板、工人镇板房、庄园恒温库、矿井工棚立面（`Layer.mat_tex`） |
+| `Plaster003_Color.jpg` | https://ambientcg.com/a/Plaster003 | 真实灰泥纹理，备用（立面灰泥墙） |
 
 说明：
 - 仅取 **Color（albedo）** 单图做 2D 纹理映射；normal / roughness / displacement 等 PBR 通道未使用。
