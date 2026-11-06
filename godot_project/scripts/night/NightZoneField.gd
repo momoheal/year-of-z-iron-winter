@@ -41,12 +41,17 @@ func _draw() -> void:
 		var a := float(inf["tint"])
 		for r in z["rects"]:
 			var rc := _zrect(r as Rect2)
-			# 1) 区带淡染（上沿更浓一点，像纸上的分区线）
-			draw_rect(rc, Color(col.r, col.g, col.b, a), true)
-			# 2) 上沿虚线（像雪地上喷的分界漆，淡一点、细一点，别像调试线）+ 下沿细线
-			_dash(rc.position.x, rc.position.x + rc.size.x, rc.position.y, Color(col.r, col.g, col.b, 0.38), 34.0, 22.0)
-			draw_line(Vector2(rc.position.x, rc.end.y), Vector2(rc.end.x, rc.end.y),
-				Color(col.r, col.g, col.b, 0.22), 2.0)
+			# 区带淡染：逐水平细条 + 上下边缘 smoothstep 羽化，相邻区柔和过渡、无明显分界线；
+			# 不再画上沿虚线 / 下沿细线（那是硬分界，用户要求去掉）
+			var feather := 110.0
+			var y := rc.position.y
+			while y < rc.end.y:
+				var seg := 4.0
+				var cy := y + seg * 0.5
+				var d := minf(cy - rc.position.y, rc.end.y - cy)
+				var w := smoothstep(0.0, 1.0, clampf(d / feather, 0.0, 1.0))
+				draw_rect(Rect2(rc.position.x, y, rc.size.x, seg + 1.0), Color(col.r, col.g, col.b, a * w), true)
+				y += seg
 			# 3) 地面喷字（俄文模板字）：左右各一处，避免镜头在中间时看不到；
 			#    很淡，像被雪盖了一半 —— 当前在哪个区以 HUD 为准，这里只是环境叙事
 			var tag := String(inf["tag"])
