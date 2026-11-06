@@ -91,6 +91,8 @@ var state := "play"            # play | choice | caught | frozen | downed | extr
 var pack: Array[String] = []
 var warmth := 100.0
 var hp := 100.0
+var mate_id := ""                # 本夜所带伙伴（_spawn_follower 写入；gulya 用于急救）
+var _gulya_used := false         # 古丽娅「每夜救一次重伤」是否已用
 var hurt := 0.0                # 受伤闪红计时
 var borrowed := 0              # 借刀杀人：清杀队替你清掉的狂暴者
 var rabids: Array = []
@@ -296,7 +298,7 @@ func _ready() -> void:
 func _spawn_follower() -> void:
 	## 伙伴跟随：战役出发时 RaidBridge.cfg.mate 指定带谁（"" = 没带，不生成）；
 	## F2 独立跑默认灰烬，可用 --mate=ash/anna/gulya/pavel/ivan 覆盖。
-	var mate_id := ""
+	mate_id = ""
 	var rb := get_node_or_null("/root/RaidBridge")
 	if rb != null and rb.active:
 		mate_id = String(rb.cfg.get("mate", ""))
@@ -313,6 +315,7 @@ func _spawn_follower() -> void:
 	var f = script.new()
 	f.mate_id = mate_id
 	f.player_target = player
+	f.ctl = self
 	$World.add_child(f)
 	f.global_position = player.global_position + Vector2(-48, 28)
 	f.z_index = player.z_index
@@ -925,7 +928,7 @@ func damage_player(amount: float, _by: Node) -> void:
 	emit_noise(player.global_position, 6.0, "hit")
 	spawn_float(player.global_position + Vector2(0, -120), "-%d 被咬了！" % int(amount), Color("#f87171"))
 	if hp <= 0.0:
-		_end("downed")
+		_check_downed()
 
 func on_soldier_fired(s: Node2D, at: Vector2) -> void:
 	# 枪声的震动按距离衰减：贴脸 0.5，26 米外只剩 0.06 的闷响
@@ -986,6 +989,16 @@ func caught(by: Node) -> void:
 		sfx.play_at("gunshot", (by as Node2D).global_position, 0.0, 0.02)
 	add_shake(0.95)
 	_end("caught")
+
+func _check_downed() -> void:
+	## 古丽娅「每夜救一次重伤」：本夜带古丽娅且急救还没用过，hp 归零不死、拉回 40。
+	if mate_id == "gulya" and not _gulya_used:
+		_gulya_used = true
+		hp = 40.0
+		spawn_float(player.global_position + Vector2(0, -150), "古丽娅急救：这一夜她把你拉了回来", Color("#63d18a"))
+		return
+	_end("downed")
+
 
 func _end(reason: String) -> void:
 	state = reason
@@ -1942,7 +1955,7 @@ func _tick_hump(ev: Dictionary, k: float, delta: float) -> void:
 		spawn_float(player.global_position + Vector2(0, -140), "被溜放的车皮刮倒了 —— 整个货场都听见了",
 			Color("#f87171"))
 		if hp <= 0.0:
-			_end("downed")
+			_check_downed()
 
 
 # --- 炉口爆燃 ----------------------------------------------------------------
