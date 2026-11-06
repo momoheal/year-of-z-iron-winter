@@ -24,6 +24,15 @@ const PANEL_W_L := 452.0
 const PANEL_W_M := 566.0
 const FONT_SIZES := {"h1": 34, "h2": 22, "h3": 17, "body": 14, "small": 12}
 
+# 伙伴立绘（替换原来的 emoji 🐺👩🩺🧰🚂）；id 对不上（如 "none"）时退回 emoji。
+const MATE_ART := {
+	"ash": "res://art/30_props/PRP_Ash_Stand.png",
+	"anna": "res://art/30_props/PRP_Anna_Stand.png",
+	"gulya": "res://art/30_props/PRP_Gulya_Stand.png",
+	"pavel": "res://art/30_props/PRP_Pavel_Stand.png",
+	"ivan": "res://art/30_props/PRP_Ivan_Stand.png",
+}
+
 var sim
 var game
 var font: SystemFont
@@ -747,7 +756,15 @@ func _mate_row(id: String, ic: String, name: String, desc: String, unlocked: boo
 	p.add_theme_stylebox_override("panel", _sb(Color("#0b0d0e"), border, 8))
 	p.mouse_filter = Control.MOUSE_FILTER_STOP
 	var h := _hbox(10)
-	h.add_child(_label("🔒" if not unlocked else ic, 22, Color("#928c7c")))
+	if unlocked and MATE_ART.has(id):
+		var tr := TextureRect.new()
+		tr.texture = load(MATE_ART[id])
+		tr.custom_minimum_size = Vector2(40, 54)
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		h.add_child(tr)
+	else:
+		h.add_child(_label("🔒" if not unlocked else ic, 22, Color("#928c7c")))
 	var v := _vbox(2)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_child(_label(name, FONT_SIZES["body"], Color("#e3ddcd") if unlocked else Color("#6d6f66")))
@@ -906,7 +923,7 @@ func _build_map() -> void:
 	for m in Data.MATES:
 		if bool(sim.mates.get(String(m["id"]), false)):
 			mrow.add_child(_mate_chip(String(m["id"]),
-				String(m["ic"]) + " " + String(m["zh"] if sim.lang == "zh" else m["en"]), false))
+				String(m["zh"] if sim.lang == "zh" else m["en"]), false))
 	rv.add_child(mrow)
 
 	rv.add_child(_sep())
@@ -935,6 +952,10 @@ func _mate_chip(id: String, txt: String, is_none: bool) -> Control:
 	var sel: bool = sim.mate == id
 	var b := _btn(txt, func(): sim.select_mate(id))
 	b.custom_minimum_size = Vector2(0, 34)
+	if MATE_ART.has(id):
+		b.icon = load(MATE_ART[id])
+		b.expand_icon = true
+		b.add_theme_constant_override("icon_max_width", 20)
 	if sel:
 		b.add_theme_stylebox_override("normal", _sb(Color("#193024"), Color("#63d18a"), 7))
 	return b

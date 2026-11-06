@@ -290,6 +290,32 @@ func _ready() -> void:
 	_init_weapons()
 	_build_hud()
 	_init_post_defaults()
+	_spawn_follower()
+
+
+func _spawn_follower() -> void:
+	## 伙伴跟随：战役出发时 RaidBridge.cfg.mate 指定带谁（"" = 没带，不生成）；
+	## F2 独立跑默认灰烬，可用 --mate=ash/anna/gulya/pavel/ivan 覆盖。
+	var mate_id := ""
+	var rb := get_node_or_null("/root/RaidBridge")
+	if rb != null and rb.active:
+		mate_id = String(rb.cfg.get("mate", ""))
+		if mate_id == "":
+			return                                  # 战役这一夜没带伙伴 → 无跟随者
+	else:
+		mate_id = "ash"
+		for a in OS.get_cmdline_args():
+			if a.begins_with("--mate="):
+				mate_id = a.substr(7)
+	var script = load("res://scripts/night/NightFollower.gd")
+	if script == null:
+		return
+	var f = script.new()
+	f.mate_id = mate_id
+	f.player_target = player
+	$World.add_child(f)
+	f.global_position = player.global_position + Vector2(-48, 28)
+	f.z_index = player.z_index
 
 
 ## 显式初始化后处理 shader 参数。未 set 过的 ShaderMaterial，get_shader_parameter
