@@ -148,8 +148,6 @@ var thrown: Array[Dictionary] = []
 var soldiers: Array = []
 var containers: Array = []
 var _lock_hint_t := 0.0
-var _breath: CPUParticles2D = null
-var _breath_t := 0.0
 var slush: Array = []          # [center_m: Vector2, radii_m: Vector2]
 var warm_lights: Array = []    # [pos_px, radius_m]
 var fade_props: Array = []
@@ -419,35 +417,19 @@ func _ambient_role(node_name: String) -> String:
 # 主循环
 # ============================================================================
 func _setup_breath() -> void:
-	# 呼吸白气：严寒里玩家每 ~3.4s 呼出一小团白雾（软圆粒子，上升 + 淡出），强化「阴冷」。
-	_breath = CPUParticles2D.new()
-	_breath.amount = 5
-	_breath.lifetime = 1.5
-	_breath.one_shot = true
-	_breath.emitting = false
-	_breath.texture = load("res://art/50_vfx/VFX_Light_Radial_Soft.png")
-	_breath.direction = Vector2(0.25, -1.0)
-	_breath.spread = 22.0
-	_breath.gravity = Vector2(0, -12)
-	_breath.initial_velocity_min = 12.0
-	_breath.initial_velocity_max = 26.0
-	_breath.scale_amount_min = 0.05
-	_breath.scale_amount_max = 0.1
-	_breath.z_index = 5
-	var grad := Gradient.new()
-	grad.set_color(0, Color(0.9, 0.94, 1.0, 0.4))
-	grad.set_color(1, Color(0.9, 0.94, 1.0, 0.0))
-	_breath.color_ramp = grad
-	player.add_child(_breath)
-	_breath.position = Vector2(8, -82)
+	# 呼吸白气统一用 Breath.gd（可复用、随机相位）：玩家 + 夜潜 NPC（清杀兵/狂暴者/半人/幸存者）。
+	var b = load("res://scripts/night/Breath.gd").new()
+	player.add_child(b)
+	b.position = Vector2(8, -82)
+	for arr in [soldiers, rabids, halfs, survivors]:
+		for n in arr:
+			if is_instance_valid(n):
+				var nb = load("res://scripts/night/Breath.gd").new()
+				n.add_child(nb)
+				nb.position = Vector2(6, -72)
 
 func _process(delta: float) -> void:
 	t += delta
-	_breath_t += delta
-	if _breath_t >= 3.4 and state == "play":
-		_breath_t = 0.0
-		if _breath != null:
-			_breath.restart()
 	hurt = maxf(0.0, hurt - delta)
 	cam.global_position = player.global_position + Vector2(0, -40)
 	_apply_shake(delta)

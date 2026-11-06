@@ -107,7 +107,10 @@ def _blood_decals(col, X, Y, h, w, seed=77):
     if y_hi <= y_lo:
         return col
     blood = hexc("#3d1010")[None, None, :]          # 干涸的暗红
-    for _ in range(int(rng.integers(2, 4))):
+    # 剧情差异化：清杀 / 焚化 / 饥荒关（庄园、疗养院、食堂）血迹更多，其余关保持零星。
+    lid = str(LY.META.get("id", ""))
+    lo, hi = {"manor": (4, 7), "sanitarium": (4, 7), "canteen": (3, 6)}.get(lid, (2, 4))
+    for _ in range(int(rng.integers(lo, hi))):
         cx = float(rng.uniform(2.0, float(LY.W) - 2.0))
         cy = float(rng.uniform(y_lo, y_hi))
         r = float(rng.uniform(0.35, 0.7))            # 主血泊半径（米）
@@ -137,7 +140,10 @@ def _graffiti(img: Image.Image, seed: int = 5) -> Image.Image:
         font = ImageFont.truetype("arial.ttf", int(H * 0.11))
     except Exception:
         font = ImageFont.load_default()
-    for _ in range(int(rng.integers(1, 3))):
+    # 剧情差异化：居民区（工人镇、赫鲁晓夫楼）旧标语更多；清杀队地盘（庄园/疗养院）标语被覆盖、更少。
+    lid = str(LY.META.get("id", ""))
+    glo, ghi = {"market": (3, 5), "yard": (3, 5)}.get(lid, (0, 2) if lid in ("manor", "sanitarium") else (1, 3))
+    for _ in range(int(rng.integers(glo, ghi))):
         cx = int(W * rng.uniform(0.12, 0.78))
         txt = str(rng.choice(["МИР", "СССР", "1917"]))
         col = (96, 42, 38, int(rng.integers(110, 150)))  # 褪色暗红喷漆

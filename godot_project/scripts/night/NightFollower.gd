@@ -73,6 +73,10 @@ func _ready() -> void:
 	circ.radius = 9.0
 	col.shape = circ
 	add_child(col)
+	# 呼吸白气（可复用 Breath 节点，随机相位）：狼犬嘴在前、人形嘴在上方。
+	var breath = load("res://scripts/night/Breath.gd").new()
+	add_child(breath)
+	breath.position = Vector2(26, -58) if mate_id == "ash" else Vector2(8, -84)
 
 
 func _dist_m(a: Vector2, b: Vector2) -> float:
