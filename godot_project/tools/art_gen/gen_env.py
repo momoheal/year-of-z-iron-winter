@@ -140,23 +140,32 @@ def _graffiti(img: Image.Image, seed: int = 5) -> Image.Image:
         font = ImageFont.truetype("arial.ttf", int(H * 0.11))
     except Exception:
         font = ImageFont.load_default()
-    # 剧情差异化：居民区（工人镇、赫鲁晓夫楼）旧标语更多；清杀队地盘（庄园/疗养院）标语被覆盖、更少。
+    # 剧情差异化：居民区（工人镇、赫鲁晓夫楼）褪色官方旧标语 + 五角星；清杀队地盘（庄园/疗养院/食堂）
+    # 改成清杀队喷涂的记号 / 警告（ЧИСТО=已清杀、ОПАСНО=危险、ЗОНА=封锁）+ X 叉号，骨白喷漆更刺目。
     lid = str(LY.META.get("id", ""))
+    purge = lid in ("manor", "sanitarium", "canteen")
+    words = ["ЧИСТО", "ОПАСНО", "ЗОНА"] if purge else ["МИР", "СССР", "1917", "СЛАВА"]
     glo, ghi = {"market": (3, 5), "yard": (3, 5)}.get(lid, (0, 2) if lid in ("manor", "sanitarium") else (1, 3))
     for _ in range(int(rng.integers(glo, ghi))):
         cx = int(W * rng.uniform(0.12, 0.78))
-        txt = str(rng.choice(["МИР", "СССР", "1917"]))
-        col = (96, 42, 38, int(rng.integers(110, 150)))  # 褪色暗红喷漆
+        txt = str(rng.choice(words))
+        alpha = int(rng.integers(110, 150))
+        col = (178, 180, 174, alpha) if purge else (96, 42, 38, alpha)
         d.text((cx, gy), txt, font=font, fill=col)
-        sx = cx - int(H * 0.13)                        # 标语旁的五角星
+        sx = cx - int(H * 0.13)
         sy = gy + int(H * 0.04)
         r = int(H * 0.05)
-        pts = []
-        for k in range(10):
-            ang = -np.pi / 2 + k * np.pi / 5
-            rr = r if k % 2 == 0 else r * 0.42
-            pts.append((sx + rr * np.cos(ang), sy + rr * np.sin(ang)))
-        d.polygon(pts, fill=col)
+        if purge:
+            wd = max(2, int(H * 0.012))               # 清杀队 X 叉号（已清杀 / 封锁标记）
+            d.line([(sx - r, sy - r), (sx + r, sy + r)], fill=col, width=wd)
+            d.line([(sx - r, sy + r), (sx + r, sy - r)], fill=col, width=wd)
+        else:
+            pts = []                                    # 居民区苏联五角星
+            for k in range(10):
+                ang = -np.pi / 2 + k * np.pi / 5
+                rr = r if k % 2 == 0 else r * 0.42
+                pts.append((sx + rr * np.cos(ang), sy + rr * np.sin(ang)))
+            d.polygon(pts, fill=col)
     ov_arr = np.asarray(ov).astype(np.float32)         # 喷漆斑驳（噪声擦掉一部分）
     ov_arr[..., 3] *= np.clip(vnoise(H, W, 6, 4, seed + 3) * 1.4, 0, 1)
     ov = Image.fromarray(ov_arr.astype(np.uint8), "RGBA")
