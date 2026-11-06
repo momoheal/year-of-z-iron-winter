@@ -99,6 +99,29 @@ func _run() -> void:
 	s._check_downed()
 	_assert(s.state == "downed", "second down is fatal (rescue already used)", s.state)
 
+	# 7. 上锁 / 隐藏容器机制
+	var locked_c: Node2D = null
+	var hidden_c: Node2D = null
+	for c in s.containers:
+		if bool(c.get_meta("locked", false)):
+			locked_c = c
+		if bool(c.get_meta("hidden", false)):
+			hidden_c = c
+	_assert(locked_c != null, "a welded (locked) container exists")
+	_assert(hidden_c != null and hidden_c.modulate.a < 0.1, "a hidden container starts invisible")
+	if hidden_c != null:
+		# 未显形前不可被搜刮
+		s.player.global_position = hidden_c.global_position
+		_assert(s.nearest_container() != hidden_c, "hidden container is not searchable before reveal")
+		# 伊万显形
+		hidden_c.global_position = f.global_position + Vector2(30, 0)
+		f._sense_ivan()
+		_assert(bool(hidden_c.get_meta("revealed", false)) and hidden_c.modulate.a > 0.5, "ivan reveals the hidden container")
+	if locked_c != null:
+		# 帕维尔搜刮完成即撬开焊死箱
+		s._finish_search(locked_c)
+		_assert(not bool(locked_c.get_meta("locked", false)), "pavel's finish_search unwelds the locked box")
+
 	_finish()
 
 

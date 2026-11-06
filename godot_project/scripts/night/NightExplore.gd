@@ -147,6 +147,7 @@ var floats: Array[Dictionary] = []
 var thrown: Array[Dictionary] = []
 var soldiers: Array = []
 var containers: Array = []
+var _lock_hint_t := 0.0
 var slush: Array = []          # [center_m: Vector2, radii_m: Vector2]
 var warm_lights: Array = []    # [pos_px, radius_m]
 var fade_props: Array = []
@@ -274,6 +275,7 @@ func _ready() -> void:
 		h.ctl = self
 		halfs.append(h)
 	containers = get_tree().get_nodes_in_group("night_container")
+	_setup_special_containers()
 	for m in get_tree().get_nodes_in_group("night_market"):
 		markets.append(m)
 	for sv in get_tree().get_nodes_in_group("night_survivor"):
@@ -488,10 +490,20 @@ func _update_interact(delta: float) -> void:
 		return
 	extract_prog = 0.0
 	if holding and c != null:
+		var locked := bool(c.get_meta("locked", false))
+		if locked and mate_id != "pavel":
+			# 焊死的箱子：只有帕维尔的撬棍能开
+			search_prog = 0.0
+			search_target = null
+			_lock_hint_t -= delta
+			if _lock_hint_t <= 0.0:
+				_lock_hint_t = 1.6
+				spawn_float(c.global_position + Vector2(0, -90), "焊死了——需要帕维尔的撬棍", Color("#fbbf24"))
+			return
 		if search_target != c:
 			search_target = c
 			search_prog = 0.0
-		search_prog += delta / SEARCH_TIME
+		search_prog += delta / (SEARCH_TIME * (1.8 if locked else 1.0))
 		player.frozen = true
 		_search_noise -= delta
 		if _search_noise <= 0.0:
@@ -503,11 +515,29 @@ func _update_interact(delta: float) -> void:
 		search_target = null
 		search_prog = 0.0
 
+func _setup_special_containers() -> void:
+	## 每关放一个「焊死」箱（帕维尔可撬）与一个「隐藏」箱（伊万可显形）。
+	## 运行时按索引确定性选取，不重生成场景，便于测试与平衡。
+	var n := containers.size()
+	if n == 0:
+		return
+	var li := n / 2
+	containers[li].set_meta("locked", true)
+	if n >= 2:
+		var hi := n - 1
+		if hi == li:
+			hi = 0
+		containers[hi].set_meta("hidden", true)
+		containers[hi].modulate = Color(1, 1, 1, 0)   # 未显形前不可见
+
+
 func nearest_container() -> Node2D:
 	var best: Node2D = null
 	var bd := REACH
 	for c in containers:
 		if bool(c.get_meta("searched", false)):
+			continue
+		if bool(c.get_meta("hidden", false)) and not bool(c.get_meta("revealed", false)):
 			continue
 		var d := dist_m(player.global_position, interact_point(c))
 		if d < bd:
@@ -725,6 +755,9 @@ func interact_point(c: Node2D) -> Vector2:
 	return c.global_position + Vector2(c.get_meta("interact_offset", Vector2.ZERO))
 
 func _finish_search(c: Node2D) -> void:
+	if bool(c.get_meta("locked", false)):
+		c.set_meta("locked", false)
+		spawn_float(c.global_position + Vector2(0, -120), "帕维尔撬开了焊死的箱子", Color("#7fb2e0"))
 	c.set_meta("searched", true)
 	var spr := c.get_node_or_null("Sprite") as CanvasItem
 	if spr != null:

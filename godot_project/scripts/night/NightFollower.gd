@@ -137,6 +137,8 @@ func _update_perks(delta: float) -> void:
 			_sense_anna()
 		"ivan":
 			_sense_ivan()
+		"pavel":
+			_sense_pavel()
 
 
 func _in_range(n: Node2D, rng: float) -> bool:
@@ -211,17 +213,32 @@ func _sense_anna() -> void:
 
 
 func _sense_ivan() -> void:
-	if _exit_beacon:
-		return
-	_exit_beacon = true
-	if not ctl.has_node("Markers/Exit"):
-		return
-	var exit: Node2D = ctl.get_node("Markers/Exit")
-	# 常驻光圈（与夜潜灯光同素材）+ 撤离标记
-	var glow := Sprite2D.new()
-	glow.texture = load("res://art/50_vfx/VFX_Light_Radial_Soft.png")
-	glow.modulate = Color(0.45, 0.95, 0.6, 0.5)
-	glow.scale = Vector2(1.4, 1.4)
-	glow.z_index = -1
-	exit.add_child(glow)
-	_mark(exit, "撤离", Color("#63d18a"), -48.0)
+	if not _exit_beacon:
+		_exit_beacon = true
+		if ctl.has_node("Markers/Exit"):
+			var exit: Node2D = ctl.get_node("Markers/Exit")
+			# 常驻光圈（与夜潜灯光同素材）+ 撤离标记
+			var glow := Sprite2D.new()
+			glow.texture = load("res://art/50_vfx/VFX_Light_Radial_Soft.png")
+			glow.modulate = Color(0.45, 0.95, 0.6, 0.5)
+			glow.scale = Vector2(1.4, 1.4)
+			glow.z_index = -1
+			exit.add_child(glow)
+			_mark(exit, "撤离", Color("#63d18a"), -48.0)
+	# 显隐藏容器：8m 内把「隐藏」箱显形并标出，使其可搜刮
+	for c in ctl.containers:
+		if bool(c.get_meta("hidden", false)) and not bool(c.get_meta("revealed", false)) and _in_range(c, ANNA_RANGE):
+			c.set_meta("revealed", true)
+			c.modulate = Color(1, 1, 1, 0.85)
+			_mark(c, "隐藏", Color("#7fb2e0"), -56.0)
+			ctl.spawn_float(c.global_position + Vector2(0, -90), "伊万发现了暗格", Color("#7fb2e0"))
+
+
+func _sense_pavel() -> void:
+	# 标出 6m 内的焊死箱（可撬）
+	var keep := {}
+	for c in ctl.containers:
+		if bool(c.get_meta("locked", false)) and _in_range(c, SENSE_RANGE):
+			_mark(c, "🔒", Color("#e0a34a"), -56.0)
+			keep[c] = true
+	_sweep(keep)
