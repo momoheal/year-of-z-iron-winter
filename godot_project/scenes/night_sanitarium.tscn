@@ -31,18 +31,20 @@
 [ext_resource type="Texture2D" path="res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png" id="29_text"]
 [ext_resource type="Script" path="res://scripts/night/NightHalf.gd" id="30_scri"]
 [ext_resource type="Texture2D" path="res://art/10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png" id="31_text"]
-[ext_resource type="Texture2D" path="res://art/30_props/PRP_Survivor_Stand.png" id="32_text"]
-[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Facade_WindowGlow_Sanitarium.png" id="33_text"]
-[ext_resource type="Script" path="res://scripts/night/NightFlicker.gd" id="34_scri"]
-[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Steam_Puff.png" id="35_text"]
-[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Snow_Particle.png" id="36_text"]
-[ext_resource type="Shader" path="res://shaders/night_post.gdshader" id="37_shad"]
-[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_FogNoise.png" id="38_text"]
-[ext_resource type="Script" path="res://scripts/night/NightOverlay.gd" id="39_scri"]
-[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Wind_Blizzard_Loop.wav" id="40_audi"]
-[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Fire_Crackle_Loop.wav" id="41_audi"]
-[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Steam_Hiss_Loop.wav" id="42_audi"]
-[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Sodium_Buzz_Loop.wav" id="43_audi"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_Anna_Stand.png" id="32_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_Leonov_Stand.png" id="33_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_Gulya_Stand.png" id="34_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Facade_WindowGlow_Sanitarium.png" id="35_text"]
+[ext_resource type="Script" path="res://scripts/night/NightFlicker.gd" id="36_scri"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Steam_Puff.png" id="37_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Snow_Particle.png" id="38_text"]
+[ext_resource type="Shader" path="res://shaders/night_post.gdshader" id="39_shad"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_FogNoise.png" id="40_text"]
+[ext_resource type="Script" path="res://scripts/night/NightOverlay.gd" id="41_scri"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Wind_Blizzard_Loop.wav" id="42_audi"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Fire_Crackle_Loop.wav" id="43_audi"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Steam_Hiss_Loop.wav" id="44_audi"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Sodium_Buzz_Loop.wav" id="45_audi"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(2816, 300)
@@ -236,8 +238,8 @@ scale_max = 2.6
 color = Color(0.85, 0.9, 1, 0.3)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_47"]
-shader = ExtResource("37_shad")
-shader_parameter/fog_tex = ExtResource("38_text")
+shader = ExtResource("39_shad")
+shader_parameter/fog_tex = ExtResource("40_text")
 
 [node name="NightExplore" type="Node2D"]
 texture_filter = 2
@@ -886,7 +888,7 @@ position = Vector2(864, 944.38)
 metadata/role = "survivor"
 
 [node name="Sprite" type="Sprite2D" parent="World/Survivor_1"]
-texture = ExtResource("32_text")
+texture = ExtResource("33_text")
 centered = false
 offset = Vector2(-36, -108)
 
@@ -895,21 +897,21 @@ position = Vector2(1120, 960.26)
 metadata/role = "survivor"
 
 [node name="Sprite" type="Sprite2D" parent="World/Survivor_2"]
-texture = ExtResource("32_text")
+texture = ExtResource("34_text")
 centered = false
 offset = Vector2(-36, -108)
 
 [node name="Lights" type="Node2D" parent="."]
 
 [node name="FacadeGlow" type="PointLight2D" parent="Lights"]
-texture = ExtResource("33_text")
+texture = ExtResource("35_text")
 position = Vector2(1408, -95.96)
 energy = 1.15
 range_item_cull_mask = 3
 
 [node name="LampCage" type="Node2D" parent="Lights"]
 position = Vector2(1472, 297.6)
-script = ExtResource("34_scri")
+script = ExtResource("36_scri")
 mode = "sodium"
 flicker_seed = 5
 
@@ -941,7 +943,7 @@ range_item_cull_mask = 1
 
 [node name="LampOffice" type="Node2D" parent="Lights"]
 position = Vector2(960, 920.58)
-script = ExtResource("34_scri")
+script = ExtResource("36_scri")
 mode = "sodium"
 flicker_seed = 13
 
@@ -973,7 +975,7 @@ range_item_cull_mask = 1
 
 [node name="BrazierClinic" type="Node2D" parent="Lights" groups=["night_warm"]]
 position = Vector2(2240, 886.8)
-script = ExtResource("34_scri")
+script = ExtResource("36_scri")
 mode = "fire"
 metadata/radius = 2.6
 
@@ -997,7 +999,7 @@ range_item_cull_mask = 1
 
 [node name="BrazierHeater" type="Node2D" parent="Lights" groups=["night_warm"]]
 position = Vector2(2528, 1005.84)
-script = ExtResource("34_scri")
+script = ExtResource("36_scri")
 mode = "fire"
 metadata/radius = 2.6
 
@@ -1024,7 +1026,7 @@ position = Vector2(1344, 435.68)
 amount = 22
 lifetime = 2.6
 preprocess = 3.0
-texture = ExtResource("35_text")
+texture = ExtResource("37_text")
 visibility_rect = Rect2(-300, -400, 600, 500)
 process_material = SubResource("ParticleProcessMaterial_44")
 
@@ -1059,7 +1061,7 @@ position_smoothing_speed = 6.0
 amount = 900
 lifetime = 8.0
 preprocess = 8.0
-texture = ExtResource("36_text")
+texture = ExtResource("38_text")
 local_coords = false
 visibility_rect = Rect2(-1300, -900, 2600, 1800)
 process_material = SubResource("ParticleProcessMaterial_45")
@@ -1072,7 +1074,7 @@ position = Vector2(960, 540)
 amount = 110
 lifetime = 3.0
 preprocess = 3.0
-texture = ExtResource("36_text")
+texture = ExtResource("38_text")
 visibility_rect = Rect2(-1200, -800, 2400, 1600)
 process_material = SubResource("ParticleProcessMaterial_46")
 
@@ -1094,7 +1096,7 @@ follow_viewport_enabled = true
 
 [node name="Overlay" type="Node2D" parent="OverlayLayer"]
 texture_filter = 2
-script = ExtResource("39_scri")
+script = ExtResource("41_scri")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 10
@@ -1108,23 +1110,23 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Wind" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("40_audi")
+stream = ExtResource("42_audi")
 volume_db = -9.0
 
 [node name="FireAudio" type="AudioStreamPlayer2D" parent="."]
 position = Vector2(2240, 892.8)
-stream = ExtResource("41_audi")
+stream = ExtResource("43_audi")
 max_distance = 900.0
 volume_db = -2.0
 
 [node name="SteamAudio" type="AudioStreamPlayer2D" parent="."]
 position = Vector2(1344, 515.68)
-stream = ExtResource("42_audi")
+stream = ExtResource("44_audi")
 max_distance = 700.0
 volume_db = -8.0
 
 [node name="LampBuzz" type="AudioStreamPlayer2D" parent="."]
 position = Vector2(1408, 297.6)
-stream = ExtResource("43_audi")
+stream = ExtResource("45_audi")
 max_distance = 500.0
 volume_db = -14.0

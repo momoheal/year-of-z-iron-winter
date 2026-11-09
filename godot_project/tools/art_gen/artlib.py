@@ -212,6 +212,28 @@ class Layer:
         n = self.noise(cell, seed, cy)
         return hexc(base)[None, None, :] * (1.0 + (n - 0.5)[..., None] * 2.0 * amt)
 
+    def mat_tex(self, base: str, name: str = "Concrete035", px_h: float = 360.0,
+                contrast: float = 0.6, seed: int = 0) -> np.ndarray:
+        """真实材质墙面：加载 tools/art_gen/textures/ 里的 ambientCG（CC0）albedo，
+        去饱和后按 base 基色映射明暗并平铺，替代程序噪声——气孔 / 裂纹 / 污渍比 fbm 自然。
+        找不到材质文件时回退 tex()，保证离线与 CI 可复现。返回 (H, W, 3)。"""
+        import os
+        path = os.path.join(os.path.dirname(__file__), "textures", f"{name}_Color.jpg")
+        if not os.path.exists(path):
+            return self.tex(base, 0.08, 6, seed)
+        im = Image.open(path).convert("L")
+        th = max(8, int(px_h * self.ss))
+        tw = max(8, int(im.width * th / im.height))
+        g = np.asarray(im.resize((tw, th), Image.LANCZOS), np.float32) / 255.0
+        lo, hi = np.percentile(g, 2), np.percentile(g, 98)
+        g = np.clip((g - lo) / max(1e-6, hi - lo), 0, 1)
+        g = 0.5 + (g - 0.5) * contrast          # 压对比，避免墙面太花抢戏
+        G = np.tile(g, (int(np.ceil(self.H / th)), int(np.ceil(self.W / tw))))[: self.H, : self.W]
+        dark = hexc(base) * (1.0 - 0.26 * contrast)
+        light = hexc(base) * (1.0 + 0.16 * contrast)
+        col = dark[None, None, :] * (1.0 - G[..., None]) + light[None, None, :] * G[..., None]
+        return col.astype(np.float32)
+
     def rim(self, mask: np.ndarray, dx: float, dy: float, color, strength: float = 0.5) -> None:
         """mask 向 (dx,dy) 方向的内缘高光/暗边。"""
         sx, sy = int(round(dx * self.ss)), int(round(dy * self.ss))

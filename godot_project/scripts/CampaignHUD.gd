@@ -24,6 +24,15 @@ const PANEL_W_L := 452.0
 const PANEL_W_M := 566.0
 const FONT_SIZES := {"h1": 34, "h2": 22, "h3": 17, "body": 14, "small": 12}
 
+# 伙伴立绘（替换原来的 emoji 🐺👩🩺🧰🚂）；id 对不上（如 "none"）时退回 emoji。
+const MATE_ART := {
+	"ash": "res://art/30_props/PRP_Ash_Stand.png",
+	"anna": "res://art/30_props/PRP_Anna_Stand.png",
+	"gulya": "res://art/30_props/PRP_Gulya_Stand.png",
+	"pavel": "res://art/30_props/PRP_Pavel_Stand.png",
+	"ivan": "res://art/30_props/PRP_Ivan_Stand.png",
+}
+
 var sim
 var game
 var font: SystemFont
@@ -36,6 +45,7 @@ var sound_on := true
 var _sig := ""
 var _modal_kind := ""
 var _live: Dictionary = {}
+var _new_confirm := false          # 标题页：已有存档时「新的一局」要点两下
 
 # 顶栏标签
 var _lbl_day: Label
@@ -191,6 +201,31 @@ func _chip(txt: String, col: Color = SovietUI.STEEL_LIT, txt_col: Color = Soviet
 	p.add_child(l)
 	return p
 
+## _label() 默认自动换行，但换行 Label 的最小宽度≈0：放进 HBox / CenterContainer 又没要
+## EXPAND 时，容器按最小宽度排它，于是被挤成「一字一行」、把整行撑高、图标压到字上。
+## 每次重建界面后扫一遍：处在这种位置的 Label 关掉换行；竖排里的、EXPAND 的照旧换行。
+func _unwrap_cramped(node: Node) -> void:
+	for c in node.get_children():
+		if c is Label and (c as Label).autowrap_mode != TextServer.AUTOWRAP_OFF and _is_cramped(c):
+			(c as Label).autowrap_mode = TextServer.AUTOWRAP_OFF
+		_unwrap_cramped(c)
+
+
+## 从 Label 往上找：穿过不 EXPAND 的 Panel / Margin 外壳，碰到横排 / 居中容器 = 会被挤。
+static func _is_cramped(l: Control) -> bool:
+	var n: Control = l
+	while n != null:
+		if n.size_flags_horizontal & Control.SIZE_EXPAND:
+			return false
+		var parent := n.get_parent()
+		if parent is HBoxContainer or parent is CenterContainer:
+			return true
+		if not (parent is PanelContainer or parent is MarginContainer):
+			return false
+		n = parent as Control
+	return false
+
+
 func _clear(node: Node) -> void:
 	if node == null:
 		return
@@ -244,12 +279,15 @@ func _build_top_bar() -> void:
 
 	_lbl_day = _label("第 1 天 · 夜", 16, SovietUI.BONE)
 	_lbl_day.add_theme_font_override("font", SovietUI.mono_font())
+	_lbl_day.autowrap_mode = TextServer.AUTOWRAP_OFF     # HBox 里自动换行的 Label 会被挤成一字一行
+	_lbl_day.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	h.add_child(_lbl_day)
 	var tally_box := PanelContainer.new()
 	tally_box.add_theme_stylebox_override("panel", SovietUI.brass(6))
 	h.add_child(tally_box)
 	_lbl_tally = _label("卌 0", 16, SovietUI.OCHRE)
 	_lbl_tally.add_theme_font_override("font", SovietUI.display_font())
+	_lbl_tally.autowrap_mode = TextServer.AUTOWRAP_OFF
 	tally_box.add_child(_lbl_tally)
 
 	_btn_lang = _btn("中文 / EN (L)", func(): sim.toggle_lang())
@@ -303,6 +341,7 @@ func _refresh(force: bool) -> void:
 		_sig = sig
 		_rebuild_body()
 		_build_modal()
+		_unwrap_cramped(root)
 	else:
 		_update_live()
 
@@ -450,6 +489,7 @@ func _build_title() -> void:
 	stamp_wrap.add_child(stamp_box)
 	var stamp_lbl := _label("СЕКРЕТНО · 机密 · ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ", 12, SovietUI.BLOOD_LIT)
 	stamp_lbl.add_theme_font_override("font", SovietUI.mono_font())
+	stamp_lbl.autowrap_mode = TextServer.AUTOWRAP_OFF    # CenterContainer 按最小宽度排：换行会把章竖成一列
 	stamp_box.add_child(stamp_lbl)
 
 	var sub := _label("基地 602 室 → 地图选点 → 夜潜 → 撤离 → 结算　　BASE → MAP → NIGHT → EXTRACT → REPORT",
@@ -476,22 +516,59 @@ func _build_title() -> void:
 	c.add_child(p)
 
 	var row := _hbox(12)
-	var b_start := _btn(_tr("开始第一夜（Enter）", "Begin Night One (Enter)"), _start_game, true)
-	b_start.custom_minimum_size = Vector2(300, 52)
-	row.add_child(b_start)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	var save := SaveGame.summary()
+	if not save.is_empty():
+		var mom := _tr("母亲在等", "mother waiting") if bool(save["mother_alive"]) else _tr("失母", "motherless")
+		var b_cont := _btn(_tr("继续 · 第 %d 天 · %s（Enter）", "Continue · Day %d · %s (Enter)")
+			% [int(save["day"]), mom], continue_game, true)
+		b_cont.custom_minimum_size = Vector2(340, 52)
+		row.add_child(b_cont)
+		var new_txt := _tr("确认：覆盖存档重开？", "Confirm: overwrite save?") if _new_confirm 			else _tr("新的一局", "New Game")
+		var b_new := _btn(new_txt, _on_new_game_pressed)
+		b_new.custom_minimum_size = Vector2(240, 52)
+		if _new_confirm:
+			b_new.add_theme_color_override("font_color", SovietUI.BLOOD_LIT)
+		row.add_child(b_new)
+	else:
+		var b_start := _btn(_tr("开始第一夜（Enter）", "Begin Night One (Enter)"), start_new_game, true)
+		b_start.custom_minimum_size = Vector2(340, 52)
+		row.add_child(b_start)
+	c.add_child(row)
+	var row2 := _hbox(12)
+	row2.alignment = BoxContainer.ALIGNMENT_CENTER
 	var b_lang := _btn(_tr("English", "中文"), func(): sim.toggle_lang())
-	b_lang.custom_minimum_size = Vector2(160, 52)
-	row.add_child(b_lang)
+	b_lang.custom_minimum_size = Vector2(160, 40)
+	row2.add_child(b_lang)
 	var b_gym := _btn(_tr("灰盒测试场（F1）", "Greybox Gym (F1)"),
 		func(): get_tree().change_scene_to_file("res://scenes/gym.tscn"))
-	b_gym.custom_minimum_size = Vector2(240, 52)
-	row.add_child(b_gym)
-	c.add_child(row)
+	b_gym.custom_minimum_size = Vector2(240, 40)
+	row2.add_child(b_gym)
+	c.add_child(row2)
 
-func _start_game() -> void:
+func start_new_game() -> void:
+	_new_confirm = false
 	sim.new_game()
 	sim.phase = "base"
 	_sig = ""
+
+
+## 标题页「继续」：读档成功 → 直接回 602 室；存档坏了 → 退回新开局按钮。
+func continue_game() -> void:
+	_new_confirm = false
+	if not SaveGame.load_into(sim):
+		_sig = ""
+		return
+	set_sound_on(bool(sim.sound_on))
+	_sig = ""
+
+
+func _on_new_game_pressed() -> void:
+	if not _new_confirm:
+		_new_confirm = true
+		_sig = ""
+		return
+	start_new_game()
 
 # ============================================================================
 # 基地
@@ -679,7 +756,15 @@ func _mate_row(id: String, ic: String, name: String, desc: String, unlocked: boo
 	p.add_theme_stylebox_override("panel", _sb(Color("#0b0d0e"), border, 8))
 	p.mouse_filter = Control.MOUSE_FILTER_STOP
 	var h := _hbox(10)
-	h.add_child(_label("🔒" if not unlocked else ic, 22, Color("#928c7c")))
+	if unlocked and MATE_ART.has(id):
+		var tr := TextureRect.new()
+		tr.texture = load(MATE_ART[id])
+		tr.custom_minimum_size = Vector2(40, 54)
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		h.add_child(tr)
+	else:
+		h.add_child(_label("🔒" if not unlocked else ic, 22, Color("#928c7c")))
 	var v := _vbox(2)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_child(_label(name, FONT_SIZES["body"], Color("#e3ddcd") if unlocked else Color("#6d6f66")))
@@ -838,7 +923,7 @@ func _build_map() -> void:
 	for m in Data.MATES:
 		if bool(sim.mates.get(String(m["id"]), false)):
 			mrow.add_child(_mate_chip(String(m["id"]),
-				String(m["ic"]) + " " + String(m["zh"] if sim.lang == "zh" else m["en"]), false))
+				String(m["zh"] if sim.lang == "zh" else m["en"]), false))
 	rv.add_child(mrow)
 
 	rv.add_child(_sep())
@@ -867,6 +952,10 @@ func _mate_chip(id: String, txt: String, is_none: bool) -> Control:
 	var sel: bool = sim.mate == id
 	var b := _btn(txt, func(): sim.select_mate(id))
 	b.custom_minimum_size = Vector2(0, 34)
+	if MATE_ART.has(id):
+		b.icon = load(MATE_ART[id])
+		b.expand_icon = true
+		b.add_theme_constant_override("icon_max_width", 20)
 	if sel:
 		b.add_theme_stylebox_override("normal", _sb(Color("#193024"), Color("#63d18a"), 7))
 	return b
@@ -1210,7 +1299,7 @@ func _build_ending() -> void:
 	c.add_child(p)
 	var row := _hbox(12)
 	row.add_child(_btn(_tr("回到 602 室", "Back to Room 602"), func(): sim.phase = "base"))
-	row.add_child(_btn(_tr("重新开始", "New game"), _start_game))
+	row.add_child(_btn(_tr("回标题页", "Title screen"), func(): sim.phase = "title"))   # 新开局在标题页确认，结局预览里点错不会盖掉存档
 	row.add_child(_btn(_tr("灰盒测试场（F1）", "Greybox Gym (F1)"),
 		func(): get_tree().change_scene_to_file("res://scenes/gym.tscn")))
 	c.add_child(row)

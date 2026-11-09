@@ -26,6 +26,7 @@ SignalBus="*res://autoload/SignalBus.gd"
 LogbookManager="*res://autoload/LogbookManager.gd"
 AcousticRippleBus="*res://autoload/AcousticRippleBus.gd"
 RaidBridge="*res://autoload/RaidBridge.gd"
+SaveGame="*res://autoload/SaveGame.gd"
 
 [display]
 

@@ -57,6 +57,8 @@ TRACKS = []                  # 室内关：没有轨道
 BALLAST_W = (1.9, 1.5)
 SLAB_BAND = (3.0, 32.0)      # 室内：整层都是混凝土地面（雪只从破门/破窗飘进来）
 INTERIOR = True              # 室内关：混凝土地面打底（bake_ground 全片曝光）
+# 室内地面材质（gen_env._interior_floor）：后厨是梅特拉赫小方砖，备餐间 + 礼堂是水磨石
+FLOOR = {"zones": [("metlakh", 3.0, 12.6), ("terrazzo", 12.6, 32.0)]}
 
 SPAWN = (22.0, 29.5)         # 南门入口（礼堂）
 EXIT = (22.0, 31.4)          # 撤离点：原路出南门

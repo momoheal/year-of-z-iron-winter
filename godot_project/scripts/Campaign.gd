@@ -5,13 +5,33 @@ extends Node2D
 ## 本文件负责三块视觉：
 ##   1. 城市地图（900×520，13 个节点 + 已解锁路径）
 ##   2. 夜潜世界（26px/米、y 轴 0.62 压缩的 75° 斜俯视，程序化街区 + 雾 + 探照锥 + 波纹）
-##   3. 基地 / 结算 / 结局的背景氛围（雪、窗光、暗角）
+##   3. 基地 / 结算 / 结局的背景交给 scripts/ui/CampaignBackdrop.gd（夜景立面 + 窗光 + 钠灯），这里只叠雪
 ## 所有可点击的按钮都在 HUD 里；地图节点本身用鼠标在世界里点选（_unhandled_input）。
 
 const SimScript := preload("res://scripts/CampaignSim.gd")
 const HudScript := preload("res://scripts/CampaignHUD.gd")
 const SfxScript := preload("res://scripts/Sfx.gd")
 const Data := preload("res://scripts/CampaignData.gd")
+const BackdropScript := preload("res://scripts/ui/CampaignBackdrop.gd")
+const TEX_CITY_MAP := preload("res://art/60_ui/UI_City_Map.png")
+# 支线夜潜（_draw_raid）材质化：可平铺雪 / 灰泥地面、侧视立面、容器贴图。
+# 实体（玩家 / 敌人 / 伙伴）保持与节点化场景一致的程序化风格。
+const TEX_SNOW := preload("res://art/20_tileset/TIL_Snow_Tile.png")
+const TEX_CONCRETE := preload("res://art/20_tileset/TIL_Concrete_Tile.png")
+const TEX_FACADE := preload("res://art/20_tileset/TIL_Facade_Town_A.png")
+const TEX_CONTS := {
+	"crate": preload("res://art/30_props/PRP_Crate_Wood_Stack.png"),
+	"locker": preload("res://art/30_props/PRP_Locker_ElectricCabinet.png"),
+	"medcab": preload("res://art/30_props/PRP_MedCabinet.png"),
+	"briefcase": preload("res://art/30_props/PRP_Locker_ElectricCabinet.png"),
+	"safe": preload("res://art/30_props/PRP_Locker_ElectricCabinet.png"),
+	"hidden": preload("res://art/30_props/PRP_Crate_Wood_Stack.png"),
+	"car": preload("res://art/30_props/PRP_Car_Moskvich_Wreck.png"),
+	"dumpster": preload("res://art/30_props/PRP_Dumpster_Steel.png"),
+	"supply": preload("res://art/30_props/PRP_SupplyCrates_Military.png"),
+	"fridge": preload("res://art/30_props/PRP_ColdStore_Chest.png"),
+	"corpse": preload("res://art/30_props/PRP_Corpse_Tarp.png"),
+}
 
 const SCREEN := Vector2(1920, 1080)
 const TOP := 74.0                    # 顶栏高度
@@ -55,6 +75,8 @@ var font: SystemFont
 var snow: Array[Vector3] = []      # x, y, speed
 var t: float = 0.0
 var shake := 0.0
+var _save_key := ""
+var backdrop: Node2D                # 标题 / 602 室 / 地图 / 结算的夜景背景（夜潜灰盒时隐藏）                # 上次自动存档时的 phase|day；变了才写盘
 
 func _ready() -> void:
 	# P1: 从夜潜场景回来时，RaidBridge 持有原 CampaignSim（含 stash/day/flags），
@@ -68,6 +90,9 @@ func _ready() -> void:
 		"Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "SimHei",
 		"PingFang SC", "Segoe UI", "Arial",
 	])
+	backdrop = BackdropScript.new()
+	backdrop.name = "Backdrop"
+	add_child(backdrop)
 	hud = HudScript.new()
 	add_child(hud)
 	hud.bind_campaign(sim, self)
@@ -110,9 +135,20 @@ func _process(delta: float) -> void:
 		_drain_sfx()
 		if sim.raid.over and sim.phase == "raid":
 			sim.finish_raid(sim.raid.phase)
+	_autosave()
 	shimmy_snow(delta)
 	hud.refresh()
 	queue_redraw()
+
+## 自动存档：进入 602 室（新开局 / 睡觉 / 次日）或结算页时写一次。
+## 夜潜中途不存 —— 退出游戏 = 这一夜没发生过，回到出发前的 602 室。
+func _autosave() -> void:
+	var key := "%s|%d" % [sim.phase, sim.day]
+	if key == _save_key:
+		return
+	_save_key = key
+	if sim.phase == "base" or sim.phase == "report":
+		SaveGame.save(sim)
 
 func _drain_sfx() -> void:
 	if sim.raid == null or sfx == null:
@@ -177,8 +213,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if k == KEY_ENTER or k == KEY_KP_ENTER:
 			if sim.phase == "title":
-				sim.new_game()
-				sim.phase = "base"
+				# 有存档时 Enter = 继续；新开局要点按钮并确认，防止一下把存档盖掉
+				if SaveGame.has_save():
+					hud.continue_game()
+				else:
+					hud.start_new_game()
 			elif sim.phase == "report":
 				sim.to_base()
 				sim.advance_day()
@@ -249,21 +288,15 @@ func project(sim_raid, wx: float, wy: float) -> Vector2:
 func _draw() -> void:
 	if sim == null:
 		return
-	draw_rect(Rect2(Vector2.ZERO, SCREEN), COL["bg"], true)
-	match sim.phase:
-		"title":
-			_draw_title()
-		"base":
-			_draw_base()
-		"map":
-			_draw_base()
-			_draw_city_map()
-		"raid":
-			_draw_raid()
-		"report":
-			_draw_report_bg()
-		"ending":
-			_draw_report_bg()
+	var in_raid: bool = sim.phase == "raid"
+	if backdrop != null:
+		backdrop.visible = not in_raid
+		backdrop.mode = String(sim.phase)
+	if in_raid:
+		draw_rect(Rect2(Vector2.ZERO, SCREEN), COL["bg"], true)
+		_draw_raid()
+	elif sim.phase == "map":
+		_draw_city_map()
 	_draw_snow()
 	if sim.phase == "raid" and sim.raid != null:
 		_draw_raid_overlays()
@@ -273,75 +306,11 @@ func _draw_snow() -> void:
 	for s in snow:
 		draw_circle(Vector2(s.x, s.y), 1.2, Color(0.88, 0.94, 1.0, a))
 
-func _draw_title() -> void:
-	# 602 室的窗：一块冷光，窗外是雪
-	draw_rect(Rect2(0, 0, SCREEN.x, SCREEN.y), Color("#080b11"), true)
-	draw_rect(Rect2(1260, 150, 420, 330), Color("#16202e"), true)
-	draw_rect(Rect2(1272, 162, 396, 306), Color("#0d1520"), true)
-	for i in 5:
-		draw_line(Vector2(1272 + i * 99, 162), Vector2(1272 + i * 99, 468), Color("#1b2735"), 2.0)
-	draw_line(Vector2(1272, 315), Vector2(1668, 315), Color("#1b2735"), 2.0)
-	# 床沿与点滴架
-	draw_rect(Rect2(1150, 600, 520, 120), Color("#121821"), true)
-	draw_rect(Rect2(1150, 600, 520, 10), Color("#1e2836"), true)
-	draw_line(Vector2(1120, 380), Vector2(1120, 610), Color("#2b3a4d"), 3.0)
-	draw_line(Vector2(1120, 392), Vector2(1180, 392), Color("#2b3a4d"), 3.0)
-	draw_circle(Vector2(1180, 402), 9.0, Color("#7dd3fc33"))
-	draw_circle(Vector2(1180, 402), 4.0, Color("#7dd3fc88"))
-	# 地板与门
-	draw_rect(Rect2(0, 780, SCREEN.x, 300), Color("#0b0f15"), true)
-	for i in 12:
-		draw_line(Vector2(i * 160, 780), Vector2(i * 160 - 120, 1080), Color("#0f151d"), 2.0)
-	draw_rect(Rect2(760, 640, 180, 320), Color("#0e141c"), true)
-	draw_rect(Rect2(760, 640, 180, 6), Color("#1d2836"), true)
-
-func _draw_base() -> void:
-	# 基地背景：暖气片 + 结霜的窗 + 母亲的床（左三分之一留给状态栏）
-	draw_rect(Rect2(0, TOP, SCREEN.x, SCREEN.y - TOP), Color("#080b11"), true)
-	draw_rect(Rect2(0, TOP, SCREEN.x, 6), Color("#111a26"), true)
-	# 窗
-	draw_rect(Rect2(120, 150, 300, 210), Color("#141d29"), true)
-	draw_rect(Rect2(130, 160, 280, 190), Color("#0c141e"), true)
-	draw_line(Vector2(270, 160), Vector2(270, 350), Color("#1b2735"), 3.0)
-	draw_line(Vector2(130, 255), Vector2(410, 255), Color("#1b2735"), 3.0)
-	# 床
-	draw_rect(Rect2(90, 780, 560, 130), Color("#11171f"), true)
-	draw_rect(Rect2(90, 780, 560, 8), Color("#1e2836"), true)
-	draw_rect(Rect2(110, 760, 120, 30), Color("#26303e"), true)
-	# 点滴
-	draw_line(Vector2(690, 470), Vector2(690, 790), Color("#2b3a4d"), 3.0)
-	draw_line(Vector2(690, 482), Vector2(650, 482), Color("#2b3a4d"), 3.0)
-	draw_circle(Vector2(648, 494), 8.0, Color("#7dd3fc44"))
-	# 暖气片
-	for i in 14:
-		draw_rect(Rect2(1000 + i * 26, 860, 14, 90), Color("#1a232e"), true)
-	draw_line(Vector2(990, 900), Vector2(1420, 900), Color("#243040"), 3.0)
-	# 桌面 / 地图
-	draw_rect(Rect2(1460, 780, 400, 24), Color("#18202b"), true)
-	draw_rect(Rect2(1470, 700, 380, 80), Color("#1c2a22"), true)
-	for i in 6:
-		draw_line(Vector2(1480 + i * 60, 706), Vector2(1480 + i * 60, 774), Color("#243a2c"), 1.0)
-
 func _draw_city_map() -> void:
-	# 地图底板
-	draw_rect(MAP_RECT, Color("#0a1013"), true)
+	# 地图底板：AI 手绘城区夜景（雪覆街区 / 冰河 / 铁路），替代原色块 + 线条灰盒；
+	# 节点 / 解锁路径 / 地名标签仍在下方用 _draw 叠加，保持交互
+	draw_texture_rect(TEX_CITY_MAP, MAP_RECT, false)
 	draw_rect(MAP_RECT, Color("#1d2a26"), false, 2.0)
-	# 河 / 铁路
-	draw_line(MAP_RECT.position + Vector2(0, 400), MAP_RECT.position + Vector2(900, 360),
-		Color("#123243"), 26.0)
-	for i in 9:
-		var x := MAP_RECT.position.x + 10 + i * 108
-		draw_line(Vector2(x, MAP_RECT.position.y + 372 - i * 4),
-			Vector2(x + 74, MAP_RECT.position.y + 366 - i * 4), Color("#26303c"), 2.0)
-	# 街区网格
-	for i in 13:
-		var gx := MAP_RECT.position.x + i * 70
-		draw_line(Vector2(gx, MAP_RECT.position.y + 8), Vector2(gx - 24, MAP_RECT.end.y - 8),
-			Color("#0f1a1a"), 1.0)
-	for j in 8:
-		var gy := MAP_RECT.position.y + j * 66
-		draw_line(Vector2(MAP_RECT.position.x + 8, gy), Vector2(MAP_RECT.end.x - 8, gy + 12),
-			Color("#0f1a1a"), 1.0)
 	# 路径：从 3 号居住区（基地）连到每个已解锁节点
 	var base_pos := Vector2(150, 330)
 	for L in Data.LOCS:
@@ -380,19 +349,6 @@ func _draw_city_map() -> void:
 		"НОВОРСК-17 · 第 %d 夜" % sim.day if sim.lang == "zh" else "NOVORSK-17 · NIGHT %d" % sim.day,
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color(0.45, 0.6, 0.55, 0.8))
 
-func _draw_report_bg() -> void:
-	draw_rect(Rect2(0, TOP, SCREEN.x, SCREEN.y - TOP), Color("#080b11"), true)
-	# 一张压在桌上的日志纸
-	draw_rect(Rect2(90, 150, 640, 780), Color("#141a20"), true)
-	draw_rect(Rect2(90, 150, 640, 780), Color("#233040"), false, 2.0)
-	for i in 14:
-		draw_line(Vector2(120, 240 + i * 46), Vector2(700, 240 + i * 46), Color("#1c2530"), 1.0)
-	draw_line(Vector2(120, 210), Vector2(430, 210), Color("#2a3a4a"), 3.0)
-	# 窗光
-	draw_rect(Rect2(1290, 200, 460, 380), Color("#101823"), true)
-	for i in 4:
-		draw_line(Vector2(1290, 200 + i * 95), Vector2(1750, 200 + i * 95), Color("#1a2634"), 3.0)
-
 # ----------------------------------------------------------------------------
 # 夜潜世界
 # ----------------------------------------------------------------------------
@@ -412,7 +368,10 @@ func _draw_raid() -> void:
 	var j0: int = maxi(0, int(floor(cam.y - VIEW_C.y / ph)) - 1)
 	var j1: int = mini(H - 1, int(ceil(cam.y + (SCREEN.y - VIEW_C.y) / ph)) + 1)
 
-	# ---- 地面 ----
+	# ---- 地面：真实雪 / 灰泥材质平铺（替代纯色块灰盒），按 tile 类型叠色保留可读性 ----
+	var indoor_locs := ["boiler", "underpass", "workshop", "archive"]
+	var gtex: Texture2D = TEX_CONCRETE if indoor_locs.has(sim.selected_loc) else TEX_SNOW
+	var gsz := Vector2(gtex.get_size())
 	for j in range(j0, j1 + 1):
 		for i in range(i0, i1 + 1):
 			var s: Vector2 = project(R, float(i), float(j))
@@ -420,24 +379,19 @@ func _draw_raid() -> void:
 				draw_rect(Rect2(s, Vector2(pw + 1, ph + 1)), COL["bg"], true)
 				continue
 			var v: int = g[j * W + i]
-			var c: Color = COL["floor"]
+			var reg := Rect2(fmod(i * pw, gsz.x), fmod(j * ph, gsz.y), pw + 1, ph + 1)
+			draw_texture_rect_region(gtex, Rect2(s, Vector2(pw + 1, ph + 1)), reg)
+			var c := Color(1, 1, 1, 0)
 			if v == Data.TT_SLUSH:
-				c = COL["slush"]
-			elif v == Data.TT_COVER:
-				c = Color("#1b222b")
-			elif v == Data.TT_FENCE:
-				c = Color("#171e26")
+				c = Color(0.2, 0.34, 0.42, 0.4)
+			elif v == Data.TT_COVER or v == Data.TT_FENCE:
+				c = Color(0.05, 0.07, 0.1, 0.3)
 			elif v == Data.TT_WALL:
-				c = Color("#111822")
+				c = Color(0.03, 0.05, 0.08, 0.45)
 			elif v == Data.TT_DOOR or v == Data.TT_WEDGED or v == Data.TT_BDOOR:
-				c = Color("#1a212b")
-			if (i * 3 + j * 5) % 11 == 0:
-				c = c.lightened(0.04)
-			draw_rect(Rect2(s, Vector2(pw + 1, ph + 1)), c, true)
-			draw_rect(Rect2(s, Vector2(pw + 1, ph + 1)), COL["grout"], false, 1.0)
-			if v == Data.TT_SLUSH and (i * 3 + j * 5) % 4 == 0:
-				draw_rect(Rect2(s + Vector2(4, 3), Vector2(pw - 10, ph - 8)),
-					Color(0.2, 0.34, 0.42, 0.35), true)
+				c = Color(0.05, 0.07, 0.1, 0.3)
+			if c.a > 0.0:
+				draw_rect(Rect2(s, Vector2(pw + 1, ph + 1)), c, true)
 
 	# ---- 血渍 ----
 	for d in R.decals:
@@ -459,18 +413,16 @@ func _draw_raid() -> void:
 				var inner: bool = R.at(i - 1, j) == Data.TT_WALL and R.at(i + 1, j) == Data.TT_WALL \
 					and R.at(i, j - 1) == Data.TT_WALL and R.at(i, j + 1) == Data.TT_WALL
 				if inner:
-					_draw_box(sp, pw, ph, ht, Color("#232d3b"), Color("#101620"), Color("#38465a"))
+					# 实心内墙：深色材质（正常被外墙遮挡，透视 / 全图时也有纹理而非纯黑块）
+					var ireg := Rect2(fmod(i * pw, gsz.x), fmod(j * ph, gsz.y), pw + 1, ph + ht)
+					draw_texture_rect_region(TEX_CONCRETE,
+						Rect2(sp + Vector2(0, -ht), Vector2(pw + 1, ph + ht)), ireg, Color(0.3, 0.33, 0.4))
 				else:
-					_draw_box(sp, pw, ph, ht, COL["wallTop"], COL["wallFront"], COL["wallEdge"])
-					draw_rect(Rect2(sp + Vector2(1, 1), Vector2(pw - 2, 3)),
-						Color(0.89, 0.91, 0.94, 0.22), true)
-					var wh: float = float((i * 37 + j * 61) % 100) / 100.0
-					if wh < 0.45:
-						draw_rect(Rect2(sp + Vector2(4, ph + 3), Vector2(5, 5)),
-							Color("#f59e0b88"), true)
-					else:
-						draw_rect(Rect2(sp + Vector2(4, ph + 3), Vector2(5, 5)),
-							Color("#1e293b"), true)
+					# 侧视立面贴图（斜俯视 + 立面，替代纯色盒）
+					var fw := float(TEX_FACADE.get_width())
+					var freg := Rect2(fmod(i * pw, maxf(1.0, fw - pw - 1.0)), 0.0, pw + 1, ph + ht)
+					draw_texture_rect_region(TEX_FACADE,
+						Rect2(sp + Vector2(0, -ht), Vector2(pw + 1, ph + ht)), freg)
 			elif vv == Data.TT_BDOOR:
 				_draw_box(sp, pw, ph, ht * 0.9, Color("#6b4a2b"), Color("#2a1e12"), Color("#8a6a3c"))
 				draw_rect(Rect2(sp + Vector2(pw * 0.45, ph * 0.3), Vector2(3, ht * 0.5)),
@@ -602,26 +554,15 @@ func _draw_container(R, c: Dictionary, pw: float, ph: float, ht: float) -> void:
 	var w := pw * 0.85
 	var h := ph * 0.85
 	var hh := ht * 0.55
-	var pal := {
-		"crate": [Color("#6b5232"), Color("#2e2314"), Color("#8a6a3c")],
-		"locker": [Color("#3a4c60"), Color("#161d26"), Color("#4f6478")],
-		"medcab": [Color("#d7dde5"), Color("#6b7280"), Color("#f1f5f9")],
-		"briefcase": [Color("#4b3b2a"), Color("#1e1710"), Color("#6b5540")],
-		"safe": [Color("#4a4f57"), Color("#1b1f26"), Color("#6b7280")],
-		"hidden": [Color("#22303a"), Color("#0e151b"), Color("#2f4654")],
-		"car": [Color("#3b4a3e"), Color("#151c18"), Color("#586e5c")],
-		"dumpster": [Color("#2f4a3a"), Color("#121b16"), Color("#486b54")],
-		"supply": [Color("#5c4a2e"), Color("#241c11"), Color("#7d6a45")],
-		"fridge": [Color("#8fa3b3"), Color("#3b4650"), Color("#c7d4de")],
-		"corpse": [Color("#3a2a28"), Color("#160f0e"), Color("#5a3f3b")],
-	}
 	var t := String(c.get("type", "crate"))
-	var p: Array = pal.get(t, pal["crate"])
-	if bool(c.get("searched", false)):
-		p = [Color("#25292e"), Color("#12151a"), Color("#2f353c")]
-	_draw_box(sp, w, h, hh, p[0], p[1], p[2])
+	var tex: Texture2D = TEX_CONTS.get(t, TEX_CONTS["crate"])
+	# 容器贴图：保持宽高比、底部贴地；已搜刮压暗
+	var th := w * (float(tex.get_height()) / float(tex.get_width()))
+	var tpos := sp + Vector2(0, h - th)
+	var tint := Color(0.42, 0.44, 0.48) if bool(c.get("searched", false)) else Color(1, 1, 1)
+	draw_texture_rect(tex, Rect2(tpos, Vector2(w, th)), false, tint)
 	if t == "medcab" and not bool(c.get("searched", false)):
-		draw_rect(Rect2(sp + Vector2(w * 0.4, -hh * 0.65), Vector2(w * 0.2, hh * 0.2)),
+		draw_rect(Rect2(tpos + Vector2(w * 0.4, th * 0.15), Vector2(w * 0.18, th * 0.18)),
 			Color("#ef4444"), true)
 	if t == "hidden" and not bool(c.get("searched", false)) and sim.mate == "ivan":
 		draw_arc(sp + Vector2(w * 0.5, -hh * 0.6), 12.0, 0.0, TAU, 16,

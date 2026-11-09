@@ -57,6 +57,8 @@ TRACKS = []                  # 「铁壳号」在墙外的广轨弯道上——�
 BALLAST_W = (1.9, 1.5)
 SLAB_BAND = (3.0, 30.0)      # 室内：混凝土地面
 INTERIOR = True              # 室内关：混凝土地面打底（bake_ground 全片曝光）
+# 室内地面材质（gen_env._interior_floor）：铁笼区是渗水的湿混凝土，走廊 + 医生区是起皮的牛血红地坪漆
+FLOOR = {"zones": [("concrete", 3.0, 13.4), ("painted", 13.4, 30.0)]}
 
 SPAWN = (22.0, 27.5)         # 南侧楼梯间（下地下室）
 EXIT = (22.0, 29.2)          # 撤离点：原路回楼梯
@@ -183,9 +185,9 @@ SEARCHLIGHT = None
 # 平民幸存者（build_scene 的 SURVIVORS 钩子 → World/Survivor_<i>，night_survivor 组）：
 # 安娜（0419，铁架床边）+ 梁诺夫医生 + 古丽娅（工作区）。
 SURVIVORS = [
-    (22.3, 5.8),   # 安娜（Survivor_0）：档案号 0419，熬过第四天
-    (13.5, 23.8),  # 梁诺夫医生（Survivor_1）：老眼科主任
-    (17.5, 24.2),  # 古丽娅（Survivor_2）：女流调医师
+    (22.3, 5.8, "PRP_Anna_Stand"),      # 安娜（Survivor_0）：档案号 0419，熬过第四天
+    (13.5, 23.8, "PRP_Leonov_Stand"),   # 梁诺夫医生（Survivor_1）：老眼科主任
+    (17.5, 24.2, "PRP_Gulya_Stand"),    # 古丽娅（Survivor_2）：女流调医师
 ]
 
 # 立面关键点（x 米，供 gen_env._facade_sanitarium 取用；不设 terminal / vent / tower 灯位）

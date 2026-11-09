@@ -38,6 +38,7 @@ os.environ["NOVORSK_LEVEL"] = _LEVEL        # layout 在 import 时就灌关卡�
 import gen_chars  # noqa: E402
 import gen_env  # noqa: E402
 import gen_market  # noqa: E402
+import gen_npcs  # noqa: E402
 import gen_props  # noqa: E402
 import gen_rabid  # noqa: E402
 import gen_vfx  # noqa: E402
@@ -97,7 +98,7 @@ def build_facade(man):
 def build_props(man, only=None):
     # 武器 / 弹药 / 靶场道具与 PRP_* 同一套注册表，--only 也一起筛选
     for name, fn in (list(gen_props.ALL.items()) + list(gen_weapons.ALL.items())
-                     + list(gen_market.ALL.items())):
+                     + list(gen_market.ALL.items()) + list(gen_npcs.ALL.items())):
         if only and name not in only:
             continue
         img, piv = fn()

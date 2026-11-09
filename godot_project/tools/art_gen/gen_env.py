@@ -81,6 +81,97 @@ def _line_mask(w, h, polylines, width, blur_r):
 # ===========================================================================
 # 地面
 # ===========================================================================
+def _snow_albedo(h, w, name="Snow014", px=340.0, strength=0.16):
+    """真实雪材质（ambientCG Snow014，CC0）灰度平铺成乘性细节层，归一到 1±strength。
+    只给雪底加自然雪晶颗粒 / 起伏，不改变配色与布局；素材缺失时返回全 1（不影响离线复现）。"""
+    import os
+    path = os.path.join(os.path.dirname(__file__), "textures", f"{name}_Color.jpg")
+    if not os.path.exists(path):
+        return np.ones((h, w), np.float32)
+    im = Image.open(path).convert("L")
+    th = max(8, int(px))
+    tw = max(8, int(im.width * th / im.height))
+    g = np.asarray(im.resize((tw, th), Image.LANCZOS), np.float32) / 255.0
+    lo, hi = np.percentile(g, 2), np.percentile(g, 98)
+    g = np.clip((g - lo) / max(1e-6, hi - lo), 0, 1)
+    G = np.tile(g, (int(np.ceil(h / th)), int(np.ceil(w / tw))))[:h, :w]
+    return (1.0 - strength + 2.0 * strength * G).astype(np.float32)
+
+
+def _blood_decals(col, X, Y, h, w, seed=77):
+    """雪地暗红血迹贴花：几处不规则喷溅（重叠椭圆 + 噪声侵蚀边缘），暗示清杀 / 饥荒的阴冷。
+    只落在院子活动区（北墙脚以南），纯视觉，不影响布局 / 路线 / 掩体；素材与玩法均无依赖。"""
+    rng = np.random.default_rng(seed)
+    y_lo = float(LY.FACADE_BASE_Y) + 0.6
+    y_hi = float(LY.H) - 0.6
+    if y_hi <= y_lo:
+        return col
+    blood = hexc("#3d1010")[None, None, :]          # 干涸的暗红
+    # 剧情差异化：清杀 / 焚化 / 饥荒关（庄园、疗养院、食堂）血迹更多，其余关保持零星。
+    lid = str(LY.META.get("id", ""))
+    lo, hi = {"manor": (4, 7), "sanitarium": (4, 7), "canteen": (3, 6)}.get(lid, (2, 4))
+    for _ in range(int(rng.integers(lo, hi))):
+        cx = float(rng.uniform(2.0, float(LY.W) - 2.0))
+        cy = float(rng.uniform(y_lo, y_hi))
+        r = float(rng.uniform(0.35, 0.7))            # 主血泊半径（米）
+        pool = np.zeros((h, w), np.float32)
+        for _ in range(int(rng.integers(5, 9))):     # 主血泊 + 卫星飞溅
+            ox = float(rng.uniform(-r, r))
+            oy = float(rng.uniform(-r, r)) * 0.6
+            rr = float(rng.uniform(r * 0.3, r))
+            dd = ((X - cx - ox) / rr) ** 2 + ((Y - cy - oy) / (rr * 0.62)) ** 2
+            pool = np.maximum(pool, smooth(1.1, 0.5, dd))
+        pool *= smooth(0.25, 0.7, vnoise(h, w, 3.0, 2.0, int(rng.integers(0, 999))) + 0.25)
+        col = _mix(col, np.clip(pool, 0, 1) * 0.72, blood)
+    return col
+
+
+def _graffiti(img: Image.Image, seed: int = 5) -> Image.Image:
+    """北墙墙裙喷绘：褪色五角星 + 西里尔标语（МИР=和平 / СССР / 1917），做旧喷漆，苏联废墟感。
+    只喷在立面下段实墙带（墙裙，一般无窗门），暗红半透明 + 噪声斑驳，像多年风霜后的旧标语。"""
+    from PIL import ImageDraw, ImageFont
+    base = img.convert("RGBA")
+    ov = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(ov)
+    W, H = base.size
+    rng = np.random.default_rng(seed)
+    gy = int(H * 0.80)                                # 墙裙带（立面下段实墙）
+    try:
+        font = ImageFont.truetype("arial.ttf", int(H * 0.11))
+    except Exception:
+        font = ImageFont.load_default()
+    # 剧情差异化：居民区（工人镇、赫鲁晓夫楼）褪色官方旧标语 + 五角星；清杀队地盘（庄园/疗养院/食堂）
+    # 改成清杀队喷涂的记号 / 警告（ЧИСТО=已清杀、ОПАСНО=危险、ЗОНА=封锁）+ X 叉号，骨白喷漆更刺目。
+    lid = str(LY.META.get("id", ""))
+    purge = lid in ("manor", "sanitarium", "canteen")
+    words = ["ЧИСТО", "ОПАСНО", "ЗОНА"] if purge else ["МИР", "СССР", "1917", "СЛАВА"]
+    glo, ghi = {"market": (3, 5), "yard": (3, 5)}.get(lid, (0, 2) if lid in ("manor", "sanitarium") else (1, 3))
+    for _ in range(int(rng.integers(glo, ghi))):
+        cx = int(W * rng.uniform(0.12, 0.78))
+        txt = str(rng.choice(words))
+        alpha = int(rng.integers(110, 150))
+        col = (178, 180, 174, alpha) if purge else (96, 42, 38, alpha)
+        d.text((cx, gy), txt, font=font, fill=col)
+        sx = cx - int(H * 0.13)
+        sy = gy + int(H * 0.04)
+        r = int(H * 0.05)
+        if purge:
+            wd = max(2, int(H * 0.012))               # 清杀队 X 叉号（已清杀 / 封锁标记）
+            d.line([(sx - r, sy - r), (sx + r, sy + r)], fill=col, width=wd)
+            d.line([(sx - r, sy + r), (sx + r, sy - r)], fill=col, width=wd)
+        else:
+            pts = []                                    # 居民区苏联五角星
+            for k in range(10):
+                ang = -np.pi / 2 + k * np.pi / 5
+                rr = r if k % 2 == 0 else r * 0.42
+                pts.append((sx + rr * np.cos(ang), sy + rr * np.sin(ang)))
+            d.polygon(pts, fill=col)
+    ov_arr = np.asarray(ov).astype(np.float32)         # 喷漆斑驳（噪声擦掉一部分）
+    ov_arr[..., 3] *= np.clip(vnoise(H, W, 6, 4, seed + 3) * 1.4, 0, 1)
+    ov = Image.fromarray(ov_arr.astype(np.uint8), "RGBA")
+    return Image.alpha_composite(base, ov)
+
+
 def bake_ground() -> Image.Image:
     w, h = _gw(), _gh()
     xs = (np.arange(w, dtype=np.float32) + 0.5) / PPM
@@ -98,6 +189,7 @@ def bake_ground() -> Image.Image:
     col = lerp(hexc("#95a4b6"), hexc("#d8e1ea"), smooth(0.05, 0.95, nb * 0.55 + nm * 0.45))
     col = col * (0.965 + 0.07 * rip)[..., None]
     col = col * (0.985 + 0.03 * nf)[..., None]
+    col = col * _snow_albedo(h, w)[..., None]   # Snow014 真实雪晶颗粒（雪底细节层）
 
     # ---- 雪径（踩实的灰雪 + 脚印）----
     pathm = _line_mask(w, h, LY.PATHS, 64, 16)
@@ -108,36 +200,16 @@ def bake_ground() -> Image.Image:
     slab = ((Y > y0) & (Y < y1)).astype(np.float32)
 
     # ---- 院子：混凝土预制板从雪下露出来 ----
-    if LY.has("INTERIOR", False):
-        expose = slab                      # 室内关：整片都是混凝土地面（雪只在 SLUSH 里）
+    interior = bool(LY.has("INTERIOR", False))
+    if interior:
+        # 室内关：整片是室内地面，按 LY.FLOOR 分区画材质（梅特拉赫砖 / 水磨石 / 刷漆地坪 / 湿混凝土）
+        expose = slab
+        floor_rgb, _wear = _interior_floor(X, Y, h, w, nm, nb, nf)
+        col = _mix(col, expose, floor_rgb)
     else:
         expose = smooth(0.66, 0.82, nm * 0.72 + nb * 0.28 + pathm * 0.18) * slab * 0.8
-    conc = hexc("#7f858e")[None, None, :] * (0.88 + 0.2 * nf)[..., None]
-    conc = conc * (0.94 + 0.12 * vnoise(h, w, 22, 14, 15))[..., None]
-    row = np.floor(Y / 1.5)
-    sx = X + (row % 2) * 1.0
-    seam = ((sx % 2.0) < 0.045) | ((Y % 1.5) < 0.05)
-    conc = conc * np.where(seam, 0.6, 1.0)[..., None]
-    # 发丝裂缝
-    crack = Image.new("L", (w, h), 0)
-    d = ImageDraw.Draw(crack)
-    r = np.random.default_rng(16)
-    for _ in range(260):
-        x, y = r.uniform(0, w), r.uniform(LY.FACADE_BASE_Y * GY,
-                                         (fence_y if fence_y is not None else LY.H) * GY)
-        ang = r.uniform(0, math.tau)
-        pts = [(x, y)]
-        for _k in range(r.integers(4, 10)):
-            ang += r.normal(0, 0.6)
-            x += math.cos(ang) * r.uniform(4, 12)
-            y += math.sin(ang) * r.uniform(2, 7)
-            pts.append((x, y))
-        d.line(pts, fill=255, width=1)
-    crk = np.asarray(crack, np.float32) / 255.0
-    conc = conc * (1 - 0.45 * crk)[..., None]
-    col = _mix(col, expose, conc)
-    col = _mix(col, pathm * 0.72 * slab, hexc("#87909b") * 1.0)
-    col = _mix(col, pathm * 0.62 * (1 - slab), hexc("#8b939d"))
+        col = _outdoor_slab(col, X, Y, h, w, nf, expose, slab, pathm, fence_y)
+        col = _mix(col, pathm * 0.62 * (1 - slab), hexc("#8b939d"))
 
     # ---- 沥青便道（可选层：检修通道，雪被扫到两边）----
     for i, road in enumerate(LY.has("ASPHALT", [])):
@@ -160,7 +232,14 @@ def bake_ground() -> Image.Image:
     sn = vnoise(h, w, 2.4, 1.7, 21)
     sn2 = vnoise(h, w, 1.2, 0.9, 22)
     stones = hexc("#5a5e65")[None, None, :] * (0.62 + 0.55 * sn + 0.25 * (sn2 - 0.5))[..., None]
-    for i, (cx, cy, rx, ry) in enumerate(LY.has("GRAVEL", [])):
+    if interior:
+        # 室内关的 GRAVEL 是「油腻地」（砧板周 / 尸袋周）：一摊发乌的油泥，不是石子
+        for i, (cx, cy, rx, ry) in enumerate(LY.has("GRAVEL", [])):
+            dd = ((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2 + (nm - 0.5) * 0.8
+            gm = smooth(1.05, 0.55, dd)
+            col = col * (1 - 0.3 * gm * (0.7 + 0.4 * nf))[..., None]
+            col = _mix(col, gm * smooth(0.72, 0.9, vnoise(h, w, 16, 5, 140 + i)) * 0.14, hexc("#9aa6ad"))
+    for i, (cx, cy, rx, ry) in enumerate([] if interior else LY.has("GRAVEL", [])):
         dd = ((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2 + (nm - 0.5) * 0.7
         gm = smooth(1.05, 0.8, dd)
         patch = smooth(0.5, 0.76, nm * 0.8 + nb * 0.2 + vnoise(h, w, 5, 3, 130 + i) * 0.25)
@@ -233,8 +312,16 @@ def bake_ground() -> Image.Image:
         col = _mix(col, melt * 0.75, hexc("#58606a")[None, None, :] * (0.85 + 0.3 * nf)[..., None])
         col = _mix(col, smooth(0.66, 0.82, streak) * melt * 0.5, hexc("#9fb6c8"))
 
-    # ---- 焦油黑雪 ----
-    for i, (cx, cy, rr) in enumerate(LY.TAR_STAINS):
+    # ---- 焦油黑雪（室内：油渍 / 水渍，干掉的边缘一圈潮痕）----
+    for i, (cx, cy, rr) in enumerate(LY.TAR_STAINS if interior else []):
+        dd = np.sqrt(((X - cx) / rr) ** 2 + ((Y - cy) / (rr * 0.7)) ** 2) + (nm - 0.5) * 0.9
+        m = smooth(1.0, 0.7, dd)
+        tide = smooth(1.02, 0.95, dd) * (1 - smooth(0.95, 0.86, dd))
+        col = col * (1 - 0.34 * m * (0.75 + 0.35 * nf))[..., None]
+        col = col * (1 - 0.3 * tide)[..., None]
+        sheen = smooth(0.7, 0.9, vnoise(h, w, 18, 6, 300 + i)) * m
+        col = _mix(col, sheen * 0.12, hexc("#8fa0ae"))
+    for i, (cx, cy, rr) in enumerate([] if interior else LY.TAR_STAINS):
         dd = np.sqrt(((X - cx) / rr) ** 2 + ((Y - cy) / (rr * 0.8)) ** 2) + (nm - 0.5) * 0.8
         m = smooth(1.0, 0.6, dd)
         speck = (vnoise(h, w, 2, 1.5, 60 + i) > 0.55).astype(np.float32)
@@ -299,8 +386,21 @@ def bake_ground() -> Image.Image:
                 qx, qy = _px(cx, cy)
                 d.ellipse([qx - 4, qy - 3, qx + 4, qy + 3], fill=255)
     fpm = blur(np.asarray(fp, np.float32) / 255.0, 0.8)
-    col = col * (1 - 0.2 * fpm)[..., None]
-    col = _mix(col, fpm * 0.12, hexc("#5f7590"))
+    if interior:
+        # 室内：从门口带进来的湿鞋印，越往里越淡
+        fade = smooth(LY.FACADE_BASE_Y + 2.0, LY.H, Y)
+        col = col * (1 - 0.12 * fpm * (0.35 + 0.65 * fade))[..., None]
+    else:
+        col = col * (1 - 0.2 * fpm)[..., None]
+        col = _mix(col, fpm * 0.12, hexc("#5f7590"))
+
+    # ---- 冷库：月台与南库的结冰 / 霜（FROST_ZONES = [(y0, y1), …]，只有 coldstore 设）----
+    for fy0, fy1 in LY.has("FROST_ZONES", []):
+        band = ((Y > fy0) & (Y < fy1)).astype(np.float32)
+        ice = smooth(0.45, 0.75, vnoise(h, w, 6, 3, 301)) * band
+        col = _mix(col, ice * 0.5, hexc("#aebfd0"))
+        glaze = smooth(0.72, 0.9, vnoise(h, w, 18, 6, 302)) * band
+        col = _mix(col, glaze * 0.25, hexc("#dfe9f2"))
 
     # ---- 雪面闪点 + 颗粒 ----
     spark = (np.random.default_rng(91).random((h, w)) > 0.9965).astype(np.float32)
@@ -308,7 +408,189 @@ def bake_ground() -> Image.Image:
     col = col * (0.985 + 0.03 * np.random.default_rng(92).random((h, w)))[..., None]
     # 楼体脚下（被立面盖住的部分）直接压黑
     col = col * np.where(Y < LY.FACADE_BASE_Y - 0.05, 0.25, 1.0)[..., None]
+    col = _blood_decals(col, X, Y, h, w)
     return to_img(col)
+
+
+def _outdoor_slab(col, X, Y, h, w, nf, expose, slab, pathm, fence_y):
+    """户外关：院子里从雪下露出来的混凝土预制板（错缝）+ 发丝裂缝 + 踩出来的灰雪径。"""
+    conc = hexc("#7f858e")[None, None, :] * (0.88 + 0.2 * nf)[..., None]
+    conc = conc * (0.94 + 0.12 * vnoise(h, w, 22, 14, 15))[..., None]
+    row = np.floor(Y / 1.5)
+    sx = X + (row % 2) * 1.0
+    seam = ((sx % 2.0) < 0.045) | ((Y % 1.5) < 0.05)
+    conc = conc * np.where(seam, 0.6, 1.0)[..., None]
+    crk = _cracks(w, h, 260, LY.FACADE_BASE_Y, fence_y if fence_y is not None else LY.H, 16)
+    conc = conc * (1 - 0.45 * crk)[..., None]
+    col = _mix(col, expose, conc)
+    return _mix(col, pathm * 0.72 * slab, hexc("#87909b") * 1.0)
+
+
+def _cracks(w, h, n, y0_m, y1_m, seed, step=(4, 12), width=1):
+    """发丝裂缝蒙版（0..1）：n 条随机游走折线。默认参数与老版户外裂缝逐像素一致。"""
+    crack = Image.new("L", (w, h), 0)
+    d = ImageDraw.Draw(crack)
+    r = np.random.default_rng(seed)
+    for _ in range(n):
+        x, y = r.uniform(0, w), r.uniform(y0_m * GY, y1_m * GY)
+        ang = r.uniform(0, math.tau)
+        pts = [(x, y)]
+        for _k in range(r.integers(4, 10)):
+            ang += r.normal(0, 0.6)
+            x += math.cos(ang) * r.uniform(step[0], step[1])
+            y += math.sin(ang) * r.uniform(step[0] / 2, step[1] * 7 / 12)
+            pts.append((x, y))
+        d.line(pts, fill=255, width=width)
+    return np.asarray(crack, np.float32) / 255.0
+
+
+# ===========================================================================
+# 室内地面（INTERIOR 关）：LY.FLOOR = {"zones": [(材质, y0, y1), …]}
+#   metlakh  梅特拉赫小方砖（食堂后厨）：赭红 / 奶油色棋盘 + 深色边带、釉面磨损、缺砖露底
+#   terrazzo 水磨石（食堂礼堂 / 备餐间）：灰水泥里的石子 + 铜分格条，走得多的地方被磨亮
+#   painted  刷漆地坪（疗养院走廊 / 医生区）：牛血红地坪漆，路径上磨穿、整片起皮
+#   concrete 湿混凝土（疗养院铁笼区）：北墙渗水的深色潮带 + 白色盐霜 + 切缝 + 排水沟
+# 没写 FLOOR 的室内关退回 concrete。
+# ===========================================================================
+def _hash2(ix, iy, s):
+    v = np.sin(ix * 12.9898 + iy * 78.233 + s * 37.719) * 43758.5453
+    return v - np.floor(v)
+
+
+def _interior_floor(X, Y, h, w, nm, nb, nf):
+    spec = LY.has("FLOOR", None) or {"zones": [("concrete", 0.0, LY.H)]}
+    mott = norm01(fbm(h, w, 3.0 * PPM, 3.0 * GY, 4, 201))        # 大块色差（水渍 / 旧补丁）
+    grain = vnoise(h, w, 1.3, 1.0, 202)                           # 细颗粒
+    # 磨损：踩出来的路径（比户外的雪径宽、边缘更软）
+    wear = smooth(0.12, 0.65, _line_mask(w, h, LY.PATHS, 110, 34)) * (0.55 + 0.6 * nm)
+    wear = np.clip(wear, 0.0, 1.0)
+    out = np.zeros((h, w, 3), np.float32)
+    makers = {"metlakh": _fl_metlakh, "terrazzo": _fl_terrazzo,
+              "painted": _fl_painted, "concrete": _fl_concrete}
+    for kind, y0, y1 in spec["zones"]:
+        zm = (Y >= y0) & (Y < y1)
+        if not zm.any():
+            continue
+        layer = makers[kind](X, Y, h, w, mott, grain, nf, nm, wear, float(y0), float(y1))
+        out = np.where(zm[..., None], layer, out)
+    # 材质交界：一条铁包边门槛（暗条 + 上沿一线反光）
+    for _kind, y0, _y1 in spec["zones"][1:]:
+        th = smooth(0.08, 0.03, np.abs(Y - y0))
+        out = _mix(out, th * 0.85, hexc("#34373a"))
+        out = _mix(out, smooth(0.025, 0.0, np.abs(Y - (y0 - 0.06))) * 0.55, hexc("#a3a49c"))
+    # 细裂缝（比户外少、短、淡）
+    crk = _cracks(w, h, 110, LY.FACADE_BASE_Y, LY.H, 17, step=(3, 9))
+    out = out * (1 - 0.3 * crk)[..., None]
+    # 墙根积灰：北墙脚一条脏带
+    grime = smooth(LY.FACADE_BASE_Y + 1.8, LY.FACADE_BASE_Y, Y) * (0.6 + 0.4 * nm)
+    out = out * (1 - 0.28 * grime)[..., None]
+    return out, wear
+
+
+def _tile_grid(X, Y, y0, size):
+    ix = np.floor(X / size)
+    iy = np.floor((Y - y0) / size)
+    return ix, iy, X / size - ix, (Y - y0) / size - iy
+
+
+def _fl_metlakh(X, Y, h, w, mott, grain, nf, nm, wear, y0, y1):
+    T = 0.30
+    ix, iy, fx, fy = _tile_grid(X, Y, y0, T)
+    r = _hash2(ix, iy, 1)
+    red, cream, border = hexc("#8a4632"), hexc("#bba783"), hexc("#5a2f24")
+    checker = ((ix + iy) % 2 == 0)[..., None]
+    base = np.where(checker, red, cream)
+    edge = ((Y - y0) < 2 * T) | ((y1 - Y) < 2 * T)
+    base = np.where(edge[..., None], border, base)
+    tile = base * (0.86 + 0.2 * r)[..., None] * (0.9 + 0.14 * mott)[..., None]
+    # 釉面：左上一线亮、右下一线暗（每块砖都有一点厚度）
+    bev = (0.07 * smooth(0.14, 0.0, fx) + 0.07 * smooth(0.14, 0.0, fy)
+           - 0.1 * smooth(0.86, 1.0, fx) - 0.1 * smooth(0.86, 1.0, fy))
+    tile = tile * (1.0 + bev)[..., None]
+    # 灰缝：按像素距离算，横缝比竖缝细（地面 y 压缩）
+    gx = np.minimum(fx, 1 - fx) * T * PPM
+    gy = np.minimum(fy, 1 - fy) * T * GY
+    grout = ((gx < 1.2) | (gy < 0.9)).astype(np.float32)
+    out = _mix(tile, grout, hexc("#3a3530")[None, None, :] * (0.8 + 0.3 * nf)[..., None])
+    # 磨损：釉面被磨哑、发灰，灰缝塞满油泥
+    out = _mix(out, wear * 0.42, hexc("#76695c"))
+    out = out * (1 - 0.18 * wear * grout)[..., None]
+    # 缺砖：露出下面的水泥砂浆，左上内侧有一道阴影
+    miss = (_hash2(ix, iy, 7) < 0.035) & ~edge
+    conc = hexc("#5b5d60")[None, None, :] * (0.82 + 0.3 * grain)[..., None]
+    conc = conc * (0.68 + 0.32 * smooth(0.0, 0.18, fx) * smooth(0.0, 0.18, fy))[..., None]
+    out = np.where(miss[..., None], conc, out)
+    # 裂砖：几块砖上一道斜裂
+    crk = (_hash2(ix, iy, 9) < 0.07) & (np.abs(fx - fy * (0.5 + r) - 0.15) < 0.035) & ~miss
+    return out * np.where(crk, 0.55, 1.0)[..., None]
+
+
+def _fl_terrazzo(X, Y, h, w, mott, grain, nf, nm, wear, y0, y1):
+    out = hexc("#878884")[None, None, :] * (0.88 + 0.18 * mott)[..., None] * (0.95 + 0.08 * grain)[..., None]
+    # 石子：四种颜色，几像素大小的碎块
+    for seed, cell, thr, c, a in ((211, (2.4, 1.8), 0.84, "#55555a", 0.55), (212, (2.0, 1.5), 0.87, "#a8957b", 0.5),
+                                  (213, (1.7, 1.3), 0.89, "#cfcbc1", 0.45), (214, (2.8, 2.0), 0.95, "#7a4a3f", 0.4)):
+        chip = (vnoise(h, w, cell[0], cell[1], seed) > thr).astype(np.float32)
+        out = _mix(out, chip * a, hexc(c))
+    # 走得多的地方被磨亮（石子对比变小，整体泛一层灰白光）
+    out = _mix(out, wear * 0.3, hexc("#a5a6a1"))
+    # 铜分格条：2 米见方，平时发暗带绿锈，路径上被磨亮
+    D = 2.0
+    lx = np.minimum(X % D, D - X % D) * PPM
+    ly = np.minimum((Y - y0) % D, D - (Y - y0) % D) * GY
+    strip = ((lx < 1.0) | (ly < 0.8)).astype(np.float32)
+    brass = lerp(hexc("#5b5640"), hexc("#94845c"), wear[..., None] * 0.9 + 0.1)
+    out = _mix(out, strip * 0.55, brass)
+    # 区边一圈深色水磨石边带
+    band = (((Y - y0) < 0.45) | ((y1 - Y) < 0.45)).astype(np.float32)
+    return _mix(out, band * 0.55, hexc("#3d3f40"))
+
+
+def _fl_painted(X, Y, h, w, mott, grain, nf, nm, wear, y0, y1):
+    conc = hexc("#545759")[None, None, :] * (0.84 + 0.26 * mott)[..., None] * (0.93 + 0.12 * grain)[..., None]
+    paint = hexc("#5b2b23")[None, None, :] * (0.82 + 0.3 * mott)[..., None]
+    paint = lerp(paint, hexc("#6b5a55"), 0.22)                     # 褪色
+    # 漆面起皮：大片斑驳 + 路径上直接磨穿
+    flake = norm01(fbm(h, w, 0.42 * PPM, 0.42 * GY, 3, 221))
+    v = flake * 0.62 + wear * 0.62 + mott * 0.12
+    lost = smooth(0.74, 0.79, v)
+    # 整片漆面上零星的小崩点（椅腿 / 推车磕掉的）
+    lost = np.maximum(lost, smooth(0.9, 0.94, vnoise(h, w, 7, 4.5, 224)) * (0.6 + 0.4 * mott))
+    rim = smooth(0.70, 0.74, v) * (1 - lost)                       # 剥落边缘：漆皮翘起的暗边
+    out = _mix(paint, lost, conc)
+    out = out * (1 - 0.22 * rim)[..., None]
+    # 刷痕：顺着 x 的细长纹
+    out = out * (0.96 + 0.06 * vnoise(h, w, 40, 1.5, 222))[..., None]
+    # 切缝：3 米一道
+    D = 3.0
+    lx = np.minimum(X % D, D - X % D) * PPM
+    ly = np.minimum((Y - y0) % D, D - (Y - y0) % D) * GY
+    return out * np.where((lx < 0.9) | (ly < 0.7), 0.7, 1.0)[..., None]
+
+
+def _fl_concrete(X, Y, h, w, mott, grain, nf, nm, wear, y0, y1):
+    out = hexc("#63676a")[None, None, :] * (0.8 + 0.3 * mott)[..., None] * (0.92 + 0.13 * grain)[..., None]
+    # 抹面：顺着 x 的长条抹痕
+    out = out * (0.95 + 0.08 * vnoise(h, w, 60, 3, 231))[..., None]
+    # 北墙渗水：深色潮带，边缘一圈白色盐霜
+    yy = Y + (nm - 0.5) * 2.2
+    damp = smooth(y0 + 4.2, y0 + 0.6, yy)
+    out = out * (1 - 0.38 * damp)[..., None]
+    eff = smooth(0.35, 0.0, np.abs(yy - (y0 + 4.2))) * smooth(0.35, 0.7, vnoise(h, w, 26, 9, 232))
+    out = _mix(out, blur(eff, 2.0) * 0.2, hexc("#c6cac6"))
+    # 切缝：4 米一道
+    D = 4.0
+    lx = np.minimum(X % D, D - X % D) * PPM
+    ly = np.minimum((Y - y0) % D, D - (Y - y0) % D) * GY
+    out = out * np.where((lx < 0.9) | (ly < 0.7), 0.68, 1.0)[..., None]
+    # 排水沟：区南沿一条铸铁箅子
+    gy0 = y1 - 0.55
+    gut = (np.abs(Y - gy0) < 0.16).astype(np.float32)
+    bars = ((X % 0.18) < 0.07).astype(np.float32)
+    out = _mix(out, gut, hexc("#1c1e20"))
+    out = _mix(out, gut * bars * 0.85, hexc("#4a4c4e")[None, None, :] * (0.8 + 0.3 * nf)[..., None])
+    rust = smooth(0.4, 0.0, np.abs(Y - gy0)) * (1 - gut) * smooth(0.55, 0.8, vnoise(h, w, 5, 3, 233))
+    return _mix(out, rust * 0.4, hexc("#6e4127"))
 
 
 # ===========================================================================
@@ -559,6 +841,12 @@ def _drainpipe(h: int) -> Image.Image:
 
 
 def bake_facade() -> tuple[Image.Image, Image.Image]:
+    """北侧立面 + 墙裙涂鸦贴花。返回 (立面精灵, 窗光灯光贴图)。"""
+    img, glow = _bake_facade_raw()
+    return _graffiti(img), glow
+
+
+def _bake_facade_raw() -> tuple[Image.Image, Image.Image]:
     """北侧立面：按 LY.META["facade"] 选一种墙。返回 (立面精灵, 窗光灯光贴图)。"""
     kind = facade_kind()
     if kind == "depot":
@@ -591,7 +879,7 @@ def _facade_coldstore() -> tuple[Image.Image, Image.Image]:
     F = LY.FACADE_FEATURES
     # 保温板墙：横向大板 + 板缝 + 霜挂
     wall = L.rect(0, base - 330, w, base)
-    L.paint(wall, L.tex("#8a97a4", 0.07, 6, 1511))
+    L.paint(wall, L.mat_tex("#8a97a4", "Metal025", px_h=330, contrast=0.5, seed=1511))
     L.shade(wall, L.gy(base - 330, base, 1.1, 0.72))
     for vy in range(base - 322, base - 8, 64):
         L.paint(L.rect(0, vy, w, vy + 2.4), hexc("#6c7a88"), 0.6)
@@ -662,7 +950,7 @@ def _facade_canteen() -> tuple[Image.Image, Image.Image]:
     F = LY.FACADE_FEATURES
     # 瓷砖墙：下半瓷砖 + 上半涂料 + 油污
     wall = L.rect(0, base - 330, w, base)
-    L.paint(wall, L.tex("#8a8f96", 0.07, 6, 1611))
+    L.paint(wall, L.mat_tex("#8a8f96", "Concrete035", px_h=340, contrast=0.6, seed=1611))
     L.shade(wall, L.gy(base - 330, base, 1.1, 0.74))
     tiles = L.rect(0, base - 170, w, base)
     L.paint(tiles, L.tex("#aab0b6", 0.09, 4, 1613))
@@ -724,7 +1012,7 @@ def _facade_sanitarium() -> tuple[Image.Image, Image.Image]:
     F = LY.FACADE_FEATURES
     # 地下室墙：深灰混凝土 + 霉斑 + 水渍
     wall = L.rect(0, base - 380, w, base)
-    L.paint(wall, L.tex("#6b7076", 0.09, 7, 1711))
+    L.paint(wall, L.mat_tex("#6b7076", "Concrete035", px_h=380, contrast=0.7, seed=1711))
     L.shade(wall, L.gy(base - 380, base, 1.12, 0.68))
     L.grime(wall, 230, 0.22)
     # 墙皮剥落片
@@ -789,7 +1077,7 @@ def _town_shack(L: Layer, x0: int, bw: int, bh: int, seed: int, base: int,
     pal = ["#6b5138", "#5f5647", "#555b62", "#6a5a44", "#5a4a38"]
     wall_c = pal[seed % len(pal)]
     wall = L.rect(x0 + 6, base - bh, x0 + bw - 6, base)
-    L.paint(wall, L.tex(wall_c, 0.1, 5, seed))
+    L.paint(wall, L.mat_tex(wall_c, "Metal025", px_h=float(bh), contrast=0.45, seed=seed))
     L.shade(wall, L.gy(base - bh, base, 1.08, 0.7))
     for vx in range(x0 + 14, x0 + bw - 12, 26):        # 板缝
         L.paint(L.rect(vx, base - bh, vx + 1.6, base), hexc("#3c3122"), 0.5)
@@ -1018,7 +1306,7 @@ def _mine_shed(seed: int) -> tuple[Image.Image, tuple]:
     L = Layer(w, h, 1)
     base = h - 2
     wall = L.rect(14, 42, 236, base)
-    L.paint(wall, L.tex("#5a6169", 0.08, 5, seed))
+    L.paint(wall, L.mat_tex("#5a6169", "Metal025", px_h=168.0, contrast=0.45, seed=seed))
     L.shade(wall, L.gy(42, base, 1.15, 0.72))
     for vx in range(18, 236, 16):                 # 波纹板竖缝
         L.paint(L.rect(vx, 42, vx + 1.6, base), hexc("#464c53"), 0.7)
@@ -1549,7 +1837,7 @@ def _facade_manor() -> tuple[Image.Image, Image.Image]:
 
     # ---- 左：恒温库保温板墙 ----
     dep = L.rect(0, wall_top, split, plinth_top)
-    L.paint(dep, L.tex("#79828a", 0.05, 10, 601))
+    L.paint(dep, L.mat_tex("#79828a", "Metal025", px_h=float(plinth_top - wall_top), contrast=0.5, seed=601))
     for xx in np.arange(24, split, 76):        # 保温板竖缝
         L.paint(L.rect(xx, wall_top, xx + 2.4, plinth_top), hexc("#5a626a"), 0.8)
         L.paint(L.rect(xx + 2.4, wall_top, xx + 3.6, plinth_top), hexc("#98a1a9"), 0.5)
@@ -1603,7 +1891,7 @@ def _facade_manor() -> tuple[Image.Image, Image.Image]:
 
     # ---- 右：焚化车间 ----
     hall = L.rect(split, wall_top - 26, w, plinth_top)
-    _depot_brick(L, hall, 650, base="#5e463c")
+    L.paint(hall, L.mat_tex("#5e463c", "Bricks097", px_h=float(plinth_top - wall_top + 26), contrast=0.55, seed=650))
     L.shade(hall, L.gy(wall_top - 26, plinth_top, 1.05, 0.8))
     # 烟囱
     chx = F.get("chimney_x", 40.0) * PPM

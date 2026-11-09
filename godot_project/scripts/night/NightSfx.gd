@@ -21,6 +21,7 @@ const FLAT_VOICES := 6
 ## 每种音色的可闻半径（米）→ AudioStreamPlayer2D.max_distance
 const RADIUS_M := {
 	"step_snow": 13.0, "step_ice": 17.0, "step_rail": 19.0,
+	"step_tile": 13.0, "step_concrete": 13.0,
 	"growl": 20.0, "snarl": 22.0, "bite": 15.0,
 	"moan": 15.0, "radio": 22.0, "klaxon": 44.0, "mask_breath": 4.0,
 	"gunshot": 48.0, "akm": 48.0,
@@ -37,11 +38,13 @@ var muted := false
 var tension := 0.0               # 0..1：心跳的驱动量（NightExplore._tension）
 var cold := 1.0                  # 战役 cfg.cold：风雪强度
 var dawn := 0.0                  # 0..1：天亮进度（风声退去）
+var interior := false            # 室内关：风只在窗外，底噪换成房间低鸣
 
 var _streams: Dictionary = {}
 var _pos: Array[AudioStreamPlayer2D] = []
 var _flat: Array[AudioStreamPlayer] = []
 var _ambient: Array = []         # [AudioStreamPlayer/2D, role, base_db]
+var _room: AudioStreamPlayer = null   # 室内低鸣循环（interior 时自动启动）
 var _next_pos := 0
 var _next_flat := 0
 var _beat := 0.0
@@ -90,6 +93,21 @@ func stream_count() -> int:
 
 func set_muted(value: bool) -> void:
 	muted = value
+	if _room != null:
+		_room.volume_db = -80.0 if muted else ROOM_DB
+
+
+## 室内关（食堂 / 疗养院地下室）：风声退到窗外，另起一层房间低鸣，不再像站在暴风雪里。
+const ROOM_DB := -19.0
+
+func set_interior(value: bool) -> void:
+	interior = value
+	if interior and _room == null and _streams.has("room_tone"):
+		_room = AudioStreamPlayer.new()
+		_room.stream = _streams["room_tone"]
+		_room.volume_db = -80.0 if muted else ROOM_DB
+		add_child(_room)
+		_room.play()
 
 
 func set_tension(k: float) -> void:
@@ -167,8 +185,12 @@ func _mix_ambient() -> void:
 		var db := base
 		match role:
 			"wind":
-				# 战役的 cfg.cold 越大风越猛；天亮风雪退去
-				db = base + clampf(cold - 1.0, -0.6, 0.9) * 7.0 - dawn * 9.0
+				if interior:
+					# 室内：只剩窗外很远的一层风，不在屋里刮
+					db = base - 18.0 - dawn * 4.0
+				else:
+					# 战役的 cfg.cold 越大风越猛；天亮风雪退去
+					db = base + clampf(cold - 1.0, -0.6, 0.9) * 7.0 - dawn * 9.0
 			"fire", "steam":
 				db = base - dawn * 2.5
 		p.set("volume_db", db)
@@ -257,6 +279,9 @@ func _build_streams() -> void:
 	CACHE["step_snow"] = _step_snow()
 	CACHE["step_ice"] = _step_ice()
 	CACHE["step_rail"] = _step_rail()
+	CACHE["step_tile"] = _step_tile()
+	CACHE["step_concrete"] = _step_concrete()
+	CACHE["room_tone"] = _room_tone()
 	# —— 狂暴者：低吼（游荡）/ 嘶吼（追击起跳）/ 扑咬 ——
 	CACHE["growl"] = _growl(0.75, 64.0, 46.0, 0.30, 900.0, 0.44, 31337)
 	CACHE["snarl"] = _growl(0.46, 122.0, 78.0, 0.52, 1900.0, 0.55, 4241)
@@ -378,6 +403,52 @@ func _step_rail() -> AudioStreamWAV:
 	# 枕木与钢轨的金属回响
 	_sine_ring(d, [1180.0, 1770.0, 2360.0], 17.0, 0.13)
 	return _wav(d)
+
+
+func _step_tile() -> AudioStreamWAV:
+	## 食堂：梅特拉赫砖 / 水磨石——硬而脆的一下「咔」，带一点石质高频回响，没有雪的咯吱声。
+	var d := _buf(0.13)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1204
+	_noise(d, rng, 0.5)
+	_bandpass(d, 1400.0, 5200.0)
+	for i in d.size():
+		var t := float(i) / float(RATE)
+		d[i] *= exp(-t * 55.0)
+	_sine_ring(d, [1900.0, 2860.0], 40.0, 0.12)
+	return _wav(d)
+
+
+func _step_concrete() -> AudioStreamWAV:
+	## 疗养院：湿混凝土 / 旧地坪漆——闷硬的一脚，低频多一点，几乎没有高频雪粒感。
+	var d := _buf(0.14)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1205
+	_noise(d, rng, 0.55)
+	_lowpass(d, 1500.0)
+	for i in d.size():
+		var t := float(i) / float(RATE)
+		d[i] *= exp(-t * 42.0)
+	_sine_ring(d, [240.0, 420.0], 30.0, 0.16)
+	return _wav(d)
+
+
+func _room_tone() -> AudioStreamWAV:
+	## 室内底噪：低频房间轰鸣 + 缓慢起伏的空气声，4 秒循环，音量很低，只填补「安静得不对」。
+	var dur := 4.0
+	var d := _buf(dur)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2301
+	var lp := 0.0
+	var lp2 := 0.0
+	for i in d.size():
+		var t := float(i) / float(RATE)
+		var w := rng.randf_range(-1.0, 1.0)
+		lp = lerpf(lp, w, 0.02)
+		lp2 = lerpf(lp2, w, 0.002)
+		d[i] = (lp * 0.5 + lp2 * 0.5) * (0.7 + 0.3 * sin(TAU * t / dur))
+	_lowpass(d, 320.0)
+	return _wav(d, true, 0.5)
 
 
 func _growl(dur: float, f0: float, f1: float, noise_mix: float, cutoff: float,

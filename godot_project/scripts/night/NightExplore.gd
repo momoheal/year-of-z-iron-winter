@@ -9,7 +9,7 @@ extends Node2D
 ## 物品与容器掉落表直接读 CampaignData，后续可以把本场景接进 CampaignSim 的夜潜阶段。
 ##
 ## 操作：WASD 移动 · 鼠标朝向 · Ctrl 蹲伏 · Shift 冲刺 · 长按 E 搜刮/撤离 · G 扔罐头
-##       F 手电 · M 静音 · R 重来 · Esc 返回战役
+##       F 手电 · M 静音 · F5 重来（仅独立跑）· Esc 暂停菜单（继续 / 音量 / 放弃夜潜 / 退出）
 ##       靠近半人按 E → 抉择面板：1 喂药退烧 / 2 绕开 / 3 撬棍灭口 / Esc 先不决定
 ##
 ## P1.5 天亮：战役里 cfg.night 是这一夜的秒数，最后 DAWN_WINDOW（20%）开始「天色渐变」——
@@ -30,6 +30,7 @@ const TEX_SPARK := preload("res://art/50_vfx/VFX_Impact_Spark.png")
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const SovietMeter := preload("res://scripts/ui/SovietMeter.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
+const PauseMenuScript := preload("res://scripts/ui/PauseMenu.gd")
 
 const PPM := 64.0
 const SQ := 0.62
@@ -44,8 +45,11 @@ const CORPSE_CATS := ["med", "val", "intel"]
 # ---- 天亮（P1.5）----
 const DAWN_WINDOW := 0.2                                  # 夜长最后 20% 开始天亮
 const NIGHT_MOD := Color(0.27, 0.32, 0.45)                # 与场景里 CanvasModulate 的初值一致
+const INTERIOR_MOD := Color(0.40, 0.45, 0.58)             # 室内关：抬一点冷色底光，别让地面材质黑成一片
 const DAWN_MOD := Color(0.60, 0.575, 0.565)               # 黎明前的清灰（比夜色亮、比白天冷）
 const DAWN_SNOW_A := 0.5                                  # 天亮时雪粒子留多少
+const INTERIOR_LEVELS := ["canteen", "sanitarium"]        # 室内关：雪只在地面贴图里（破窗飘入），不挂满屏飘雪
+var base_mod := NIGHT_MOD                                 # 夜色基准：室内关换成 INTERIOR_MOD
 # ---- 声音（P2.5）----
 const MASK_BREATH_M := 4.0                                # 面具呼吸的可闻半径（规划 P2.5：4 米）
 const WARMTH_CHILL_AT := [35.0, 20.0, 8.0]                # 失温提示音的三个档
@@ -60,8 +64,7 @@ var in_campaign := false
 var bag_max := 8
 var night_left := 0.0
 var night_max := 0.0
-var abort_pending := false
-var abort_timer := 0.0
+var _pause: CanvasLayer = null      # Esc 暂停菜单（第一次按 Esc 时才建）
 var cold := 1.0                # cfg.cold：体温下降倍率，同时决定风雪音量（P1.4 / P2.5）
 var day_n := 1                 # cfg.day：HUD 标题里的「第 N 夜」
 
@@ -88,6 +91,8 @@ var state := "play"            # play | choice | caught | frozen | downed | extr
 var pack: Array[String] = []
 var warmth := 100.0
 var hp := 100.0
+var mate_id := ""                # 本夜所带伙伴（_spawn_follower 写入；gulya 用于急救）
+var _gulya_used := false         # 古丽娅「每夜救一次重伤」是否已用
 var hurt := 0.0                # 受伤闪红计时
 var borrowed := 0              # 借刀杀人：清杀队替你清掉的狂暴者
 var rabids: Array = []
@@ -142,6 +147,7 @@ var floats: Array[Dictionary] = []
 var thrown: Array[Dictionary] = []
 var soldiers: Array = []
 var containers: Array = []
+var _lock_hint_t := 0.0
 var slush: Array = []          # [center_m: Vector2, radii_m: Vector2]
 var warm_lights: Array = []    # [pos_px, radius_m]
 var fade_props: Array = []
@@ -224,6 +230,16 @@ func _ready() -> void:
 	sfx.name = "NightSfx"
 	add_child(sfx)
 	_read_level_meta()
+	# 室内关（食堂后厨 / 疗养院地下室）：关全屏飘雪、抬底光、风声退到窗外 + 房间低鸣
+	if level_id in INTERIOR_LEVELS:
+		for p in [snow_back, snow_front]:
+			if p != null:
+				p.emitting = false
+				p.visible = false
+		base_mod = INTERIOR_MOD
+		if night_mod != null:
+			night_mod.color = base_mod
+		sfx.set_interior(true)
 	# P1: 战役出发 → 读 cfg 初始化背包 / 携带物 / 天亮倒计时；F2 独立跑用灰盒默认。
 	in_campaign = RaidBridge.active
 	var cfg: Dictionary = RaidBridge.cfg if in_campaign else {}
@@ -259,6 +275,7 @@ func _ready() -> void:
 		h.ctl = self
 		halfs.append(h)
 	containers = get_tree().get_nodes_in_group("night_container")
+	_setup_special_containers()
 	for m in get_tree().get_nodes_in_group("night_market"):
 		markets.append(m)
 	for sv in get_tree().get_nodes_in_group("night_survivor"):
@@ -272,11 +289,39 @@ func _ready() -> void:
 	player.global_position = $Markers/Spawn.global_position
 	cam.global_position = player.global_position
 	cam.reset_smoothing()
+	_setup_breath()
 	_wire_audio()
 	_init_beats()
 	_init_weapons()
 	_build_hud()
 	_init_post_defaults()
+	_spawn_follower()
+
+
+func _spawn_follower() -> void:
+	## 伙伴跟随：战役出发时 RaidBridge.cfg.mate 指定带谁（"" = 没带，不生成）；
+	## F2 独立跑默认灰烬，可用 --mate=ash/anna/gulya/pavel/ivan 覆盖。
+	mate_id = ""
+	var rb := get_node_or_null("/root/RaidBridge")
+	if rb != null and rb.active:
+		mate_id = String(rb.cfg.get("mate", ""))
+		if mate_id == "":
+			return                                  # 战役这一夜没带伙伴 → 无跟随者
+	else:
+		mate_id = "ash"
+		for a in OS.get_cmdline_args():
+			if a.begins_with("--mate="):
+				mate_id = a.substr(7)
+	var script = load("res://scripts/night/NightFollower.gd")
+	if script == null:
+		return
+	var f = script.new()
+	f.mate_id = mate_id
+	f.player_target = player
+	f.ctl = self
+	$World.add_child(f)
+	f.global_position = player.global_position + Vector2(-48, 28)
+	f.z_index = player.z_index
 
 
 ## 显式初始化后处理 shader 参数。未 set 过的 ShaderMaterial，get_shader_parameter
@@ -339,6 +384,9 @@ func _wire_audio() -> void:
 func _exit_tree() -> void:
 	# M 键 / 战役带过来的静音是按主总线做的，别把它留给下一个场景
 	AudioServer.set_bus_mute(0, false)
+	# 暂停菜单开着时切场景 / 退出：别把整棵树留在暂停态
+	if is_inside_tree():
+		get_tree().paused = false
 
 func _loop_audio(p: Node) -> void:
 	var s = p.get("stream")
@@ -368,15 +416,23 @@ func _ambient_role(node_name: String) -> String:
 # ============================================================================
 # 主循环
 # ============================================================================
+func _setup_breath() -> void:
+	# 呼吸白气统一用 Breath.gd（可复用、随机相位）：玩家 + 夜潜 NPC（清杀兵/狂暴者/半人/幸存者）。
+	var b = load("res://scripts/night/Breath.gd").new()
+	player.add_child(b)
+	b.position = Vector2(8, -82)
+	for arr in [soldiers, rabids, halfs, survivors]:
+		for n in arr:
+			if is_instance_valid(n):
+				var nb = load("res://scripts/night/Breath.gd").new()
+				n.add_child(nb)
+				nb.position = Vector2(6, -72)
+
 func _process(delta: float) -> void:
 	t += delta
 	hurt = maxf(0.0, hurt - delta)
 	cam.global_position = player.global_position + Vector2(0, -40)
 	_apply_shake(delta)
-	if abort_pending:
-		abort_timer -= delta
-		if abort_timer <= 0.0:
-			abort_pending = false
 	if state == "play":
 		_update_zone(delta)
 		_update_interact(delta)
@@ -447,10 +503,20 @@ func _update_interact(delta: float) -> void:
 		return
 	extract_prog = 0.0
 	if holding and c != null:
+		var locked := bool(c.get_meta("locked", false))
+		if locked and mate_id != "pavel":
+			# 焊死的箱子：只有帕维尔的撬棍能开
+			search_prog = 0.0
+			search_target = null
+			_lock_hint_t -= delta
+			if _lock_hint_t <= 0.0:
+				_lock_hint_t = 1.6
+				spawn_float(c.global_position + Vector2(0, -90), "焊死了——需要帕维尔的撬棍", Color("#fbbf24"))
+			return
 		if search_target != c:
 			search_target = c
 			search_prog = 0.0
-		search_prog += delta / SEARCH_TIME
+		search_prog += delta / (SEARCH_TIME * (1.8 if locked else 1.0))
 		player.frozen = true
 		_search_noise -= delta
 		if _search_noise <= 0.0:
@@ -462,11 +528,29 @@ func _update_interact(delta: float) -> void:
 		search_target = null
 		search_prog = 0.0
 
+func _setup_special_containers() -> void:
+	## 每关放一个「焊死」箱（帕维尔可撬）与一个「隐藏」箱（伊万可显形）。
+	## 运行时按索引确定性选取，不重生成场景，便于测试与平衡。
+	var n := containers.size()
+	if n == 0:
+		return
+	var li := n / 2
+	containers[li].set_meta("locked", true)
+	if n >= 2:
+		var hi := n - 1
+		if hi == li:
+			hi = 0
+		containers[hi].set_meta("hidden", true)
+		containers[hi].modulate = Color(1, 1, 1, 0)   # 未显形前不可见
+
+
 func nearest_container() -> Node2D:
 	var best: Node2D = null
 	var bd := REACH
 	for c in containers:
 		if bool(c.get_meta("searched", false)):
+			continue
+		if bool(c.get_meta("hidden", false)) and not bool(c.get_meta("revealed", false)):
 			continue
 		var d := dist_m(player.global_position, interact_point(c))
 		if d < bd:
@@ -684,6 +768,9 @@ func interact_point(c: Node2D) -> Vector2:
 	return c.global_position + Vector2(c.get_meta("interact_offset", Vector2.ZERO))
 
 func _finish_search(c: Node2D) -> void:
+	if bool(c.get_meta("locked", false)):
+		c.set_meta("locked", false)
+		spawn_float(c.global_position + Vector2(0, -120), "帕维尔撬开了焊死的箱子", Color("#7fb2e0"))
 	c.set_meta("searched", true)
 	var spr := c.get_node_or_null("Sprite") as CanvasItem
 	if spr != null:
@@ -866,6 +953,9 @@ func _voice_noise(pos: Vector2, radius_m: float, kind: String) -> void:
 func step_sound(pos: Vector2, on_slush: bool) -> String:
 	if on_slush:
 		return "step_ice"
+	if level_id in INTERIOR_LEVELS:
+		# 室内：瓷砖 / 水磨石是脆的「咔」，湿混凝土与地坪漆是闷硬的一脚，不再是踩雪
+		return "step_tile" if level_id == "canteen" else "step_concrete"
 	var y := to_m(pos).y
 	for band in rail_y:
 		if absf(y - float(band)) <= STEP_RAIL_BAND:
@@ -884,7 +974,7 @@ func damage_player(amount: float, _by: Node) -> void:
 	emit_noise(player.global_position, 6.0, "hit")
 	spawn_float(player.global_position + Vector2(0, -120), "-%d 被咬了！" % int(amount), Color("#f87171"))
 	if hp <= 0.0:
-		_end("downed")
+		_check_downed()
 
 func on_soldier_fired(s: Node2D, at: Vector2) -> void:
 	# 枪声的震动按距离衰减：贴脸 0.5，26 米外只剩 0.06 的闷响
@@ -945,6 +1035,16 @@ func caught(by: Node) -> void:
 		sfx.play_at("gunshot", (by as Node2D).global_position, 0.0, 0.02)
 	add_shake(0.95)
 	_end("caught")
+
+func _check_downed() -> void:
+	## 古丽娅「每夜救一次重伤」：本夜带古丽娅且急救还没用过，hp 归零不死、拉回 40。
+	if mate_id == "gulya" and not _gulya_used:
+		_gulya_used = true
+		hp = 40.0
+		spawn_float(player.global_position + Vector2(0, -150), "古丽娅急救：这一夜她把你拉了回来", Color("#63d18a"))
+		return
+	_end("downed")
+
 
 func _end(reason: String) -> void:
 	state = reason
@@ -1036,6 +1136,53 @@ func _count_searched() -> int:
 	return n
 
 # ============================================================================
+# 暂停菜单（Esc）：SceneTree.paused 冻结世界；放弃夜潜 / 退出游戏走这里
+# ============================================================================
+func open_pause() -> void:
+	if state != "play":
+		return
+	if _pause == null:
+		_pause = PauseMenuScript.new()
+		_pause.name = "PauseMenu"
+		if in_campaign:
+			_pause.abort_label = "放弃这次夜潜"
+			_pause.abort_hint = "背包清空，活着回 602 室"
+		else:
+			_pause.abort_label = "返回战役"
+			_pause.abort_hint = "F2 独立跑：回到战役标题页"
+		_pause.abort_requested.connect(_on_pause_abort)
+		_pause.quit_requested.connect(_on_pause_quit)
+		add_child(_pause)
+	search_target = null
+	search_prog = 0.0
+	extract_prog = 0.0
+	_pause.open()
+
+
+func close_pause() -> void:
+	if _pause != null:
+		_pause.close()
+
+
+func is_paused() -> bool:
+	return _pause != null and _pause.is_open()
+
+
+func _on_pause_abort() -> void:
+	if in_campaign:
+		_end("abort")
+	else:
+		get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+
+
+## 退出游戏：战役存档停在出发前的 602 室（夜潜中途不存档），这一夜等于没发生。
+func _on_pause_quit() -> void:
+	get_tree().paused = false
+	RaidBridge.clear()
+	get_tree().quit()
+
+
+# ============================================================================
 # 输入
 # ============================================================================
 func _unhandled_input(event: InputEvent) -> void:
@@ -1078,15 +1225,8 @@ func _unhandled_input(event: InputEvent) -> void:
 					get_tree().reload_current_scene()
 			KEY_ESCAPE:
 				if state == "play":
-					if in_campaign:
-						if abort_pending:
-							abort_pending = false
-							_end("abort")
-						else:
-							abort_pending = true
-							abort_timer = 2.5
-					else:
-						get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+					open_pause()
+					get_viewport().set_input_as_handled()
 				elif state != "choice":
 					# 结束画面：战役回写结算，F2 重开
 					if in_campaign:
@@ -1494,8 +1634,25 @@ func on_soldier_killed(s: Node, _by: String) -> void:
 # ============================================================================
 # 表现
 # ============================================================================
+const FLOAT_LINE := 24.0         # 浮字行高：同一处同时冒出几句时往上错开一行
+const FLOAT_MAX := 6             # 屏幕上同时最多几句浮字，多了挤掉最旧的
+
 func spawn_float(pos: Vector2, txt: String, col: Color) -> void:
-	floats.append({"pos": pos, "txt": txt, "col": col, "life": 2.2})
+	# 同一处同时冒出好几句（借刀 + 进区 + 勘踏 + 撤离提示）时逐行往上错开，别糊成一团
+	var p := pos
+	for _i in 8:
+		var clash := false
+		for f in floats:
+			var q: Vector2 = f["pos"]
+			if absf(q.x - p.x) < 320.0 and absf(q.y - p.y) < FLOAT_LINE:
+				clash = true
+				break
+		if not clash:
+			break
+		p.y -= FLOAT_LINE
+	floats.append({"pos": p, "txt": txt, "col": col, "life": 2.2})
+	while floats.size() > FLOAT_MAX:
+		floats.pop_front()
 
 func _update_fx(delta: float) -> void:
 	for r in ripples:
@@ -1570,7 +1727,7 @@ func _update_post() -> void:
 		_flare_light.energy = 3.4 * beat_flare
 	# 天亮：夜色（CanvasModulate）由夜青转黎明清灰，暴风雪变薄
 	if night_mod != null:
-		night_mod.color = NIGHT_MOD.lerp(DAWN_MOD, g)
+		night_mod.color = base_mod.lerp(DAWN_MOD, g)
 	var snow_a := lerpf(1.0, DAWN_SNOW_A, g)
 	if snow_back != null:
 		snow_back.modulate.a = snow_a
@@ -1844,7 +2001,7 @@ func _tick_hump(ev: Dictionary, k: float, delta: float) -> void:
 		spawn_float(player.global_position + Vector2(0, -140), "被溜放的车皮刮倒了 —— 整个货场都听见了",
 			Color("#f87171"))
 		if hp <= 0.0:
-			_end("downed")
+			_check_downed()
 
 
 # --- 炉口爆燃 ----------------------------------------------------------------
@@ -2353,9 +2510,7 @@ func _refresh_hud() -> void:
 	# --- 底栏：电传提示 ---
 	var mech := nearest_mechanism()
 	var near_half = nearest_half()
-	if abort_pending:
-		_lbl_hint.text = "再按 Esc 放弃这次夜潜？（背包清空，活着回 602 室）"
-	elif dawn_t > 0.0:
+	if dawn_t > 0.0:
 		_lbl_hint.text = "天要亮了 —— %s（长按 E）" % extract_zh
 	elif has_prize:
 		_lbl_hint.text = "%s到手 —— %s（长按 E）" % [item_name(prize), extract_zh] \
@@ -2367,7 +2522,7 @@ func _refresh_hud() -> void:
 	elif dist_m(player.global_position, exit_px) <= REACH:
 		_lbl_hint.text = "长按 E · " + extract_zh
 	else:
-		_lbl_hint.text = objective_zh + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电"
+		_lbl_hint.text = objective_zh + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电　Esc 暂停"
 
 	# --- 屏幕边框：警报时边缘渗红 ---
 	if _chrome != null:
