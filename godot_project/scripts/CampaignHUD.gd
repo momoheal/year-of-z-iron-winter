@@ -32,6 +32,16 @@ const MATE_ART := {
 	"pavel": "res://art/30_props/PRP_Pavel_Stand.png",
 	"ivan": "res://art/30_props/PRP_Ivan_Stand.png",
 }
+# 剧情对话框右下角说话者表情头像（story_id → 胸像）
+const STORY_PORTRAITS := {
+	"coldstore": preload("res://art/10_characters/portraits/PRT_Chernov.png"),
+	"canteen": preload("res://art/10_characters/portraits/PRT_Fyodor.png"),
+	"market": preload("res://art/10_characters/portraits/PRT_Ivan.png"),
+	"sanitarium": preload("res://art/10_characters/portraits/PRT_Anna.png"),
+	"yard": preload("res://art/10_characters/portraits/PRT_Aleksei.png"),
+	"manor": preload("res://art/10_characters/portraits/PRT_Aleksei.png"),
+	"marshalling": preload("res://art/10_characters/portraits/PRT_Aleksei.png"),
+}
 
 var sim
 var game
@@ -1375,6 +1385,25 @@ func _build_story_modal() -> void:
 		v.add_child(b)
 		v.add_child(_label("　" + String(c.get("d_zh" if sim.lang == "zh" else "d_en", "")),
 			FONT_SIZES["small"], Color("#a8a294")))
+	# 右下角说话者表情头像（金边胸像，不拦截点击）
+	var ptex: Texture2D = STORY_PORTRAITS.get(sim.story_id, null)
+	if ptex != null:
+		var frame := PanelContainer.new()
+		frame.add_theme_stylebox_override("panel", _sb(Color("#0d0f12"), Color("#c8a257"), 4))
+		frame.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+		frame.offset_left = -236.0
+		frame.offset_top = -256.0
+		frame.offset_right = -20.0
+		frame.offset_bottom = -20.0
+		frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var tr := TextureRect.new()
+		tr.texture = ptex
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		tr.custom_minimum_size = Vector2(200, 200)
+		tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		frame.add_child(tr)
+		modal.add_child(frame)
 
 func _resolve_story(idx: int) -> void:
 	var res: Dictionary = sim.resolve_story(idx)
