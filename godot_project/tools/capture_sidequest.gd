@@ -15,8 +15,9 @@ func _run() -> void:
 	var Data = load("res://scripts/CampaignData.gd")
 	var L: Dictionary = Data.loc("underpass")
 	sim.selected_loc = "underpass"
+	sim.mates["ash"] = true
 	var cfg := {
-		"loc": L, "day": 1, "seed": int(L["seed"]) + 7, "left": 1.0, "mate": "",
+		"loc": L, "day": 1, "seed": int(L["seed"]) + 7, "left": 1.0, "mate": "ash",
 		"pack_max": Data.BAG, "weapon": Data.weapon("fist"), "load": {}, "cold": float(L["cold"]),
 		"danger": int(L["dg"]), "time": 60.0, "glasses": false, "night": 120.0, "sound_on": false,
 	}
@@ -28,6 +29,19 @@ func _run() -> void:
 	sim.raid.explored.fill(1)
 	sim.raid.vis.fill(1)
 	sim.raid.cam = Vector2(sim.raid.W * 0.5, sim.raid.H * 0.5)
+	# 验证用：玩家附近补各类型实体，一次看清全部贴图
+	var RaidSim = load("res://scripts/RaidSim.gd")
+	var px: float = sim.raid.player.x
+	var py: float = sim.raid.player.y
+	var kinds := ["rabid", "osk", "half", "survivor"]
+	for i in kinds.size():
+		var e = RaidSim.Ent.new()
+		e.kind = kinds[i]
+		e.id = kinds[i] + "_t"
+		e.x = px - 1.5 + float(i) * 1.0
+		e.y = py - 1.5
+		e.face = PI / 2.0
+		sim.raid.ents.append(e)
 	for i in 20:
 		await process_frame
 	_snap("capture_side_underpass")

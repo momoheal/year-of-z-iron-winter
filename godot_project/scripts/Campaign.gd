@@ -32,6 +32,21 @@ const TEX_CONTS := {
 	"fridge": preload("res://art/30_props/PRP_ColdStore_Chest.png"),
 	"corpse": preload("res://art/30_props/PRP_Corpse_Tarp.png"),
 }
+# 支线夜潜实体贴图化：主关同款角色 spritesheet（8列×3行 S/E/N，72×112/帧，W=E翻转）
+const TEX_CHR := {
+	"player": preload("res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png"),
+	"rabid": preload("res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png"),
+	"osk": preload("res://art/10_characters/CHR_05_OSK/CHR_05_OSK_Sheet.png"),
+	"half": preload("res://art/10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png"),
+}
+const TEX_SURVIVOR := preload("res://art/30_props/PRP_Survivor_Stand.png")
+const MATE_TEX := {   # 伙伴立绘前缀（+ Stand/Walk0/Walk1.png）
+	"ash": "res://art/30_props/PRP_Ash_",
+	"anna": "res://art/30_props/PRP_Anna_",
+	"gulya": "res://art/30_props/PRP_Gulya_",
+	"pavel": "res://art/30_props/PRP_Pavel_",
+	"ivan": "res://art/30_props/PRP_Ivan_",
+}
 
 const SCREEN := Vector2(1920, 1080)
 const TOP := 74.0                    # 顶栏高度
@@ -485,11 +500,21 @@ func _draw_raid() -> void:
 			"half":
 				_draw_half(es, e)
 			"mate":
-				draw_circle(es, 8.0, COL["mate"])
-				draw_circle(es + Vector2(0, -14), 5.0, Color("#bbf7d0"))
-				_draw_name(es + Vector2(0, -26), _mate_name(e.id), "#4ade80")
+				var mv := _is_moving(e, es)
+				var flip := false
+				if _prev_dir.has(e):
+					flip = cos(float(_prev_dir[e])) < 0.0
+				var mh := 36.0 if e.id == "ash" else 46.0
+				draw_circle(es + Vector2(0, 2), 8.0, Color(0.0, 0.0, 0.0, 0.45))
+				_draw_still(es, _mate_tex(e.id, mv), flip, mh)
+				_draw_name(es + Vector2(0, -mh - 6.0), _mate_name(e.id), "#4ade80")
 			"survivor":
-				draw_circle(es, 8.0, COL["mate"])
+				var mv2 := _is_moving(e, es)
+				var flip2 := false
+				if _prev_dir.has(e):
+					flip2 = cos(float(_prev_dir[e])) < 0.0
+				draw_circle(es + Vector2(0, 2), 8.0, Color(0.0, 0.0, 0.0, 0.45))
+				_draw_still(es, TEX_SURVIVOR, flip2, 46.0)
 	# 容器上的「暗格」提示（伊万）
 	for c2 in R.conts:
 		if bool(c2.get("searched", false)) or String(c2["type"]) != "hidden":
@@ -543,6 +568,74 @@ func _draw_raid() -> void:
 		fc.a = clampf(f2.life, 0.0, 1.0)
 		draw_string(font, fp + Vector2(-w2 / 2.0, 0), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs3, fc)
 
+var _prev_pos: Dictionary = {}    # 实体上一帧屏幕位置（移动 / 朝向检测）
+var _prev_dir: Dictionary = {}    # 实体最近移动方向（弧度）
+var _mate_cache: Dictionary = {}  # 伙伴立绘帧缓存
+
+
+func _is_moving(key: Variant, s: Vector2) -> bool:
+	var mv := false
+	if _prev_pos.has(key):
+		var d: Vector2 = s - (_prev_pos[key] as Vector2)
+		if d.length() > 0.45:
+			mv = true
+			_prev_dir[key] = d.angle()
+	_prev_pos[key] = s
+	return mv
+
+
+## 角色 spritesheet（8列×3行 S/E/N，72×112/帧）：选方向行 + 站/走列 + 翻转 + 缩放
+func _draw_char(s: Vector2, kind: String, face: float, moving: bool, h: float, tint: Color = Color(1, 1, 1, 1)) -> void:
+	var deg := rad_to_deg(face)
+	var row := 0
+	var flip := false
+	if absf(deg) <= 50.0:
+		row = 1
+	elif absf(deg) >= 130.0:
+		row = 1
+		flip = true
+	elif deg > 0.0:
+		row = 0
+	else:
+		row = 2
+	var col := 0
+	if moving:
+		col = 1 + int(t * 7.0) % 4
+	var fw := 72.0
+	var fh := 112.0
+	var dw := fw * (h / fh)
+	var dest := Rect2(Vector2(-dw * 0.5, -h), Vector2(dw, h))
+	var src := Rect2(col * fw, row * fh, fw, fh)
+	draw_set_transform(s, 0.0, Vector2(-1.0 if flip else 1.0, 1.0))
+	draw_texture_rect_region(TEX_CHR[kind], dest, src, tint)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+
+## 单张立绘（伙伴 / 幸存者）：底部贴地、保持宽高比、按移动方向翻转
+func _draw_still(s: Vector2, tex: Texture2D, flip: bool, h: float, tint: Color = Color(1, 1, 1, 1)) -> void:
+	if tex == null:
+		return
+	var tsz := tex.get_size()
+	var dw := tsz.x * (h / tsz.y)
+	var dest := Rect2(Vector2(-dw * 0.5, -h), Vector2(dw, h))
+	draw_set_transform(s, 0.0, Vector2(-1.0 if flip else 1.0, 1.0))
+	draw_texture_rect(tex, dest, false, tint)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+
+func _mate_tex(id: String, moving: bool) -> Texture2D:
+	var suffix := "Stand"
+	if moving:
+		suffix = "Walk0" if int(t * 5.0) % 2 == 0 else "Walk1"
+	var key := id + "_" + suffix
+	if not _mate_cache.has(key):
+		var base: String = MATE_TEX.get(id, "")
+		if base == "":
+			return null
+		_mate_cache[key] = load(base + suffix + ".png")
+	return _mate_cache[key]
+
+
 func _draw_box(sp: Vector2, w: float, h: float, ht: float, top: Color, front: Color, edge: Color) -> void:
 	draw_rect(Rect2(sp + Vector2(0, -ht), Vector2(w + 1, h + 1)), top, true)
 	draw_rect(Rect2(sp + Vector2(0, -ht), Vector2(w + 1, h + 1)), edge, false, 1.0)
@@ -583,15 +676,12 @@ func _draw_player(R, pw: float, ph: float) -> void:
 		pts.append(s + Vector2(cos(a) * rng_vis * pw, sin(a) * rng_vis * ph) + Vector2(0, -4))
 	var gc := Color(0.85, 0.93, 1.0, 0.05)
 	draw_colored_polygon(pts, gc)
-	# 躯干
-	var body := COL["player"]
+	# 躯干：角色 sheet 贴图（站立/行走帧 + 朝向），受伤泛红光
+	var moving := _is_moving("player", s)
+	var tint := Color(1, 1, 1, 1)
 	if p.hurt > 0.0:
-		body = Color("#fecaca")
-	draw_circle(s + Vector2(0, -10), 10.0, Color("#0b0f14"))
-	draw_circle(s + Vector2(0, -10), 8.0, body)
-	draw_circle(s + Vector2(0, -22), 6.0, Color("#cbd5e1"))
-	var aim: Vector2 = Vector2(cos(p.face), sin(p.face) * Data.SQUASH)
-	draw_line(s + Vector2(0, -12), s + Vector2(0, -12) + aim * 22.0, Color("#94a3b8"), 2.0)
+		tint = Color(1.0, 0.55, 0.55)
+	_draw_char(s, "player", p.face, moving, 40.0 if p.sneak else 46.0, tint)
 	# 头顶血条（只在受伤时）
 	if p.hp < 100.0:
 		var wgt := 34.0
@@ -600,10 +690,10 @@ func _draw_player(R, pw: float, ph: float) -> void:
 			COL["good"] if p.hp > 45.0 else COL["bad"], true)
 
 func _draw_rabid(s: Vector2, e) -> void:
-	var c := COL["rabid"].darkened(0.15 if e.brute else 0.0)
 	draw_circle(s + Vector2(0, 2), 11.0 if e.brute else 9.0, Color(0.0, 0.0, 0.0, 0.5))
-	draw_circle(s + Vector2(0, -8), 10.0 if e.brute else 8.0, c)
-	draw_circle(s + Vector2(0, -18), 5.5, Color("#fca5a5"))
+	var moving := _is_moving(e, s)
+	var face := float(_prev_dir.get(e, e.face))   # 朝最近移动方向
+	_draw_char(s, "rabid", face, moving, 52.0 if e.brute else 38.0)
 	# 撕咬前摇
 	if float(e.bite) > 0.2:
 		draw_arc(s + Vector2(0, -8), 16.0, -0.7, 0.7, 8, Color(1.0, 0.4, 0.4, 0.7), 2.0)
@@ -615,9 +705,6 @@ func _draw_rabid(s: Vector2, e) -> void:
 
 func _draw_osk(s: Vector2, e) -> void:
 	draw_circle(s + Vector2(0, 2), 9.0, Color(0.0, 0.0, 0.0, 0.5))
-	draw_circle(s + Vector2(0, -8), 8.0, Color("#1f3346"))
-	draw_circle(s + Vector2(0, -8), 8.0, COL["osk"], false, 2.0)
-	draw_circle(s + Vector2(0, -18), 5.0, Color("#0f1b26"))
 	# 手电锥
 	var half: float = 22.5 * PI / 180.0
 	var cone := PackedVector2Array([s + Vector2(0, -10)])
@@ -625,8 +712,9 @@ func _draw_osk(s: Vector2, e) -> void:
 		var a: float = float(e.face) - half + 2.0 * half * float(k) / 14.0
 		cone.append(s + Vector2(cos(a) * 14.0 * Data.PPM, sin(a) * 14.0 * Data.PPM * Data.SQUASH) + Vector2(0, -10))
 	draw_colored_polygon(cone, Color(0.55, 0.83, 0.98, 0.055 + 0.06 * clampf(float(e.suspect), 0.0, 1.0)))
-	draw_line(s + Vector2(0, -10), s + Vector2(0, -10) +
-		Vector2(cos(e.face), sin(e.face) * Data.SQUASH) * 20.0, COL["osk"], 2.0)
+	# 躯干：角色 sheet 贴图（站立/行走帧 + 朝向）
+	var moving := _is_moving(e, s)
+	_draw_char(s, "osk", e.face, moving, 46.0)
 	if float(e.lock) > 0.05:
 		draw_arc(s + Vector2(0, -8), 13.0, -PI / 2, -PI / 2 + TAU * clampf(float(e.lock), 0.0, 1.0),
 			18, Color("#7dd3fc"), 2.0)
@@ -634,8 +722,7 @@ func _draw_osk(s: Vector2, e) -> void:
 func _draw_half(s: Vector2, e) -> void:
 	var a := 0.85 + sin(float(e.ph) * 2.0) * 0.1
 	draw_circle(s + Vector2(0, 2), 7.0, Color(0.0, 0.0, 0.0, 0.4))
-	draw_circle(s + Vector2(0, -6), 6.5, Color(0.96, 0.62, 0.04, a))
-	draw_circle(s + Vector2(0, -14), 4.5, Color(0.99, 0.78, 0.3, a))
+	_draw_char(s, "half", PI / 2.0, false, 44.0, Color(1, 1, 1, a))
 	if sim.mate == "anna":
 		_draw_name(s + Vector2(0, -26), "0419 · 半人", "#f59e0b")
 	elif e.used:
