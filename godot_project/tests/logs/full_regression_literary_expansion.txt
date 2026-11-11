@@ -1,0 +1,22 @@
+[godot] C:\Users\admin\Downloads\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe
+[proj ] C:\Users\admin\Documents\ChatGPT\year-of-z-iron-winter-github-repo\year-of-z-iron-winter\godot_project
+
+=== 1) 导入资产（--import）===
+  import 退出码 0（约 25 条导入日志）
+
+=== 2) 跑 12 套测试 ===
+  [PASS] campaign_smoke.gd                 100 通过 / 0 失败 / 0 脚本错误  (8.2s)
+  [PASS] data_pipeline_smoke.gd            100 通过 / 0 失败 / 0 脚本错误  (0.6s)
+  [PASS] gym_smoke.gd                       63 通过 / 0 失败 / 0 脚本错误  (1.8s)
+  [PASS] night_beats_smoke.gd              237 通过 / 0 失败 / 0 脚本错误  (5.4s)
+  [PASS] night_combat_smoke.gd              58 通过 / 0 失败 / 0 脚本错误  (2.2s)
+  [PASS] night_explore_smoke.gd            134 通过 / 0 失败 / 0 脚本错误  (34.4s)
+  [PASS] night_follower_smoke.gd            15 通过 / 0 失败 / 0 脚本错误  (4.2s)
+  [PASS] night_level_smoke.gd              360 通过 / 0 失败 / 0 脚本错误  (5.5s)
+  [PASS] night_zones_smoke.gd              162 通过 / 0 失败 / 0 脚本错误  (10.8s)
+  [PASS] room_a_smoke.gd                    20 通过 / 0 失败 / 0 脚本错误  (5.5s)
+  [PASS] save_pause_smoke.gd                42 通过 / 0 失败 / 0 脚本错误  (5.6s)
+  [PASS] story_emotions_smoke.gd           229 通过 / 0 失败 / 0 脚本错误  (3.4s)
+
+=== 汇总：1520 通过 / 0 失败 / 0 脚本错误，共 12 套 ===
+结果：全部通过 ✅

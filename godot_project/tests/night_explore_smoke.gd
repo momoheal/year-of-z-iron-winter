@@ -293,6 +293,8 @@ func _run() -> void:
 	_assert(s.state == "choice" and s.choice_msg != "", "refusal keeps the panel open with a reason")
 	s.pack.append("asp")
 	_assert(s.choose(0), "feeding aspirin + hot water succeeds")
+	_assert(not s.floats.is_empty() and String(s.floats.back()["txt"]).contains("\n") \
+		and float(s.floats.back()["life"]) > 2.2, "long night dialogue wraps and stays readable")
 	_assert(s.state == "play" and h1.state == "saved", "half-human sleeps off the fever", h1.state)
 	_assert(is_equal_approx(s.conscience, 7.0) and s.half_saved == 1, "conscience +7, one saved", str(s.conscience))
 	_assert(not s.pack.has("asp") and not s.pack.has("water") and s.pack.has("intel"),

@@ -1,0 +1,100 @@
+[gd_resource type="Resource" script_class="EventData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/EventOptionData.gd" id="1_mkhkr"]
+[ext_resource type="Script" path="res://scripts/data/DeltaData.gd" id="2_m6wmn"]
+[ext_resource type="Script" path="res://scripts/data/EventData.gd" id="3_rn0w3"]
+
+[sub_resource type="Resource" id="Resource_v038n"]
+script = ExtResource("2_m6wmn")
+target = "stat"
+key = "sanity"
+amount = 8
+label_zh = "拒绝体面的赦免"
+label_en = "Refuse respectable absolution"
+
+[sub_resource type="Resource" id="Resource_iqmff"]
+script = ExtResource("2_m6wmn")
+target = "stat"
+key = "hp"
+amount = -3
+label_zh = "击碎玻璃的伤"
+label_en = "Cut by the mirror"
+
+[sub_resource type="Resource" id="Resource_dy6e8"]
+script = ExtResource("2_m6wmn")
+target = "flag"
+key = "double_defied"
+amount = 1
+label_zh = "拒绝白昼自我"
+label_en = "Double defied"
+
+[sub_resource type="Resource" id="Resource_qy638"]
+script = ExtResource("1_mkhkr")
+id = "defy_double"
+label_zh = "回答：拉娜不是一行油墨"
+label_en = "Answer: Lana is not a line of ink"
+on_success = Array[ExtResource("2_m6wmn")]([SubResource("Resource_v038n"), SubResource("Resource_iqmff"), SubResource("Resource_dy6e8")])
+result_text_zh = "你一拳砸向那张温和的笑脸。镜子裂开，每一片里却仍坐着一个戴蓝袖章的你；血流进掌纹时，他们齐声纠正：「是 0420。」你疼得发抖，却第一次敢直视那些碎片：「不。她先是我妹妹，然后才是你们的一行字。」白昼的幻象消失了，冻疮和罪却一样也没有少。"
+result_text_en = "You strike the mirror. Every fragment answers \"0420,\" but you insist she was your sister before she was their ink. The vision vanishes; your wounds and guilt remain."
+
+[sub_resource type="Resource" id="Resource_dues1"]
+script = ExtResource("2_m6wmn")
+target = "stat"
+key = "sanity"
+amount = 3
+label_zh = "暂时不必再争辩"
+label_en = "A temporary truce"
+
+[sub_resource type="Resource" id="Resource_ibifg"]
+script = ExtResource("2_m6wmn")
+target = "flag"
+key = "double_accepted"
+amount = 1
+label_zh = "接受白昼逻辑"
+label_en = "Double accepted"
+
+[sub_resource type="Resource" id="Resource_6nkgi"]
+script = ExtResource("1_mkhkr")
+id = "accept_double"
+label_zh = "承认：我只想做个合乎规矩的庸人"
+label_en = "Admit: I only want to be ordinary and obedient"
+on_success = Array[ExtResource("2_m6wmn")]([SubResource("Resource_dues1"), SubResource("Resource_ibifg")])
+result_text_zh = "镜中的人满意地点头，把一张二等核算主任的任命书贴在玻璃另一侧。可你伸手去接时，摸到的仍是自己冰凉的指尖。没有两箱腹透液，没有暖房，也没有谁真来赦免你；只有你终于承认，所谓庸人的幸福，有时不过是不再追问别人被运去了哪里。"
+result_text_en = "You accept his respectable appointment and find only your own cold fingertips. The comfort is real for one moment: the comfort of no longer asking where the trains go."
+
+[sub_resource type="Resource" id="Resource_dewjd"]
+script = ExtResource("2_m6wmn")
+target = "stat"
+key = "sanity"
+amount = -6
+label_zh = "把判断交给幻影"
+label_en = "Surrender judgement"
+
+[sub_resource type="Resource" id="Resource_cosbk"]
+script = ExtResource("2_m6wmn")
+target = "flag"
+key = "double_begged"
+amount = 1
+label_zh = "向幻影求助"
+label_en = "Begged the double"
+
+[sub_resource type="Resource" id="Resource_g2t7m"]
+script = ExtResource("1_mkhkr")
+id = "beg_double"
+label_zh = "跪下，求那个体面的自己替你决定"
+label_en = "Kneel and let your respectable self decide"
+on_success = Array[ExtResource("2_m6wmn")]([SubResource("Resource_dewjd"), SubResource("Resource_cosbk")])
+result_text_zh = "你跪下来，求他告诉你究竟怎样才算无罪。蓝袖章的幻影俯身扶你，动作温柔得像一位兄长：「你看，阿廖沙，连你的反抗也需要我批准。只要你还只想证明自己是个好人，你就永远是我的。」你猛然抬头，镜前却只剩一个人跪着，分不清刚才被扶起的是身体，还是最后一点抵抗。"
+result_text_en = "You beg him for innocence. He gently replies that even your rebellion needs his approval so long as you only wish to prove yourself good. When you look up, only one man is kneeling."
+
+[resource]
+script = ExtResource("3_rn0w3")
+id = "mirror_double"
+title_zh = "锅炉房镜子里的核算员"
+title_en = "The Clerk in the Boiler-Room Mirror"
+desc_zh = "午夜一点，你刚在《双面工作日志》背面划下一道血痕，锅炉房结霜的破镜里便走出另一个阿列克谢：蓝袖章、雪亮眼镜、体面铁路制服，连指甲缝也没有煤灰。他坐上蒸汽管，温和得像来探病的旧友：「阿廖沙，何必呢？拉娜已经是一行 0420 的油墨，你救不出墨水。把古丽娅那三页废纸交给督察官吧，你能换两箱瑞士 409 批腹透液，还能升任二等核算主任。妈能多活三年，你也能睡在有暖气的屋子里——做个合乎规矩的庸人有什么错？为什么非要当个满手冻疮的圣徒？」他没有辱骂你，也没有撒谎；正因如此，你才想立刻杀死他。"
+desc_en = "At 01:00 a blue-armbanded Aleksei steps from the frosted boiler-room mirror: clean uniform, bright glasses, no soot beneath his nails. Trade Gulya's pages for dialysis fluid and promotion, he says; Lana is already ink. His gentleness is worse than mockery because none of his arithmetic is false."
+phase = "night"
+trigger_chance = 0.75
+art_tag = "double"
+options = Array[ExtResource("1_mkhkr")]([SubResource("Resource_qy638"), SubResource("Resource_6nkgi"), SubResource("Resource_g2t7m")])

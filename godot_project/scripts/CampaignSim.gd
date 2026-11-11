@@ -85,8 +85,8 @@ func new_game() -> void:
 	mates = {"ash": false, "anna": false, "gulya": false, "pavel": false, "ivan": false}
 	for l in Data.LOCS:
 		nodes[l["id"]] = {"visits": 0, "left": 1.0, "hint": 0}
-	add_log("进入 602 室。母亲在透析机旁睡着了。",
-		"Entered Room 602. Mother is asleep beside the dialysis machine.")
+	add_log("你回到 602 室。母亲在透析机旁睡着了，眉头仍因疼痛紧锁；你放轻脚步，仿佛连呼吸也会成为一笔开销。",
+		"You return to Room 602. Mother sleeps beside the dialysis machine, her brow still knotted with pain; you soften even your breathing, as if it too had a price.")
 	_sync_logbook()
 
 # ============================================================================
@@ -628,6 +628,9 @@ func ending_preview() -> Dictionary:
 		"_": {"zh": "", "en": ""},
 	}
 	var t: Dictionary = texts.get(key, texts["_"])
+	if key != "ENDING_C_NUMBNESS":
+		t["zh"] = String(t["zh"]) + "\n\n" + Data.PASHA_EPILOGUE_ZH
+		t["en"] = String(t["en"]) + "\n\n" + Data.PASHA_EPILOGUE_EN
 	return {"key": key, "zh": String(t["zh"]), "en": String(t["en"])}
 
 # ============================================================================

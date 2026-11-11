@@ -3,6 +3,7 @@ extends CanvasLayer
 ## 生命/体力/体温、BPM、姿态/噪声、罐头/水、目标、撤离提示、toast、胜负横幅。
 
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
+const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
 
 var sim                       # Sim 纯数据对象（动态访问，不使用静态类型）
 var _bars: Dictionary = {}
@@ -132,23 +133,32 @@ func _ready() -> void:
 
 func _add_bar(parent: Node, key: String, label: String, c: Color) -> void:
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 6)
+	row.add_theme_constant_override("separation", 8)
 	var lab := Label.new()
 	lab.text = label
-	lab.custom_minimum_size = Vector2(72, 0)
+	lab.custom_minimum_size = Vector2(84, 0)
 	lab.add_theme_font_size_override("font_size", 12)
 	row.add_child(lab)
-	var bg := ColorRect.new()
-	bg.custom_minimum_size = Vector2(180, 14)
-	bg.size = Vector2(180, 14)
-	bg.color = Color(0.1, 0.12, 0.15)
-	var fill := ColorRect.new()
-	fill.color = c
-	fill.size = Vector2(180, 14)
-	bg.add_child(fill)
-	row.add_child(bg)
+	if key == "hp" or key == "warm":
+		var star := SovietStarMeter.new()
+		star.name = "StarMeter_" + key
+		star.fill = c
+		star.custom_minimum_size = Vector2(82, 72)
+		star.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		row.add_child(star)
+		_bars[key] = star
+	else:
+		var bg := ColorRect.new()
+		bg.custom_minimum_size = Vector2(180, 12)
+		bg.size = Vector2(180, 12)
+		bg.color = Color(0.1, 0.12, 0.15)
+		var fill := ColorRect.new()
+		fill.color = c
+		fill.size = Vector2(180, 12)
+		bg.add_child(fill)
+		row.add_child(bg)
+		_bars[key] = fill
 	parent.add_child(row)
-	_bars[key] = fill
 
 func bind_sim(s) -> void:
 	sim = s
@@ -157,9 +167,9 @@ func refresh() -> void:
 	if sim == null:
 		return
 	var p = sim.player
-	_bars["hp"].size.x = 180.0 * p.hp / 100.0
+	_bars["hp"].set_value(p.hp / 100.0)
 	_bars["stam"].size.x = 180.0 * p.stam / 100.0
-	_bars["warm"].size.x = 180.0 * p.warmth / 100.0
+	_bars["warm"].set_value(p.warmth / 100.0)
 	var stance: String = "蹲伏潜行" if p.sneak else ("冲刺" if p.sprint else "步行")
 	_meta.text = "BPM %d  ·  姿态:%s 噪声%.1fm  ·  空罐头×%d  ·  水×%d" % [
 		roundi(p.bpm), stance, sim.noise_hint, sim.cans, sim.water]

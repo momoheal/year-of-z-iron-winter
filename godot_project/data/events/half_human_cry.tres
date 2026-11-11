@@ -36,7 +36,7 @@ success_chance = 0.9
 costs = Array[ExtResource("2_ganms")]([SubResource("Resource_isq4t")])
 on_success = Array[ExtResource("2_ganms")]([SubResource("Resource_2hni1")])
 on_failure = Array[ExtResource("2_ganms")]([SubResource("Resource_o51l2")])
-result_text_zh = "罐头砸向远处，它循着声音摸了过去。"
+result_text_zh = "空铁皮罐头在远处的冰面上砸出清脆的回响，那个可怜的影子笨拙地转过身，循着响动跌跌撞撞地摸了过去。"
 result_text_en = "It follows the sound away."
 
 [sub_resource type="Resource" id="Resource_hjqkg"]
@@ -63,7 +63,7 @@ label_en = "Hold your breath and slip past"
 success_chance = 0.5
 on_success = Array[ExtResource("2_ganms")]([SubResource("Resource_1cjn1")])
 on_failure = Array[ExtResource("2_ganms")]([SubResource("Resource_hjqkg")])
-result_text_zh = "你贴着墙根，一寸寸挪了过去。"
+result_text_zh = "你死死咬住冻僵的嘴唇，贴着滴水的冰冷砖墙，像一抹真正的幽灵般从他颤抖的脊背旁一寸寸挪了过去。"
 result_text_en = "You inch along the wall."
 
 [sub_resource type="Resource" id="Resource_02c6f"]
@@ -106,7 +106,7 @@ label_en = "Strike first"
 success_chance = 0.75
 on_success = Array[ExtResource("2_ganms")]([SubResource("Resource_035ay"), SubResource("Resource_kbnlx")])
 on_failure = Array[ExtResource("2_ganms")]([SubResource("Resource_02c6f"), SubResource("Resource_jj5n1")])
-result_text_zh = "刀落下去，哭声戛然而止。"
+result_text_zh = "冰冷的铁器带着风声狠狠劈落，那阵令人心烦意乱的呜咽声戛然而止——黑暗重新归于死寂，只剩你自己的喘息。"
 result_text_en = "The blade falls; the crying stops."
 
 [resource]
@@ -114,7 +114,7 @@ script = ExtResource("3_jdsjv")
 id = "half_human_cry"
 title_zh = "黑暗里的半人"
 title_en = "The Half-Human in the Dark"
-desc_zh = "黑暗中传来退化半人的呜咽，它还没有发现你。"
+desc_zh = "伸手不见五指的废墟死角里，传来退化半人抱头撞墙的痛苦呜咽，他正陷在高热的神经风暴里，还没有察觉你的气息。"
 desc_en = "A regressed half-human whimpers in the dark; it has not seen you."
 phase = "night"
 trigger_chance = 0.85

@@ -1,4 +1,5 @@
 extends RefCounted
+const CampaignData := preload("res://scripts/CampaignData.gd")
 ## GymSim.gd — 《Z年纪事：凛冬铁轨》5 合 1 灰盒测试场 · 纯逻辑层（RefCounted）
 ##
 ## 1:1 对应 prototypes/Year_of_Z_Iron_Winter_Playable_Greybox_Gym.html 的 1100×680 逻辑竞技场：
@@ -69,8 +70,8 @@ const ROOM_BRIEF := {
 		"en": "Walk past the 3 cages with Ash: [I Rabid → Bark], [II Self-bound Anna 0419 → Whimper], [III Father with insulin → Tail Wag]. Press [E] at Cage II to hear where Lana is.",
 	},
 	"E": {
-		"zh": "先靠近备餐台按 [E] 拾取【东街宽背砍骨刀】，随后靠近右侧杂物间触发瓦西里破门扑击！按 [Space] 挥刀将 100% 触发【锁骨卡刀 6 连按 QTE】，听他在瞳孔回色时喊出“……Пить（渴）……”，并解锁按 [Q] 喝水的 PTSD 幻听。",
-		"en": "Press [E] at the butcher block for the [East St. Cleaver], then approach the pantry: Vasily bursts out in 40°C delirium! Press [Space] to strike—triggering the 6-hit Collarbone Blade Jam QTE, his eyes clearing as he whispers '…Пить (Thirsty)…', unlocking PTSD when you drink [Q].",
+		"zh": "先靠近备餐台按 [E] 拾取【东街宽背砍骨刀】，随后靠近右侧杂物间触发瓦西里破门扑击！按 [Space] 挥刀将 100% 触发【锁骨卡刀 6 连按 QTE】，听他在瞳孔回色时喊出“……Пить（水/渴）……”，并解锁按 [Q] 喝水的 PTSD 幻听。",
+		"en": "Press [E] at the butcher block for the [East St. Cleaver], then approach the pantry: Vasily bursts out in 40°C delirium! Press [Space] to strike—triggering the 6-hit Collarbone Blade Jam QTE, his eyes clearing as he whispers '…Пить (Water / Thirst)…', unlocking PTSD when you drink [Q].",
 	},
 }
 
@@ -410,10 +411,11 @@ func spawn_float(x: float, y: float, zh: String, en: String, color: String = "#f
 	var ft := FloatText.new()
 	ft.x = x
 	ft.y = y
-	ft.zh = zh
-	ft.en = en
+	ft.zh = CampaignData.wrap_float_text(zh, 42)
+	ft.en = CampaignData.wrap_float_text(en, 42)
 	ft.color = color
-	ft.life = 95.0
+	ft.life = 95.0 if not ft.zh.contains("\n") and not ft.en.contains("\n") \
+		else clampf(95.0 + maxi(zh.length(), en.length()) * 1.2, 160.0, 300.0)
 	floats.append(ft)
 
 func set_task(task_id: String, done: bool = true) -> void:
@@ -660,8 +662,8 @@ func interact() -> void:
 			"安娜 (0419号自愈吹哨人) & 妹妹拉娜 (0420号·锁在三号车厢)",
 			"Anna (File 0419 Recovered Witness) & Sister Lana (0420 · In Carriage No. 3)")
 		add_feed(
-			"【Room D · 安娜0419证言】用皮带自缚双手熬过退烧的安娜认出了拉娜的照片：『阿列克谢！拉娜的烧已经退了，她昨晚被清杀队锁进了铁壳号第三节闷罐车厢！』",
-			"[Room D · Anna 0419 Testimony] Self-bound Anna recognized Lana's photo: 'Alyosha! Lana's fever broke—last night they locked her inside Carriage No. 3 of the Buran!'",
+			"【Room D · 安娜0419证言】用皮带自缚双手熬过退烧的安娜认出了拉娜的照片：『阿列克谢！听我说，拉娜的高烧已经退了！她没有变成怪物，可昨晚清杀队还是按着名单，把她锁进了铁壳号的第三节闷罐车厢！』",
+			"[Room D · Anna 0419 Testimony] Self-bound Anna recognized Lana's photo: 'Alyosha, listen! Lana recovered. She never became a monster, yet last night the OSK followed their list and locked her inside Car 3!'",
 			"text-cyan-300"
 		)
 		set_task("D")
@@ -770,14 +772,14 @@ func qte_hit() -> void:
 		player.bpm = 168.0
 		_sfx("thirst")
 		spawn_float(vasily.x, vasily.y - 22.0,
-			"💧 瓦西里瞳孔回色：“……Пить（渴）……”",
-			"💧 Vasily's eyes clear to blue: '…Пить (Thirsty)…'", "#38bdf8")
+			"💧 瓦西里瞳孔回色：“……Пить（水/渴）……”",
+			"💧 Vasily's eyes clear to blue: '…Пить (Water / Thirst)…'", "#38bdf8")
 		add_verified("vasily_fyodorovich",
 			"瓦西里·费奥多罗维奇 (东街食堂 · 锁骨卡刀，死前瞳孔回色喊出“Пить渴”)",
 			"Vasily Fyodorovich (East St. Canteen · Eyes cleared before dying, whispered 'Пить')")
 		add_feed(
-			"【Room E · 锁骨卡刀与觉醒】你拔出了卡在瓦西里左锁骨缝里的砍骨刀！随着鲜血喷涌，他眼中的紫黑血翳消退，恢复了二十岁小伙子清澈的蓝眼睛，吐出半个俄语词：『……Пить（渴）……』！你已解锁永久【PTSD 干渴耳鸣】。",
-			"[Room E · Collarbone Blade Jam] You wrenched the cleaver free! As his fever broke in blood loss, Vasily's eyes cleared to blue and he whispered: '…Пить (Thirsty)…'! Unlocked permanent [PTSD Thirst Tinnitus].",
+			"【Room E · 锁骨卡刀与觉醒】你拔出了卡在瓦西里左锁骨缝里的砍骨刀！随着鲜血喷涌，他眼中的紫黑血翳消退，恢复了二十岁小伙子清澈的蓝眼睛，吐出半个俄语词：『……Пить（水/渴）……』！你已解锁永久【PTSD 干渴耳鸣】。",
+			"[Room E · Collarbone Blade Jam] You wrenched the cleaver free! As his fever broke in blood loss, Vasily's eyes cleared to blue and he whispered: '…Пить (Water / Thirst)…'! Unlocked permanent [PTSD Thirst Tinnitus].",
 			"text-rose-300"
 		)
 		set_task("E")
@@ -788,11 +790,11 @@ func drink() -> void:
 		ptsd_flash = 90.0
 		player.bpm = 152.0
 		spawn_float(player.x, player.y - 24.0,
-			"🧠 [PTSD耳鸣] 喉咙像吞了火炭，耳边回荡：“……Пить（渴）……”",
-			"🧠 [PTSD TINNITUS] Throat burns like charcoal—echoing: '…Пить (Thirsty)…'", "#f43f5e")
+			"🧠 [PTSD耳鸣] 喉咙像吞了火炭，耳边回荡：“……Пить（水/渴）……”",
+			"🧠 [PTSD TINNITUS] Throat burns like charcoal—echoing: '…Пить (Water / Thirst)…'", "#f43f5e")
 		add_feed(
-			"【PTSD 干渴幻听触发】你仰头喝下一口冰水，但吞咽末尾耳道里再次响起瓦西里临死前带着血泡的气音：『……Пить（渴）……』，心率飙升至 152 BPM！",
-			"[PTSD Thirst Tinnitus] You swallowed cold water, but at the end of the gulp Vasily's dying whisper echoed: '…Пить (Thirsty)…'! Heart rate spiked to 152 BPM!",
+			"【PTSD 干渴幻听触发】你仰头喝下一口冰水，但吞咽末尾耳道里再次响起瓦西里临死前带着血泡的气音：『……Пить（水/渴）……』，心率飙升至 152 BPM！",
+			"[PTSD Thirst Tinnitus] You swallowed cold water, but at the end of the gulp Vasily's dying whisper echoed: '…Пить (Water / Thirst)…'! Heart rate spiked to 152 BPM!",
 			"text-rose-400"
 		)
 	else:
@@ -987,7 +989,7 @@ func update(dt: float, move: Vector2, sprint_held: bool, mouse_world: Vector2) -
 		ambient_acc = 0.0
 		if half_human.status == "unresolved":
 			spawn_ripple(half_human.x, half_human.y, 65.0, "#e2e8f0",
-				"“……Воды（水）……拉娜在三号车厢……”", "'…Воды (Water)… Lana is in Car 3…'")
+				"“……Воды（给口水吧）……求求你……那个叫拉娜的护士姑娘……被他们塞进三号车厢拉走了……”", "'…Воды (Water, please)… the nurse named Lana…they took her away in Car 3…'")
 		if not fence_box.delivered:
 			spawn_ripple(fence_box.x + 28.0, fence_box.y, 55.0, "#f59e0b",
 				"刺啦——门底窄缝刮擦声", "Scrape—hand reaching under 12cm gap")

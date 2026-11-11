@@ -115,7 +115,10 @@ func _common(s: Node, tag: String) -> void:
 	_assert(s.get_node_or_null("HUD/Root/Dossier") != null, tag + " 有左上档案牌")
 	_assert(s.get_node_or_null("HUD/Root/Mission") != null, tag + " 有右上任务卡")
 	_assert(s.get_node_or_null("HUD/Root/Teletype") != null, tag + " 有底部电传条")
-	_assert(s._m_warm != null and s._m_hp != null, tag + " 两条分段仪表")
+	_assert(s._m_warm != null and s._m_hp != null, tag + " 双星生命仪表")
+	_assert(s._m_warm.segments == 10 and s._m_hp.segments == 10 \
+		and s._m_warm.has_method("lit_segments") and s._m_hp.has_method("lit_segments"),
+		tag + " 红黄五角星各有十个半角")
 	_assert(s._chrome != null and s._chrome.danger >= 0.0, tag + " 金属框读得到危险度")
 	# 关键物资点必须落在「必出 prize」的容器上（HUD 的方位读数不能指错）
 	# 一关可能有多个同 prize 的容器（调车场：发车令 + 水箱手稿），指向其中任意一个都算对

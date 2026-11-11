@@ -156,6 +156,14 @@ func _run_tests() -> void:
 	var before_water := int(sim.stash.get("water", 0))
 	_fresh_raid(sim, "coldstore")
 	_assert(sim.phase == "raid" and sim.raid != null, "28. depart enters the raid phase")
+	var R0 = sim.raid
+	R0.spawn_float(R0.player.x, R0.player.y,
+		"他眼底的紫黑血翳一点点退去，瞳孔重新聚起了人的光彩，他还记得一个能帮你的人。",
+		"His fever-dark eyes clear, and he remembers someone who can help you.", "#34d399")
+	var long_float = R0.floats.back()
+	_assert(String(long_float.zh).contains("\n") and String(long_float.en).contains("\n") \
+		and float(long_float.life) > 2.2, "28b. long combat dialogue wraps and stays readable",
+		"life=%s zh=%s en=%s" % [str(long_float.life), str(long_float.zh), str(long_float.en)])
 	_assert(int(sim.stash.get("water", 0)) == before_water - 1, "29. loadout deducted from stash")
 	var R = sim.raid
 	_assert(R.total_cont > 0, "30. raid spawns containers", str(R.total_cont))
@@ -345,6 +353,7 @@ func _run_tests() -> void:
 	# --- 15. 结局判定 ---------------------------------------------------------
 	sim.new_game()
 	_assert(sim.ending_key() == "ENDING_C_NUMBNESS", "74. no truth → ending C")
+	_assert(not String(sim.ending_preview()["zh"]).contains("帕沙"), "74b. no Eagle's Crag epilogue without truth")
 	sim.flags["truth"] = true
 	sim.mother_alive = false
 	_assert(sim.ending_key() == "TRUE_BETA_OUTLAND_FIRE", "75. truth without mother → TRUE β")
@@ -353,6 +362,7 @@ func _run_tests() -> void:
 	sim.flags.erase("betrayed")
 	sim.mother_alive = true
 	_assert(sim.ending_key() == "TRUE_ALPHA_HELLO_LANA", "77. truth + clean hands → TRUE α")
+	_assert(String(sim.ending_preview()["zh"]).contains("帕沙"), "77b. Pasha epilogue follows the breakout")
 	sim.tally = 1
 	_assert(sim.ending_key() == "ENDING_B_FLAWED_LIBERATION", "78. strokes → ending B")
 	sim.mother_alive = false

@@ -33,7 +33,9 @@ func _run_tests() -> void:
 	catalog.load_all()
 
 	# 1) 加载数量
-	check(catalog.count() == 5, "catalog 加载 5 个事件 .tres")
+	check(catalog.count() == 7, "catalog 加载 7 个事件 .tres")
+	check(String(catalog.get_event("drunk_father").desc_zh).contains("棺材"), "马卡尔事件保留自虐式父亲母题")
+	check(String(catalog.get_event("mirror_double").desc_zh).contains("蓝袖章"), "镜中双我事件保留白昼自我")
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 12345
@@ -70,13 +72,18 @@ func _run_tests() -> void:
 				if d.target == "item" and d.amount < 0:
 					check(total >= 0, "物品消耗后不会为负 (%s)" % d.key)
 
-	# popup 结果态
+	# popup 结果态与工业指令牌样式
 	popup.show_event(catalog.get_event("steam_pipe_leak"))
+	var event_button := popup._buttons.get_child(0) as Button
+	check(event_button != null and event_button.get_node_or_null("CommandChrome") != null,
+		"EventPopup 选项使用铆接指令牌")
+	check(popup._continue_btn.get_node_or_null("CommandChrome") != null,
+		"EventPopup 继续按钮使用铆接指令牌")
 	popup.show_result("测试结果", "test result")
 	check(popup._continue_btn.visible, "show_result 后继续按钮可见")
 
 	# 3) 阶段过滤
-	check(catalog.events_for_phase("night").size() == 5, "night 阶段包含全部事件")
+	check(catalog.events_for_phase("night").size() == 7, "night 阶段包含全部事件")
 	check(catalog.events_for_phase("base").size() == 0, "base 阶段无事件（正确过滤）")
 
 	# 4) 零代码新事件验收：模拟「复制 .tres、改字段」

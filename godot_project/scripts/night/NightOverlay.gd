@@ -48,8 +48,10 @@ func _draw() -> void:
 		if bool(hm.get("kill", false)):
 			hc = Color(1.0, 0.28, 0.24, ha)
 		var hp2: Vector2 = hm["pos"]
-		for d in [Vector2(-7, -7), Vector2(7, 7), Vector2(-7, 7), Vector2(7, -7)]:
-			draw_line(hp2, hp2 + d, hc, 2.4, true)
+		var spread := 7.0 + (1.0 - ha) * 9.0
+		for d in [Vector2(-spread, -spread), Vector2(spread, spread), Vector2(-spread, spread), Vector2(spread, -spread)]:
+			draw_line(hp2, hp2 + d, hc, 3.4 if bool(hm.get("kill", false)) else 2.8, true)
+		draw_circle(hp2, 2.4, hc)
 	# 撤离点
 	var ex: Vector2 = ctl.exit_px
 	var pulse := 0.5 + 0.5 * sin(ctl.t * 3.0)
@@ -162,7 +164,9 @@ func _draw() -> void:
 	for f in ctl.floats:
 		var fc: Color = f["col"]
 		fc.a = clampf(float(f["life"]), 0.0, 1.0)
-		_text(f["pos"], String(f["txt"]), fc, 17)
+		var rows := String(f["txt"]).split("\n")
+		for ri in rows.size():
+			_text(Vector2(f["pos"]) + Vector2(0, 22.0 * ri), rows[ri], fc, 17)
 
 func _cont_name(c: Node) -> String:
 	var k := String(c.get_meta("container", "crate"))

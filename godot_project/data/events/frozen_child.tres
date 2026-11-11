@@ -34,7 +34,7 @@ label_zh = "把热水壶留给她"
 label_en = "Leave her the hot water"
 costs = Array[ExtResource("2_e6imk")]([SubResource("Resource_mo0g1")])
 on_success = Array[ExtResource("2_e6imk")]([SubResource("Resource_t1tnw"), SubResource("Resource_3g68o")])
-result_text_zh = "她捧着水壶，嘴唇终于有了一点颜色。"
+result_text_zh = "她用冻得像胡萝卜似的小手死死抱住温热的水壶，贴在心口，青紫的嘴唇上终于泛起了一丝活人的血色。"
 result_text_en = "Colour returns to her lips."
 
 [sub_resource type="Resource" id="Resource_3tu4c"]
@@ -67,7 +67,7 @@ label_zh = "分她半把黑麦"
 label_en = "Share some grits"
 costs = Array[ExtResource("2_e6imk")]([SubResource("Resource_3tu4c")])
 on_success = Array[ExtResource("2_e6imk")]([SubResource("Resource_s06aw"), SubResource("Resource_83fxb")])
-result_text_zh = "你把碎粒塞进她冻僵的手心。"
+result_text_zh = "你把粗糙的冷黑麦碎粒塞进她僵硬的手心，她连雪带米一口吞了下去，仰起脸冲你流下一行无声的泪。"
 result_text_en = "You press the grits into her hand."
 
 [sub_resource type="Resource" id="Resource_mtc7x"]
@@ -92,7 +92,7 @@ id = "leave"
 label_zh = "什么都不留，走开"
 label_en = "Leave her nothing"
 on_success = Array[ExtResource("2_e6imk")]([SubResource("Resource_mtc7x"), SubResource("Resource_jmlnj")])
-result_text_zh = "你听见身后的哭声一点点弱下去。"
+result_text_zh = "你狠下心裹紧大衣快步走上台阶，身后那点微弱得像小猫一样的抽泣声，在风雪里一点点彻底冷了下去。"
 result_text_en = "The crying behind you fades."
 
 [resource]
@@ -100,7 +100,7 @@ script = ExtResource("3_ncbh2")
 id = "frozen_child"
 title_zh = "冻僵的孩子"
 title_en = "The Frozen Child"
-desc_zh = "楼梯间里，一个孩子蜷在墙角，冻得只剩一口气。"
+desc_zh = "结满冰溜子的楼梯间死角里，一个瘦小的女孩蜷缩在水泥墙根下，冻得乌青的嘴唇只剩下一丝若有若无的白气。"
 desc_en = "A child huddles in the stairwell, barely breathing from the cold."
 phase = "night"
 trigger_chance = 0.9

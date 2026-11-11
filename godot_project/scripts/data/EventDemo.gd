@@ -1,5 +1,6 @@
 class_name EventDemo
 extends Control
+const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 ## EventDemo.gd — 数据管线演示控制器。
 ##
 ## 串起「EventCatalog(.tres) -> EventPopup(通用UI) -> EventResolver(结算)
@@ -50,11 +51,14 @@ func _ready() -> void:
 	_draw_btn = Button.new()
 	_draw_btn.text = "抽取一个夜潜事件（Enter）"
 	_draw_btn.custom_minimum_size = Vector2(0, 44)
+	SovietUI.dress_button(_draw_btn, true, 16)
 	_draw_btn.pressed.connect(draw_event)
 	root.add_child(_draw_btn)
 
 	var lang_btn := Button.new()
 	lang_btn.text = "切换语言 / Language"
+	lang_btn.custom_minimum_size = Vector2(0, 40)
+	SovietUI.dress_button(lang_btn, false, 15)
 	lang_btn.pressed.connect(_toggle_lang)
 	root.add_child(lang_btn)
 

@@ -30,6 +30,7 @@ const TEX_SPARK := preload("res://art/50_vfx/VFX_Impact_Spark.png")
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const SovietMeter := preload("res://scripts/ui/SovietMeter.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
+const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
 const PauseMenuScript := preload("res://scripts/ui/PauseMenu.gd")
 
 const PPM := 64.0
@@ -48,7 +49,7 @@ const NIGHT_MOD := Color(0.27, 0.32, 0.45)                # 与场景里 CanvasM
 const INTERIOR_MOD := Color(0.40, 0.45, 0.58)             # 室内关：抬一点冷色底光，别让地面材质黑成一片
 const DAWN_MOD := Color(0.60, 0.575, 0.565)               # 黎明前的清灰（比夜色亮、比白天冷）
 const DAWN_SNOW_A := 0.5                                  # 天亮时雪粒子留多少
-const INTERIOR_LEVELS := ["canteen", "sanitarium"]        # 室内关：雪只在地面贴图里（破窗飘入），不挂满屏飘雪
+const INTERIOR_LEVELS := ["canteen", "sanitarium", "boiler", "underpass", "workshop", "greenhouse", "archive"] # 室内关：雪只在地面贴图里，不挂满屏飘雪
 var base_mod := NIGHT_MOD                                 # 夜色基准：室内关换成 INTERIOR_MOD
 # ---- 声音（P2.5）----
 const MASK_BREATH_M := 4.0                                # 面具呼吸的可闻半径（规划 P2.5：4 米）
@@ -190,6 +191,14 @@ var _brief_lbl: Label
 var _choice_panel: PanelContainer
 var _choice_head: Label
 var _choice_lbl: Label
+var _osk_bark_panel: PanelContainer = null
+var _osk_bark_portrait: TextureRect = null
+var _osk_bark_speaker: Label = null
+var _osk_bark_label: Label = null
+var _osk_bark_life := 0.0
+var _osk_bark_priority := 0
+var osk_last_bark: Dictionary = {}
+var _hit_stop_serial := 0
 
 # ============================================================================
 # 关卡导演（LevelBeats.gd 的数据在这里跑）
@@ -382,6 +391,8 @@ func _wire_audio() -> void:
 
 
 func _exit_tree() -> void:
+	Engine.time_scale = 1.0
+	_hit_stop_serial += 1
 	# M 键 / 战役带过来的静音是按主总线做的，别把它留给下一个场景
 	AudioServer.set_bus_mute(0, false)
 	# 暂停菜单开着时切场景 / 退出：别把整棵树留在暂停态
@@ -431,6 +442,12 @@ func _setup_breath() -> void:
 func _process(delta: float) -> void:
 	t += delta
 	hurt = maxf(0.0, hurt - delta)
+	if _osk_bark_life > 0.0:
+		_osk_bark_life = maxf(0.0, _osk_bark_life - delta)
+		if _osk_bark_life <= 0.0:
+			_osk_bark_priority = 0
+			if _osk_bark_panel != null:
+				_osk_bark_panel.visible = false
 	cam.global_position = player.global_position + Vector2(0, -40)
 	_apply_shake(delta)
 	if state == "play":
@@ -669,9 +686,9 @@ func _survivor_lines() -> void:
 			continue
 		survivor_seen[n.name] = true
 		var role := String(n.get_meta("role", "survivor"))
-		var line := "「别站在灯底下。」"
+		var line := "「不想变成账本上的死数字，就别站在探照灯底下！」"
 		if role == "trader":
-			line = "「罐头换子弹，别的免谈。」"
+			line = "「黑麦罐头换步枪子弹，一物换一物，眼泪和良心在这儿免谈。」"
 		spawn_float(n.global_position + Vector2(0, -120), line, Color("#c7d2fe"))
 
 
@@ -731,12 +748,12 @@ func choose(idx: int) -> bool:
 			h.save()
 			if pack.size() < bag_max:
 				pack.append("intel")
-			spawn_float(top, "他的瞳孔回色了：「……水塔下面，找戴蓝毛线帽的老头……」", Color("#34d399"))
+			spawn_float(top, "他眼底的紫黑血翳一点点退去，瞳孔重新聚起了人的光彩：「……谢谢你没拿撬棍砸死我……去西站水塔底下，找那个戴蓝毛线帽的老列车长……」", Color("#34d399"))
 			sfx.play("beep")
 		1:
 			conscience -= 2.0
 			h.resolved = "left"
-			spawn_float(top, "你绕开了他。他还在烧。", Color("#94a3b8"))
+			spawn_float(top, "你绕开了他。身后的呜咽仍在追你，仿佛那不是他的声音，而是你自己的。", Color("#94a3b8"))
 		_:
 			conscience -= 10.0
 			tally += 1
@@ -756,12 +773,12 @@ func on_half_killed(h, by: String) -> void:
 			h.resolved = "mercy"
 			tally += 1
 			conscience -= 10.0
-		spawn_float(h.global_position + Vector2(0, -124), "撬棍落下。日志背面多了一道卌。", Color("#fbbf24"))
+		spawn_float(h.global_position + Vector2(0, -124), "撬棍落下。日志背面多了一道卌；你忽然不敢确定，这一道究竟记的是他，还是你。", Color("#fbbf24"))
 		return
 	h.resolved = "osk"
 	half_lost += 1
 	conscience -= 4.0
-	spawn_float(h.global_position + Vector2(0, -124), "清杀队打死了半人 %s —— 他还有瞳孔。" % h.tag,
+	spawn_float(h.global_position + Vector2(0, -124), "清杀队打死了半人 %s —— 他方才还会喊渴，眼睛里还映着灯。" % h.tag,
 		Color("#fca5a5"))
 
 func interact_point(c: Node2D) -> Vector2:
@@ -1023,13 +1040,47 @@ func raise_alarm(pos: Vector2, _by: Node) -> void:
 		if dist_m(s.global_position, pos) <= 30.0:
 			s.alert_to(pos)
 
+func show_osk_bark(kind: String) -> void:
+	var data: Dictionary = Data.OSK_BARKS.get(kind, {})
+	if data.is_empty():
+		return
+	var priority: int = {"warning": 1, "chase": 2, "execute": 3, "death": 4}.get(kind, 0)
+	if _osk_bark_life > 0.45 and priority < _osk_bark_priority:
+		return
+	var lines: Array = data.get("lines", [])
+	if lines.is_empty():
+		return
+	var line: Dictionary = lines[rng.randi_range(0, lines.size() - 1)]
+	var mood := String(data.get("mood", "calm"))
+	var file := "Calm"
+	match mood:
+		"intense": file = "Intense"
+		"death": file = "Death"
+	_osk_bark_life = 3.4 if kind != "death" else 4.2
+	_osk_bark_priority = priority
+	osk_last_bark = {"kind": kind, "mood": mood, "zh": String(line.get("zh", ""))}
+	if _osk_bark_portrait != null:
+		_osk_bark_portrait.texture = load("res://art/10_characters/portraits/PRT_OSK_%s.png" % file)
+	if _osk_bark_speaker != null:
+		_osk_bark_speaker.text = "ОСК · " + String(data.get("speaker_zh", "清杀队"))
+	if _osk_bark_label != null:
+		_osk_bark_label.text = String(line.get("zh", ""))
+	if _osk_bark_panel != null:
+		_osk_bark_panel.visible = true
+
+func on_soldier_warning(_s: Node) -> void:
+	show_osk_bark("warning")
+	sfx.play("radio", -8.0)
+
 func on_soldier_alert(_s: Node) -> void:
+	show_osk_bark("chase")
 	sfx.play("radio", -3.0)          # 面具里的电台叫了一声：他们开始喊人了
 	add_shake(0.16)
 
 func caught(by: Node) -> void:
 	if state != "play":
 		return
+	show_osk_bark("execute")
 	caught_by = String(by.name)
 	if by is Node2D:
 		sfx.play_at("gunshot", (by as Node2D).global_position, 0.0, 0.02)
@@ -1546,9 +1597,22 @@ func _hit_radius(e: Node) -> float:
 	return float(Arsenal.HIT_R["half"])
 
 
-func _damage_enemy(e: Node, dmg: float, by: String) -> void:
-	if e.has_method("hit"):
-		e.hit(dmg, by)
+func _damage_enemy(e: Node, dmg: float, by: String, melee := false) -> void:
+	if not e.has_method("hit"):
+		return
+	# 命中确认的三段式：极短停帧 → 敌人暖白闪 → 震动/命中标记/血雾。
+	# 只冻结几十毫秒，不改变武器伤害、AI 判定或战役结算。
+	var spr = e.get("sprite")
+	if spr is Sprite2D:
+		spr.modulate.r = 2.4
+		spr.modulate.g = 1.9
+		spr.modulate.b = 1.35
+		var flash: Tween = spr.create_tween().set_parallel(true)
+		flash.tween_property(spr, "modulate:r", 1.0, 0.13)
+		flash.tween_property(spr, "modulate:g", 1.0, 0.13)
+		flash.tween_property(spr, "modulate:b", 1.0, 0.13)
+	hit_stop(0.058 if melee else 0.028)
+	e.hit(dmg, by)
 
 
 ## 撬棍：扇形近战。安静，但要贴到 1.9m 内，而且一次只能挑一个。
@@ -1575,14 +1639,14 @@ func melee_swing() -> void:
 			bd = d
 			best = e
 	if best != null:
-		_damage_enemy(best, float(w.get("dmg", 34.0)), "player")
-		sfx.play_at("crowbar_hit", best.global_position, -1.0)
-		add_shake(0.24)
-		punch = 0.6
+		_damage_enemy(best, float(w.get("dmg", 34.0)), "player", true)
+		sfx.play_at("crowbar_hit", best.global_position, 0.0)
+		add_shake(0.46)
+		punch = 0.85
 		hit_marks.append({"pos": best.global_position + Vector2(0, -46), "life": 0.45,
 			"kill": not best.has_method("is_alive") or not best.is_alive()})
 		_spawn_vfx(TEX_BLOOD,
-			best.global_position + Vector2(0, -44), 0.8, 0.3)
+			best.global_position + Vector2(0, -44), 1.15, 0.36)
 	emit_noise(player.global_position, float(w.get("noise", 4.5)), "step", true)
 
 
@@ -1619,6 +1683,7 @@ func on_soldier_hurt(s: Node, _by: String) -> void:
 
 
 func on_soldier_killed(s: Node, _by: String) -> void:
+	show_osk_bark("death")
 	soldier_kills += 1
 	conscience -= 0.5
 	_splat(s.global_position)
@@ -1638,8 +1703,9 @@ const FLOAT_LINE := 24.0         # 浮字行高：同一处同时冒出几句时
 const FLOAT_MAX := 6             # 屏幕上同时最多几句浮字，多了挤掉最旧的
 
 func spawn_float(pos: Vector2, txt: String, col: Color) -> void:
-	# 同一处同时冒出好几句（借刀 + 进区 + 勘踏 + 撤离提示）时逐行往上错开，别糊成一团
-	var p := pos
+	var wrapped := Data.wrap_float_text(txt)
+	var rows := wrapped.split("\n")
+	var p := pos - Vector2(0, FLOAT_LINE * (rows.size() - 1))
 	for _i in 8:
 		var clash := false
 		for f in floats:
@@ -1650,7 +1716,8 @@ func spawn_float(pos: Vector2, txt: String, col: Color) -> void:
 		if not clash:
 			break
 		p.y -= FLOAT_LINE
-	floats.append({"pos": p, "txt": txt, "col": col, "life": 2.2})
+	var life := 2.2 if rows.size() == 1 else clampf(2.2 + txt.length() * 0.055, 3.5, 7.0)
+	floats.append({"pos": p, "txt": wrapped, "col": col, "life": life})
 	while floats.size() > FLOAT_MAX:
 		floats.pop_front()
 
@@ -1761,6 +1828,15 @@ func tension_level() -> float:
 ## 镜头震动：trauma 模型（shake² 决定幅度），受伤 / 枪声 / 扑咬 / 警报 / 结局都往里加。
 func add_shake(amount: float) -> void:
 	shake = clampf(shake + amount, 0.0, 1.0)
+
+
+func hit_stop(duration: float) -> void:
+	_hit_stop_serial += 1
+	var serial := _hit_stop_serial
+	Engine.time_scale = 0.08
+	await get_tree().create_timer(duration, true, false, true).timeout
+	if serial == _hit_stop_serial:
+		Engine.time_scale = 1.0
 
 
 func _apply_shake(delta: float) -> void:
@@ -2140,11 +2216,16 @@ func _build_hud() -> void:
 	lv.add_child(sub)
 	lv.add_child(SovietUI.rule(SovietUI.STEEL, 1))
 
-	# 仪表：体温 / 健康（分段式，掉格看得见）
-	var warm_row := _meter_row(lv, "体温", "ТЕПЛО", SovietUI.SIGNAL)
+	# 双星生命仪表：红色生命、钠灯黄体温；每半个星角代表 10%。
+	var stars := HBoxContainer.new()
+	stars.name = "StarVitals"
+	stars.add_theme_constant_override("separation", 24)
+	stars.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lv.add_child(stars)
+	var warm_row := _meter_row(stars, "体温", "ТЕПЛО", SovietUI.SIGNAL)
 	_m_warm = warm_row[0]
 	_lbl_warm_val = warm_row[1]
-	var hp_row := _meter_row(lv, "健康", "ЗДОРОВЬЕ", SovietUI.BLOOD_LIT)
+	var hp_row := _meter_row(stars, "生命", "ЗДОРОВЬЕ", SovietUI.BLOOD_LIT)
 	_m_hp = hp_row[0]
 	_lbl_hp_val = hp_row[1]
 
@@ -2227,6 +2308,45 @@ func _build_hud() -> void:
 	bh.add_child(_lbl_hint)
 	var tail := _mono_label("№ 0420", 10, SovietUI.BONE_DIM)
 	bh.add_child(tail)
+
+	# ---- 清杀队短对白：右下角头像，不暂停战斗、不挡住底部操作提示 ----
+	_osk_bark_panel = PanelContainer.new()
+	_osk_bark_panel.name = "OSKBark"
+	_osk_bark_panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	_osk_bark_panel.offset_left = -610
+	_osk_bark_panel.offset_right = -26
+	_osk_bark_panel.offset_top = -288
+	_osk_bark_panel.offset_bottom = -102
+	_osk_bark_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_osk_bark_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_osk_bark_panel.add_theme_stylebox_override("panel",
+		SovietUI.plate(Color(0.035, 0.04, 0.042, 0.96), SovietUI.BLOOD_LIT, 2, 12))
+	_osk_bark_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_osk_bark_panel.visible = false
+	hud_root.add_child(_osk_bark_panel)
+	var oh := HBoxContainer.new()
+	oh.add_theme_constant_override("separation", 14)
+	oh.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_osk_bark_panel.add_child(oh)
+	_osk_bark_portrait = TextureRect.new()
+	_osk_bark_portrait.custom_minimum_size = Vector2(132, 132)
+	_osk_bark_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_osk_bark_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_osk_bark_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	oh.add_child(_osk_bark_portrait)
+	var ov := VBoxContainer.new()
+	ov.add_theme_constant_override("separation", 8)
+	ov.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ov.alignment = BoxContainer.ALIGNMENT_CENTER
+	ov.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	oh.add_child(ov)
+	_osk_bark_speaker = _mono_label("ОСК · 清杀队", 12, SovietUI.BLOOD_LIT)
+	ov.add_child(_osk_bark_speaker)
+	_osk_bark_label = _label("", 17, SovietUI.BONE)
+	_osk_bark_label.custom_minimum_size = Vector2(398, 0)
+	_osk_bark_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_osk_bark_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ov.add_child(_osk_bark_label)
 
 	# ---- 开场档案卡（七秒后自己淡掉） ----
 	_brief_card = PanelContainer.new()
@@ -2324,10 +2444,12 @@ func _mono_label(txt: String, size: int, col: Color) -> Label:
 	return l
 
 
-## 一行分段仪表：返回 [仪表, 数值 Label]（体温 / 健康共用一套）
+## 一枚十格五角星仪表：返回 [仪表, 数值 Label]（体温 / 健康共用一套）
 func _meter_row(parent: Node, zh: String, ru: String, col: Color) -> Array:
 	var row := VBoxContainer.new()
 	row.add_theme_constant_override("separation", 2)
+	row.custom_minimum_size = Vector2(226, 0)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(row)
 	var head := HBoxContainer.new()
@@ -2338,14 +2460,14 @@ func _meter_row(parent: Node, zh: String, ru: String, col: Color) -> Array:
 	head.add_child(nm)
 	var val := _mono_label("100%", 12, col)
 	head.add_child(val)
-	var m = SovietMeter.new()
-	m.name = "Meter"
+	var m = SovietStarMeter.new()
+	m.name = "StarMeter_" + zh
 	m.fill = col
-	m.fill_low = SovietUI.BLOOD_LIT
+	m.fill_low = SovietUI.FROST if zh == "体温" else Color("e04432")
 	m.track = SovietUI.INK
-	m.edge = SovietUI.STEEL
-	m.custom_minimum_size = Vector2(0, 15)
-	m.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	m.edge = SovietUI.OCHRE_DIM if zh == "体温" else SovietUI.STEEL_LIT
+	m.custom_minimum_size = Vector2(104, 94)
+	m.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	row.add_child(m)
 	return [m, val]
 

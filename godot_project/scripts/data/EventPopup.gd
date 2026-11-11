@@ -1,5 +1,6 @@
 class_name EventPopup
 extends Control
+const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 ## EventPopup.gd — 通用事件弹窗（唯一的事件/交互 UI 预制体）。
 ##
 ## 给定一个 EventData 就自动渲染标题、描述与选项按钮；
@@ -46,6 +47,7 @@ func _ready() -> void:
 	_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
 	_panel.custom_minimum_size = Vector2(640, 0)
+	_panel.add_theme_stylebox_override("panel", SovietUI.archive_panel())
 	add_child(_panel)
 
 	var margin := MarginContainer.new()
@@ -61,11 +63,17 @@ func _ready() -> void:
 
 	_title = Label.new()
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	SovietUI.label_font(_title, "display")
+	_title.add_theme_font_size_override("font_size", 24)
+	_title.add_theme_color_override("font_color", SovietUI.OCHRE)
 	box.add_child(_title)
 
 	_desc = Label.new()
 	_desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	SovietUI.label_font(_desc)
+	_desc.add_theme_font_size_override("font_size", 16)
+	_desc.add_theme_color_override("font_color", SovietUI.BONE)
 	box.add_child(_desc)
 
 	_buttons = VBoxContainer.new()
@@ -74,12 +82,15 @@ func _ready() -> void:
 
 	_result = Label.new()
 	_result.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_result.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_result.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	SovietUI.label_font(_result)
+	_result.add_theme_color_override("font_color", SovietUI.BONE_DIM)
 	_result.visible = false
 	box.add_child(_result)
 
 	_continue_btn = Button.new()
 	_continue_btn.text = "继续 / Continue"
+	SovietUI.dress_button(_continue_btn, true, 16)
 	_continue_btn.visible = false
 	_continue_btn.pressed.connect(_on_continue)
 	box.add_child(_continue_btn)
@@ -104,6 +115,8 @@ func show_event(ev: EventData) -> void:
 	for option in ev.options:
 		var b := Button.new()
 		b.text = _t(option.label_zh, option.label_en)
+		b.custom_minimum_size = Vector2(0, 42)
+		SovietUI.dress_choice_button(b, "neutral", 15)
 		b.pressed.connect(_on_option.bind(option))
 		_buttons.add_child(b)
 	visible = true

@@ -195,6 +195,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif sim.logbook_open:
 				sim.logbook_open = false
 			return
+		if (k == KEY_SPACE or k == KEY_ENTER or k == KEY_KP_ENTER) and sim.story_open:
+			hud.advance_story()
+			return
 		if k == KEY_F1:
 			get_tree().change_scene_to_file("res://scenes/gym.tscn")
 			return
@@ -563,10 +566,13 @@ func _draw_raid() -> void:
 		var fp: Vector2 = project(R, f2.x, f2.y)
 		var txt: String = String(f2.zh if sim.lang == "zh" else f2.en)
 		var fs3 := 17
-		var w2: float = font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs3).x
 		var fc := Color(String(f2.color))
 		fc.a = clampf(f2.life, 0.0, 1.0)
-		draw_string(font, fp + Vector2(-w2 / 2.0, 0), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs3, fc)
+		var rows := txt.split("\n")
+		for ri in rows.size():
+			var row := rows[ri]
+			var w2: float = font.get_string_size(row, HORIZONTAL_ALIGNMENT_LEFT, -1, fs3).x
+			draw_string(font, fp + Vector2(-w2 / 2.0, 20.0 * ri), row, HORIZONTAL_ALIGNMENT_LEFT, -1, fs3, fc)
 
 var _prev_pos: Dictionary = {}    # 实体上一帧屏幕位置（移动 / 朝向检测）
 var _prev_dir: Dictionary = {}    # 实体最近移动方向（弧度）

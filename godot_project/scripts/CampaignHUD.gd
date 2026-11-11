@@ -2,7 +2,7 @@ extends CanvasLayer
 ## CampaignHUD.gd — 「一夜」探索循环的 CanvasLayer 界面层（纯代码构建，无 .tscn 依赖）。
 ##
 ## 对应 HTML Exploration Demo 的四块界面：
-##   · 顶栏：标题 / 第 N 天 / 卌 划痕 / 语言 / 日志 / 帮助 / 音效 / 跳转灰盒场
+##   · 顶栏：标题 / 第 N 天 / 卌 划痕 / 语言 / 日志 / 帮助 / 音效 / 跳转机制场
 ##   · 基地：三栏（状态 · 队伍与武器库 · 目标 / 地点 / 真名 / 事件）
 ##   · 地图：右侧节点卡（危险 / 时长 / 寒冷 / 物资 / 容器余量 / 伙伴 / 携带物 / 出发）
 ##   · 结算：带回物资 / 本次记录 / 事件 / 武器架更新 / 日志背面
@@ -17,6 +17,7 @@ const Data := preload("res://scripts/CampaignData.gd")
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const LevelBeats := preload("res://scripts/night/LevelBeats.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
+const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
 
 const SCREEN := Vector2(1920, 1080)
 const TOP_H := 70.0
@@ -32,15 +33,84 @@ const MATE_ART := {
 	"pavel": "res://art/30_props/PRP_Pavel_Stand.png",
 	"ivan": "res://art/30_props/PRP_Ivan_Stand.png",
 }
-# 剧情对话框右下角说话者表情头像（story_id → 胸像）
+# 剧情角色三态胸像：calm 平静 / sad 悲伤 / intense 激动
 const STORY_PORTRAITS := {
-	"coldstore": preload("res://art/10_characters/portraits/PRT_Chernov.png"),
-	"canteen": preload("res://art/10_characters/portraits/PRT_Fyodor.png"),
-	"market": preload("res://art/10_characters/portraits/PRT_Ivan.png"),
-	"sanitarium": preload("res://art/10_characters/portraits/PRT_Anna.png"),
-	"yard": preload("res://art/10_characters/portraits/PRT_Aleksei.png"),
-	"manor": preload("res://art/10_characters/portraits/PRT_Aleksei.png"),
-	"marshalling": preload("res://art/10_characters/portraits/PRT_Aleksei.png"),
+	"aleksei": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Aleksei_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Aleksei_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Aleksei_Intense.png"),
+	},
+	"chernov": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Chernov_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Chernov_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Chernov_Intense.png"),
+	},
+	"fyodor": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Fyodor_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Fyodor_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Fyodor_Intense.png"),
+	},
+	"ivan": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Ivan_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Ivan_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Ivan_Intense.png"),
+	},
+	"anna": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Anna_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Anna_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Anna_Intense.png"),
+	},
+	"pasha": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Pasha_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Pasha_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Pasha_Intense.png"),
+	},
+	"gulya": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Gulya_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Gulya_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Gulya_Intense.png"),
+	},
+	"lana": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Lana_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Lana_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Lana_Intense.png"),
+	},
+	"pavel": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Pavel_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Pavel_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Pavel_Intense.png"),
+	},
+	"ash": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Ash_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Ash_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Ash_Intense.png"),
+	},
+	"leonov": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Leonov_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Leonov_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Leonov_Intense.png"),
+	},
+}
+const STORY_SPEAKERS := {
+	"切尔诺夫中士": "chernov",
+	"费奥多尔老爹": "fyodor",
+	"老轨伊万": "ivan",
+	"伊万": "ivan",
+	"安娜（0419）": "anna",
+	"安娜": "anna",
+	"帕沙": "pasha",
+	"清杀队新兵帕沙": "pasha",
+	"古丽娅": "gulya",
+	"古丽娅医生": "gulya",
+	"拉娜": "lana",
+	"拉娜（妹妹）": "lana",
+	"拉娜（0420）": "lana",
+	"帕维尔老爹": "pavel",
+	"七级钳工帕维尔": "pavel",
+	"灰烬": "ash",
+	"灰狼犬灰烬": "ash",
+	"梁诺夫": "leonov",
+	"梁诺夫医生": "leonov",
 }
 
 var sim
@@ -55,6 +125,8 @@ var sound_on := true
 var _sig := ""
 var _modal_kind := ""
 var _live: Dictionary = {}
+var _story_line := 0
+var _story_beat := ""
 var _new_confirm := false          # 标题页：已有存档时「新的一局」要点两下
 
 # 顶栏标签
@@ -138,19 +210,8 @@ func _rich(size: int = 14) -> RichTextLabel:
 func _btn(txt: String, cb: Callable, primary: bool = false) -> Button:
 	var b := Button.new()
 	b.text = txt
-	b.add_theme_font_override("font", font)
-	b.add_theme_font_size_override("font_size", 15)
-	b.focus_mode = Control.FOCUS_NONE
-	if primary:
-		b.add_theme_stylebox_override("normal", _sb(Color("#3a1512"), Color("#63d18a"), 8))
-		b.add_theme_stylebox_override("hover", _sb(Color("#541c17"), Color("#a7e8bf"), 8))
-		b.add_theme_stylebox_override("pressed", _sb(Color("#240d0b"), Color("#63d18a"), 8))
-		b.add_theme_color_override("font_color", Color("#dcead9"))
-	else:
-		b.add_theme_stylebox_override("normal", _sb(Color("#1b2023"), Color("#343c3f"), 7))
-		b.add_theme_stylebox_override("hover", _sb(Color("#343c3f"), Color("#6d6f66"), 7))
-		b.add_theme_stylebox_override("pressed", _sb(Color("#070809"), Color("#55534a"), 7))
-		b.add_theme_color_override("font_color", Color("#ebe2d2"))
+	b.custom_minimum_size = Vector2(0, 38)
+	SovietUI.dress_button(b, primary, 15)
 	b.pressed.connect(cb)
 	b.pressed.connect(func(): ui_sfx.emit("beep"))
 	return b
@@ -308,7 +369,7 @@ func _build_top_bar() -> void:
 	h.add_child(b_help)
 	_btn_sound = _btn("音效：开 (M)", _toggle_sound)
 	h.add_child(_btn_sound)
-	var b_gym := _btn("灰盒场 (F1)", func(): get_tree().change_scene_to_file("res://scenes/gym.tscn"))
+	var b_gym := _btn("机制场 (F1)", func(): get_tree().change_scene_to_file("res://scenes/gym.tscn"))
 	h.add_child(b_gym)
 
 func _toggle_sound() -> void:
@@ -344,7 +405,7 @@ func _refresh(force: bool) -> void:
 		return
 	_lbl_day.text = ("第 %d 天 · 夜" % sim.day) if sim.lang == "zh" else ("DAY %d · NIGHT" % sim.day)
 	_lbl_tally.text = "卌 %d" % sim.tally
-	_lbl_sub.text = ("探索循环 · 灰盒 DEMO" if sim.lang == "zh" else "EXPLORATION LOOP · GREYBOX DEMO")
+	_lbl_sub.text = ("探索循环 · 夜潜 DEMO" if sim.lang == "zh" else "EXPLORATION LOOP · NIGHT RAID DEMO")
 	_btn_lang.text = "EN (L)" if sim.lang == "zh" else "中文 (L)"
 	var sig := _make_sig()
 	if force or sig != _sig:
@@ -400,11 +461,11 @@ func _update_live() -> void:
 	if _live.has("hp"):
 		(_live["hp"] as Label).text = "HP %d" % int(round(p.hp))
 	if _live.has("hp_bar"):
-		(_live["hp_bar"] as ProgressBar).value = clampf(p.hp, 0.0, 100.0)
+		_live["hp_bar"].set_value(clampf(p.hp / 100.0, 0.0, 1.0))
 	if _live.has("warm"):
 		(_live["warm"] as Label).text = ("体温 %d" if sim.lang == "zh" else "WARMTH %d") % int(round(p.warmth))
 	if _live.has("warm_bar"):
-		(_live["warm_bar"] as ProgressBar).value = clampf(p.warmth, 0.0, 100.0)
+		_live["warm_bar"].set_value(clampf(p.warmth / 100.0, 0.0, 1.0))
 	if _live.has("stam_bar"):
 		(_live["stam_bar"] as ProgressBar).value = clampf(p.stam, 0.0, 100.0)
 	if _live.has("bpm"):
@@ -510,15 +571,15 @@ func _build_title() -> void:
 	var p := _panel()
 	var pv := _vbox(12)
 	pv.add_child(_label(_tr(
-		"诺沃斯克-17，第 4 号铁路冷库的征召工。母亲在 602 室的透析机旁等你带回下一袋腹透液。\n" \
-		+ "每晚只能去一个地方：搜刮、救人、或者杀人。天亮之前回到撤离点，否则你带不回任何东西。",
-		"Novorsk-17, conscript labourer at Cold Storage No.4. Your mother waits beside the dialysis machine in Room 602.\n" \
-		+ "One place per night: loot, rescue, or kill. Be back at the extraction point before dawn, or you carry nothing home."),
+		"为了母亲的 409 批腹透液，你曾在第 004 号车皮调拨单上签名；如今，妹妹拉娜的编号 0420 正在那节车厢的名单里。\n" \
+		+ "白昼替台账搬运活人，黑夜在探照灯之间把他们找回来。每夜只能去一个地方，天亮前必须回到撤离点。",
+		"You signed Car 004's transfer order to buy Mother's Batch-409 dialysis fluid; now Lana, file 0420, is listed inside that same car.\n" \
+		+ "By day the ledger moves living people; by night you try to bring them back. One location per night. Return before dawn."),
 		FONT_SIZES["body"], Color("#b4ad9c")))
 	pv.add_child(_sep())
 	pv.add_child(_label(_tr(
 		"WASD 移动 · Ctrl 潜行 · Shift 冲刺 · 鼠标瞄准 · 空格/左键 攻击 · 长按 E 交互\n" \
-		+ "Q 热水 · H 绷带 · G 扔空罐 · R 装弹 · Tab 日志 · Esc 取消 · F1 灰盒测试场",
+		+ "Q 热水 · H 绷带 · G 扔空罐 · R 装弹 · Tab 日志 · Esc 取消 · F1 机制测试场",
 		"WASD move · Ctrl sneak · Shift sprint · mouse aim · Space/LMB attack · hold E interact\n" \
 		+ "Q water · H bandage · G throw tin · R reload · Tab logbook · Esc cancel · F1 gym"),
 		FONT_SIZES["small"], Color("#6d6f66")))
@@ -550,7 +611,7 @@ func _build_title() -> void:
 	var b_lang := _btn(_tr("English", "中文"), func(): sim.toggle_lang())
 	b_lang.custom_minimum_size = Vector2(160, 40)
 	row2.add_child(b_lang)
-	var b_gym := _btn(_tr("灰盒测试场（F1）", "Greybox Gym (F1)"),
+	var b_gym := _btn(_tr("机制测试场（F1）", "Mechanics Gym (F1)"),
 		func(): get_tree().change_scene_to_file("res://scenes/gym.tscn"))
 	b_gym.custom_minimum_size = Vector2(240, 40)
 	row2.add_child(b_gym)
@@ -615,8 +676,8 @@ func _build_base() -> void:
 	lv.add_child(dial_row)
 	lv.add_child(_bar(clampf(sim.dial / 3.0 * 100.0, 0.0, 100.0), Color("#b2ab9f")))
 	var md := _label(_tr(
-		"每过一天消耗 1 袋腹透液；断供两天以上，母亲会死于急性肺水肿。",
-		"One bag of fluid per day. Two days without it and she dies of acute pulmonary oedema."),
+		"每天耗去一袋透析液；断供两天，母亲便会在急性肺水肿里溺亡。你救她的每一天，都可能要把另一个人留在门外。",
+		"One bag each day; after two without it, Mother drowns in acute pulmonary oedema. Each day you save her may leave another soul outside."),
 		FONT_SIZES["small"], Color("#6d6f66"))
 	lv.add_child(md)
 
@@ -1026,27 +1087,34 @@ func _build_raid_hud() -> void:
 	nrow.add_child(night_txt)
 	tv.add_child(nrow)
 
-	var hp_row := _hbox(8)
-	var hp := _label("", FONT_SIZES["body"], Color("#a7e8bf"))
-	hp.custom_minimum_size = Vector2(70, 0)
-	_live["hp"] = hp
-	hp_row.add_child(hp)
-	var hp_bar := _bar(sim.raid.player.hp, Color("#63d18a"), 10)
-	hp_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_live["hp_bar"] = hp_bar
-	hp_row.add_child(hp_bar)
-	tv.add_child(hp_row)
-
-	var warm_row := _hbox(8)
-	var warm := _label("", FONT_SIZES["body"], Color("#b2ab9f"))
-	warm.custom_minimum_size = Vector2(70, 0)
-	_live["warm"] = warm
-	warm_row.add_child(warm)
-	var warm_bar := _bar(sim.raid.player.warmth, Color("#b2ab9f"), 8)
-	warm_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_live["warm_bar"] = warm_bar
-	warm_row.add_child(warm_bar)
-	tv.add_child(warm_row)
+	var vitals := _hbox(18)
+	vitals.name = "StarVitals"
+	for spec in [
+		{"key": "hp", "title": "HP 100", "color": SovietUI.BLOOD_LIT},
+		{"key": "warm", "title": "体温 100", "color": SovietUI.SIGNAL},
+	]:
+		var key := String(spec["key"])
+		var cell := _vbox(2)
+		cell.custom_minimum_size = Vector2(112, 0)
+		var caption := _label(String(spec["title"]), FONT_SIZES["small"], spec["color"])
+		caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_live[key] = caption
+		cell.add_child(caption)
+		var star := SovietStarMeter.new()
+		star.name = "StarMeter_" + key
+		star.fill = spec["color"]
+		star.fill_low = SovietUI.FROST if key == "warm" else Color("e04432")
+		star.custom_minimum_size = Vector2(96, 88)
+		star.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		_live[key + "_bar"] = star
+		cell.add_child(star)
+		vitals.add_child(cell)
+	var stam_note := _vbox(5)
+	stam_note.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stam_note.add_child(_label("生命 / 体温", FONT_SIZES["small"], SovietUI.BONE_DIM))
+	stam_note.add_child(_label("每半角 = 10%", 11, SovietUI.ASH))
+	vitals.add_child(stam_note)
+	tv.add_child(vitals)
 
 	var stam_row := _hbox(8)
 	stam_row.add_child(_label("STA", FONT_SIZES["small"], Color("#6d6f66")))
@@ -1310,7 +1378,7 @@ func _build_ending() -> void:
 	var row := _hbox(12)
 	row.add_child(_btn(_tr("回到 602 室", "Back to Room 602"), func(): sim.phase = "base"))
 	row.add_child(_btn(_tr("回标题页", "Title screen"), func(): sim.phase = "title"))   # 新开局在标题页确认，结局预览里点错不会盖掉存档
-	row.add_child(_btn(_tr("灰盒测试场（F1）", "Greybox Gym (F1)"),
+	row.add_child(_btn(_tr("机制测试场（F1）", "Mechanics Gym (F1)"),
 		func(): get_tree().change_scene_to_file("res://scenes/gym.tscn")))
 	c.add_child(row)
 
@@ -1320,6 +1388,9 @@ func _build_ending() -> void:
 func _build_modal() -> void:
 	_clear(modal)
 	_modal_kind = ""
+	if not sim.story_open:
+		_story_beat = ""
+		_story_line = 0
 	if sim.story_open:
 		_build_story_modal()
 	elif sim.logbook_open:
@@ -1331,9 +1402,9 @@ func _build_modal() -> void:
 	elif sim.phase == "raid" and sim.raid != null and sim.raid.choice_open:
 		_build_choice_modal()
 
-func _dim() -> ColorRect:
+func _dim(alpha: float = 0.82) -> ColorRect:
 	var d := ColorRect.new()
-	d.color = Color(0.01, 0.02, 0.03, 0.82)
+	d.color = Color(0.01, 0.02, 0.03, alpha)
 	d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	d.mouse_filter = Control.MOUSE_FILTER_STOP
 	modal.add_child(d)
@@ -1353,57 +1424,126 @@ func _modal_panel(w: float) -> VBoxContainer:
 
 func _build_story_modal() -> void:
 	_modal_kind = "story"
-	_dim()
+	# Galgame 式底部横框：保留场景可见度，头像与台词同属一个阅读区。
+	_dim(0.46)
 	var beat: Dictionary = Data.STORY.get(sim.story_id, {})
 	if beat.is_empty():
 		sim.story_open = false
 		return
-	var v := _modal_panel(940.0)
-	v.add_child(_label("▲ " + String(beat.get("title_zh" if sim.lang == "zh" else "title_en", "")),
-		30, Color("#c8a257")))
+	if _story_beat != sim.story_id:
+		_story_beat = sim.story_id
+		_story_line = 0
+	var lines: Array = beat.get("lines", [])
+	_story_line = clampi(_story_line, 0, maxi(0, lines.size() - 1))
+
+	var dock := _vbox(0)
+	dock.name = "GalgameBottomDock"
+	dock.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dock.offset_left = 90.0
+	dock.offset_top = TOP_H + 12.0
+	dock.offset_right = -90.0
+	dock.offset_bottom = -28.0
+	dock.alignment = BoxContainer.ALIGNMENT_END
+	dock.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	modal.add_child(dock)
+	var p := _panel(1740.0)
+	p.name = "GalgameStoryPanel"
+	p.custom_minimum_size = Vector2(1740, 0)
+	p.add_theme_stylebox_override("panel", SovietUI.archive_panel())
+	dock.add_child(p)
+	var v := _vbox(10)
+	p.add_child(v)
+	var masthead := _hbox(14)
+	var file_stamp := PanelContainer.new()
+	file_stamp.add_theme_stylebox_override("panel", SovietUI.stamp(6))
+	file_stamp.add_child(_label("ДЕЛО · 0420", 12, SovietUI.BONE))
+	masthead.add_child(file_stamp)
+	masthead.add_child(_label(String(beat.get("title_zh" if sim.lang == "zh" else "title_en", "")),
+		24, SovietUI.OCHRE))
+	masthead.add_child(_label("НОВОРСК-17 / ЛИЧНОЕ ДЕЛО", 11, SovietUI.ASH))
+	v.add_child(masthead)
 	v.add_child(_sep())
-	for line in beat.get("lines", []):
-		var w := String((line as Dictionary).get("w", ""))
+
+	var row := _hbox(22)
+	v.add_child(row)
+	var text_col := _vbox(8)
+	text_col.name = "StoryTextColumn"
+	text_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(text_col)
+	# 每屏只显示当前句，避免文学扩写后的多段独白累计顶出屏幕；已播内容仍保留在剧情数据与导出剧本中。
+	for i in range(_story_line, _story_line + 1):
+		var line: Dictionary = lines[i]
+		var current := i == _story_line
+		var w := String(line.get("w", ""))
 		if w != "":
 			var who := PanelContainer.new()
-			who.add_theme_stylebox_override("panel", _sb(Color("#121618"), Color("#4a5457"), 6))
-			who.add_child(_label(w, FONT_SIZES["small"], Color("#b2ab9f")))
-			v.add_child(who)
-		v.add_child(_label(String((line as Dictionary).get("zh" if sim.lang == "zh" else "en", "")),
-			FONT_SIZES["body"], Color("#d8d1bf")))
-	v.add_child(_sep())
-	v.add_child(_label(_tr("你写下 / 做了什么：", "What you write / do:"), FONT_SIZES["small"], Color("#6d6f66")))
-	var choices: Array = beat.get("choices", [])
-	for i in choices.size():
-		var c: Dictionary = choices[i]
-		var cls := String(c.get("cls", ""))
-		var col := Color("#63d18a") if cls == "good" else (Color("#b8281c") if cls == "bad" else Color("#55534a"))
-		var b := _btn(String(c.get("zh" if sim.lang == "zh" else "en", "")), func(): _resolve_story(i), cls == "good")
-		b.custom_minimum_size = Vector2(0, 46)
-		b.add_theme_stylebox_override("normal", _sb(Color("#1b1a18"), col, 8))
-		b.add_theme_stylebox_override("hover", _sb(Color("#282623"), col, 8))
-		v.add_child(b)
-		v.add_child(_label("　" + String(c.get("d_zh" if sim.lang == "zh" else "d_en", "")),
-			FONT_SIZES["small"], Color("#a8a294")))
-	# 右下角说话者表情头像（金边胸像，不拦截点击）
-	var ptex: Texture2D = STORY_PORTRAITS.get(sim.story_id, null)
-	if ptex != null:
+			who.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			who.add_theme_stylebox_override("panel", SovietUI.paper_tag())
+			var speaker := _label(w, 13, SovietUI.INK)
+			speaker.add_theme_font_override("font", SovietUI.display_font())
+			who.add_child(speaker)
+			text_col.add_child(who)
+		var spoken := _label(String(line.get("zh" if sim.lang == "zh" else "en", "")),
+			16, Color("#f0e5ce") if current else Color("#9e998d"))
+		spoken.custom_minimum_size = Vector2(0, 48)
+		spoken.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		text_col.add_child(spoken)
+
+	if not lines.is_empty():
 		var frame := PanelContainer.new()
+		frame.name = "StoryPortraitFrame"
+		frame.custom_minimum_size = Vector2(238, 238)
+		frame.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		frame.add_theme_stylebox_override("panel", _sb(Color("#0d0f12"), Color("#c8a257"), 4))
-		frame.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-		frame.offset_left = -236.0
-		frame.offset_top = -256.0
-		frame.offset_right = -20.0
-		frame.offset_bottom = -20.0
 		frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var tr := TextureRect.new()
-		tr.texture = ptex
+		tr.texture = _story_texture(lines[_story_line])
 		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		tr.custom_minimum_size = Vector2(200, 200)
+		tr.custom_minimum_size = Vector2(220, 220)
 		tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		frame.add_child(tr)
-		modal.add_child(frame)
+		row.add_child(frame)
+
+	if lines.is_empty() or _story_line >= lines.size() - 1:
+		text_col.add_child(_sep())
+		text_col.add_child(_label(_tr("你写下 / 做了什么：", "What you write / do:"), FONT_SIZES["small"], Color("#6d6f66")))
+		var choices: Array = beat.get("choices", [])
+		for i in choices.size():
+			var c: Dictionary = choices[i]
+			var cls := String(c.get("cls", ""))
+			var b := _btn(String(c.get("zh" if sim.lang == "zh" else "en", "")), func(): _resolve_story(i), cls == "good")
+			b.custom_minimum_size = Vector2(0, 46)
+			SovietUI.dress_choice_button(b, cls, 16)
+			text_col.add_child(b)
+			text_col.add_child(_label("　" + String(c.get("d_zh" if sim.lang == "zh" else "d_en", "")),
+				FONT_SIZES["small"], Color("#a8a294")))
+	else:
+		text_col.add_child(_sep())
+		var next_text := _tr("继续 ▾  %d/%d（空格）", "Continue ▾  %d/%d (Space)") % [_story_line + 1, lines.size()]
+		var next := _btn(next_text, func(): advance_story(), true)
+		next.custom_minimum_size = Vector2(0, 46)
+		text_col.add_child(next)
+
+
+func _story_texture(line: Dictionary) -> Texture2D:
+	var role := String(STORY_SPEAKERS.get(String(line.get("w", "")), "aleksei"))
+	var mood := String(line.get("mood", "calm"))
+	return STORY_PORTRAITS[role].get(mood, STORY_PORTRAITS[role]["calm"])
+
+
+func advance_story() -> bool:
+	if not sim.story_open:
+		return false
+	var beat: Dictionary = Data.STORY.get(sim.story_id, {})
+	var lines: Array = beat.get("lines", [])
+	if _story_line >= lines.size() - 1:
+		return false
+	_story_line += 1
+	ui_sfx.emit("beep")
+	_sig = ""
+	return true
+
 
 func _resolve_story(idx: int) -> void:
 	var res: Dictionary = sim.resolve_story(idx)
@@ -1421,20 +1561,20 @@ func _build_choice_modal() -> void:
 	var R = sim.raid
 	var has_med: bool = int(R.load.get("asp", 0)) > 0 and int(R.load.get("water", 0)) > 0
 	var v := _modal_panel(900.0)
-	v.add_child(_label(_tr("抉择 A · 他在发烧", "CHOICE A · He Is Burning Up"), 28, Color("#c8a257")))
+	v.add_child(_label(_tr("抉择 A · 你是否还承认他是人", "CHOICE A · Do you still call him human?"), 28, Color("#c8a257")))
 	v.add_child(_label(_tr(
-		"一个半人蜷在暖气井里。瞳孔还在，但体温高得吓人。对面楼顶有清杀队的红外点。",
-		"A half-human curled in the heating shaft. His pupils are still there, but his fever is terrifying. An IR dot moves on the roof opposite."),
+		"暖气井里蜷着一个半人。他的瞳孔还映着灯，身体却被高烧烧得发抖；对面楼顶的红外点正慢慢移过来。你若承认他是人，接下来每一个动作都要付出代价。",
+		"A half-human curls in the heating shaft, pupils still reflecting the light while fever shakes him. An IR dot crawls across the opposite roof. If you call him human, every next action has a price."),
 		FONT_SIZES["body"], Color("#d8d1bf")))
 	v.add_child(_sep())
-	v.add_child(_btn(_tr("A1 喂阿司匹林 + 热水（消耗各 1）", "A1 Aspirin + hot water (1 each)"),
+	v.add_child(_btn(_tr("A1 冒险喂阿司匹林与温水，等他醒来（各消耗 1）", "A1 Risk aspirin and warm water; wait for him to wake (1 each)"),
 		func(): _choice(0), true))
 	if not has_med:
 		v.add_child(_label(_tr("　你身上没有阿司匹林和热水。", "　You have no aspirin or water."),
 			FONT_SIZES["small"], Color("#e0897e")))
-	v.add_child(_btn(_tr("A2 绕行，别惹麻烦（良知 −2）", "A2 Walk away (Conscience −2)"),
+	v.add_child(_btn(_tr("A2 贴墙绕行，把他的哭声留给黑暗（良知 −2）", "A2 Slip past and leave his crying to the dark (Conscience −2)"),
 		func(): _choice(1)))
-	v.add_child(_btn(_tr("A3 撬棍灭口，划一道卌（良知 −10）", "A3 Crowbar. One more stroke (Conscience −10)"),
+	v.add_child(_btn(_tr("A3 一撬棍让他安静，再搜走罐头（良知 −10 · 卌 +1）", "A3 Silence him, take his tin (Conscience −10 · stroke +1)"),
 		func(): _choice(2)))
 	v.add_child(_sep())
 	v.add_child(_label(_tr("按 Esc 先不决定（他会继续烧）。", "Esc to decide later (he keeps burning)."),

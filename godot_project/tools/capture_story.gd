@@ -1,5 +1,7 @@
 extends SceneTree
-## capture_story.gd — 截剧情对话框右下角表情头像。带窗口运行，勿 --headless。
+## capture_story.gd — 逐句截图，验证角色 × 情绪头像随当前台词切换。带窗口运行，勿 --headless。
+
+const Data = preload("res://scripts/CampaignData.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -11,14 +13,30 @@ func _run() -> void:
 	for i in 4:
 		await process_frame
 	var sim = sc.sim
-	for sid in ["sanitarium", "coldstore", "market"]:
+	var story_ids: Array = ["sanitarium", "coldstore", "market", "yard"]
+	var only := OS.get_environment("STORY_ONLY")
+	if not only.is_empty() and Data.STORY.has(only):
+		story_ids = [only]
+	for sid in story_ids:
 		sim.story_id = sid
 		sim.story_open = true
-		for i in 16:
+		sc.hud._story_beat = ""
+		sc.hud._story_line = 0
+		sc.hud._sig = ""
+		for i in 12:
 			await process_frame
-		_snap("capture_story_" + sid)
+		var lines: Array = Data.STORY[sid]["lines"]
+		for i in lines.size():
+			if i > 0:
+				sc.hud.advance_story()
+				for j in 6:
+					await process_frame
+			await RenderingServer.frame_post_draw
+			_snap("capture_story_%s_%02d" % [sid, i + 1])
 		sim.story_open = false
+		sc.hud._sig = ""
 		await process_frame
+	print("CAPTURE_DONE")
 	quit()
 
 

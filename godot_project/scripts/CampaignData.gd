@@ -18,6 +18,27 @@ const WALL_H := 0.62
 const FOV_DEG := 90.0
 const SIGHT := 12.0
 const SIGHT_CRACKED := 7.2
+
+## 战斗浮字在标点或空格附近换行；保留完整文本，不截断文学扩写后的句子。
+static func wrap_float_text(txt: String, limit: int = 32) -> String:
+	if txt.length() <= limit:
+		return txt
+	var rows: Array[String] = []
+	var line := ""
+	var soft_breaks := "，。！？；：…,.!?; "
+	for ch in txt:
+		line += ch
+		if line.length() >= limit and (soft_breaks.contains(ch) or line.length() >= limit + 6):
+			rows.append(line.strip_edges())
+			line = ""
+	if not line.is_empty():
+		rows.append(line.strip_edges())
+	# 句子只在末尾出现标点时，柔性分行可能仍得到一整行；按上限硬切兜底。
+	if rows.size() <= 1 and txt.length() > limit:
+		rows.clear()
+		for start in range(0, txt.length(), limit):
+			rows.append(txt.substr(start, limit))
+	return "\n".join(rows)
 const NEAR_SENSE := 1.8
 const BAG := 12
 const SPEED_WALK := 3.2
@@ -176,7 +197,8 @@ const LOCS := [
 		"hint_zh": "楼下就能摸到，煤堆旁常有人堆杂物。", "hint_en": "Right downstairs; people stash junk by the coal pile.",
 		"hint2_zh": "两只旧木箱、一台报废蒸汽泵。清杀队偶尔从东侧栅栏路过。",
 		"hint2_en": "Two old crates, one dead steam pump. A patrol sometimes passes the east fence.",
-		"time": 60, "cold": 0.4, "story": "", "req": {}, "req_flag": ""},
+		"time": 60, "cold": 0.4, "story": "", "req": {}, "req_flag": "",
+		"scene": "res://scenes/night_boiler.tscn"},
 	{"id": "coldstore", "x": 150, "y": 120, "dg": 2, "seed": 2202,
 		"zh": "城北四号铁路冷库", "en": "Rail Cold Storage No.4",
 		"loot": ["med", "food"],
@@ -199,7 +221,8 @@ const LOCS := [
 		"hint_zh": "黑冰很滑，声音会传得很远。有人在这儿烧火。", "hint_en": "Black ice is loud. Someone keeps a fire burning here.",
 		"hint2_zh": "涉雪泥移动 ×0.65，噪声 ×2.0；火堆可回温。",
 		"hint2_en": "Slush: speed ×0.65, noise ×2.0. The brazier restores warmth.",
-		"time": 70, "cold": 1.3, "story": "", "req": {}, "req_flag": ""},
+		"time": 70, "cold": 1.3, "story": "", "req": {}, "req_flag": "",
+		"scene": "res://scenes/night_underpass.tscn"},
 	{"id": "canteen", "x": 510, "y": 330, "dg": 3, "seed": 5505,
 		"zh": "东街工人食堂 · 后厨", "en": "East Street Canteen · Kitchen",
 		"loot": ["weapon", "food"],
@@ -257,7 +280,8 @@ const LOCS := [
 		"hint_en": "Sheltered. Firewood, and sometimes people who ran.",
 		"hint2_zh": "低风险补给点，适合缺体温的夜里。",
 		"hint2_en": "Low-risk resupply. Good when you are freezing.",
-		"time": 60, "cold": 1.5, "story": "", "req": {}, "req_flag": ""},
+		"time": 60, "cold": 1.5, "story": "", "req": {}, "req_flag": "",
+		"scene": "res://scenes/night_birch.tscn"},
 	{"id": "workshop", "x": 480, "y": 130, "dg": 2, "seed": 6606,
 		"zh": "机修车间", "en": "Machine Workshop",
 		"loot": ["scrap", "part"],
@@ -265,7 +289,8 @@ const LOCS := [
 		"hint_en": "Parts by the lathes; the welder still sparks.",
 		"hint2_zh": "车间里工具多，但巡逻队常来查。",
 		"hint2_en": "Plenty of tools — and patrols check in often.",
-		"time": 70, "cold": 0.8, "story": "", "req": {}, "req_flag": ""},
+		"time": 70, "cold": 0.8, "story": "", "req": {}, "req_flag": "",
+		"scene": "res://scenes/night_workshop.tscn"},
 	{"id": "greenhouse", "x": 480, "y": 470, "dg": 1, "seed": 7707,
 		"zh": "温室大棚", "en": "Greenhouse",
 		"loot": ["food", "warm"],
@@ -273,7 +298,8 @@ const LOCS := [
 		"hint_en": "The plastic still holds; last year's potatoes are in the frozen soil.",
 		"hint2_zh": "低风险食物点，适合缺粮的夜里。",
 		"hint2_en": "Low-risk food. Good when you are hungry.",
-		"time": 60, "cold": 0.6, "story": "", "req": {}, "req_flag": ""},
+		"time": 60, "cold": 0.6, "story": "", "req": {}, "req_flag": "",
+		"scene": "res://scenes/night_greenhouse.tscn"},
 	{"id": "archive", "x": 860, "y": 250, "dg": 3, "seed": 8808,
 		"zh": "档案馆电报局", "en": "Archive & Telegraph Office",
 		"loot": ["intel", "val"],
@@ -281,7 +307,8 @@ const LOCS := [
 		"hint_en": "Old telegrams and rosters — and valuable intel.",
 		"hint2_zh": "高风险：清杀队重点盯防的情报点。",
 		"hint2_en": "High risk: an intel site the purge squads watch closely.",
-		"time": 90, "cold": 0.7, "story": "", "req": {}, "req_flag": ""},
+		"time": 90, "cold": 0.7, "story": "", "req": {}, "req_flag": "",
+		"scene": "res://scenes/night_archive.tscn"},
 ]
 
 # ============================================================================
@@ -294,13 +321,13 @@ const STORY := {
 	"coldstore": {
 		"title_zh": "账面死人", "title_en": "The Paper Dead",
 		"lines": [
-			{"w": "", "zh": "南库 3 号柱后，一个男人正把儿子裹进自己的棉袄里。他们的通行证在终端上跳出刺眼的红字：",
+			{"w": "", "zh": "南库 3 号水泥柱的阴影底下，一个男人正用那件破得露出了黑棉絮的袄子，死死裹紧怀里早已冻得不哭了的儿子。磁卡划过终端，屏幕上跳出一行叫人血液发冷的红字——",
 				"en": "Behind column 3 in the south hall, a man is wrapping his son inside his own padded coat. The terminal spits red:"},
-			{"w": "切尔诺夫中士", "zh": "档案 0892：已于昨日 22:00 移交乌拉尔山线站。当前坐标在册人数：0。",
+			{"w": "切尔诺夫中士", "mood": "intense", "zh": "档案 0892：昨日 22:00 已移交乌拉尔山线站。按主脑台账，当前坐标在册活人：0。听见没有？这里是空的，没人！",
 				"en": "File 0892: transferred to the Ural line yesterday at 22:00. Persons at this coordinate: 0."},
-			{"w": "", "zh": "配给箱的电子锁「咔」地锁死了。男人没有抬头，只是在结冰的地上摸索掉落的两粒黑麦。",
+			{"w": "", "mood": "sad", "zh": "配给箱的电子锁「咔」地一声落了死栓——多么干脆、多么合乎规矩的一声响！那男人竟连头也没有抬一下，只是跪在结了黑冰的水泥地上，用冻裂的指甲一寸寸抠着冰缝里掉出来的两粒黑麦。既然账本上写着「零」，那他们就连喊饿的权利也一并被注销了。",
 				"en": "The ration crate's lock snaps shut. The man does not look up; he only feels in the ice for two spilled grains of buckwheat."},
-			{"w": "", "zh": "收发亭旁，一只脖颈勒着断铁丝的灰狼犬盯着你手里的半块冷黑麦饼。",
+			{"w": "", "zh": "废弃收发亭旁，一只脖颈上还深深嵌着断铁丝血痕的灰狼犬，正一动不动地从风雪里盯着你掌心里那半块冰冷的黑麦饼。",
 				"en": "By the dispatch hut, a wolfdog with a snapped wire collar stares at the half loaf of cold rye in your hand."},
 		],
 		"choices": [
@@ -310,25 +337,25 @@ const STORY := {
 				"cls": "good",
 				"ops": [["name", "Сергей, Мария · 谢尔盖与玛丽亚"], ["conscience", 8], ["add", "scrap", 1]],
 				"after_mate": "ash",
-				"toast_zh": "钢笔划过纸面：又一条真名留下了。「灰烬」把前爪按在你靴子上。",
+				"toast_zh": "钢笔尖刺破纸背：谢尔盖、玛丽亚——哪怕全世界的电传机都判了他们死刑，在这张纸上，他们还在喘气。「灰烬」无声地走上前，把冻湿的前爪轻轻按在了你的靴面上。",
 				"toast_en": "The pen scratches: another real name survives. Ash plants a paw on your boot."},
 			{"zh": "什么也不写，低头搬你的箱子", "en": "Write nothing. Keep hauling crates.",
 				"d_zh": "中立 · 省下麻烦", "d_en": "Neutral · save yourself the trouble",
 				"cls": "",
 				"ops": [["add", "scrap", 2]],
 				"after_mate": "ash",
-				"toast_zh": "你数完了箱子。你没数他们。「灰烬」还是跟了上来。",
+				"toast_zh": "你卑怯地低下头，数清了公家的箱子，却唯独不敢去数近在咫尺的活人。「灰烬」在身后静静看着你，还是踩着你的脚印跟了上来。",
 				"toast_en": "You counted the crates. You did not count them. Ash follows anyway."},
 		],
 	},
 	"yard": {
 		"title_zh": "铁壳号的编组单", "title_en": "The Buran Consist",
 		"lines": [
-			{"w": "", "zh": "煤水塔的阴影里，一张被雪水泡烂的编组单贴在调度箱背面：",
+			{"w": "", "zh": "煤水塔被黑冰包裹的背阴处，一张被冻雪泡得发胀的油印编组单，像一块揭不掉的伤疤似地黏在调度箱铁皮背面：",
 				"en": "In the water tower's shadow, a consist sheet rots against the back of a switch box:"},
-			{"w": "", "zh": "【布拉风号 · 第 7 次特别运输 · 闷罐车厢 03 · 编号 0401—0576 · 终点：乌拉尔鹰嘴崖】",
+			{"w": "", "mood": "intense", "zh": "【布拉风号 · 第 7 次特别运输 · 闷罐车厢 03 · 档案编号 0401—0576 · 终到销账点：乌拉尔鹰嘴崖】",
 				"en": "[BURAN · Special Run 7 · Boxcar 03 · Files 0401–0576 · Terminus: Eagle's Crag, Urals]"},
-			{"w": "", "zh": "你把单子折好塞进内袋。妹妹的档案号是 0420——就在这个区间里。",
+			{"w": "", "mood": "sad", "zh": "你的手指抖得几乎折不拢那张薄纸。拉娜的编号是 0420——不偏不倚，就像一颗被铁锤钉进棺木的钉子，死死夹在那串将死的数字中间。",
 				"en": "You fold it into your inner pocket. Lana is 0420. She is inside that range."},
 		],
 		"choices": [
@@ -336,18 +363,18 @@ const STORY := {
 				"d_zh": "主线推进", "d_en": "Story lead", "cls": "good",
 				"ops": [["add", "intel", 1]],
 				"after_mate": "",
-				"toast_zh": "编组单贴着你的肋骨。0420 就在那一节车厢里。",
+				"toast_zh": "那张冰凉的编组单隔着衬衣紧贴着你的肋骨，像一块烧红的烙铁。0420，你的亲妹妹，此刻正在第三节闷罐车厢里等着被抹去。",
 				"toast_en": "The consist sits against your ribs. 0420 is in that car."},
 		],
 	},
 	"canteen": {
 		"title_zh": "锁骨里的砍骨刀", "title_en": "The Cleaver in the Collarbone",
 		"lines": [
-			{"w": "", "zh": "后厨杂物间的木门炸裂。炊事员的儿子瓦西里在 40℃ 谵妄里冲了出来，眼白是紫黑的。",
+			{"w": "", "zh": "后厨杂物间的朽木门轰然炸裂！炊事员的独子瓦西里在 40℃ 高烧的狂乱谵妄里扑了出来，那双原本憨厚的眼睛里，此刻只剩下一片令人胆寒的紫黑血翳。",
 				"en": "The pantry door explodes. Vasily, the cook's son, comes out in 40°C delirium, sclera black-purple."},
-			{"w": "", "zh": "你被逼到备餐台死角，手摸到砧板上那把宽背砍骨刀。",
+			{"w": "", "zh": "后背已经抵死了冰冷的备餐铁台，退无可退。你在令人窒息的腥气里胡乱摸索，五指猛地攥住了油腻砧板上那把沉重的宽背砍骨刀。",
 				"en": "Cornered against the prep table, your hand finds the heavy-backed cleaver in the block."},
-			{"w": "费奥多尔老爹", "zh": "……阿廖沙！他昨天还给四楼送饼——！",
+			{"w": "费奥多尔老爹", "mood": "intense", "zh": "……阿廖沙！别下手啊！我的瓦西里是个好孩子，他昨天夜里还冒着暴风雪给四楼瘫在床上的老工友送黑麦饼啊——！",
 				"en": "…Alyosha! He was delivering bread to the fourth floor yesterday!"},
 		],
 		"choices": [
@@ -355,16 +382,16 @@ const STORY := {
 				"d_zh": "自卫击杀，不记划痕", "d_en": "Self-defence · no tally stroke", "cls": "",
 				"ops": [["flag", "ptsd"], ["flag", "vasily"], ["add", "blade", 1], ["conscience", -4]],
 				"after_mate": "pavel",
-				"toast_zh": "刀卡在骨缝里。他的瞳孔回色了，吐出半个词：「……Пить（渴）……」帕维尔老爹替你修好了撬棍。",
-				"toast_en": "The blade jams. His pupils clear and he breathes half a word: \"…Пить (Thirsty)…\" Old Pavel straightens your crowbar."},
+				"toast_zh": "钝重的刀刃卡进骨缝，瓦西里眼里的紫黑血翳却在临死前退去了：「……Пить（水/渴）……」系统没有给你记上杀戮划痕，可那个词从此在你耳膜里嗡嗡作响。两天后的深夜，你高烧着重返东街食堂。费奥多尔没有逃，正用温水擦洗儿子锁骨上的伤口，脚边还摆着你上次送来的黑麦糊。你本可以躲在阴影里，却推开门，跪进结冰的血水：「打死我吧，费奥多尔大叔！他冲出来时已经滑倒了，我本可以用撬棍柄砸他的腿……可我太害怕，只想快点脱身，挑了最省事的砍骨刀！」独眼老爹久久没有说话，最后只用满是老茧的手摸了摸你的头，把瓦西里生前的厚棉坎肩披到你肩上：「孩子，我们都在地狱里。你替我把他还活着的名字，写进你的本子里吧。」他没有原谅那致命的一刀，也没有把你变成一个凶手；他只是把继续背负这条命的权利，交还给了你。",
+				"toast_en": "The blade jams. His pupils clear: \"…Пить (Thirsty)…\" Two nights later you return to the canteen and kneel before Fyodor, confessing that you chose the cleaver because fear made it quickest. He drapes Vasily's coat over your shoulders and asks you to write his son's living name in your book."},
 		],
 	},
 	"market": {
 		"title_zh": "老轨伊万", "title_en": "Old Ivan, the Railman",
 		"lines": [
-			{"w": "", "zh": "黑市的铁皮棚下，跑了二十年西伯利亚专列的老列车长吐掉烟头，把一张油纸拍在你胸口。",
+			{"w": "", "zh": "黑市低矮漏风的铁皮棚下，在这条西伯利亚死线上跑了整整二十年专列的老列车长吐掉嘴里的劣质烟蒂，带着一身煤油与劣酒的寒气，把一张浸透机油的路线纸重重拍在你的胸口上。",
 				"en": "Under the market's tin awning, the conductor who ran Siberian trains for twenty years spits out his cigarette and slaps an oil-paper note on your chest."},
-			{"w": "老轨伊万", "zh": "今晚十一点，不挂车次牌的铁壳号走鹰嘴崖线。第三节车厢里一百七十六个已经退烧的活人，拉进 3 号矿坑填埋。你要不要爬车？",
+			{"w": "老轨伊万", "mood": "intense", "zh": "听着，调度员小子！今晚十一点整，那趟连车次牌都不敢挂的「铁壳号」要走鹰嘴崖死线！第三节闷罐车厢里锁着整整一百七十六个已经退了烧、会哭会喊的活人，全都要拉进 3 号废弃矿坑拿炸药活埋销账！你妹妹也在里头——我只问你一句：这趟地狱里的车，你敢不敢爬？！",
 				"en": "Eleven tonight: an unnumbered Buran takes the Eagle's Crag line. One hundred seventy-six recovered people in Boxcar 3, dumped in Pit No.3. You climbing or not?"},
 		],
 		"choices": [
@@ -373,7 +400,7 @@ const STORY := {
 				"cls": "good",
 				"ops": [["take", "scrap", 2], ["add", "intel", 1], ["flag", "manor_tip"]],
 				"after_mate": "",
-				"toast_zh": "伊万把路线画在油纸上：走水塔下的检修沟，别踩第三根枕木。",
+				"toast_zh": "伊万冷冷收下废钢，用粗黑的指甲在油纸上划出一道死线：「顺着西站水塔底下的排污检修沟摸过去；记住，第三根冻裂的枕木底下埋着雷，不想死就别往上踩。」",
 				"toast_en": "Ivan sketches the route on the oil paper: use the maintenance trench under the water tower; skip the third sleeper."},
 			{"zh": "C3 倾囊相助：把抗生素分给这里冻伤的人（良知▲）",
 				"en": "C3 Give everything: hand out your antibiotics",
@@ -381,7 +408,7 @@ const STORY := {
 				"cls": "good",
 				"ops": [["take", "abx", 1], ["conscience", 10], ["flag", "manor_tip"], ["mate", "ivan"]],
 				"after_mate": "ivan",
-				"toast_zh": "「老轨」伊万入队。他把一只冻僵的手套塞给你。",
+				"toast_zh": "看着你把救命的药塞进冻烂脚趾的苦人手里，「老轨」伊万浑浊的眼底狠狠颤了一下。他没再要你的废钢，一言不发地将一只烤热了的厚帆布手套塞进你怀里，跟上了你的脚步。",
 				"toast_en": "Old Ivan joins your crew. He shoves a frozen glove into your hands."},
 			{"zh": "C2 背叛：趁他引开哨兵，锁死铁门拿走磁卡（良知▼·卌+1）",
 				"en": "C2 Betray: lock the door and take the keycard",
@@ -389,18 +416,18 @@ const STORY := {
 				"ops": [["add", "abx", 2], ["add", "scrap", 3], ["add", "dial", 1],
 					["tally", 1], ["conscience", -14], ["flag", "manor_tip"], ["flag", "betrayed"]],
 				"after_mate": "",
-				"toast_zh": "铁门在你身后合上。枪声很短。",
+				"toast_zh": "沉重的铁门被你从外头死死落了锁。门后先是一声难以置信的闷哼，紧接着是微声步枪短促得像踩碎冰碴似的点射声。你的背包被抢来的物资撑得满满当当，可你的灵魂却在日志背面多了一道洗不掉的血痕。",
 				"toast_en": "The door shuts behind you. The shots are very short."},
 		],
 	},
 	"sanitarium": {
 		"title_zh": "0419 号在呼吸", "title_en": "0419 Is Breathing",
 		"lines": [
-			{"w": "", "zh": "最深处的钢筋铁笼前，一个年轻姑娘用两根旧皮带把自己死死捆在铁架床栏杆上。",
+			{"w": "", "zh": "地底最深处那间结满白霜的钢筋铁笼前，一个瘦得只剩一把骨头的年轻姑娘，正用两根磨断了扣眼的旧皮带，将自己的一双手腕死死勒在铁架床的栏杆上，勒得皮肉翻卷、深可见骨。",
 				"en": "At the deepest cage, a young woman has belted her own wrists to the bed frame with two old straps."},
-			{"w": "", "zh": "「灰烬」走上去，摇着尾巴用湿鼻尖碰了碰她的手背。她抬起头——眼白充血已退，神智完全清醒。",
+			{"w": "", "zh": "「灰烬」安静地走上前，摇着尾巴，把温热湿润的鼻尖轻轻贴了贴她布满脱落鳞屑的手背。姑娘剧烈地颤栗了一下，缓缓抬起头——她眼白里的紫黑充血已经完全退净，那双深陷的眸子里闪烁着受尽苦难后刀锋般清醒的光。",
 				"en": "Ash walks up, tail low, and touches the back of her hand with a wet nose. The girl looks up — the blood has receded from her eyes. She is fully awake."},
-			{"w": "安娜（0419）", "zh": "是拉娜！！三天前她就关在我隔壁！她的烧退到三十六度八了，手背的灰鳞都在掉！昨天夜里，他们把她和一百多个退烧的人锁进了铁壳号——第三节闷罐车厢！！",
+			{"w": "安娜（0419）", "mood": "intense", "zh": "是拉娜！！天哪，这是拉娜的照片！！三天前在西站铁皮棚里，她就关在我隔壁的笼子里！那时候她的烧已经退到三十六度八了，手背上的灰鳞一片片往下掉！她看我高烧撞墙，还从铁网眼儿里塞给我最后半片阿司匹林……可昨天夜里，他们根本不管谁退了烧，按着名单把她和一百多个清醒过来的活人，全都锁进了「铁壳号」的第三节闷罐车厢！！",
 				"en": "It's Lana!! Three days ago she was in the cage next to mine! Her fever broke at 36.8°C, the scales were falling off her hands! Last night they locked her and a hundred others into the Buran — Boxcar No.3!!"},
 		],
 		"choices": [
@@ -410,18 +437,22 @@ const STORY := {
 				"ops": [["mate", "anna"], ["mate", "gulya"], ["conscience", 6],
 					["flag", "lana_car3"], ["flag", "manor_tip"]],
 				"after_mate": "",
-				"toast_zh": "安娜（0419）与古丽娅医师入队。铁笼的门轴在雪里尖叫。",
+				"toast_zh": "你用撬棍崩开了生锈的笼锁，替她解开了嵌进肉里的皮带。安娜（0419）与古丽娅医师搀扶着跟上了你，铁笼门轴在极夜的风雪里发出一声长长的、如释重负的悲鸣。",
 				"toast_en": "Anna (0419) and Dr. Gulya join. The cage hinge screams in the snow."},
 		],
 	},
 	"manor": {
 		"title_zh": "焦油黑雪", "title_en": "Tar-Black Snow",
 		"lines": [
-			{"w": "", "zh": "墙外零下三十五度，墙里二十六度。叉车把仅仅「临期十五天」的牛排、黄油和 409 批腹透液整铲推进 2000℃ 的焚化炉。",
+			{"w": "", "zh": "一墙之隔，墙外是零下三十五度冻死骨头的苦寒地狱，墙里却是二十六度暖风熏人的特权天堂。履带叉车正轰鸣着，把一托盘又一托盘仅仅因为「距离保质期还有十五天」的谷饲牛排、黄油，连同你母亲救命的 409 批瑞士腹透液，整铲整铲地推进 2000℃ 的工业焚化炉！",
 				"en": "-35°C outside the wall, 26°C inside. A forklift shoves beef, butter and Batch-409 dialysis fluid — \"fifteen days past date\" — into a 2000°C furnace."},
-			{"w": "", "zh": "烟囱喷出的黑烟混着大雪，飘向下风口两公里外的工人居住区。那就是「焦油黑雪」——闻着有烤肉脂香，抓进嘴里全是烧塑料的油垢。",
+			{"w": "", "zh": "高耸的烟囱向着上风口喷吐出浓黑的脂臭油烟，混着鹅毛大雪飘向下风口两公里外的工人筒子楼。原来这就是落满全城窗台的「焦油黑雪」——饿极了的孩子闻着有烤肉的焦香，抓一把塞进嘴里，嚼碎的却全是烧化了的塑料包装袋与黑油垢！",
 				"en": "The stack vomits black smoke into the snow and drifts two kilometres downwind to the workers' blocks. That is the tar-black snow: it smells like roast fat and tastes like burnt plastic."},
-			{"w": "", "zh": "你举起相机，按下了快门。",
+			{"w": "", "mood": "sad", "zh": "办公室里没有酒池肉林。茹科夫专员面前摆着的，也是一碗和白区饥民相同的冷水泡霉黑麦；他眼窝深陷，像许多夜没有睡过。签署三号矿坑活埋令的那只手没有躲你的撬棍，只是平静地指向窗外：「你以为我烧掉腹透液是因为贪婪？三十箱药，三百个病人。发下去，二十四座工人楼今夜就会拿菜刀互相开门。人类承受不起只有十分之一的人能活的自由。」",
+				"en": "Zhukov's desk holds the same mouldy rye and cold water as the workers' canteen. He does not flinch from your crowbar: thirty crates, three hundred patients; distribution would mean a knife in every hallway by midnight."},
+			{"w": "", "mood": "intense", "zh": "他低头喝了一口那碗霉水，仿佛在替全城领受圣餐：「他们也不能知道灰鳞病会自愈。知道了，过去每一张处决单都会变成他们亲手签的罪。只有电传机亮着绿灯，只有他们相信三号车厢里全是怪物，良民才睡得着。我把牛排烧成灰，把活人填进矿坑——是我替这十万个软弱的人背起下地狱的十字架。你去广播吧，阿列克谢。门一开，他们第一个撕碎的，也许不是我和我的台账，而是那个逼他们看见真相的你。」你的撬棍仍举在半空，可你忽然分不清，自己准备砸碎的是他的谎言，还是全城赖以活命的梦。",
+				"en": "He drinks the mouldy water like communion. If the cured are human, every citizen becomes an accomplice; if they are monsters, the city can sleep. He calls the furnace his cross, and warns that the crowd may tear apart the witness before the executioner."},
+			{"w": "", "zh": "你在令人作呕的热浪里举起相机，冻僵的食指狠狠按下了快门。",
 				"en": "You raise the camera and press the shutter."},
 		],
 		"choices": [
@@ -430,18 +461,18 @@ const STORY := {
 				"cls": "good",
 				"ops": [["add", "dial", 2], ["add", "photo", 1], ["flag", "truth"], ["conscience", 5]],
 				"after_mate": "",
-				"toast_zh": "快门声像一声枪响。你把 409 批腹透液塞进背包。",
+				"toast_zh": "机械快门「咔嚓」一响，在轰鸣的火炉旁清脆得像一发顶上膛的子弹。你把拍下罪证的胶卷贴胸藏好，将两袋滚烫的 409 批腹透液死死塞进了背包。",
 				"toast_en": "The shutter sounds like a gunshot. You stuff Batch-409 into your pack."},
 		],
 	},
 	"marshalling": {
 		"title_zh": "十一点的发车令", "title_en": "The 23:00 Dispatch Order",
 		"lines": [
-			{"w": "", "zh": "调度室外的铁皮板上钉着一张还没撕的发车令，红章新鲜得发黏。",
+			{"w": "", "zh": "西站调度室外的防寒铁皮板上，孤零零地钉着一张还没来得及撕毁的绝密发车令，上面内务部的红章新鲜得发黏，像一滩刚刚凝固的血：",
 				"en": "A dispatch order is still pinned to the board outside the control room, the red stamp still tacky."},
-			{"w": "", "zh": "【特别运输 · 不挂车次牌 · 23:00 · 鹰嘴崖线 · 第三节车厢 176 人 · 实毁数与账面数必须闭合】",
+			{"w": "", "zh": "【特别运输指令 · 严禁悬挂车次牌 · 发车时刻：23:00 · 行车区间：鹰嘴崖死线 · 第三节车厢核载：176 人 · 死令：实毁数与账面数必须绝对闭合】",
 				"en": "[SPECIAL RUN · NO TRAIN NUMBER · 23:00 · EAGLE'S CRAG LINE · BOXCAR 3 · 176 PERSONS · PHYSICAL COUNT MUST EQUAL LEDGER]"},
-			{"w": "", "zh": "你把红章的位置拍了下来。报废守车的工具箱里，躺着几块能拼成一支枪的钢件。",
+			{"w": "", "zh": "你屏住呼吸拍下了那个鲜红的印鉴。而在一旁报废守车的铁工具箱底，正静静躺着几块抹了黄油、足以拼凑出一支致命猎枪的精钢枪机零件。",
 				"en": "You photograph the stamp. In a dead brake van's toolbox lie the steel pieces of a gun."},
 		],
 		"choices": [
@@ -450,11 +481,52 @@ const STORY := {
 				"cls": "good",
 				"ops": [["add", "intel", 1], ["flag", "endgame_known"]],
 				"after_mate": "",
-				"toast_zh": "23:00。鹰嘴崖。一百七十六人。你终于知道了全部数字。",
+				"toast_zh": "午夜 23:00。乌拉尔鹰嘴崖。一百七十六条退了烧的性命。所有的数字、所有的罪孽与最后的审判时刻，终于在你的脑海里严丝合缝地扣上了。",
 				"toast_en": "23:00. Eagle's Crag. One hundred seventy-six. You finally know every number."},
 		],
 	},
 }
+
+# 清杀队战斗短对白：警告 → 追杀 → 阵亡；execute 为玩家被击毙前的处决短句。
+# 与 STORY 分表存放，避免战斗事件反复触发时把七段主线剧情重新打开。
+const OSK_BARKS := {
+	"warning": {
+		"speaker_zh": "清杀队 · 警戒", "speaker_en": "OSK · Suspicious", "mood": "calm",
+		"lines": [
+			{"zh": "阴影里是谁？滚到探照灯底下来，把印鉴卡举过头顶！", "en": "Who is there? Step into the light. Papers, now."},
+			{"zh": "不准动！手放在光柱里，别让我提醒第二遍。", "en": "Do not move. Keep your hands where I can see them."},
+			{"zh": "宵禁封锁区。转过身，面朝铁墙慢慢退过来！", "en": "This sector is sealed. Turn around and approach slowly."},
+		],
+	},
+	"chase": {
+		"speaker_zh": "清杀队 · 追杀", "speaker_en": "OSK · Pursuit", "mood": "intense",
+		"lines": [
+			{"zh": "是夜潜者！焊死前头路口，绝不能让他钻回居住区！", "en": "Target spotted! Seal the junction. Do not let him reach the blocks!"},
+			{"zh": "他插翅难逃！二号从涵洞包抄，探照灯死死钉住他！", "en": "He will not escape. Two, flank him. Keep the light on him!"},
+			{"zh": "站住！再往前一步，按灰鳞狂暴者就地销账！", "en": "Halt! Run again and we fire!"},
+		],
+	},
+	"death": {
+		"speaker_zh": "清杀队 · 阵亡", "speaker_en": "OSK · Down", "mood": "death",
+		"lines": [
+			{"zh": "三号中弹……探照灯……别让光灭了……黑……", "en": "Three is hit... the light... do not let it go out..."},
+			{"zh": "电传机……还亮着吗……替我划掉……编号……", "en": "Is the radio... still on... tell them..."},
+			{"zh": "面具碎了……好冷……报告督察……活人还在……", "en": "I cannot see... report... the target is still..."},
+		],
+	},
+	"execute": {
+		"speaker_zh": "清杀队 · 目标清除", "speaker_en": "OSK · Target Down", "mood": "intense",
+		"lines": [
+			{"zh": "目标已物理清零。核对档案号，恢复灯火封锁。", "en": "Target down. Verify the file number. Restore the cordon."},
+			{"zh": "停止射击。实毁数加一，写进午夜交接底单。", "en": "Cease pursuit. Enter the scene in the handover log."},
+		],
+	},
+}
+
+# 终局共同余响：帕沙的圣愚行为不改变结局判定，只追问救人与尊严是否必须有利可图。
+const PASHA_EPILOGUE_ZH := "鹰嘴崖谷底，十八岁的清杀队新兵帕沙在崖顶反戈，替你和拉娜挡下督察队的机枪，随后顺着雪坡滚到一具从闷罐车厢摔出的无名女尸旁。他知道自己快死了，却仍用满是血的手解那件铅灰色防化服，执意把厚重的衣服套在早已冻僵的女人身上：「大哥……帮我把扣子系上……她穿着单衣，雪太大了……督察官说防化服是公家财产，少一件要枪毙……可她也是个人啊，不能光着身子见上帝……」他的最后一息没有救活任何人，也没有改变一张台账。可在整座城都计算一件衣服能换几发子弹时，这个连字也认不全的少年偏要把最后一寸温暖送给死人；正是这毫无用处的举动，使所有精明的生存账忽然显得比死亡更加贫穷。"
+
+const PASHA_EPILOGUE_EN := "At Eagle's Crag, eighteen-year-old Pasha turns his rifle on the inspectors and takes their fire for you and Lana. Dying beside a nameless woman thrown from the boxcar, he struggles to pull off his state-issued protective suit and dress her frozen body: she is a person too, and cannot meet God half naked. His last act saves no one and changes no ledger; its useless mercy makes every careful calculation of survival suddenly look poorer than death."
 
 # ============================================================================
 # TEXT — UI 文案
@@ -462,12 +534,12 @@ const STORY := {
 const TEXT := {
 	"zh": {
 		"title": "《Z年纪事：凛冬铁轨》", "subtitle": "探索循环 DEMO · 无美术灰盒 · GODOT 4 移植版",
-		"tagline": "在诺沃斯克-17，电传机亮绿灯即为温饱，档案号划掉即为清零。",
+		"tagline": "在诺沃斯克-17，电传机的绿灯证明配给已经抵达，档案上的划线证明一个人从未活过。",
 		"start": "进入 602 室（开始）", "help": "操作说明", "logbook": "工作日志",
 		"base_title": "据点 · 第3居住区 赫鲁晓夫楼 602 室",
-		"base_sub": "白昼的锚。母亲的透析机还在响，夜里你要翻出锅炉房气窗。",
+		"base_sub": "透析机的低鸣替母亲数着剩下的时间。你白天替她换液，夜里翻过锅炉房气窗；每次回来，都要重新决定自己还是不是自己。",
 		"map_title": "诺沃斯克-17 · 夜潜目标选择",
-		"map_sub": "每夜只能去一处。情报越少，风险越高——先想清楚带谁、带什么、还剩多少时间到天亮。",
+		"map_sub": "每夜只能去一个地方。你带走的不只是物资，也可能是某个人的最后一口气；先想清楚带谁、带什么，以及准备把谁留在黑暗里。",
 		"back_base": "返回 602 室", "to_map": "前往夜潜地图",
 		"sleep": "白昼：照顾母亲 / 休息到下一夜",
 		"next_day": "回到 602 室（进入第二天）",
@@ -490,17 +562,17 @@ const TEXT := {
 		"ending_preview": "终局预演", "restart": "重新开始",
 		"loaded": "已携带", "stock": "库存", "mate_none": "不带伙伴",
 		"raid_help": "WASD 移动 · 鼠标定向 · Ctrl 蹲伏 · Shift 冲刺 · 左键/Space 攻击 · 按住 E 搜刮/卡门/撤离 · Q 喝水 · F 绷带 · R 装填 · Tab 日志 · Esc 放弃",
-		"choice_a": "抉择 A · 风雪里伸出的那只手",
-		"a1": "冒险喂阿司匹林与温水", "a2": "贴墙绕行，省下药水", "a3": "一撬棍灭口并搜走罐头",
+		"choice_a": "抉择 A · 你是否还承认他是人",
+		"a1": "冒险喂他阿司匹林与温水，等他醒来", "a2": "贴墙绕行，把他的哭声留给黑暗", "a3": "一撬棍让他安静，再搜走他的罐头",
 	},
 	"en": {
 		"title": "Year of Z: Iron Winter", "subtitle": "Exploration Loop DEMO · Zero-Art Greybox · Godot 4 port",
-		"tagline": "In Novorsk-17, when the teletype lights up green, everyone is fed; when a file number is crossed out, the person is zeroed.",
+		"tagline": "In Novorsk-17, a green teletype light proves the rations arrived; a stroke through a file number proves a person never lived.",
 		"start": "Enter Room 602 (Start)", "help": "Controls", "logbook": "Logbook",
 		"base_title": "Base · Khrushchyovka Block 3, Apt 602",
-		"base_sub": "The daytime anchor. Mother's dialysis machine is still beeping; at night you pry open the boiler-room vent.",
+		"base_sub": "The dialysis machine counts the time Mother has left. By day you change her fluid; by night you climb through the boiler-room vent and ask what remains of you.",
 		"map_title": "Novorsk-17 · Night Raid Target",
-		"map_sub": "One location per night. Less intel = more risk. Decide who and what you bring.",
+		"map_sub": "One location per night. You may carry back more than supplies—or leave someone's last breath behind. Choose who and what to bring, and whom to abandon.",
 		"back_base": "Back to Room 602", "to_map": "Go to night map",
 		"sleep": "Daytime: tend mother / rest until next night",
 		"next_day": "Return to Room 602 (next day)",
@@ -523,8 +595,8 @@ const TEXT := {
 		"ending_preview": "Ending preview", "restart": "Restart",
 		"loaded": "Loaded", "stock": "stock", "mate_none": "Go alone",
 		"raid_help": "WASD move · mouse aim · Ctrl crouch · Shift sprint · LMB/Space attack · hold E search/wedge/extract · Q drink · F bandage · R reload · Tab logbook · Esc abort",
-		"choice_a": "CHOICE A · The hand reaching out of the blizzard",
-		"a1": "Feed aspirin + warm water", "a2": "Bypass along the wall", "a3": "Silence him with the crowbar",
+		"choice_a": "CHOICE A · Do you still call him human?",
+		"a1": "Risk aspirin and warm water; wait for him to wake", "a2": "Slip past and leave his crying to the dark", "a3": "Silence him with the crowbar, then take his tin",
 	},
 }
 

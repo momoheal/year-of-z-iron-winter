@@ -109,6 +109,8 @@ func _perceive(delta: float) -> void:
 		suspicion = minf(1.2, suspicion + vis * 1.25 * delta)
 		lost_time = 0.0
 		if suspicion > 0.35 and state != "alert":
+			if state not in ["investigate", "search"] and ctl.has_method("on_soldier_warning"):
+				ctl.on_soldier_warning(self)
 			state = "investigate"
 			target = ctl.player.global_position
 		if suspicion >= 1.0:
@@ -181,6 +183,8 @@ func hear(pos: Vector2, kind: String) -> void:
 	suspicion = maxf(suspicion, 0.3 if kind == "can" else 0.18)
 
 func alert_to(pos: Vector2) -> void:
+	if state != "alert" and ctl != null and ctl.has_method("on_soldier_alert"):
+		ctl.on_soldier_alert(self)
 	target = pos
 	state = "alert"
 	suspicion = maxf(suspicion, 1.0)

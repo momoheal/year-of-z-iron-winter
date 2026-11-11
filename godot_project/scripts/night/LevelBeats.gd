@@ -60,6 +60,12 @@ static func mechanisms_zh(b: Dictionary) -> String:
 	return "可动机关：" + "、".join(names)
 
 
+const PROMOTED_ART_SOURCES := {
+	"boiler": "coldstore", "underpass": "sanitarium", "birch": "yard",
+	"workshop": "canteen", "greenhouse": "market", "archive": "sanitarium",
+}
+
+
 static func for_level(id: String) -> Dictionary:
 	var base := {
 		"code": "ДЕЛО № 0420 · НОЧНОЙ РЕЙД",
@@ -74,6 +80,10 @@ static func for_level(id: String) -> Dictionary:
 		"first_beat": 0.0,
 	}
 	var data: Dictionary = LEVELS.get(id, {})
+	if PROMOTED_ART_SOURCES.has(id):
+		data = LEVELS[PROMOTED_ART_SOURCES[id]].duplicate(true)
+		for key in LEVELS[id]:
+			data[key] = LEVELS[id][key]
 	var out := base.duplicate(true)
 	for k in data.keys():
 		out[k] = data[k]
@@ -315,5 +325,67 @@ const LEVELS := {
 		"events": [],
 		"mechanisms": [],
 		"first_beat": 0.0,
+	},
+	# 六张原 RaidSim 灰盒主地图的实体美术版。空间机制继承对应母版，
+	# 但档案标题、任务简报与场景路径独立，避免把旧关卡剧情误贴到新地点。
+	"boiler": {
+		"scene": "res://scenes/night_boiler.tscn", "code": "ДЕЛО № 0317 · КОТЕЛЬНАЯ", "zone": "НОВОРСК-17 · КОТЕЛЬНАЯ",
+		"danger": 2, "accent": "c98a3e", "events": [],
+		"landmarks": [
+			{"name": "蒸汽泄压阀", "pos": [12.0, 25.0], "radius": 3.0, "note": "锈死的泄压阀仍在漏汽，白雾能短暂遮住灯光。"},
+			{"name": "燃料油渣箱", "pos": [24.0, 24.0], "radius": 3.0, "note": "箱底还剩能烧的油渣，桶壁标着锅炉房领用号。"},
+			{"name": "取暖总管", "pos": [36.0, 25.0], "radius": 3.0, "note": "通往工人区的取暖总管，保温层早已被拆去换烟。"},
+		],
+		"brief": ["锅炉房外的蒸汽总管仍在工作。废钢和取暖燃料散在灯照不到的角落。", "别在泄压阀旁停留；蒸汽会遮住脚步，也会遮住清杀队的灯光。"],
+	},
+	"underpass": {
+		"scene": "res://scenes/night_underpass.tscn", "code": "ДЕЛО № 0144 · ТОННЕЛЬ", "zone": "НОВОРСК-17 · ТОННЕЛЬ",
+		"danger": 2, "accent": "6a8f9c", "events": [],
+		"landmarks": [
+			{"name": "旧调度底单", "pos": [10.0, 23.5], "radius": 3.0, "note": "被水汽泡皱的车道底单，边角还有能用铅笔拓出的编号。"},
+			{"name": "涵洞铁栅", "pos": [22.0, 11.0], "radius": 3.0, "note": "铁栅外就是车道，插销上的新油说明今晚有人来过。"},
+			{"name": "南侧排风口", "pos": [22.0, 3.0], "radius": 3.0, "note": "排风机早停了，风仍从铁叶缝里灌进来。这里可以撤离。"},
+		],
+		"brief": ["涵洞前的旧调度室还留着车道底单。水滴声会盖住一次轻脚步，盖不住枪声。", "排风口就在南侧，拿到情报后不必穿回巡逻区。"],
+	},
+	"birch": {
+		"scene": "res://scenes/night_birch.tscn", "code": "ДЕЛО № 0208 · РОЩА", "zone": "НОВОРСК-17 · БЕРЁЗОВАЯ РОЩА",
+		"danger": 2, "accent": "8fa9bd", "events": [],
+		"landmarks": [
+			{"name": "巡逻雪道", "pos": [7.0, 24.0], "radius": 3.0, "note": "两行靴印在林边交错，最新的一行还没有被雪盖住。"},
+			{"name": "倒伏白桦", "pos": [24.0, 24.0], "radius": 3.0, "note": "白桦横在雪道上，树干后面能躲开远处的扫灯。"},
+			{"name": "巡逻队急救包", "pos": [36.0, 24.0], "radius": 3.0, "note": "掉在雪里的急救包，绷带外层的油纸还没有湿。"},
+		],
+		"brief": ["白桦林边的巡逻道被雪埋了一半。绷带和木料比废钢更值得带走。", "林中视野开阔，蹲下并不能代替树木和障碍物的遮挡。"],
+	},
+	"workshop": {
+		"scene": "res://scenes/night_workshop.tscn", "code": "ДЕЛО № 0771 · МАСТЕРСКАЯ", "zone": "НОВОРСК-17 · ДЕПО · МАСТЕРСКАЯ",
+		"danger": 3, "accent": "b87333", "events": [],
+		"landmarks": [
+			{"name": "台钳与道钉", "pos": [24.0, 8.2], "radius": 3.0, "note": "台钳夹着一根弯道钉，旁边放着刚磨过的撬棍。"},
+			{"name": "钳工长台", "pos": [22.0, 25.0], "radius": 3.0, "note": "长台的钢板被锤子打出密麻凹坑，走动时会放大脚步声。"},
+			{"name": "机油桶", "pos": [12.0, 5.0], "radius": 3.0, "note": "桶里只剩黑色油泥，空气里全是旧机油和铁锈味。"},
+		],
+		"brief": ["机务段钳工房的台钳上还夹着道钉。那把撬棍比手上这根更结实。", "工作台的金属表面会把脚步声传得很远，贴墙走。"],
+	},
+	"greenhouse": {
+		"scene": "res://scenes/night_greenhouse.tscn", "code": "ДЕЛО № 0512 · ТЕПЛИЦА", "zone": "НОВОРСК-17 · ТЕПЛИЦА",
+		"danger": 2, "accent": "82956b", "events": [],
+		"landmarks": [
+			{"name": "碎玻璃苗床", "pos": [12.0, 23.0], "radius": 3.0, "note": "碎玻璃压在冻土上，苗床里只剩发黑的黑麦根茎。"},
+			{"name": "最后一箱黑麦", "pos": [24.5, 24.4], "radius": 3.0, "note": "木箱里的黑麦受潮结块，筛一筛还能吃。"},
+			{"name": "温室煤炉", "pos": [36.5, 25.0], "radius": 3.0, "note": "煤炉早已熄灭，炉膛灰下还有一点没有散尽的热。"},
+		],
+		"brief": ["温室只剩几箱发黑的黑麦。破玻璃和积雪之间还有一条能走人的通道。", "这里的灯少，脚步声却比雪地里更清楚。"],
+	},
+	"archive": {
+		"scene": "res://scenes/night_archive.tscn", "code": "ДЕЛО № 0420 · АРХИВ", "zone": "НОВОРСК-17 · АРХИВ",
+		"danger": 3, "accent": "9b7653", "events": [],
+		"landmarks": [
+			{"name": "0420 号底柜", "pos": [10.0, 23.5], "radius": 3.0, "note": "底柜标签被人撕去一半，残留号码里还能认出 0420。"},
+			{"name": "调车记录架", "pos": [22.0, 11.0], "radius": 3.0, "note": "铁架上的调车记录按车厢编号排列，第三节被抽走了几页。"},
+			{"name": "地下排风管", "pos": [22.0, 3.0], "radius": 3.0, "note": "排风管轻微震动，地面上能听到清杀队交接班的口令。"},
+		],
+		"brief": ["档案库的地下排风管还通着电。拉娜的 0420 号病历和调车记录可能还在底柜里。", "纸张不会发出声音，碰倒铁柜会。"],
 	},
 }

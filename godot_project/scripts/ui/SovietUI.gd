@@ -16,6 +16,8 @@ extends RefCounted
 ## 舰队命名（界面上出现的俄文一律写死在数据层，这里只提供排版工具）：
 ##     НОВОРСК-17 / ЖЕЛЕЗНАЯ ЗИМА / СССР / ОСК / ДЕЛО
 
+const ButtonChrome := preload("res://scripts/ui/SovietButtonChrome.gd")
+
 # ============================================================================
 # 调色板 —— 全项目界面配色的唯一数据源
 # ============================================================================
@@ -120,25 +122,88 @@ static func brass(margin: int = 8) -> StyleBoxFlat:
 	return plate(Color("2a2318"), OCHRE_DIM, 1, margin)
 
 
+## 铆接指令牌：左侧粗铜边是「拉手」，右下阴影是钢板厚度。
+static func command_plate(bg: Color, accent: Color, pressed: bool = false) -> StyleBoxFlat:
+	var sb := plate(bg, STEEL, 1, 15)
+	sb.border_color = accent
+	sb.border_width_left = 2 if pressed else 6
+	sb.border_width_right = 1
+	sb.border_width_top = 1
+	sb.border_width_bottom = 2
+	sb.shadow_color = Color(0, 0, 0, 0.0 if pressed else 0.58)
+	sb.shadow_size = 0 if pressed else 3
+	sb.shadow_offset = Vector2(3, 3)
+	sb.content_margin_left = 20
+	sb.content_margin_right = 16
+	sb.content_margin_top = 9
+	sb.content_margin_bottom = 9
+	return sb
+
+
+## 剧情与日志使用的主面板：不是圆角玻璃卡，而是一张压在铁板上的档案。
+static func archive_panel() -> StyleBoxFlat:
+	var sb := plate(Color(0.055, 0.063, 0.064, 0.97), OCHRE_DIM, 1, 18)
+	sb.border_width_left = 6
+	sb.border_width_bottom = 3
+	sb.shadow_color = Color(0, 0, 0, 0.72)
+	sb.shadow_size = 12
+	sb.shadow_offset = Vector2(7, 8)
+	return sb
+
+
+## 说话者名牌：漂白档案纸配黑字，和钢板正文形成材质对比。
+static func paper_tag() -> StyleBoxFlat:
+	var sb := plate(Color("c9bea4"), Color("756444"), 1, 9)
+	sb.border_width_left = 4
+	sb.shadow_color = Color(0, 0, 0, 0.35)
+	sb.shadow_size = 2
+	sb.shadow_offset = Vector2(2, 2)
+	return sb
+
+
 ## 给 Button 一次性套上全部状态（normal / hover / pressed / disabled）。
 static func dress_button(b: Button, primary: bool = false, font_size: int = 15) -> void:
 	b.add_theme_font_override("font", display_font())
 	b.add_theme_font_size_override("font_size", font_size)
 	b.focus_mode = Control.FOCUS_NONE
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	if primary:
-		b.add_theme_stylebox_override("normal", plate(Color("3a1512"), BLOOD_LIT, 2, 12))
-		b.add_theme_stylebox_override("hover", plate(Color("541c17"), OCHRE, 2, 12))
-		b.add_theme_stylebox_override("pressed", plate(Color("240d0b"), BLOOD_LIT, 2, 12))
-		b.add_theme_stylebox_override("disabled", plate(IRON, STEEL, 1, 12))
-		b.add_theme_color_override("font_color", Color("f0e6d2"))
-		b.add_theme_color_override("font_hover_color", Color("ffffff"))
+		b.add_theme_stylebox_override("normal", command_plate(Color("641c16"), OCHRE))
+		b.add_theme_stylebox_override("hover", command_plate(Color("85251b"), Color("efd18a")))
+		b.add_theme_stylebox_override("pressed", command_plate(Color("310d0a"), BLOOD_LIT, true))
+		b.add_theme_stylebox_override("disabled", command_plate(IRON, STEEL, true))
+		b.add_theme_color_override("font_color", Color("f4e7cc"))
+		b.add_theme_color_override("font_hover_color", Color("fff7e5"))
 	else:
-		b.add_theme_stylebox_override("normal", plate(IRON_LIT, STEEL, 1, 12))
-		b.add_theme_stylebox_override("hover", plate(PLATE, OCHRE_DIM, 1, 12))
-		b.add_theme_stylebox_override("pressed", plate(INK, STEEL, 1, 12))
-		b.add_theme_stylebox_override("disabled", plate(INK, Color("22282b"), 1, 12))
+		b.add_theme_stylebox_override("normal", command_plate(Color("202526"), OCHRE_DIM))
+		b.add_theme_stylebox_override("hover", command_plate(Color("343833"), OCHRE))
+		b.add_theme_stylebox_override("pressed", command_plate(INK, BLOOD_LIT, true))
+		b.add_theme_stylebox_override("disabled", command_plate(INK, Color("22282b"), true))
 		b.add_theme_color_override("font_color", BONE)
-		b.add_theme_color_override("font_hover_color", OCHRE)
+		b.add_theme_color_override("font_hover_color", Color("efd18a"))
+	b.add_theme_color_override("font_pressed_color", OCHRE)
+	b.add_theme_color_override("font_disabled_color", ASH)
+	var chrome = b.get_node_or_null("CommandChrome")
+	if chrome == null:
+		chrome = ButtonChrome.new()
+		chrome.name = "CommandChrome"
+		b.add_child(chrome)
+	chrome.accent = OCHRE if primary else OCHRE_DIM
+	chrome.queue_redraw()
+
+
+## 抉择不是网页按钮：按道德语气分成铜签、血签和钢签。
+static func dress_choice_button(b: Button, tone: String = "neutral", font_size: int = 15) -> void:
+	dress_button(b, tone == "good", font_size)
+	if tone == "bad":
+		b.add_theme_stylebox_override("normal", command_plate(Color("351411"), BLOOD_LIT))
+		b.add_theme_stylebox_override("hover", command_plate(Color("591a14"), Color("e77762")))
+	elif tone == "neutral":
+		b.add_theme_stylebox_override("normal", command_plate(Color("25241f"), Color("756444")))
+	var chrome = b.get_node_or_null("CommandChrome")
+	if chrome != null:
+		chrome.accent = BLOOD_LIT if tone == "bad" else (Color("756444") if tone == "neutral" else OCHRE)
+		chrome.queue_redraw()
 
 
 ## 1~2px 的分隔线（钢色）。

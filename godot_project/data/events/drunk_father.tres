@@ -1,0 +1,118 @@
+[gd_resource type="Resource" script_class="EventData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/EventOptionData.gd" id="1_emmpy"]
+[ext_resource type="Script" path="res://scripts/data/DeltaData.gd" id="2_85use"]
+[ext_resource type="Script" path="res://scripts/data/EventData.gd" id="3_p1wbm"]
+
+[sub_resource type="Resource" id="Resource_vkje7"]
+script = ExtResource("2_85use")
+key = "abx"
+amount = -1
+label_zh = "抗生素"
+label_en = "Antibiotics"
+
+[sub_resource type="Resource" id="Resource_873g7"]
+script = ExtResource("2_85use")
+target = "stat"
+key = "sanity"
+amount = 8
+label_zh = "替孩子留住一次天亮"
+label_en = "One more dawn for the child"
+
+[sub_resource type="Resource" id="Resource_don2l"]
+script = ExtResource("2_85use")
+target = "flag"
+key = "makar_child"
+amount = 1
+label_zh = "药送回地窖"
+label_en = "Medicine returned"
+
+[sub_resource type="Resource" id="Resource_iy4ft"]
+script = ExtResource("1_emmpy")
+id = "replace_medicine"
+label_zh = "用自己的抗生素换回那半瓶酒精"
+label_en = "Trade your own antibiotics for the bottle"
+costs = Array[ExtResource("2_85use")]([SubResource("Resource_vkje7")])
+on_success = Array[ExtResource("2_85use")]([SubResource("Resource_873g7"), SubResource("Resource_don2l")])
+result_text_zh = "马卡尔捏着你给他的药，忽然不笑了。他把酒精推回来，像推开一具自己的尸体：「你为什么现在才来？我已经把最不要脸的话说完了……」他抱着药爬回地窖，脚步仍旧踉跄。你没有见证退烧的奇迹，只替那个孩子留住了一次尚不确定的天亮。"
+result_text_en = "You trade your antibiotics for the bottle. Makar crawls back to the cellar; no miracle is promised, only another uncertain dawn."
+
+[sub_resource type="Resource" id="Resource_0pe2y"]
+script = ExtResource("2_85use")
+target = "stat"
+key = "hp"
+amount = -5
+label_zh = "挣扎时撞伤"
+label_en = "Hurt in the struggle"
+
+[sub_resource type="Resource" id="Resource_0alnl"]
+script = ExtResource("2_85use")
+target = "stat"
+key = "sanity"
+amount = -2
+label_zh = "他仍在咒骂自己"
+label_en = "He still curses himself"
+
+[sub_resource type="Resource" id="Resource_xwn6y"]
+script = ExtResource("2_85use")
+target = "stat"
+key = "sanity"
+amount = 4
+label_zh = "没有让他独自逃走"
+label_en = "No solitary escape"
+
+[sub_resource type="Resource" id="Resource_t6axx"]
+script = ExtResource("2_85use")
+target = "flag"
+key = "makar_returned"
+amount = 1
+label_zh = "父亲回到地窖"
+label_en = "Father returned"
+
+[sub_resource type="Resource" id="Resource_wagvo"]
+script = ExtResource("1_emmpy")
+id = "drag_home"
+label_zh = "夺下酒瓶，拖他回女儿身边"
+label_en = "Take the bottle and drag him home"
+success_chance = 0.85
+on_success = Array[ExtResource("2_85use")]([SubResource("Resource_xwn6y"), SubResource("Resource_t6axx")])
+on_failure = Array[ExtResource("2_85use")]([SubResource("Resource_0pe2y"), SubResource("Resource_0alnl")])
+result_text_zh = "他一边同你争夺酒瓶，一边恳求你再打得重些，仿佛疼痛是唯一不必付费的赦罪。你最终把他拖回地窖门口；他不敢进去，只隔着门听见女儿烧得说胡话，便跪在雪里号啕大哭。门没有因此变成天堂，但他至少没有再逃走。"
+result_text_en = "You drag him to the cellar door. He cannot enter, but he no longer runs; outside, he weeps at the sound of his daughter's fever."
+
+[sub_resource type="Resource" id="Resource_32xhv"]
+script = ExtResource("2_85use")
+target = "stat"
+key = "sanity"
+amount = -5
+label_zh = "无力回答"
+label_en = "No answer"
+
+[sub_resource type="Resource" id="Resource_o4lqm"]
+script = ExtResource("2_85use")
+target = "flag"
+key = "makar_abandoned"
+amount = 1
+label_zh = "离开马卡尔"
+label_en = "Makar left"
+
+[sub_resource type="Resource" id="Resource_3gh74"]
+script = ExtResource("1_emmpy")
+id = "leave_makar"
+label_zh = "让他跪在雪里，不替他裁决"
+label_en = "Leave him in the snow without judging him"
+on_success = Array[ExtResource("2_85use")]([SubResource("Resource_32xhv"), SubResource("Resource_o4lqm")])
+result_text_zh = "你转身走了。身后的人还在大声咒骂自己，仿佛只要抢先把自己骂成畜生，别人的审判就再也伤不到他。你没有唾弃他，也没有原谅他；你只是忽然害怕，他那套听上去无比丑恶的账，自己在某个夜里也曾悄悄算过。"
+result_text_en = "You walk away without spitting or absolving. His self-hatred sounds obscene because some part of you recognises the arithmetic."
+
+[resource]
+script = ExtResource("3_p1wbm")
+id = "drunk_father"
+title_zh = "酒馆里的换药人"
+title_en = "The Father Who Sold the Medicine"
+desc_zh = "黑市篝火旁，前市立中学语文教师马卡尔当着众人的面，把古丽娅给他女儿退烧的两粒阿司匹林换成半瓶掺水工业酒精，仰头灌下，又跪在雪泥里揪着头发狂笑：「来啊，往我脸上吐唾沫！我是个吃女儿肉的畜生！可她熬过四天又能怎样？醒过来还是要被塞进铁壳号！我喝掉这两粒药，是因为我连看她清醒着被烧死的勇气都没有！阿列克谢，你撬得开铁门，撬得开人心里这口棺材吗？！」地窖里，他的女儿仍在四十度高烧中喊冷；他越把这句话喊得响亮，越像是在等谁替他把最后一丝做人的资格也拿走。"
+desc_en = "At the market fire, former schoolteacher Makar trades the two aspirin meant for his feverish daughter for diluted industrial alcohol. He begs the crowd to spit on him: even if she survives, the Buran will take her. His self-abasement is both confession and refuge."
+phase = "night"
+trigger_chance = 0.8
+art_tag = "confession"
+options = Array[ExtResource("1_emmpy")]([SubResource("Resource_iy4ft"), SubResource("Resource_wagvo"), SubResource("Resource_3gh74")])

@@ -52,7 +52,7 @@ success_chance = 0.8
 costs = Array[ExtResource("2_npq7h")]([SubResource("Resource_beoev")])
 on_success = Array[ExtResource("2_npq7h")]([SubResource("Resource_1nmxp"), SubResource("Resource_d6g5g")])
 on_failure = Array[ExtResource("2_npq7h")]([SubResource("Resource_2kgcf"), SubResource("Resource_3xv81")])
-result_text_zh = "你把裂口砸扁，白雾慢慢止住。"
+result_text_zh = "你抄起沉重的废钢件狠命砸扁了翻卷的管口，刺耳的嘶鸣声渐渐平息，白雾终于止住了。"
 result_text_en = "You hammer the crack shut."
 
 [sub_resource type="Resource" id="Resource_0wunk"]
@@ -88,7 +88,7 @@ success_chance = 0.6
 costs = Array[ExtResource("2_npq7h")]([SubResource("Resource_0wunk")])
 on_success = Array[ExtResource("2_npq7h")]([SubResource("Resource_e1dk6")])
 on_failure = Array[ExtResource("2_npq7h")]([SubResource("Resource_yunvr")])
-result_text_zh = "破布被蒸汽顶开，又被你死命按了回去。"
+result_text_zh = "你扯下厚棉衣袖死命按在裂口上，滚烫的蒸汽一次次把破布顶开，又被你烫起水泡的双手硬生生按了回去。"
 result_text_en = "The rag holds, barely."
 
 [sub_resource type="Resource" id="Resource_821kx"]
@@ -113,7 +113,7 @@ id = "ignore"
 label_zh = "放任不管，继续走"
 label_en = "Leave it and move on"
 on_success = Array[ExtResource("2_npq7h")]([SubResource("Resource_821kx"), SubResource("Resource_hngvu")])
-result_text_zh = "白雾在身后继续喷涌。"
+result_text_zh = "你没有停留，任由那股救命的供暖白雾在身后的极夜里白白喷涌、消散。"
 result_text_en = "The white cloud keeps billowing."
 
 [resource]
@@ -121,7 +121,7 @@ script = ExtResource("3_7kfvi")
 id = "steam_pipe_leak"
 title_zh = "蒸汽管破裂"
 title_en = "Burst Steam Pipe"
-desc_zh = "身旁一截蒸汽管突然爆裂，滚烫的白雾喷涌而出，必须立刻处理。"
+desc_zh = "身旁一截生锈的市政高压蒸汽管突然崩裂，滚烫刺耳的白雾夹着铁锈味喷涌而出，一旦惊动远处的哨兵便万劫不复。"
 desc_en = "A steam pipe bursts beside you, scalding white fog pouring out."
 phase = "night"
 art_tag = "interrupt"

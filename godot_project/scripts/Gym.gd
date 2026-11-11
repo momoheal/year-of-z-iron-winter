@@ -455,7 +455,7 @@ func _draw_room_e() -> void:
 		draw_circle(Vector2(vas.x + 4.0, vas.y - 3.0), 2.0, Color("7dd3fc"))
 	var vlabel := ""
 	if vas.state == "resolved":
-		vlabel = sim.tr2("瓦西里（瞳孔回色·“……Пить渴……”）", "Vasily (Eyes Clear · '…Пить…')")
+		vlabel = sim.tr2("瓦西里（瞳孔回色·“……Пить，水/渴……”）", "Vasily (Eyes Clear · '…Пить, water / thirst…')")
 	else:
 		vlabel = sim.tr2("瓦西里（40℃高烧谵妄）[按Space挥刀]", "Vasily (40°C Delirium) [Press Space]")
 	_text_c(Vector2(vas.x, vas.y - 24.0), vlabel, 10,
@@ -636,7 +636,9 @@ func _draw_floats() -> void:
 		var col := Color(ft.color)
 		col.a = a
 		var label: String = ft.zh if sim.lang == "zh" else ft.en
-		_text_c(Vector2(ft.x, ft.y), label, 11, col)
+		var rows := label.split("\n")
+		for ri in rows.size():
+			_text_c(Vector2(ft.x, ft.y + 14.0 * ri), rows[ri], 11, col)
 
 func _draw_overlays() -> void:
 	# PTSD 干渴耳鸣红色闪屏

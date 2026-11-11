@@ -230,9 +230,11 @@ func spawn_float(x: float, y: float, zh: String, en: String, color: String = "#f
 	var f := FloatText.new()
 	f.x = x
 	f.y = y
-	f.zh = zh
-	f.en = en
+	f.zh = Data.wrap_float_text(zh)
+	f.en = Data.wrap_float_text(en)
 	f.color = color
+	if f.zh.contains("\n") or f.en.contains("\n"):
+		f.life = clampf(1.4 + maxi(zh.length(), en.length()) * 0.055, 3.5, 7.0)
 	floats.append(f)
 
 # ============================================================================
@@ -527,7 +529,7 @@ func drink() -> void:
 	player.drink = 1.2
 	spawn_float(player.x, player.y - 0.6, "喝下热水 · 体温 +22", "Hot water · warmth +22", "#7dd3fc")
 	if bool(camp.flags.get("ptsd", false)):
-		spawn_float(player.x, player.y - 1.2, "……Пить（渴）……", "…Пить (Thirsty)…", "#f43f5e")
+		spawn_float(player.x, player.y - 1.2, "……Пить（水/渴）……", "…Пить (Water / Thirst)…", "#f43f5e")
 
 func use_bandage() -> void:
 	var n := int(load.get("band", 0))
@@ -586,15 +588,15 @@ func set_choice(choice_index: int) -> void:
 			e.kind = "mate"
 			e.id = "survivor"
 			e.state = "follow"
-			spawn_float(e.x, e.y - 0.8, "他的瞳孔回色了：「……水塔下面，找戴蓝毛线帽的老头……」",
-				"His pupils clear: \"…below the water tower, the old man in the blue wool cap…\"", "#34d399")
+			spawn_float(e.x, e.y - 0.8, "他眼底的紫黑血翳一点点退去，瞳孔重新聚起了人的光彩：「……谢谢你没拿撬棍砸死我……去西站水塔底下，找那个戴蓝毛线帽的老列车长……」",
+				"His fever-dark eyes clear: '…thank you for sparing me…under the west water tower, find the old conductor in the blue wool cap…'", "#34d399")
 		1:
 			camp.raid_add_conscience(-2.0)
 			add_event("note", "A2 绕行：你听见了身后的枪声", "A2 Bypassed: you heard the shots behind you")
 			e.dead = true
 			emit_noise(e.x, e.y, 9.0, "#7dd3fc", "osk")
-			spawn_float(e.x, e.y - 0.8, "身后传来三声微声点射。你没有回头。",
-				"Three suppressed shots behind you. You did not look back.", "#fca5a5")
+			spawn_float(e.x, e.y - 0.8, "身后传来三声微声点射。你没有回头，仿佛只要不回头，那三枪便与你无关。",
+				"Three suppressed shots behind you. You do not look back, as if refusing to see could absolve you.", "#fca5a5")
 		_:
 			e.hp = 0.0
 			e.dead = true
@@ -607,8 +609,8 @@ func set_choice(choice_index: int) -> void:
 				pack.append("scrap")
 			add_event("bad", "A3 撬棍灭口：卌 +1", "A3 Crowbar kill: 卌 +1")
 			emit_noise(e.x, e.y, 6.0, "#ef4444", "hit")
-			spawn_float(e.x, e.y - 0.8, "你在日志背面划下一道血痕。",
-				"You carve a stroke on the back page.", "#f43f5e")
+			spawn_float(e.x, e.y - 0.8, "你在日志背面划下一道血痕。罐头很沉，那道划痕却比罐头更沉。",
+				"You cut a red stroke into the logbook. The tin is heavy; the stroke is heavier.", "#f43f5e")
 	choice_open = false
 	choice_ent = null
 

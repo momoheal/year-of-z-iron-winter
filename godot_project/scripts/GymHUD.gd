@@ -13,6 +13,7 @@ signal ui_sfx(name: String)
 const SimScript := preload("res://scripts/GymSim.gd")
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
+const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
 
 const SCREEN := Vector2(1920, 1080)
 const SIDEBAR_X := 1556.0
@@ -36,7 +37,7 @@ var _tally_top: Label
 var _lang_badge: Label
 
 # 侧栏
-var _hp_bar: ProgressBar
+var _hp_bar: Control
 var _hp_side: Label
 var _weapon: Label
 var _tally_side: Label
@@ -240,22 +241,12 @@ func _build_sidebar() -> void:
 	vit.add_child(vh)
 	_label(vh, "生命体征  VITALS", 12, Color("#928c7c"))
 	_hp_side = _label(vit, "HP 100%", 12, Color("#e0897e"))
-	_hp_bar = ProgressBar.new()
-	_hp_bar.max_value = 100.0
-	_hp_bar.value = 100.0
-	_hp_bar.show_percentage = false
-	_hp_bar.custom_minimum_size = Vector2(SIDEBAR_W - 24, 10)
+	_hp_bar = SovietStarMeter.new()
+	_hp_bar.name = "StarMeter_hp"
+	_hp_bar.fill = SovietUI.BLOOD_LIT
+	_hp_bar.custom_minimum_size = Vector2(104, 92)
+	_hp_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_hp_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var fill := StyleBoxFlat.new()
-	fill.bg_color = Color("#b8281c")
-	fill.corner_radius_top_left = 3
-	fill.corner_radius_top_right = 3
-	fill.corner_radius_bottom_left = 3
-	fill.corner_radius_bottom_right = 3
-	_hp_bar.add_theme_stylebox_override("fill", fill)
-	var bg := StyleBoxFlat.new()
-	bg.bg_color = Color(0.1, 0.13, 0.18, 1.0)
-	_hp_bar.add_theme_stylebox_override("background", bg)
 	vit.add_child(_hp_bar)
 	_weapon = _label(vit, "", 11, Color("#e3ddcd"))
 	_tally_side = _label(vit, "", 11, Color("#c8a257"))
@@ -530,7 +521,7 @@ func refresh() -> void:
 	_tally_top.text = "卌 %d/5" % sim.tally_stroke_marks()
 	_lang_badge.text = "中文" if zh else "EN"
 
-	_hp_bar.value = sim.player.hp
+	_hp_bar.set_value(sim.player.hp / 100.0)
 	_hp_side.text = ("HP %d%%   ·   心率 %d BPM" if zh else "HP %d%%   ·   %d BPM") \
 		% [int(sim.player.hp), int(sim.player.bpm)]
 	_weapon.text = ("武器  " if zh else "WEAPON  ") + sim.weapon_text()

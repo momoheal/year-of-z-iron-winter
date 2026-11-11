@@ -79,6 +79,8 @@ func _run_tests() -> void:
 	hud = scene.get("hud")
 	_assert(sim != null and hud != null, "4. Gym scene owns Sim + HUD")
 	_assert(hud.get("sim") == sim, "5. HUD bound to the same Sim instance")
+	_assert(hud._hp_bar.segments == 10 and hud._hp_bar.fill == Color("b8281c"),
+		"5b. Gym HP uses a ten-segment red star")
 	scene.set_process(false)
 
 	# --- 3. 初始状态 -------------------------------------------------------
@@ -241,6 +243,11 @@ func _run_tests() -> void:
 	sim.interact()
 	_assert(sim.cages[1].inspected and bool(sim.tasks_done["D"]),
 		"42. Anna 0419 dialogue verifies Task D")
+	sim.spawn_float(275.0, 470.0,
+		"阿列克谢！听我说，拉娜的高烧已经退了！她没有变成怪物，可昨晚清杀队还是按着名单，把她锁进了铁壳号的第三节闷罐车厢！",
+		"Alyosha, listen! Lana recovered. She never became a monster, yet the OSK followed their list and locked her inside Car 3!", "#38bdf8")
+	_assert(not sim.floats.is_empty() and String(sim.floats.back().zh).contains("\n") \
+		and float(sim.floats.back().life) > 95.0, "42b. long gym testimony wraps and stays readable")
 
 	# --- 11. Room E：砍骨刀 → 破门 → 6 连按 QTE → PTSD -------------------
 	sim.reset()
