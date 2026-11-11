@@ -32,6 +32,7 @@ const SovietMeter := preload("res://scripts/ui/SovietMeter.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
 const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
 const PauseMenuScript := preload("res://scripts/ui/PauseMenu.gd")
+const NavGridScript := preload("res://scripts/night/NavGrid.gd")
 
 const PPM := 64.0
 const SQ := 0.62
@@ -66,6 +67,7 @@ var bag_max := 8
 var night_left := 0.0
 var night_max := 0.0
 var _pause: CanvasLayer = null      # Esc 暂停菜单（第一次按 Esc 时才建）
+var nav = null                      # 共享寻路网格（NavGrid）：狂暴者 / 半人 / 清杀兵 / 伙伴绕障用
 var cold := 1.0                # cfg.cold：体温下降倍率，同时决定风雪音量（P1.4 / P2.5）
 var day_n := 1                 # cfg.day：HUD 标题里的「第 N 夜」
 
@@ -295,6 +297,7 @@ func _ready() -> void:
 	for w in get_tree().get_nodes_in_group("night_warm"):
 		warm_lights.append([w.global_position, float(w.get_meta("radius", 2.5))])
 	exit_px = $Markers/Exit.global_position
+	_build_nav()
 	player.global_position = $Markers/Spawn.global_position
 	cam.global_position = player.global_position
 	cam.reset_smoothing()
@@ -336,6 +339,15 @@ func _spawn_follower() -> void:
 ## 显式初始化后处理 shader 参数。未 set 过的 ShaderMaterial，get_shader_parameter
 ## 返回 null（即使 shader 里有默认值），这会让刚 _ready 后的断言 / float() 转换失败。
 ## 只设 shader 参数，不碰 sfx / 夜色 / 雪（那些等第一帧 _update_post 自然驱动）。
+## 寻路网格：按地面大图的尺寸、所有挡人的静态碰撞体烘一次（关卡是静态的）。
+func _build_nav() -> void:
+	var ground := get_node_or_null("Ground") as Sprite2D
+	if ground == null or ground.texture == null:
+		return
+	nav = NavGridScript.new()
+	nav.build(self, ground.texture.get_size(), 13.0)
+
+
 func _init_post_defaults() -> void:
 	var mat := post.material as ShaderMaterial
 	if mat == null:

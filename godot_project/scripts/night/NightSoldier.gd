@@ -20,6 +20,9 @@ const SHOOT_RANGE := 14.0
 @export_enum("loop", "pingpong") var mode := "loop"
 @export var pause_time := 2.0
 
+const NavGridScript := preload("res://scripts/night/NavGrid.gd")
+var _nav = NavGridScript.Agent.new()   # 自己的路径缓存（共享网格在 ctl.nav）
+
 var ctl
 var state := "patrol"        # patrol | pause | investigate | search | alert
 var facing := 0.0
@@ -195,7 +198,11 @@ func _move_to(p: Vector2, spd_m: float, arrive_px: float = 6.0) -> bool:
 	if d.length() <= arrive_px:
 		velocity = Vector2.ZERO
 		return true
-	var dm := Vector2(d.x / PPM, d.y / (PPM * SQ)).normalized()
+	# 绕障：有共享网格就朝下一个路点走，直线可达时路点就是目标本身
+	var wp: Vector2 = _nav.next(ctl.get("nav") if ctl != null else null, global_position, p,
+		get_physics_process_delta_time())
+	var dw := wp - global_position
+	var dm := Vector2(dw.x / PPM, dw.y / (PPM * SQ)).normalized()
 	velocity = Vector2(dm.x * PPM, dm.y * PPM * SQ) * spd_m
 	move_and_slide()
 	facing = lerp_angle(facing, atan2(dm.y, dm.x), 0.18)

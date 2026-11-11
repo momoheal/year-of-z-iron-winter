@@ -38,6 +38,7 @@ const SQ := 0.62
 @export var teleport_dist := 460.0
 
 var ctl: Node = null                # NightExplore 引用（_spawn_follower 注入）
+var _nav = preload("res://scripts/night/NavGrid.gd").Agent.new()   # 跟随也走共享网格，从窄口绕过来
 
 var _sprite: Sprite2D
 var _t := 0.0
@@ -95,7 +96,9 @@ func _physics_process(delta: float) -> void:
 		return
 	_moving = dist > follow_dist
 	if _moving:
-		var dir := to_player.normalized()
+		var wp: Vector2 = _nav.next(ctl.get("nav") if ctl != null else null, global_position,
+			player_target.global_position, delta)
+		var dir := (wp - global_position).normalized()
 		var spd := move_speed * clampf(dist / (follow_dist * 2.0), 0.85, 1.7)
 		velocity = dir * spd
 		if absf(dir.x) > 0.1:
