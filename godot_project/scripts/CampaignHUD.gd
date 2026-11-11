@@ -128,6 +128,9 @@ var _live: Dictionary = {}
 var _story_line := 0
 var _story_beat := ""
 var _new_confirm := false          # 标题页：已有存档时「新的一局」要点两下
+var _save_warn := ""               # 自动存档失败的原因（顶栏副标题变红显示）
+var _save_warn_until := 0          # 显示到什么时候（Time.get_ticks_msec）
+var _sub_warn_shown := false       # 副标题当前是不是警告色（只在切换时改字色，别每帧发主题变更）
 
 # 顶栏标签
 var _lbl_day: Label
@@ -405,7 +408,14 @@ func _refresh(force: bool) -> void:
 		return
 	_lbl_day.text = ("第 %d 天 · 夜" % sim.day) if sim.lang == "zh" else ("DAY %d · NIGHT" % sim.day)
 	_lbl_tally.text = "卌 %d" % sim.tally
-	_lbl_sub.text = ("探索循环 · 夜潜 DEMO" if sim.lang == "zh" else "EXPLORATION LOOP · NIGHT RAID DEMO")
+	var warn := _save_warn != "" and Time.get_ticks_msec() < _save_warn_until
+	if warn:
+		_lbl_sub.text = ("⚠ 这次没存上：" + _save_warn) if sim.lang == "zh" else "⚠ AUTOSAVE FAILED: " + _save_warn
+	else:
+		_lbl_sub.text = ("探索循环 · 夜潜 DEMO" if sim.lang == "zh" else "EXPLORATION LOOP · NIGHT RAID DEMO")
+	if warn != _sub_warn_shown:
+		_sub_warn_shown = warn
+		_lbl_sub.add_theme_color_override("font_color", SovietUI.BLOOD_LIT if warn else SovietUI.BONE_DIM)
 	_btn_lang.text = "EN (L)" if sim.lang == "zh" else "中文 (L)"
 	var sig := _make_sig()
 	if force or sig != _sig:
@@ -591,6 +601,9 @@ func _build_title() -> void:
 	var save := SaveGame.summary()
 	if not save.is_empty():
 		var mom := _tr("母亲在等", "mother waiting") if bool(save["mother_alive"]) else _tr("失母", "motherless")
+		# 主档坏了、读的是备份：照实告诉玩家（不悄悄回档）
+		if String(save.get("source", "main")) in ["backup", "tmp"]:
+			mom += _tr(" · 从备份恢复", " · from backup")
 		var b_cont := _btn(_tr("继续 · 第 %d 天 · %s（Enter）", "Continue · Day %d · %s (Enter)")
 			% [int(save["day"]), mom], continue_game, true)
 		b_cont.custom_minimum_size = Vector2(340, 52)
@@ -616,6 +629,12 @@ func _build_title() -> void:
 	b_gym.custom_minimum_size = Vector2(240, 40)
 	row2.add_child(b_gym)
 	c.add_child(row2)
+
+## 自动存档失败：顶栏副标题变红显示原因 8 秒（Campaign._autosave 调用）。
+func warn_save(msg: String) -> void:
+	_save_warn = msg
+	_save_warn_until = Time.get_ticks_msec() + 8000
+
 
 func start_new_game() -> void:
 	_new_confirm = false

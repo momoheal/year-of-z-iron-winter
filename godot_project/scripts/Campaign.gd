@@ -163,7 +163,8 @@ func _autosave() -> void:
 		return
 	_save_key = key
 	if sim.phase == "base" or sim.phase == "report":
-		SaveGame.save(sim)
+		if not SaveGame.save(sim) and SaveGame.last_error != "":
+			hud.warn_save(SaveGame.last_error)     # 存档失败要让玩家看见，不能当成存上了
 
 func _drain_sfx() -> void:
 	if sim.raid == null or sfx == null:

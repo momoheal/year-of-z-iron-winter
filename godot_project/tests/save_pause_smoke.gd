@@ -125,7 +125,8 @@ func _run() -> void:
 	_assert(int(c.stash.get("dial", 0)) == 0 and is_equal_approx(c.dial, 2.0),
 		"20. the overnight dialysis bag was consumed on load", "dial=%s" % c.dial)
 
-	# --- 5. 坏档 / 版本不符 ---------------------------------------------------
+	# --- 5. 坏档 / 版本不符（且没有备份可退）------------------------------------
+	SG.delete_save()                     # 清掉上面几次保存留下的 .bak：这里测的是「真的无档可读」
 	var f := FileAccess.open(SG._save_file(), FileAccess.WRITE)
 	f.store_string("{ not json")
 	f.close()
@@ -181,6 +182,62 @@ func _run() -> void:
 		"30. confirming 'New Game' starts day 1 and overwrites the save")
 	camp.queue_free()
 	await _frames(2)
+	SG.delete_save()
+
+	# --- 6b. 备份与恢复（替换失败 / 主档损坏 / 残留临时档）----------------------
+	SG.delete_save()
+	var bk = SimScript.new()
+	bk.new_game()
+	bk.phase = "base"
+	bk.day = 3
+	_assert(SG.save(bk) and SG.last_error == "", "B1. first save succeeds with no error")
+	bk.day = 4
+	SG.save(bk)
+	var main_p: String = SG._save_file()
+	var bak_p: String = main_p + ".bak"
+	var tmp_p: String = main_p + ".tmp"
+	_assert(FileAccess.file_exists(bak_p) and int(SG._parse_file(bak_p).get("day", 0)) == 3
+		and int(SG._parse_file(main_p).get("day", 0)) == 4,
+		"B2. saving again keeps the previous save as .bak (day 3) and the new one as main (day 4)")
+	_assert(not FileAccess.file_exists(tmp_p), "B3. no .tmp is left behind after a good save")
+	var fb := FileAccess.open(main_p, FileAccess.WRITE)
+	fb.store_string("{ half written")
+	fb.close()
+	_assert(SG.has_save() and int(SG.summary().get("day", 0)) == 3 and SG.last_load_source == "backup",
+		"B4. corrupt main save → falls back to the valid backup")
+	_assert(String(SG.summary().get("source", "")) == "backup",
+		"B5. summary reports the backup source (title shows 'from backup')")
+	bk.day = 5
+	_assert(SG.save(bk), "B6. saving over a corrupt main still succeeds")
+	_assert(int(SG._parse_file(bak_p).get("day", 0)) == 3,
+		"B7. a corrupt main is NOT copied over the good backup", str(SG._parse_file(bak_p).get("day", -1)))
+	SG.delete_save()
+	_assert(not FileAccess.file_exists(main_p) and not FileAccess.file_exists(bak_p) and not FileAccess.file_exists(tmp_p),
+		"B8. delete_save removes main, backup and temp files")
+	# 只剩一份写完整的 .tmp（替换中途崩溃）：照样能读回
+	var ft := FileAccess.open(tmp_p, FileAccess.WRITE)
+	bk.day = 6
+	ft.store_string(JSON.stringify(SG.to_dict(bk)))
+	ft.close()
+	_assert(int(SG.summary().get("day", 0)) == 6 and SG.last_load_source == "tmp",
+		"B9. a complete leftover .tmp is recovered when main and backup are missing")
+	SG.delete_save()
+	# 缺必需字段的档不算存档
+	var fm := FileAccess.open(main_p, FileAccess.WRITE)
+	fm.store_string(JSON.stringify({"version": 1, "day": 2}))
+	fm.close()
+	_assert(not SG.has_save(), "B10. a save missing required fields is rejected")
+	SG.delete_save()
+	# 主档路径被占（一个非空目录）：替换失败要报错、不能假装成功
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(main_p))
+	var fd := FileAccess.open(main_p.path_join("lock.txt"), FileAccess.WRITE)
+	fd.store_string("x")
+	fd.close()
+	bk.day = 7
+	_assert(not SG.save(bk) and SG.last_error != "", "B11. a failed replace returns false with a reason",
+		SG.last_error)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(main_p.path_join("lock.txt")))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(main_p))
 	SG.delete_save()
 
 	# --- 7. 主音量设置 ------------------------------------------------------

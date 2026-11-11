@@ -52,49 +52,99 @@ func _settings_file() -> String:
 # ============================================================================
 # 战役存档
 # ============================================================================
+## 最近一次 save() 失败的原因（空串 = 成功或没尝试）。界面用它告诉玩家「这次没存上」。
+var last_error := ""
+## 最近一次 read_raw() 实际读的是哪一份："main" / "backup" / "tmp" / ""（没有可用存档）。
+var last_load_source := ""
+
+## 一份存档必须有的字段：缺了就当坏档，不拿它覆盖备份、也不拿来读。
+const REQUIRED_KEYS := ["version", "day", "phase", "stash", "nodes"]
+
+
 func has_save() -> bool:
 	return not read_raw().is_empty()
 
 
 func delete_save() -> void:
 	var p := _save_file()
-	if FileAccess.file_exists(p):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(p))
+	for f in [p, p + ".bak", p + ".tmp"]:
+		if FileAccess.file_exists(f):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(f))
 
 
-## 写档。只接受 base / report 两个安全点；其余阶段返回 false 不写。
+## 写档。只接受 base / report 两个安全点；其余阶段返回 false 不写（不算失败，last_error 为空）。
+##
+## 步骤（每一步检查返回值，任何一步失败都至少留下一份可读的旧档）：
+##   1. 写 .tmp，再读回来校验（JSON 能解析、版本对、必需字段齐全）；
+##   2. 旧主档本身可读时才复制成 .bak —— 坏主档不会顶掉好备份；
+##   3. 删旧主档 → .tmp 改名为主档；改名失败就用 .bak 把主档补回来。
+## Windows 上「删 + 改名」不是原子操作；第 2 步的备份就是为这两步之间崩溃准备的。
 func save(sim) -> bool:
+	last_error = ""
 	if sim == null or not (String(sim.phase) in ["base", "report"]):
 		return false
-	var data := to_dict(sim)
 	var p := _save_file()
 	var tmp := p + ".tmp"
+	var bak := p + ".bak"
 	var f := FileAccess.open(tmp, FileAccess.WRITE)
 	if f == null:
-		push_warning("SaveGame: cannot write %s (%s)" % [tmp, error_string(FileAccess.get_open_error())])
-		return false
-	f.store_string(JSON.stringify(data, "\t"))
+		return _fail("无法写入临时存档（%s）" % error_string(FileAccess.get_open_error()))
+	f.store_string(JSON.stringify(to_dict(sim), "\t"))
 	f.close()
-	# 先写临时文件再替换：写到一半崩溃不会把旧档变成半截 JSON
-	var abs_tmp := ProjectSettings.globalize_path(tmp)
+	if _parse_file(tmp).is_empty():
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(tmp))
+		return _fail("临时存档写入后校验失败（磁盘已满或被占用？）")
 	var abs_p := ProjectSettings.globalize_path(p)
-	if FileAccess.file_exists(p):
-		DirAccess.remove_absolute(abs_p)
-	return DirAccess.rename_absolute(abs_tmp, abs_p) == OK
+	if FileAccess.file_exists(p) and not _parse_file(p).is_empty():
+		var e := DirAccess.copy_absolute(abs_p, ProjectSettings.globalize_path(bak))
+		if e != OK:
+			# 备份不了就不动主档：旧档还在，只是这次没存上
+			return _fail("无法备份上一份存档（%s）" % error_string(e))
+	if FileAccess.file_exists(p) or DirAccess.dir_exists_absolute(abs_p):
+		var e2 := DirAccess.remove_absolute(abs_p)
+		if e2 != OK:
+			return _fail("无法替换旧存档（%s）" % error_string(e2))
+	var e3 := DirAccess.rename_absolute(ProjectSettings.globalize_path(tmp), abs_p)
+	if e3 != OK:
+		if FileAccess.file_exists(bak):
+			DirAccess.copy_absolute(ProjectSettings.globalize_path(bak), abs_p)
+		return _fail("存档改名失败（%s），已从备份恢复上一份" % error_string(e3))
+	return true
 
 
-## 读出原始字典；文件不存在 / 损坏 / 版本不认识 → 空字典。
+func _fail(msg: String) -> bool:
+	last_error = msg
+	push_warning("SaveGame: " + msg)
+	return false
+
+
+## 读出原始字典。按「主档 → 备份 → 残留的 .tmp」顺序找第一份**校验通过**的，
+## 不按修改时间挑最新的（最新的那份可能正是写坏的那份）。都不可用 → 空字典。
 func read_raw() -> Dictionary:
 	var p := _save_file()
-	if not FileAccess.file_exists(p):
+	for pair in [[p, "main"], [p + ".bak", "backup"], [p + ".tmp", "tmp"]]:
+		var d := _parse_file(String(pair[0]))
+		if not d.is_empty():
+			last_load_source = String(pair[1])
+			return d
+	last_load_source = ""
+	return {}
+
+
+## 读一份存档文件并校验；不存在 / 损坏 / 版本不认识 / 缺字段 → 空字典。
+func _parse_file(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
 		return {}
-	# JSON.new().parse 返回错误码而不是往日志里刷 ERROR：坏档是可预期的情况，静默当「没有存档」
+	# JSON.new().parse 返回错误码而不是往日志里刷 ERROR：坏档是可预期的情况
 	var json := JSON.new()
-	if json.parse(FileAccess.get_file_as_string(p)) != OK or not (json.data is Dictionary):
+	if json.parse(FileAccess.get_file_as_string(path)) != OK or not (json.data is Dictionary):
 		return {}
 	var d: Dictionary = json.data
 	if int(d.get("version", 0)) != VERSION:
 		return {}
+	for k in REQUIRED_KEYS:
+		if not d.has(k):
+			return {}
 	return d
 
 
@@ -108,6 +158,7 @@ func summary() -> Dictionary:
 		"mother_alive": bool(d.get("mother_alive", true)),
 		"tally": int(d.get("tally", 0)),
 		"saved_at": String(d.get("saved_at", "")),
+		"source": last_load_source,          # "backup" / "tmp" 时标题页提示「从备份恢复」
 	}
 
 
