@@ -69,6 +69,22 @@ func _draw() -> void:
 			var k0: float = clampf((18.0 - od) / 8.0, 0.0, 1.0)
 			_ellipse(op, 30.0, 30.0 * SQ, Color(0.85, 0.72, 0.42, 0.22 + 0.3 * k0), 1.5)
 			_text(op + Vector2(0, -78), "ЦЕЛЬ · 目标物资", Color(0.88, 0.76, 0.46, 0.55 + 0.35 * k0), 13)
+	# 近处未搜刮容器显示小菱形；隐藏容器在发现前仍不可见。
+	if ctl.state == "play":
+		for container in ctl.containers:
+			if not is_instance_valid(container) or bool(container.get_meta("searched", false)):
+				continue
+			if bool(container.get_meta("hidden", false)) and not bool(container.get_meta("revealed", false)):
+				continue
+			var cp: Vector2 = ctl.interact_point(container)
+			var distance: float = ctl.dist_m(p, cp)
+			if distance > 8.0:
+				continue
+			var alpha: float = clampf((8.0 - distance) / 3.0, 0.25, 0.9)
+			var marker := cp + Vector2(0, -48)
+			var diamond := PackedVector2Array([marker + Vector2(0, -9), marker + Vector2(7, 0), marker + Vector2(0, 9), marker + Vector2(-7, 0), marker + Vector2(0, -9)])
+			draw_polyline(diamond, Color(1.0, 0.82, 0.39, alpha), 2.5, true)
+			draw_circle(marker, 2.5, Color(1.0, 0.91, 0.62, alpha))
 	# 可搜刮提示
 	if ctl.state == "play":
 		var c2: Node2D = ctl.nearest_container()

@@ -18,6 +18,7 @@ const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const LevelBeats := preload("res://scripts/night/LevelBeats.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
 const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
+const Opening := preload("res://scripts/ui/Opening.gd")
 
 const SCREEN := Vector2(1920, 1080)
 const TOP_H := 70.0
@@ -36,9 +37,9 @@ const MATE_ART := {
 # 剧情角色三态胸像：calm 平静 / sad 悲伤 / intense 激动
 const STORY_PORTRAITS := {
 	"aleksei": {
-		"calm": preload("res://art/10_characters/portraits/PRT_Aleksei_Calm.png"),
-		"sad": preload("res://art/10_characters/portraits/PRT_Aleksei_Sad.png"),
-		"intense": preload("res://art/10_characters/portraits/PRT_Aleksei_Intense.png"),
+		"calm": preload("res://art/10_characters/portraits/PRT_Aleksei_Concept.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Aleksei_Concept.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Aleksei_Concept.png"),
 	},
 	"chernov": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Chernov_Calm.png"),
@@ -624,6 +625,9 @@ func _build_title() -> void:
 	var b_lang := _btn(_tr("English", "中文"), func(): sim.toggle_lang())
 	b_lang.custom_minimum_size = Vector2(160, 40)
 	row2.add_child(b_lang)
+	var b_opening := _btn(_tr("回看序章", "Replay Prologue"), show_opening)
+	b_opening.custom_minimum_size = Vector2(160, 40)
+	row2.add_child(b_opening)
 	var b_gym := _btn(_tr("机制测试场（F1）", "Mechanics Gym (F1)"),
 		func(): get_tree().change_scene_to_file("res://scenes/gym.tscn"))
 	b_gym.custom_minimum_size = Vector2(240, 40)
@@ -640,7 +644,14 @@ func start_new_game() -> void:
 	_new_confirm = false
 	sim.new_game()
 	sim.phase = "base"
+	show_opening()
 	_sig = ""
+
+
+func show_opening() -> void:
+	var opening = Opening.new()
+	opening.lang = sim.lang
+	add_child(opening)
 
 
 ## 标题页「继续」：读档成功 → 直接回 602 室；存档坏了 → 退回新开局按钮。

@@ -26,6 +26,7 @@ const Arsenal := preload("res://scripts/night/Arsenal.gd")
 const Zones := preload("res://scripts/night/NightZones.gd")
 const TEX_GLOW := preload("res://art/50_vfx/VFX_Light_Radial_Soft.png")
 const TEX_BLOOD := preload("res://art/50_vfx/VFX_Blood_Mist.png")
+const OSK_CONCEPT_PORTRAIT := preload("res://art/10_characters/portraits/PRT_OSK_Concept.png")
 const TEX_SPARK := preload("res://art/50_vfx/VFX_Impact_Spark.png")
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const SovietMeter := preload("res://scripts/ui/SovietMeter.gd")
@@ -1070,15 +1071,11 @@ func show_osk_bark(kind: String) -> void:
 		return
 	var line: Dictionary = lines[rng.randi_range(0, lines.size() - 1)]
 	var mood := String(data.get("mood", "calm"))
-	var file := "Calm"
-	match mood:
-		"intense": file = "Intense"
-		"death": file = "Death"
 	_osk_bark_life = 3.4 if kind != "death" else 4.2
 	_osk_bark_priority = priority
 	osk_last_bark = {"kind": kind, "mood": mood, "zh": String(line.get("zh", ""))}
 	if _osk_bark_portrait != null:
-		_osk_bark_portrait.texture = load("res://art/10_characters/portraits/PRT_OSK_%s.png" % file)
+		_osk_bark_portrait.texture = OSK_CONCEPT_PORTRAIT
 	if _osk_bark_speaker != null:
 		_osk_bark_speaker.text = "ОСК · " + String(data.get("speaker_zh", "清杀队"))
 	if _osk_bark_label != null:
@@ -2208,6 +2205,7 @@ func _build_hud() -> void:
 	left.name = "Dossier"
 	left.add_theme_stylebox_override("panel", SovietUI.plate(SovietUI.IRON, SovietUI.STEEL, 2, 18))
 	left.position = Vector2(26, 22)
+	left.scale = Vector2(0.82, 0.82)
 	left.custom_minimum_size = Vector2(572, 0)
 	left.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud_root.add_child(left)
@@ -2277,6 +2275,9 @@ func _build_hud() -> void:
 	right.grow_vertical = Control.GROW_DIRECTION_END
 	right.add_theme_stylebox_override("panel", SovietUI.plate(SovietUI.IRON, SovietUI.STEEL, 2, 16))
 	right.custom_minimum_size = Vector2(480, 0)
+	# 缩小面板时以右上角为支点，保持靠边而不遮挡视野。
+	right.pivot_offset = Vector2(480, 0)
+	right.scale = Vector2(0.82, 0.82)
 	right.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud_root.add_child(right)
 	var rv := VBoxContainer.new()
@@ -2384,6 +2385,8 @@ func _build_hud() -> void:
 	_brief_card.add_theme_stylebox_override("panel",
 		SovietUI.plate(Color(0.04, 0.042, 0.045, 0.96), beats.get("accent", SovietUI.BLOOD), 2, 20))
 	_brief_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_brief_card.scale = Vector2(0.78, 0.78)
+	_brief_card.pivot_offset = Vector2(360, 0)
 	hud_root.add_child(_brief_card)
 	_brief_lbl = _label("", 14, SovietUI.BONE)
 	_brief_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

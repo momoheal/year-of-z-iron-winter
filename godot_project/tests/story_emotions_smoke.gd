@@ -63,11 +63,11 @@ func _run() -> void:
 	var portraits: Dictionary = sc.hud.STORY_PORTRAITS
 	var speakers: Dictionary = sc.hud.STORY_SPEAKERS
 
-	# 33 张三态资产完整且均为 512×512。
+	# 新概念头像可以高于原来的 512px，但必须是可用的方形图。
 	for role in ["aleksei", "chernov", "fyodor", "ivan", "anna", "pasha", "gulya", "lana", "pavel", "ash", "leonov"]:
 		for mood in ["calm", "sad", "intense"]:
 			var tex: Texture2D = portraits[role][mood]
-			_assert(tex != null and tex.get_width() == 512 and tex.get_height() == 512,
+			_assert(tex != null and tex.get_width() >= 512 and tex.get_width() == tex.get_height(),
 				"asset %s/%s" % [role, mood])
 
 	# 设定文档角色的常用说话者别名必须落到同一身份。
