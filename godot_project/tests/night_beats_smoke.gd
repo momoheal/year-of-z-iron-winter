@@ -133,7 +133,7 @@ func _common(s: Node, tag: String) -> void:
 		_assert(best_dist < 1.0, tag + " objective_px 指的就是它", str(best_dist))
 	# 地标：坐标必须在镜头边界内（米）
 	var max_x: float = float(s.cam.limit_right) / PPM
-	var max_y: float = float(s.cam.limit_bottom) / GY
+	var max_y: float = float(s.cam.limit_bottom - s.CAM_PAD_BOTTOM) / GY
 	var outside := 0
 	for l in s.landmarks:
 		var p: Array = l["pos"]

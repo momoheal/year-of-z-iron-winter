@@ -210,6 +210,11 @@ var landmarks: Array = []              # 本关地标（米制坐标）
 var landmark_seen: Array[String] = []
 var objective_px := Vector2.ZERO       # 关键物资所在容器的交互点（方位读数用）
 var brief_t := 0.0                     # 开场档案卡剩余时间
+## 镜头下边界比地图多放这么多像素：底部电传条约 85px 高，出生点贴着地图南沿的关卡
+## （食堂 / 疗养院 / 钳工房 / 档案库…）主角原来正好被电传条挡住。
+const CAM_PAD_BOTTOM := 96
+## 档案卡至少停留这么久，之后玩家一动就开始淡出（不必干等 7.5 秒）
+const BRIEF_MIN := 2.0
 var beat_events: Array = []            # 本关环境节拍
 var beat_timer := 0.0                  # 距离下一次节拍
 var beat_phase := ""                   # "" | warn | live
@@ -298,6 +303,7 @@ func _ready() -> void:
 		warm_lights.append([w.global_position, float(w.get_meta("radius", 2.5))])
 	exit_px = $Markers/Exit.global_position
 	_build_nav()
+	cam.limit_bottom += CAM_PAD_BOTTOM
 	player.global_position = $Markers/Spawn.global_position
 	cam.global_position = player.global_position
 	cam.reset_smoothing()
@@ -1945,6 +1951,10 @@ func _update_brief(delta: float) -> void:
 			_brief_card.visible = false
 		return
 	brief_t = maxf(0.0, brief_t - delta)
+	# 玩家已经开始走了：读够 BRIEF_MIN 秒就直接进入淡出段
+	var walking: bool = player != null and (player as CharacterBody2D).velocity.length() > 20.0
+	if brief_t > 1.6 and (7.5 - brief_t) >= BRIEF_MIN and walking:
+		brief_t = 1.6
 	if _brief_card == null:
 		return
 	_brief_card.visible = true
@@ -2366,8 +2376,9 @@ func _build_hud() -> void:
 	_brief_card.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	_brief_card.offset_left = -360
 	_brief_card.offset_right = 360
-	_brief_card.offset_top = 300
-	_brief_card.offset_bottom = 300
+	# 顶部正中：落在左右两块 HUD 面板之间，不压在游戏画面中央
+	_brief_card.offset_top = 24
+	_brief_card.offset_bottom = 24
 	_brief_card.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_brief_card.grow_vertical = Control.GROW_DIRECTION_END
 	_brief_card.add_theme_stylebox_override("panel",

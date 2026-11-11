@@ -8,6 +8,8 @@ const Data := preload("res://scripts/CampaignData.gd")
 const CAN_TEX := preload("res://art/30_props/PRP_TinCan.png")
 const SPARK_TEX := preload("res://art/50_vfx/VFX_Impact_Spark.png")
 const BLOOD_TEX := preload("res://art/50_vfx/VFX_Blood_Mist.png")
+## 顶部 HUD 面板（左档案卡 / 右任务卡）的下沿，屏幕像素
+const FLOAT_TOP_PX := 225.0
 const CASING_TEX := preload("res://art/50_vfx/VFX_Shell_Casing.png")
 
 @onready var ctl = owner
@@ -160,13 +162,19 @@ func _draw() -> void:
 				var a0: float = ctl.player.facing - 0.85 + (1.0 - sway) * 1.7
 				draw_arc(p + Vector2(0, -28), 62.0, a0 - 0.35, a0 + 0.35, 12,
 					Color(0.9, 0.84, 0.66, 0.55 * sway), 5.0, true)
-	# 浮字
+	# 浮字（屏幕上最高只到顶部 HUD 面板下沿：再往上就钻到面板后面看不见了）
+	var min_y := -INF
+	if ctl.cam != null:
+		var zy: float = maxf(0.01, ctl.cam.zoom.y)
+		min_y = ctl.cam.get_screen_center_position().y - get_viewport_rect().size.y * 0.5 / zy + FLOAT_TOP_PX / zy
 	for f in ctl.floats:
 		var fc: Color = f["col"]
 		fc.a = clampf(float(f["life"]), 0.0, 1.0)
 		var rows := String(f["txt"]).split("\n")
+		var fp: Vector2 = f["pos"]
+		fp.y = maxf(fp.y, min_y)
 		for ri in rows.size():
-			_text(Vector2(f["pos"]) + Vector2(0, 22.0 * ri), rows[ri], fc, 17)
+			_text(fp + Vector2(0, 22.0 * ri), rows[ri], fc, 17)
 
 func _cont_name(c: Node) -> String:
 	var k := String(c.get_meta("container", "crate"))

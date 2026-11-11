@@ -92,8 +92,8 @@ func _yard() -> void:
 	_assert(y.get_node_or_null("Lights/BoilerVent") != null, "yard 有锅炉房通风口灯")
 	_assert(y.get_node_or_null("Lights/Tower") == null, "yard 没有调度塔灯")
 	_assert(y.warm_lights.size() == 1, "yard 一个回温点", str(y.warm_lights.size()))
-	_assert(y.cam.limit_right == 3072 and y.cam.limit_bottom == 1587, "yard 镜头边界",
-			"%d/%d" % [y.cam.limit_right, y.cam.limit_bottom])
+	_assert(y.cam.limit_right == 3072 and y.cam.limit_bottom - y.CAM_PAD_BOTTOM == 1587, "yard 镜头边界",
+			"%d/%d" % [y.cam.limit_right, y.cam.limit_bottom - y.CAM_PAD_BOTTOM])
 	_shared(y, "yard")
 
 # ---------------------------------------------------------------------------
@@ -157,7 +157,7 @@ func _marshalling() -> void:
 			str(fl.get_node("East").shape.size.x))
 	# 镜头边界 = 本关 W/H
 	_assert(m.cam.limit_right == int(44.0 * PPM), "marshalling limit_right", str(m.cam.limit_right))
-	_assert(m.cam.limit_bottom == int(36.0 * GY), "marshalling limit_bottom", str(m.cam.limit_bottom))
+	_assert(m.cam.limit_bottom - m.CAM_PAD_BOTTOM == int(36.0 * GY), "marshalling limit_bottom", str(m.cam.limit_bottom))
 	_assert(m.cam.limit_top == int(3.0 * GY - 600), "marshalling limit_top（立面顶）", str(m.cam.limit_top))
 	# 环境音四路都在
 	for nm in ["Wind", "SteamAudio", "LampBuzz", "FireAudio"]:
@@ -233,7 +233,7 @@ func _manor() -> void:
 			str(fl.get_node("East").shape.size.x))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(46.0 * PPM), "manor limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom == int(38.0 * GY), "manor limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(38.0 * GY), "manor limit_bottom", str(g.cam.limit_bottom))
 	_assert(g.cam.limit_top == int(3.0 * GY - 600), "manor limit_top（立面顶）", str(g.cam.limit_top))
 	# 环境音：高墙里风小、没有蒸汽管 → 只有风/火/钠灯嗡鸣三路
 	for nm in ["Wind", "LampBuzz", "FireAudio"]:
@@ -301,7 +301,7 @@ func _mine() -> void:
 			g.step_sound(_m(20.0, 8.0), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(46.0 * PPM), "mine limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom == int(34.0 * GY), "mine limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(34.0 * GY), "mine limit_bottom", str(g.cam.limit_bottom))
 	_assert(g.cam.limit_top == int(3.0 * GY - 600), "mine limit_top（岩壁顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 压风管蒸汽 + 钠灯嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
@@ -374,7 +374,7 @@ func _market() -> void:
 			g.step_sound(_m(24.5, 24.4), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(46.0 * PPM), "market limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom == int(34.0 * GY), "market limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(34.0 * GY), "market limit_bottom", str(g.cam.limit_bottom))
 	_assert(g.cam.limit_top == int(3.0 * GY - 600), "market limit_top（工人镇屋顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 蒸汽 + 钠灯嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
@@ -440,7 +440,7 @@ func _sanitarium() -> void:
 			g.get_node("World/Facade/Sprite").texture.resource_path)
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(44.0 * PPM), "sanitarium limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom == int(30.0 * GY), "sanitarium limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(30.0 * GY), "sanitarium limit_bottom", str(g.cam.limit_bottom))
 	_assert(g.cam.limit_top == int(3.0 * GY - 600), "sanitarium limit_top（疗养院楼顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
@@ -508,7 +508,7 @@ func _canteen() -> void:
 			g.step_sound(_m(22.0, 25.0), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(44.0 * PPM), "canteen limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom == int(32.0 * GY), "canteen limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(32.0 * GY), "canteen limit_bottom", str(g.cam.limit_bottom))
 	_assert(g.cam.limit_top == int(3.0 * GY - 600), "canteen limit_top（食堂楼顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
@@ -576,7 +576,7 @@ func _coldstore() -> void:
 			g.step_sound(_m(2.0, 30.0), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(46.0 * PPM), "coldstore limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom == int(34.0 * GY), "coldstore limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(34.0 * GY), "coldstore limit_bottom", str(g.cam.limit_bottom))
 	_assert(g.cam.limit_top == int(3.0 * GY - 600), "coldstore limit_top（冷库主楼顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
