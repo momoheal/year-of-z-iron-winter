@@ -67,7 +67,7 @@ func _physics_process(delta: float) -> void:
 	_animate(delta, spd)
 
 func _animate(delta: float, spd: float) -> void:
-	var deg := rad_to_deg(facing)
+	var deg := rad_to_deg(wrapf(facing, -PI, PI))
 	var row := 0
 	sprite.flip_h = false
 	if absf(deg) <= 50.0:
