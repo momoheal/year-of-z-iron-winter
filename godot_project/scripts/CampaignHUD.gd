@@ -19,6 +19,10 @@ const LevelBeats := preload("res://scripts/night/LevelBeats.gd")
 const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
 const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
 const Opening := preload("res://scripts/ui/Opening.gd")
+const StorySlides := preload("res://scripts/ui/StorySlides.gd")
+const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
+const Tutorial := preload("res://scripts/ui/Tutorial.gd")
+const SaveLoadMenu := preload("res://scripts/ui/SaveLoadMenu.gd")
 
 const SCREEN := Vector2(1920, 1080)
 const TOP_H := 70.0
@@ -38,8 +42,8 @@ const MATE_ART := {
 const STORY_PORTRAITS := {
 	"aleksei": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Aleksei_Concept.png"),
-		"sad": preload("res://art/10_characters/portraits/PRT_Aleksei_Concept.png"),
-		"intense": preload("res://art/10_characters/portraits/PRT_Aleksei_Concept.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Aleksei_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Aleksei_Intense.png"),
 	},
 	"chernov": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Chernov_Calm.png"),
@@ -131,6 +135,10 @@ var _story_beat := ""
 var _new_confirm := false          # 标题页：已有存档时「新的一局」要点两下
 var _save_warn := ""               # 自动存档失败的原因（顶栏副标题变红显示）
 var _save_warn_until := 0          # 显示到什么时候（Time.get_ticks_msec）
+var _save_note_until := 0          # 「已自动存档」提示显示到什么时候
+var cutscene: Node = null          # 正在播的图片幻灯（序章 / 抉择余波）；播完自己 queue_free
+var tutorial: Node = null          # 正在显示的新手引导
+var save_menu: Node = null         # 打开着的存档 / 读档面板
 var _sub_warn_shown := false       # 副标题当前是不是警告色（只在切换时改字色，别每帧发主题变更）
 
 # 顶栏标签
@@ -373,6 +381,8 @@ func _build_top_bar() -> void:
 	h.add_child(b_help)
 	_btn_sound = _btn("音效：开 (M)", _toggle_sound)
 	h.add_child(_btn_sound)
+	var b_save := _btn("存档 / 读档 (F9)", open_save_menu)
+	h.add_child(b_save)
 	var b_gym := _btn("机制场 (F1)", func(): get_tree().change_scene_to_file("res://scenes/gym.tscn"))
 	h.add_child(b_gym)
 
@@ -412,6 +422,8 @@ func _refresh(force: bool) -> void:
 	var warn := _save_warn != "" and Time.get_ticks_msec() < _save_warn_until
 	if warn:
 		_lbl_sub.text = ("⚠ 这次没存上：" + _save_warn) if sim.lang == "zh" else "⚠ AUTOSAVE FAILED: " + _save_warn
+	elif Time.get_ticks_msec() < _save_note_until:
+		_lbl_sub.text = "✓ 已自动存档 · 第 %d 天" % sim.day if sim.lang == "zh" else "✓ AUTOSAVED · DAY %d" % sim.day
 	else:
 		_lbl_sub.text = ("探索循环 · 夜潜 DEMO" if sim.lang == "zh" else "EXPLORATION LOOP · NIGHT RAID DEMO")
 	if warn != _sub_warn_shown:
@@ -426,6 +438,7 @@ func _refresh(force: bool) -> void:
 		_unwrap_cramped(root)
 	else:
 		_update_live()
+	_maybe_tutorial()
 
 func _make_sig() -> String:
 	if sim.phase == "raid":
@@ -616,9 +629,13 @@ func _build_title() -> void:
 			b_new.add_theme_color_override("font_color", SovietUI.BLOOD_LIT)
 		row.add_child(b_new)
 	else:
-		var b_start := _btn(_tr("开始第一夜（Enter）", "Begin Night One (Enter)"), start_new_game, true)
+		var b_start := _btn(_tr("开始新的故事（Enter）", "Begin the Story (Enter)"), start_new_game, true)
 		b_start.custom_minimum_size = Vector2(340, 52)
 		row.add_child(b_start)
+	if SaveGame.has_any_save():
+		var b_load := _btn(_tr("读取存档（F9）", "Load Game (F9)"), open_save_menu)
+		b_load.custom_minimum_size = Vector2(200, 52)
+		row.add_child(b_load)
 	c.add_child(row)
 	var row2 := _hbox(12)
 	row2.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -642,16 +659,149 @@ func warn_save(msg: String) -> void:
 
 func start_new_game() -> void:
 	_new_confirm = false
+	_close_tutorial()
 	sim.new_game()
 	sim.phase = "base"
 	show_opening()
 	_sig = ""
 
 
+## 故事开场（新开局自动播；标题页「回看序章」也走这里，不改战役状态）。
 func show_opening() -> void:
 	var opening = Opening.new()
 	opening.lang = sim.lang
-	add_child(opening)
+	_play(opening)
+
+
+## 播一段图片幻灯。pages 的格式见 scripts/ui/StorySlides.gd 文件头。
+func play_slides(pages: Array, heading_zh: String, heading_en: String) -> void:
+	if pages.is_empty():
+		return
+	var deck = StorySlides.new()
+	deck.slides = pages
+	deck.lang = sim.lang
+	deck.heading_zh = heading_zh
+	deck.heading_en = heading_en
+	_play(deck)
+
+
+func _play(deck: Node) -> void:
+	if cutscene_active():
+		cutscene.queue_free()
+	cutscene = deck
+	deck.connect("finished", Callable(self, "_on_cutscene_finished").bind(deck))
+	add_child(deck)
+
+
+func _on_cutscene_finished(deck: Node) -> void:
+	if cutscene == deck:
+		cutscene = null
+	_sig = ""
+
+
+## 有图片幻灯正在播：Campaign 用它推迟切场景、暂停灰盒夜潜；引导也等它播完再出现。
+func cutscene_active() -> bool:
+	return cutscene != null and is_instance_valid(cutscene) and not cutscene.is_queued_for_deletion()
+
+
+func tutorial_active() -> bool:
+	return tutorial != null and is_instance_valid(tutorial) and not tutorial.is_queued_for_deletion()
+
+
+func save_menu_open() -> bool:
+	return save_menu != null and is_instance_valid(save_menu) and not save_menu.is_queued_for_deletion()
+
+
+## 任何一层全屏覆盖物开着（幻灯 / 引导 / 存读档面板）。
+func overlay_active() -> bool:
+	return cutscene_active() or tutorial_active() or save_menu_open()
+
+
+# ---------------------------------------------------------------------------
+# 新手引导：第一次进 602 室 / 第一次打开城市地图各讲一段，看过的记在 sim.seen 里（随存档走）
+# ---------------------------------------------------------------------------
+func _maybe_tutorial() -> void:
+	if sim == null or overlay_active():
+		return
+	if sim.story_open or sim.logbook_open or sim.help_open or sim.abort_confirm:
+		return
+	var section := String(sim.phase)
+	if not Tutorial.has_section(section) or bool(sim.seen.get(section, false)):
+		return
+	start_tutorial(section)
+
+
+func start_tutorial(section: String) -> void:
+	if not Tutorial.has_section(section):
+		return
+	_close_tutorial()
+	var tut = Tutorial.new()
+	tut.section = section
+	tut.lang = sim.lang
+	tut.connect("finished", Callable(self, "_on_tutorial_finished"))
+	tutorial = tut
+	add_child(tut)
+
+
+func _on_tutorial_finished(section: String, skip_all: bool) -> void:
+	tutorial = null
+	sim.seen[section] = true
+	if skip_all:
+		for k in ["base", "map", "night"]:
+			sim.seen[k] = true
+	# seen 也是存档的一部分：在安全点就顺手存一下，免得读档后又教一遍
+	if SaveGame.can_save(sim):
+		SaveGame.save(sim)
+
+
+func _close_tutorial() -> void:
+	if tutorial_active():
+		tutorial.queue_free()
+	tutorial = null
+
+
+## 帮助面板里的「重看新手引导」：把三段都标成没看过，当前界面那段马上重播。
+func replay_tutorial() -> void:
+	sim.help_open = false
+	sim.seen = {}
+	_sig = ""
+
+
+# ---------------------------------------------------------------------------
+# 存档 / 读档面板
+# ---------------------------------------------------------------------------
+func open_save_menu() -> void:
+	if sim == null or save_menu_open() or cutscene_active():
+		return
+	if String(sim.phase) == "raid":
+		return                                  # 夜潜途中不存不读
+	_close_tutorial()
+	var menu = SaveLoadMenu.new()
+	menu.sim = sim
+	menu.lang = sim.lang
+	menu.connect("loaded", Callable(self, "_on_save_loaded"))
+	menu.connect("closed", Callable(self, "_on_save_menu_closed"))
+	save_menu = menu
+	add_child(menu)
+	# 引导被面板顶掉了：没看完的那段关掉面板后会重新出现（seen 没记）
+
+
+func _on_save_menu_closed() -> void:
+	save_menu = null
+	_sig = ""                                   # 标题页的「继续 / 读取存档」按钮要跟着存档位变化
+
+
+func _on_save_loaded(_slot: int) -> void:
+	_new_confirm = false
+	set_sound_on(bool(sim.sound_on))
+	if game != null and game.get("_save_key") != null:
+		game.set("_save_key", "")               # 让自动存档位跟上刚读出来的进度
+	_sig = ""
+
+
+## 自动存档成功：顶栏副标题显示 3 秒「已自动存档」（Campaign._autosave 调用）。
+func note_saved() -> void:
+	_save_note_until = Time.get_ticks_msec() + 3000
 
 
 ## 标题页「继续」：读档成功 → 直接回 602 室；存档坏了 → 退回新开局按钮。
@@ -1454,12 +1604,33 @@ func _modal_panel(w: float) -> VBoxContainer:
 
 func _build_story_modal() -> void:
 	_modal_kind = "story"
-	# Galgame 式底部横框：保留场景可见度，头像与台词同属一个阅读区。
-	_dim(0.46)
 	var beat: Dictionary = Data.STORY.get(sim.story_id, {})
 	if beat.is_empty():
 		sim.story_open = false
 		return
+	# Galgame 式底部横框。有场景插图就铺满全屏当背景；没有插图时：
+	# 出发前播的剧情（pending_scene 还没切）把背后的灰盒压到近乎全黑，其余情况保留场景可见度。
+	var scene_tex: Texture2D = StorySlides.tex_of(CutsceneData.scene_image(String(sim.story_id)))
+	if scene_tex != null:
+		_dim(1.0)
+		var bg := TextureRect.new()
+		bg.name = "StorySceneArt"
+		bg.texture = scene_tex
+		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		bg.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		modal.add_child(bg)
+		var veil := ColorRect.new()
+		veil.color = Color(0.01, 0.02, 0.03, 0.22)
+		veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		modal.add_child(veil)
+	elif String(sim.pending_scene) != "":
+		_dim(0.97)
+	else:
+		_dim(0.46)
 	if _story_beat != sim.story_id:
 		_story_beat = sim.story_id
 		_story_line = 0
@@ -1576,10 +1747,35 @@ func advance_story() -> bool:
 
 
 func _resolve_story(idx: int) -> void:
+	var sid := String(sim.story_id)
 	var res: Dictionary = sim.resolve_story(idx)
 	if not res.is_empty():
 		ui_sfx.emit("beep")
+		play_aftermath(sid, idx, res)
 	_sig = ""
+
+
+## 关键抉择之后的图片幻灯：几页「余波」+ 最后一页「档案变更」结果卡（这次选择改了什么）。
+func play_aftermath(story_id: String, choice_index: int, res: Dictionary) -> void:
+	var pages: Array = CutsceneData.aftermath(story_id, choice_index)
+	if pages.is_empty():
+		return
+	var last: Dictionary = pages[pages.size() - 1]
+	var lines: Array = []
+	for a in res.get("applied", []):
+		lines.append(String(a))
+	if lines.is_empty():
+		lines.append(_tr("没有任何东西被记下。", "Nothing was written down."))
+	pages.append({
+		"img": last.get("img", ""),
+		"focus": last.get("focus", Vector2(0.5, 0.5)),
+		"zoom": Vector2(1.12, 1.16),
+		"card": {"title": String(res.get("choice", "")), "lines": lines},
+		"zh": "这一笔，已经记进了《工作日志》。它不会再被划掉。",
+		"en": "It is in the logbook now. It will not be crossed out.",
+	})
+	var title := String(res.get("title", ""))
+	play_slides(pages, "抉择之后 · " + title, "AFTERMATH · " + title)
 
 func _build_choice_modal() -> void:
 	_modal_kind = "choice"
@@ -1683,7 +1879,16 @@ func _build_help_modal() -> void:
 		"FOV 90°, 12m sight (7.2m once the lens cracks), 1.8m near-sense. Below 25 warmth you start losing HP.\n" \
 		+ "Not back by dawn: you keep every other item and lose 22 HP. Downed or abort: nothing comes home."),
 		FONT_SIZES["small"], Color("#928c7c")))
-	v.add_child(_btn(_tr("知道了（Esc）", "Got it (Esc)"), func(): sim.help_open = false))
+	var help_row := _hbox(10)
+	help_row.add_child(_btn(_tr("知道了（Esc）", "Got it (Esc)"), func(): sim.help_open = false, true))
+	if String(sim.phase) != "raid":
+		help_row.add_child(_btn(_tr("重看新手引导", "Replay the tutorial"), replay_tutorial))
+		help_row.add_child(_btn(_tr("存档 / 读档（F9）", "Save / Load (F9)"), _help_to_saves))
+	v.add_child(help_row)
+
+func _help_to_saves() -> void:
+	sim.help_open = false
+	open_save_menu()
 
 func _build_abort_modal() -> void:
 	_modal_kind = "abort"

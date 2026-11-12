@@ -23,6 +23,7 @@ var mates: Dictionary = {}
 var flags: Dictionary = {}
 var names: Array[String] = []
 var story_done: Dictionary = {}
+var seen: Dictionary = {}        # 新手引导看过哪几段：base / map / night（随存档走）
 var nodes: Dictionary = {}
 var log: Array[Dictionary] = []
 
@@ -64,6 +65,7 @@ func new_game() -> void:
 	flags = {}
 	names = []
 	story_done = {}
+	seen = {}
 	nodes = {}
 	log = []
 	mate = "none"

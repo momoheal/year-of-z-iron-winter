@@ -1,6 +1,7 @@
 extends Node
 ## SaveGame.gd — 战役存档 + 玩家设置（autoload）。
 ##
+## 存档位：0 号 = 自动存档，1~3 号 = 手动存档（scripts/ui/SaveLoadMenu.gd 是它的界面）。
 ## 存什么：CampaignSim 的「跨夜」状态（天数 / 母亲 / 透析液 / 良知 / 卌 / 仓库 / 同伴 / 旗标 /
 ## 真名 / 剧情 / 地点余量 / 日志 / 随机数状态）。不存夜潜进行中的状态 —— 存档点只有两个：
 ##   · 回到 602 室（phase = base）：新开局、睡觉、结算后进入次日；
@@ -61,15 +62,49 @@ var last_load_source := ""
 const REQUIRED_KEYS := ["version", "day", "phase", "stash", "nodes"]
 
 
-func has_save() -> bool:
-	return not read_raw().is_empty()
+## ---------------------------------------------------------------------------
+## 存档位：0 = 自动存档（回到 602 室 / 结算页时由 Campaign 自动写），1..MANUAL_SLOTS = 手动存档位。
+## 手动位的文件名从自动档路径派生（campaign_save.json → campaign_save_slot1.json），
+## 所以测试隔离路径和 save_path 覆盖对手动位同样生效。
+## 下面所有函数的 slot 参数都默认 0，旧调用（has_save() / save(sim) / load_into(sim)）行为不变。
+## ---------------------------------------------------------------------------
+const AUTO_SLOT := 0
+const MANUAL_SLOTS := 3
 
 
-func delete_save() -> void:
+func slot_file(slot: int = AUTO_SLOT) -> String:
 	var p := _save_file()
+	if slot <= AUTO_SLOT:
+		return p
+	return "%s_slot%d.%s" % [p.get_basename(), slot, p.get_extension()]
+
+
+func slot_valid(slot: int) -> bool:
+	return slot >= AUTO_SLOT and slot <= MANUAL_SLOTS
+
+
+func has_save(slot: int = AUTO_SLOT) -> bool:
+	return not read_raw(slot).is_empty()
+
+
+## 任意一个存档位（自动 + 手动）里有可读的档。标题页用它决定要不要显示「读取存档」。
+func has_any_save() -> bool:
+	for i in range(AUTO_SLOT, MANUAL_SLOTS + 1):
+		if has_save(i):
+			return true
+	return false
+
+
+func delete_save(slot: int = AUTO_SLOT) -> void:
+	var p := slot_file(slot)
 	for f in [p, p + ".bak", p + ".tmp"]:
 		if FileAccess.file_exists(f):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(f))
+
+
+## 现在能不能存：只有 602 室（base）和结算页（report）是安全点。
+static func can_save(sim) -> bool:
+	return sim != null and (String(sim.phase) in ["base", "report"])
 
 
 ## 写档。只接受 base / report 两个安全点；其余阶段返回 false 不写（不算失败，last_error 为空）。
@@ -79,11 +114,13 @@ func delete_save() -> void:
 ##   2. 旧主档本身可读时才复制成 .bak —— 坏主档不会顶掉好备份；
 ##   3. 删旧主档 → .tmp 改名为主档；改名失败就用 .bak 把主档补回来。
 ## Windows 上「删 + 改名」不是原子操作；第 2 步的备份就是为这两步之间崩溃准备的。
-func save(sim) -> bool:
+func save(sim, slot: int = AUTO_SLOT) -> bool:
 	last_error = ""
-	if sim == null or not (String(sim.phase) in ["base", "report"]):
+	if not can_save(sim):
 		return false
-	var p := _save_file()
+	if not slot_valid(slot):
+		return _fail("存档位不存在（%d）" % slot)
+	var p := slot_file(slot)
 	var tmp := p + ".tmp"
 	var bak := p + ".bak"
 	var f := FileAccess.open(tmp, FileAccess.WRITE)
@@ -120,8 +157,11 @@ func _fail(msg: String) -> bool:
 
 ## 读出原始字典。按「主档 → 备份 → 残留的 .tmp」顺序找第一份**校验通过**的，
 ## 不按修改时间挑最新的（最新的那份可能正是写坏的那份）。都不可用 → 空字典。
-func read_raw() -> Dictionary:
-	var p := _save_file()
+func read_raw(slot: int = AUTO_SLOT) -> Dictionary:
+	if not slot_valid(slot):
+		last_load_source = ""
+		return {}
+	var p := slot_file(slot)
 	for pair in [[p, "main"], [p + ".bak", "backup"], [p + ".tmp", "tmp"]]:
 		var d := _parse_file(String(pair[0]))
 		if not d.is_empty():
@@ -148,23 +188,37 @@ func _parse_file(path: String) -> Dictionary:
 	return d
 
 
-## 标题页「继续」按钮上显示的摘要。
-func summary() -> Dictionary:
-	var d := read_raw()
+## 存档位摘要（标题页「继续」按钮、存读档面板的每一行都用它）。空位 / 坏档 → 空字典。
+func summary(slot: int = AUTO_SLOT) -> Dictionary:
+	var d := read_raw(slot)
 	if d.is_empty():
 		return {}
+	var mates_n := 0
+	var mates_v: Variant = d.get("mates", {})
+	if mates_v is Dictionary:
+		for k in mates_v:
+			if bool(mates_v[k]):
+				mates_n += 1
+	var names_v: Variant = d.get("names", [])
+	var done_v: Variant = d.get("story_done", {})
 	return {
+		"slot": slot,
 		"day": int(d.get("day", 1)),
 		"mother_alive": bool(d.get("mother_alive", true)),
 		"tally": int(d.get("tally", 0)),
+		"conscience": int(float(d.get("conscience", 50.0))),
+		"dial": float(d.get("dial", 0.0)),
+		"mates": mates_n,
+		"names": (names_v as Array).size() if names_v is Array else 0,
+		"stories": (done_v as Dictionary).size() if done_v is Dictionary else 0,
 		"saved_at": String(d.get("saved_at", "")),
-		"source": last_load_source,          # "backup" / "tmp" 时标题页提示「从备份恢复」
+		"source": last_load_source,          # "backup" / "tmp" 时界面提示「从备份恢复」
 	}
 
 
 ## 读档进 sim。成功后 sim.phase == "base"。
-func load_into(sim) -> bool:
-	var d := read_raw()
+func load_into(sim, slot: int = AUTO_SLOT) -> bool:
+	var d := read_raw(slot)
 	if d.is_empty() or sim == null:
 		return false
 	apply(sim, d)
@@ -197,6 +251,7 @@ static func to_dict(sim) -> Dictionary:
 		"finished_demo": bool(sim.finished_demo),
 		"day_message": String(sim.day_message),
 		"selected_loc": String(sim.selected_loc),
+		"seen": sim.seen.duplicate(true),      # 新手引导看过哪几段
 		# RNG 状态是 64 位整数，JSON 的 double 存不下 —— 按字符串存
 		"rng_state": str(sim.rng.state),
 	}
@@ -239,6 +294,11 @@ static func apply(sim, d: Dictionary) -> void:
 	sim.finished_demo = bool(d.get("finished_demo", false))
 	sim.day_message = String(d.get("day_message", ""))
 	sim.selected_loc = String(d.get("selected_loc", ""))
+	if d.has("seen"):
+		sim.seen = _bool_values(d.get("seen", {}))
+	else:
+		# 加引导之前存的老档：当作老玩家，全部引导视为看过
+		sim.seen = {"base": true, "map": true, "night": true}
 	var rs := String(d.get("rng_state", ""))
 	if rs.is_valid_int():
 		sim.rng.state = rs.to_int()

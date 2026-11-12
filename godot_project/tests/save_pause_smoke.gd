@@ -240,6 +240,73 @@ func _run() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(main_p))
 	SG.delete_save()
 
+	# --- 6c. 手动存档位 / 存读档面板 / 新手引导进度 --------------------------
+	for i in range(0, int(SG.MANUAL_SLOTS) + 1):
+		SG.delete_save(i)
+	_assert(SG.slot_file(0) == SG._save_file() and SG.slot_file(2) == "user://campaign_save_test_slot2.json",
+		"S1. manual slots derive their file from the (test) autosave path", SG.slot_file(2))
+	_assert(not SG.has_any_save(), "S2. no slot holds a save yet")
+	var ms = SimScript.new()
+	ms.new_game()
+	ms.phase = "base"
+	ms.day = 9
+	ms.tally = 1
+	ms.seen["base"] = true
+	_assert(SG.save(ms, 2) and SG.has_save(2) and not SG.has_save(0) and not SG.has_save(1),
+		"S3. saving to slot 2 touches only slot 2")
+	_assert(SG.has_any_save() and int(SG.summary(2).get("day", 0)) == 9 and int(SG.summary(2).get("slot", -1)) == 2,
+		"S4. slot summary reports the saved day")
+	ms.day = 3
+	_assert(SG.save(ms) and int(SG.summary().get("day", 0)) == 3 and int(SG.summary(2).get("day", 0)) == 9,
+		"S5. the autosave and a manual slot hold different progress")
+	var ml = SimScript.new()
+	_assert(SG.load_into(ml, 2) and ml.day == 9 and ml.tally == 1 and ml.phase == "base",
+		"S6. loading slot 2 restores that slot's progress")
+	_assert(bool(ml.seen.get("base", false)) and not bool(ml.seen.get("map", false)),
+		"S7. tutorial progress travels with the save", str(ml.seen))
+	_assert(not SG.save(ms, 99) and SG.last_error != "" and not SG.load_into(ml, 99),
+		"S8. an out-of-range slot is refused")
+	ms.phase = "map"
+	_assert(not SG.save(ms, 1) and not SG.has_save(1), "S9. manual saves obey the safe-point rule too")
+	# 老存档（没有 seen 字段）读出来当作老玩家：不再弹引导
+	var raw: Dictionary = SG.read_raw(2)
+	raw.erase("seen")
+	var old_sim = SimScript.new()
+	SG.apply(old_sim, raw)
+	_assert(bool(old_sim.seen.get("base", false)) and bool(old_sim.seen.get("night", false)),
+		"S10. saves from before the tutorial count as 'already seen'")
+	# 面板：读档要二次确认；删除要二次确认
+	var menu = load("res://scripts/ui/SaveLoadMenu.gd").new()
+	var cur = SimScript.new()
+	cur.new_game()
+	cur.phase = "base"
+	cur.day = 20
+	menu.sim = cur
+	root.add_child(menu)
+	await _frames(2)
+	var got := [-1]
+	menu.loaded.connect(func(slot: int): got[0] = slot)
+	menu._on_load(2)
+	_assert(cur.day == 20 and got[0] == -1, "S11. first click on Load only asks for confirmation")
+	menu._on_load(2)
+	_assert(cur.day == 9 and got[0] == 2, "S12. second click loads the slot and reports it")
+	await _frames(2)
+	_assert(not is_instance_valid(menu), "S13. the panel closes itself after loading")
+	menu = load("res://scripts/ui/SaveLoadMenu.gd").new()
+	menu.sim = cur
+	root.add_child(menu)
+	await _frames(2)
+	menu._on_save(1)
+	_assert(SG.has_save(1) and int(SG.summary(1).get("day", 0)) == 9, "S14. saving into an empty slot needs no confirmation")
+	menu._on_delete(1)
+	_assert(SG.has_save(1), "S15. first click on Delete does not delete")
+	menu._on_delete(1)
+	_assert(not SG.has_save(1), "S16. second click deletes the slot")
+	menu.close()
+	await _frames(2)
+	for i in range(0, int(SG.MANUAL_SLOTS) + 1):
+		SG.delete_save(i)
+
 	# --- 7. 主音量设置 ------------------------------------------------------
 	SG.set_master_volume(0.5)
 	_assert(is_equal_approx(AudioServer.get_bus_volume_db(0), linear_to_db(0.5)),
