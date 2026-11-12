@@ -228,6 +228,10 @@ func _sense_ivan() -> void:
 			var glow := Sprite2D.new()
 			glow.texture = load("res://art/50_vfx/VFX_Light_Radial_Soft.png")
 			glow.modulate = Color(0.45, 0.95, 0.6, 0.5)
+			# 这张灯光图是黑底无 alpha：必须加色混合，否则会画出一个黑方块
+			var glow_mat := CanvasItemMaterial.new()
+			glow_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+			glow.material = glow_mat
 			glow.scale = Vector2(1.4, 1.4)
 			glow.z_index = -1
 			exit.add_child(glow)

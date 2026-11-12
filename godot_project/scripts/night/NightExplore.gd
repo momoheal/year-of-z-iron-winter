@@ -26,6 +26,7 @@ const Arsenal := preload("res://scripts/night/Arsenal.gd")
 const Zones := preload("res://scripts/night/NightZones.gd")
 const TEX_GLOW := preload("res://art/50_vfx/VFX_Light_Radial_Soft.png")
 const TEX_BLOOD := preload("res://art/50_vfx/VFX_Blood_Mist.png")
+const MonumentsScript := preload("res://scripts/night/NightMonuments.gd")
 const OSK_CONCEPT_PORTRAIT := preload("res://art/10_characters/portraits/PRT_OSK_Concept.png")
 const TEX_SPARK := preload("res://art/50_vfx/VFX_Impact_Spark.png")
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
@@ -209,6 +210,7 @@ var _hit_stop_serial := 0
 var beats: Dictionary = {}
 var landmarks: Array = []              # 本关地标（米制坐标）
 var landmark_seen: Array[String] = []
+var monuments = null                  # NightMonuments：旧时代纪念物（摆放 + 走近时的评语）
 var objective_px := Vector2.ZERO       # 关键物资所在容器的交互点（方位读数用）
 var brief_t := 0.0                     # 开场档案卡剩余时间
 ## 镜头下边界比地图多放这么多像素：底部电传条约 85px 高，出生点贴着地图南沿的关卡
@@ -303,6 +305,8 @@ func _ready() -> void:
 	for w in get_tree().get_nodes_in_group("night_warm"):
 		warm_lights.append([w.global_position, float(w.get_meta("radius", 2.5))])
 	exit_px = $Markers/Exit.global_position
+	monuments = MonumentsScript.new()
+	monuments.spawn(self)          # 必须在烘寻路网格之前：纪念物挡人
 	_build_nav()
 	cam.limit_bottom += CAM_PAD_BOTTOM
 	player.global_position = $Markers/Spawn.global_position
@@ -315,6 +319,27 @@ func _ready() -> void:
 	_build_hud()
 	_init_post_defaults()
 	_spawn_follower()
+	_start_coach()
+
+
+## 第一次从战役出发夜潜：屏幕上方边走边教（NightCoach）。看完 / 按 X 关掉后记进 sim.seen，
+## 以后的夜里不再出现；F2 独立跑不教。
+func _start_coach() -> void:
+	if not in_campaign or RaidBridge.sim == null:
+		return
+	var seen: Variant = RaidBridge.sim.get("seen")
+	if not (seen is Dictionary) or bool((seen as Dictionary).get("night", false)):
+		return
+	var coach = load("res://scripts/night/NightCoach.gd").new()
+	coach.name = "NightCoach"
+	coach.ctl = self
+	coach.connect("finished", Callable(self, "_on_coach_finished"))
+	add_child(coach)
+
+
+func _on_coach_finished() -> void:
+	if RaidBridge.sim != null and RaidBridge.sim.get("seen") is Dictionary:
+		RaidBridge.sim.seen["night"] = true
 
 
 func _spawn_follower() -> void:
@@ -1962,6 +1987,8 @@ func _update_brief(delta: float) -> void:
 
 func _update_director(delta: float) -> void:
 	_update_landmarks()
+	if monuments != null:
+		monuments.update(delta)
 	_update_beats(delta)
 
 

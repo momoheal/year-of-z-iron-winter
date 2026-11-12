@@ -132,7 +132,8 @@ func _process(delta: float) -> void:
 		return
 	# P1: depart 设了 pending_scene → 切到节点化夜潜场景
 	#     （story_open 时先在本场景播完剧情，下一帧再切）
-	if sim.pending_scene != "":
+	#     剧情对白和抉择之后的图片幻灯都播完了才切，不然还没看就被切走了。
+	if sim.pending_scene != "" and not sim.story_open and not hud.overlay_active():
 		var sc: String = sim.pending_scene
 		sim.pending_scene = ""
 		get_tree().change_scene_to_file(sc)
@@ -141,7 +142,8 @@ func _process(delta: float) -> void:
 	if sfx != null:
 		sfx.set_muted(not hud.sound_on)
 	sim.sound_on = hud.sound_on        # depart 时把它塞进 cfg，交给夜潜场景
-	var paused: bool = sim.story_open or sim.abort_confirm or sim.logbook_open or sim.help_open
+	var paused: bool = sim.story_open or sim.abort_confirm or sim.logbook_open or sim.help_open \
+		or hud.overlay_active() or sim.pending_scene != ""
 	if sim.phase == "raid" and sim.raid != null and not sim.raid.over and not paused:
 		var move := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		var mouse_world := screen_to_world(get_viewport().get_mouse_position())
@@ -163,7 +165,9 @@ func _autosave() -> void:
 		return
 	_save_key = key
 	if sim.phase == "base" or sim.phase == "report":
-		if not SaveGame.save(sim) and SaveGame.last_error != "":
+		if SaveGame.save(sim):
+			hud.note_saved()
+		elif SaveGame.last_error != "":
 			hud.warn_save(SaveGame.last_error)     # 存档失败要让玩家看见，不能当成存上了
 
 func _drain_sfx() -> void:
@@ -187,10 +191,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		var k := (event as InputEventKey).keycode
 		if k == KEY_ESCAPE:
-			if sim.phase == "raid":
-				sim.abort_confirm = not sim.abort_confirm
-			elif sim.story_open:
+			if sim.story_open:
+				# 剧情优先：出发前播的剧情此时 phase 已是 raid，不能让 Esc 去开「放弃夜潜」
 				sim.story_open = false
+			elif sim.phase == "raid":
+				sim.abort_confirm = not sim.abort_confirm
 			elif sim.help_open:
 				sim.help_open = false
 			elif sim.logbook_open:
@@ -198,6 +203,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if (k == KEY_SPACE or k == KEY_ENTER or k == KEY_KP_ENTER) and sim.story_open:
 			hud.advance_story()
+			return
+		if k == KEY_F9:
+			hud.open_save_menu()               # 存档 / 读档面板（夜潜途中不开）
 			return
 		if k == KEY_F1:
 			get_tree().change_scene_to_file("res://scenes/gym.tscn")
