@@ -1681,6 +1681,8 @@ func _build_story_modal() -> void:
 			who.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 			who.add_theme_stylebox_override("panel", SovietUI.paper_tag())
 			var speaker := _label(w, 13, SovietUI.INK)
+			# 名字牌是横向单行：_label() 默认换行 + SHRINK 的 Panel 会把它挤成一字一行
+			speaker.autowrap_mode = TextServer.AUTOWRAP_OFF
 			speaker.add_theme_font_override("font", SovietUI.display_font())
 			who.add_child(speaker)
 			text_col.add_child(who)

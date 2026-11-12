@@ -182,7 +182,7 @@ static func _m2px(v: Vector2) -> Vector2:
 	return Vector2(v.x * PPM, v.y * PPM * SQ)
 
 func _animate(delta: float, moving: bool) -> void:
-	var deg := rad_to_deg(facing)
+	var deg := rad_to_deg(wrapf(facing, -PI, PI))
 	var row := 0
 	sprite.flip_h = false
 	if absf(deg) <= 50.0:

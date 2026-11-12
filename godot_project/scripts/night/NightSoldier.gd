@@ -82,7 +82,7 @@ func _physics_process(delta: float) -> void:
 				_arrive_waypoint()
 		"pause":
 			_timer -= delta
-			facing = _look_base + sin(_timer * 1.7) * 0.9
+			facing = wrapf(_look_base + sin(_timer * 1.7) * 0.9, -PI, PI)
 			if _timer <= 0.0:
 				_next_waypoint()
 				state = "patrol"
@@ -94,7 +94,7 @@ func _physics_process(delta: float) -> void:
 				_look_base = facing
 		"search":
 			_timer -= delta
-			facing = _look_base + sin(_timer * 2.3) * 1.3
+			facing = wrapf(_look_base + sin(_timer * 2.3) * 1.3, -PI, PI)
 			if _timer <= 0.0:
 				_resume_route()
 		"alert":
@@ -279,7 +279,7 @@ func is_alive() -> bool:
 
 
 func _animate(delta: float, k: float) -> void:
-	var deg := rad_to_deg(facing)
+	var deg := rad_to_deg(wrapf(facing, -PI, PI))
 	var row := 0
 	sprite.flip_h = false
 	if absf(deg) <= 50.0:
