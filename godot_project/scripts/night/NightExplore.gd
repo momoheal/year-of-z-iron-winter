@@ -63,6 +63,29 @@ const SHAKE_DECAY := 0.85                                 # 每秒衰减（外�
 const STEP_RAIL_BAND := 0.95                              # 距轨心这么近就算踩在枕木 / 钢轨上
 const DEFAULT_RAIL_Y := [26.0, 33.0]                      # 关卡没给 rail_y 元数据时的兜底（yard）
 
+# ---- 地面贴花（DECAL）----
+# 贴花全部挂在 $Decals（z_index = -1），静态、不进 World 的 Y-sort ——
+# 否则一张贴地血泊会按 Y 排到角色前面，把腿盖住。
+# 两个池分开管：血泊/弹孔是「记号」，留到本局结束；脚印是「痕迹」，会化掉。
+# 合成一个 FIFO 的话，跑一趟就能用一串脚印把血泊顶掉。
+const DECAL_MARKS_CAP := 48                               # 记号上限（超出丢最早的）
+const DECAL_TRACKS_CAP := 64                              # 痕迹上限
+const DECAL_TRACK_FADE := 25.0                            # 脚印多久化完（秒）
+const DECAL_BOOT_SIDE_M := 0.15                           # 左右脚向两侧偏这么多（米）
+const DECAL_TEX := {
+	"boot_l": preload("res://art/50_vfx/VFX_Decal_Footprint_Boot_L.png"),
+	"boot_r": preload("res://art/50_vfx/VFX_Decal_Footprint_Boot_R.png"),
+	"paw": preload("res://art/50_vfx/VFX_Decal_Footprint_Paw.png"),
+	"bullet_snow": preload("res://art/50_vfx/VFX_Decal_Bullet_Snow.png"),
+	"bullet_metal": preload("res://art/50_vfx/VFX_Decal_Bullet_Metal.png"),
+	"bullet_wood": preload("res://art/50_vfx/VFX_Decal_Bullet_Wood.png"),
+	"blood_s": preload("res://art/50_vfx/VFX_Decal_Blood_Pool_S.png"),
+	"blood_m": preload("res://art/50_vfx/VFX_Decal_Blood_Pool_M.png"),
+	"blood_l": preload("res://art/50_vfx/VFX_Decal_Blood_Pool_L.png"),
+	"blood_trail": preload("res://art/50_vfx/VFX_Decal_Blood_Trail.png"),
+}
+const TEX_BLOOD_SPLAT := preload("res://art/50_vfx/VFX_Blood_Splat.png")
+
 # P1: 是否从战役出发（RaidBridge 持有 sim/cfg）。false = F2 独立灰盒跑。
 var in_campaign := false
 var bag_max := 8
@@ -165,6 +188,10 @@ var font: SystemFont
 var sfx
 var rng := RandomNumberGenerator.new()
 var _search_noise := 0.0
+# 贴花池（见 DECAL_MARKS_CAP 注释）；_boot_side 用来让左右脚印交替
+var _marks: Array[Sprite2D] = []
+var _tracks: Array[Sprite2D] = []
+var _boot_side := 0
 
 @onready var cam: Camera2D = $Camera2D
 @onready var post: ColorRect = $Post/Grade
@@ -810,7 +837,7 @@ func choose(idx: int) -> bool:
 	return true
 
 func on_half_killed(h, by: String) -> void:
-	_splat(h.global_position)
+	_splat(h.global_position, "s")                 # 半人已经没多少血了
 	if by == "player":
 		# 抉择面板之外也灭得了口（撬棍 / 枪）：账一样要记，但别重复记
 		if h.resolved != "mercy":
@@ -974,7 +1001,7 @@ func emit_noise(pos: Vector2, radius_m: float, kind: String, quiet := false) -> 
 			col = Color("#7dd3fc")
 		"half":
 			col = Color("#fcd9a0")
-	ripples.append({"pos": pos, "r": 0.0, "max": radius_m, "col": col, "life": 1.0})
+	ripples.append({"pos": pos, "r": 0.0, "max": radius_m, "col": col, "life": 1.0, "kind": kind})
 	if not quiet:
 		_voice_noise(pos, radius_m, kind)
 	if kind not in ["rabid", "gun", "half"]:
@@ -1043,6 +1070,11 @@ func on_soldier_fired(s: Node2D, at: Vector2) -> void:
 	add_shake(clampf(0.5 * (1.0 - d / 26.0), 0.06, 0.5))
 	emit_noise(s.global_position, 10.0, "gun")
 	emit_noise(at, 3.0, "gun", true)      # 落点只画波纹
+	# 弹头是穿过去的：`at`（目标的脚下）往后再啃一个雪孔。
+	# 目标自己摊的血由 on_rabid_killed / on_half_killed 负责，这里不重复。
+	if rng.randf() < 0.4:
+		var beyond := at + (at - s.global_position).normalized() * rng.randf_range(14.0, 34.0)
+		add_decal("bullet_snow", beyond, rng.randf_range(-PI, PI), "marks")
 
 ## 狂暴者起跳（NightRabid 从 windup 切到 lunge 时调）：嘶吼 + 近距离的一震。
 func on_rabid_lunge(r: Node2D) -> void:
@@ -1057,16 +1089,118 @@ func on_rabid_spotted(r: Node2D) -> void:
 	if dist_m(player.global_position, r.global_position) <= 7.0:
 		add_shake(0.18)
 
-func _splat(pos: Vector2) -> void:
-	var splat := Sprite2D.new()
-	splat.texture = load("res://art/50_vfx/VFX_Blood_Splat.png")
-	splat.light_mask = 2
-	splat.position = pos + Vector2(0, -4)
-	splat.rotation = rng.randf() * 0.4 - 0.2
-	$Decals.add_child(splat)
+# ============================================================================
+# 地面贴花层
+# ============================================================================
+## 地面贴花的正确变换 = diag(1, SQ) · R(angle)。
+## 别写成 sprite.rotation + sprite.scale.y：Godot 节点变换是 T·R·S，scale 在局部空间
+## 先作用，会跟着贴花一起转 —— θ=90° 时被压缩的那根轴就跑到 X 上，脚印会侧着贴。
+## 这里逐列乘 SQ：R 的第一列是贴花的 +X（= 朝向），第二列是 +Y，两列都按 SQ 压。
+## 恒等式：det = SQ（任何 θ 都成立，测试里就这么断言）。
+## angle 必须传「地面角」——player.facing / atan2(m.y / SQ, m.x) 那套已经反压缩过；
+## 拿像素方向 atan2(m.y, m.x) 进来会压两遍。
+static func _ground_transform(angle: float, at: Vector2) -> Transform2D:
+	var r := Transform2D(angle, Vector2.ZERO)
+	return Transform2D(Vector2(r.x.x, r.x.y * SQ), Vector2(r.y.x, r.y.y * SQ), at)
+
+
+## $Decals 的软兜底：脚本被单独实例化（测试 / 灰盒）时也放得下贴花，不至于崩。
+func _decals_root() -> Node2D:
+	var d := get_node_or_null("Decals") as Node2D
+	if d == null:
+		d = Node2D.new()
+		d.name = "Decals"
+		d.z_index = -1
+		add_child(d)
+	return d
+
+
+## 往地面上贴一张。pool = "marks"（血泊 / 弹孔，不褪）或 "tracks"（脚印，fade 秒化掉）。
+func add_decal(key: String, at: Vector2, angle := 0.0,
+		pool := "marks", fade := 0.0) -> Sprite2D:
+	var tex: Texture2D = DECAL_TEX.get(key, null)
+	if tex == null:
+		return null
+	var s := Sprite2D.new()
+	s.texture = tex
+	s.light_mask = 2                                  # 和 Ground 一致：只吃地面灯的投影
+	# 贴花的锚点在纹理中心，抬 4 px 让印子压在脚下而不是长在小腿上
+	s.transform = _ground_transform(angle, at + Vector2(0, -4))
+	_decals_root().add_child(s)
+	if pool == "tracks":
+		_tracks.append(s)
+		var life := fade if fade > 0.0 else DECAL_TRACK_FADE
+		# 用 tween 淡出而不是每帧遍历数组：暂停 / 时间缩放都不会算漏
+		var tw := s.create_tween()
+		tw.tween_interval(life * 0.55)
+		tw.tween_property(s, "modulate:a", 0.0, life * 0.45)
+		tw.tween_callback(s.queue_free)
+		while _tracks.size() > DECAL_TRACKS_CAP:
+			var old: Sprite2D = _tracks.pop_front()
+			if is_instance_valid(old):
+				old.queue_free()
+	else:
+		_marks.append(s)
+		while _marks.size() > DECAL_MARKS_CAP:
+			var old: Sprite2D = _marks.pop_front()
+			if is_instance_valid(old):
+				old.queue_free()
+	return s
+
+
+## 踩一脚印子。NightPlayer / NightFollower 在落脚那一帧调，angle 传地面角。
+## kind = "boot"（左右脚交替 + 向两侧偏）或 "paw"（狼犬的爪印，单串）。
+## 返回贴出来的那张精灵，方便调用方 / 测试确认落点。
+func footprint(at: Vector2, angle: float, kind := "boot") -> Sprite2D:
+	var key := "paw"
+	var off := Vector2.ZERO
+	if kind == "boot":
+		_boot_side = 1 - _boot_side
+		key = "boot_l" if _boot_side == 0 else "boot_r"
+		# 印子落在脚外侧：沿贴花局部 +Y（横向）偏半个脚宽
+		var side := 1.0 if _boot_side == 1 else -1.0
+		off = Vector2(-sin(angle), cos(angle) * SQ) * (DECAL_BOOT_SIDE_M * PPM * side)
+	return add_decal(key, at + off, angle, "tracks")
+
+
+## 一摊血。size = "s" / "m" / "l"，按倒下的是什么体型挑。
+## 血落地就冻住了（暗红、不再流），所以这里只放静态贴花 + 一下很快就暗掉的热血溅。
+func _splat(pos: Vector2, size := "m") -> void:
+	var key := "blood_" + size
+	if not DECAL_TEX.has(key):
+		key = "blood_m"
+	add_decal(key, pos, rng.randf_range(-PI, PI), "marks")
+	# 边界别是正圆：一半的尸体旁边再甩一道拖痕
+	if rng.randf() < 0.5:
+		add_decal("blood_trail", pos + Vector2(rng.randf_range(-10.0, 10.0), rng.randf_range(-6.0, 6.0)),
+			rng.randf_range(-PI, PI), "marks")
+	# 血刚落地还亮着，一两秒后冻成上面那摊暗红 —— 用一张会褪的亮溅当过渡
+	var flash := Sprite2D.new()
+	flash.texture = TEX_BLOOD_SPLAT
+	flash.light_mask = 2
+	flash.transform = _ground_transform(rng.randf_range(-PI, PI), pos + Vector2(0, -4))
+	flash.modulate = Color(1.0, 1.0, 1.0, 0.85)
+	_decals_root().add_child(flash)
+	var tw := flash.create_tween()
+	tw.tween_property(flash, "modulate:a", 0.0, 1.4)
+	tw.tween_callback(flash.queue_free)
+
+
+## 弹孔落在什么材质上。碰撞体上写了 meta "surface" 就用它；
+## 没写就按货场的实际构成掷骰：雪堆 0.5 / 木箱木枕 0.3 / 铁皮车厢 0.2。
+func _bullet_key(col: Object) -> String:
+	if col != null and is_instance_valid(col) and col.has_meta("surface"):
+		var s := String(col.get_meta("surface"))
+		if s == "snow" or s == "wood" or s == "metal":
+			return "bullet_" + s
+	var r := rng.randf()
+	if r < 0.5:
+		return "bullet_snow"
+	return "bullet_wood" if r < 0.8 else "bullet_metal"
+
 
 func on_rabid_killed(r: Node2D, by: String) -> void:
-	_splat(r.global_position)
+	_splat(r.global_position, "l")                 # 一百公斤的东西，血摊得最大
 	sfx.play_at("bonejam", r.global_position, -6.0)      # 一百公斤的东西倒在雪里
 	if by == "player":
 		rabid_kills += 1
@@ -1566,7 +1700,8 @@ func shoot() -> void:
 ## 一发（或一颗弹丸）：先看有没有打到人，再看打到哪儿。
 func _cast_shot(origin: Vector2, dir: Vector2, reach_m: float, dmg: float) -> void:
 	var hit := _hit_enemy(origin, dir, reach_m)
-	var to := _ray_stop(origin, dir, reach_m)
+	var stop := _ray_stop(origin, dir, reach_m)
+	var to: Vector2 = stop["pos"]
 	if not hit.is_empty():
 		var node: Node2D = hit["node"]
 		to = origin + _m_dir_px(dir) * (float(hit["t"]) * PPM)
@@ -1576,6 +1711,13 @@ func _cast_shot(origin: Vector2, dir: Vector2, reach_m: float, dmg: float) -> vo
 		_spawn_vfx(TEX_BLOOD, to, 0.9, 0.35)
 	else:
 		_spawn_vfx(TEX_SPARK, to, 0.75, 0.2)
+		# 只在真的打到东西时才留孔。打空了 to 是弹道尽头（半空里的一个点），
+		# 在那儿贴弹孔会有一排洞浮在天上。
+		if stop["hit"]:
+			# 射线从胸口出去，命中点在墙/车厢的中腰。贴花是贴地的，
+			# 所以去掉 40 px 的胸高偏移，让洞落在墙脚的地面上。
+			add_decal(_bullet_key(stop["col"]), Vector2(to.x, to.y + 40.0),
+				rng.randf_range(-PI, PI), "marks")
 	tracers.append({"from": origin, "to": to, "life": 0.07})
 
 
@@ -1584,14 +1726,16 @@ func _m_dir_px(dir: Vector2) -> Vector2:
 
 
 ## 子弹会被什么挡住：只有墙 / 车厢 / 大件（物理层 1）。
-func _ray_stop(origin: Vector2, dir: Vector2, reach_m: float) -> Vector2:
+## 返回 {pos, hit, col}。hit = false 表示这一枪打空了（弹道飞到 reach 尽头），
+## 调用方靠这个位区分「打到墙」和「飞到天上」，别拿 pos 直接当弹着点。
+func _ray_stop(origin: Vector2, dir: Vector2, reach_m: float) -> Dictionary:
 	var dpx := _m_dir_px(dir)
 	var to := origin + dpx * (reach_m * PPM)
 	var q := PhysicsRayQueryParameters2D.create(origin, to, 1)
 	var res := get_world_2d().direct_space_state.intersect_ray(q)
 	if res.is_empty():
-		return to
-	return res["position"]
+		return {"pos": to, "hit": false, "col": null}
+	return {"pos": res["position"], "hit": true, "col": res.get("collider")}
 
 
 ## 射线上的第一个活人（含清杀兵 / 狂暴者 / 半人）。返回 {node, t}，t 为逻辑米。
@@ -1726,7 +1870,7 @@ func on_soldier_killed(s: Node, _by: String) -> void:
 	show_osk_bark("death")
 	soldier_kills += 1
 	conscience -= 0.5
-	_splat(s.global_position)
+	_splat(s.global_position, "m")
 	sfx.play_at("bonejam", s.global_position, -4.0)
 	spawn_float(s.global_position + Vector2(0, -140),
 		"清杀兵倒了 —— 剩下的人会搜得更凶", SovietUI.BLOOD_LIT)

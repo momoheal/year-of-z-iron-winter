@@ -669,5 +669,115 @@
    105,
    144
   ]
+ },
+ "VFX_Decal_Footprint_Boot_L": {
+  "path": "res://art/50_vfx/VFX_Decal_Footprint_Boot_L.png",
+  "size": [
+   32,
+   32
+  ],
+  "pivot": [
+   16,
+   16
+  ]
+ },
+ "VFX_Decal_Footprint_Boot_R": {
+  "path": "res://art/50_vfx/VFX_Decal_Footprint_Boot_R.png",
+  "size": [
+   32,
+   32
+  ],
+  "pivot": [
+   16,
+   16
+  ]
+ },
+ "VFX_Decal_Footprint_Paw": {
+  "path": "res://art/50_vfx/VFX_Decal_Footprint_Paw.png",
+  "size": [
+   32,
+   32
+  ],
+  "pivot": [
+   16,
+   16
+  ]
+ },
+ "VFX_Decal_Bullet_Snow": {
+  "path": "res://art/50_vfx/VFX_Decal_Bullet_Snow.png",
+  "size": [
+   28,
+   28
+  ],
+  "pivot": [
+   14,
+   14
+  ]
+ },
+ "VFX_Decal_Bullet_Metal": {
+  "path": "res://art/50_vfx/VFX_Decal_Bullet_Metal.png",
+  "size": [
+   20,
+   20
+  ],
+  "pivot": [
+   10,
+   10
+  ]
+ },
+ "VFX_Decal_Bullet_Wood": {
+  "path": "res://art/50_vfx/VFX_Decal_Bullet_Wood.png",
+  "size": [
+   22,
+   22
+  ],
+  "pivot": [
+   11,
+   11
+  ]
+ },
+ "VFX_Decal_Blood_Pool_S": {
+  "path": "res://art/50_vfx/VFX_Decal_Blood_Pool_S.png",
+  "size": [
+   96,
+   64
+  ],
+  "pivot": [
+   48,
+   32
+  ]
+ },
+ "VFX_Decal_Blood_Pool_M": {
+  "path": "res://art/50_vfx/VFX_Decal_Blood_Pool_M.png",
+  "size": [
+   160,
+   104
+  ],
+  "pivot": [
+   80,
+   52
+  ]
+ },
+ "VFX_Decal_Blood_Pool_L": {
+  "path": "res://art/50_vfx/VFX_Decal_Blood_Pool_L.png",
+  "size": [
+   240,
+   152
+  ],
+  "pivot": [
+   120,
+   76
+  ]
+ },
+ "VFX_Decal_Blood_Trail": {
+  "path": "res://art/50_vfx/VFX_Decal_Blood_Trail.png",
+  "size": [
+   64,
+   40
+  ],
+  "pivot": [
+   32,
+   20
+  ]
  }
 }
