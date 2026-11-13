@@ -165,7 +165,6 @@ var rabid_kills := 0
 var _w_sprite: Sprite2D = null
 var _flash_sprite: Sprite2D = null
 var _flash_light: PointLight2D = null
-var _aim_noise := 0.0
 var search_target: Node2D = null
 var search_prog := 0.0
 var extract_prog := 0.0
@@ -622,7 +621,7 @@ func _setup_special_containers() -> void:
 	var n := containers.size()
 	if n == 0:
 		return
-	var li := n / 2
+	var li := floori(n * 0.5)
 	containers[li].set_meta("locked", true)
 	if n >= 2:
 		var hi := n - 1
@@ -1129,6 +1128,8 @@ func add_decal(key: String, at: Vector2, angle := 0.0,
 	_decals_root().add_child(s)
 	if pool == "tracks":
 		_tracks.append(s)
+		# 脚印淡出或被淘汰时，同步从队列移除。
+		s.tree_exiting.connect(func(): _tracks.erase(s), CONNECT_ONE_SHOT)
 		var life := fade if fade > 0.0 else DECAL_TRACK_FADE
 		# 用 tween 淡出而不是每帧遍历数组：暂停 / 时间缩放都不会算漏
 		var tw := s.create_tween()
@@ -1329,7 +1330,7 @@ func _return_to_campaign(reason: String) -> void:
 			R.ammo = int(mag.get("shotgun", 0)) + int(reserve.get("shotgun", 0))
 	R.looted = _count_searched()
 	R.total_cont = containers.size()
-	R.events = []
+	R.events.clear()
 	if not pack.is_empty():
 		R.add_event("good", "带回 %d 件物资" % pack.size(), "Brought back %d items" % pack.size())
 	if half_saved > 0:
@@ -1517,8 +1518,9 @@ func _init_weapons() -> void:
 	_w_sprite.name = "Weapon"
 	_w_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	_w_sprite.light_mask = 2
-	_w_sprite.z_index = 2
+	_w_sprite.centered = false
 	player.add_child(_w_sprite)
+	player.move_child(_w_sprite, player.sprite.get_index())
 
 	_flash_sprite = Sprite2D.new()
 	_flash_sprite.name = "MuzzleFlash"
@@ -1577,6 +1579,9 @@ func swap_weapon(slot: int) -> void:
 	reload_left = 0.0
 	cool = 0.0
 	swing_t = 0.0
+	muzzle_t = 0.0
+	_flash_sprite.hide()
+	_flash_light.energy = 0.0
 	_pose_weapon(true)
 	sfx.play("click", -10.0)
 	spawn_float(player.global_position + Vector2(0, -120), Arsenal.name_zh(id), SovietUI.OCHRE)
@@ -1588,10 +1593,24 @@ func _pose_weapon(refresh_texture := false) -> void:
 	var w := cur_w()
 	if refresh_texture or _w_sprite.texture == null:
 		_w_sprite.texture = load(String(w.get("tex", "")))
+	var dir := _m_dir_px(_aim_vec())
+	var row: int = player.sprite.frame / player.sprite.hframes
+	var hand := Vector2(15, -33)
+	if row == 1:
+		hand.x = -5.0 if player.sprite.flip_h else 5.0
+	elif row == 2:
+		hand.x = -15.0
+	if player.crouching:
+		hand.y += 3.0
 	var s := float(w.get("scale", 0.5))
+	var grip: Vector2 = w["grip"]
+	var flip: bool = dir.x < 0.0
+	_w_sprite.position = hand
+	_w_sprite.z_index = 0 if row == 2 else 2
 	_w_sprite.scale = Vector2(s, s)
-	_w_sprite.rotation = player.facing
-	_w_sprite.flip_v = cos(player.facing) < 0.0
+	_w_sprite.rotation = dir.angle() + float(w.get("hold_rot", 0.0)) * (-1.0 if flip else 1.0)
+	_w_sprite.flip_v = flip
+	_w_sprite.offset = Vector2(-grip.x, grip.y - _w_sprite.texture.get_height() if flip else -grip.y)
 
 
 ## 每帧的战斗状态：冷却 / 收尾装填 / 握枪姿势 / 枪口焰衰减 / 攻击输入。
@@ -1603,23 +1622,26 @@ func _update_combat(delta: float) -> void:
 		reload_left -= delta
 		if reload_left <= 0.0:
 			_finish_reload()
+	_pose_weapon()
+	var w := cur_w()
 	if _flash_sprite != null:
 		_flash_sprite.visible = muzzle_t > 0.0
 		if muzzle_t > 0.0:
 			var k := clampf(1.0 - muzzle_t / 0.07, 0.0, 0.999)
 			_flash_sprite.frame = int(k * 4.0)
-			var dir := _aim_vec()
-			_flash_sprite.position = Vector2(dir.x, dir.y) * (34.0 + 8.0 * k) + Vector2(0, -44)
+			var muzzle_offset: Vector2 = w.get("muzzle", w["grip"]) - w["grip"]
+			if _w_sprite.flip_v:
+				muzzle_offset.y = -muzzle_offset.y
+			var muzzle_pos := _w_sprite.transform * muzzle_offset
+			_flash_sprite.position = muzzle_pos + Vector2.from_angle(_w_sprite.rotation) * (8.0 + 8.0 * k)
+			_flash_light.position = muzzle_pos
 			_flash_sprite.scale = Vector2(0.55, 0.55)
 	if _flash_light != null:
 		_flash_light.energy = 2.6 * clampf(muzzle_t / 0.07, 0.0, 1.0)
-		_flash_light.position = _w_sprite.position if _w_sprite != null else Vector2.ZERO
-	_pose_weapon()
 	if Input.is_action_just_pressed("reload"):
 		start_reload()
 	if player.frozen:
 		return
-	var w := cur_w()
 	if String(w.get("kind", "melee")) == "melee":
 		if Input.is_action_pressed("attack_primary") and cool <= 0.0:
 			melee_swing()
@@ -1676,7 +1698,6 @@ func shoot() -> void:
 	muzzle_t = 0.07
 	var noise := float(w.get("noise", 26.0))
 	var origin: Vector2 = player.global_position + Vector2(0, -40)
-	var dir := _aim_vec()
 	# 声纹 + AI：枪声自己不听「gunshot」，用这支枪的音色（步枪 / 双管各有各的响）
 	sfx.play_at(String(w.get("sfx", "gunshot")), origin, 0.0, 0.02)
 	emit_noise(player.global_position, noise, "gun", true)
@@ -1745,17 +1766,17 @@ func _hit_enemy(origin: Vector2, dir: Vector2, reach_m: float) -> Dictionary:
 	for e in _combat_targets():
 		# 枪从胸口高度出去：目标也按胸口高度算，别让「脚的偏移」变成固定偏斜
 		var rel := to_m((e.global_position + Vector2(0, -40)) - origin)
-		var t := rel.dot(dir)
-		if t <= 0.15 or t > reach_m:
+		var distance := rel.dot(dir)
+		if distance <= 0.15 or distance > reach_m:
 			continue
 		var perp := absf(rel.cross(dir))
 		if perp > _hit_radius(e):
 			continue
 		if not los_clear(origin, e.global_position, 1):
 			continue
-		if t < bd:
-			bd = t
-			best = {"node": e, "t": t}
+		if distance < bd:
+			bd = distance
+			best = {"node": e, "t": distance}
 	return best
 
 
@@ -1914,8 +1935,8 @@ func _update_fx(delta: float) -> void:
 		f["life"] = float(f["life"]) - delta
 		f["pos"] = Vector2(f["pos"]) + Vector2(0, -22.0 * delta)
 	floats = floats.filter(func(f): return float(f["life"]) > 0.0)
-	for tr in tracers:
-		tr["life"] = float(tr["life"]) - delta
+	for tracer in tracers:
+		tracer["life"] = float(tracer["life"]) - delta
 	tracers = tracers.filter(func(x): return float(x["life"]) > 0.0)
 	for im in impacts:
 		im["life"] = float(im["life"]) - delta
@@ -2752,7 +2773,6 @@ func _refresh_hud() -> void:
 			_lbl_zone.add_theme_color_override("font_color", inf.get("hud_col", SovietUI.BONE_DIM))
 
 	# --- 手里的家伙 ---
-	var wspec := cur_w()
 	var slots: Array[String] = []
 	for sl in weapon_slots():
 		if bool(sl["owned"]):

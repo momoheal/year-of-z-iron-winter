@@ -1,7 +1,7 @@
 extends Node2D
 ## Campaign.gd — 「一夜」探索循环的渲染 / 输入层（对应 HTML Exploration Demo）。
 ##
-## 结构沿用 Gym.gd：CampaignSim（RefCounted 纯数据）+ 本文件的立即模式 _draw() + CampaignHUD（CanvasLayer）。
+## 战役由 CampaignSim（RefCounted 纯数据）、本文件的立即模式 _draw() 和 CampaignHUD（CanvasLayer）组成。
 ## 本文件负责三块视觉：
 ##   1. 城市地图（900×520，13 个节点 + 已解锁路径）
 ##   2. 夜潜世界（26px/米、y 轴 0.62 压缩的 75° 斜俯视，程序化街区 + 雾 + 探照锥 + 波纹）
@@ -137,8 +137,12 @@ func _process(delta: float) -> void:
 	if sim.pending_scene != "" and not sim.story_open and not hud.overlay_active():
 		var sc: String = sim.pending_scene
 		sim.pending_scene = ""
-		get_tree().change_scene_to_file(sc)
-		return
+		var err := get_tree().change_scene_to_file(sc)
+		if err == OK:
+			return
+		RaidBridge.clear()
+		sim.cancel_departure()
+		hud.show_departure_error()
 	t += delta
 	if sfx != null:
 		sfx.set_muted(not hud.sound_on)
@@ -188,28 +192,42 @@ func shimmy_snow(dt: float) -> void:
 			s.x = randf() * SCREEN.x
 		snow[i] = s
 
+func _input(event: InputEvent) -> void:
+	if sim == null or not sim.story_open or hud.overlay_active():
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		get_viewport().set_input_as_handled()
+		match event.keycode:
+			KEY_SPACE, KEY_ENTER, KEY_KP_ENTER:
+				hud.advance_story()
+			KEY_1, KEY_KP_1:
+				hud.choose_story(0)
+			KEY_2, KEY_KP_2:
+				hud.choose_story(1)
+			KEY_3, KEY_KP_3:
+				hud.choose_story(2)
+			KEY_ESCAPE:
+				if not sim.first_act_pending():
+					sim.close_story()
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if hud.overlay_active() or sim.pending_scene != "":
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		var k := (event as InputEventKey).keycode
 		if k == KEY_ESCAPE:
-			if sim.story_open:
-				# 剧情优先：出发前播的剧情此时 phase 已是 raid，不能让 Esc 去开「放弃夜潜」
-				sim.story_open = false
-			elif sim.phase == "raid":
+			if sim.phase == "raid":
 				sim.abort_confirm = not sim.abort_confirm
 			elif sim.help_open:
 				sim.help_open = false
 			elif sim.logbook_open:
 				sim.logbook_open = false
-			return
-		if (k == KEY_SPACE or k == KEY_ENTER or k == KEY_KP_ENTER) and sim.story_open:
-			hud.advance_story()
+			elif sim.phase == "map":
+				sim.phase = "base"
 			return
 		if k == KEY_F9:
 			hud.open_save_menu()               # 存档 / 读档面板（夜潜途中不开）
-			return
-		if k == KEY_F1:
-			get_tree().change_scene_to_file("res://scenes/gym.tscn")
 			return
 		if k == KEY_F2:
 			get_tree().change_scene_to_file("res://scenes/night_explore.tscn")
@@ -250,12 +268,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				sim.to_base()
 				sim.advance_day()
 			elif sim.phase == "base":
-				if sim.selected_loc == "":
-					for L in Data.LOCS:
-						if sim.loc_unlocked(L):
-							sim.selected_loc = String(L["id"])
-							break
-				sim.phase = "map"
+				hud.open_map()
+			elif sim.phase == "map" and not (sim.help_open or sim.logbook_open):
+				hud.depart_to(sim.location(sim.selected_loc))
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
 		if mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT:

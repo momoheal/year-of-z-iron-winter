@@ -132,6 +132,7 @@ var _modal_kind := ""
 var _live: Dictionary = {}
 var _story_line := 0
 var _story_beat := ""
+var _departure_error := false
 var _new_confirm := false          # 标题页：已有存档时「新的一局」要点两下
 var _save_warn := ""               # 自动存档失败的原因（顶栏副标题变红显示）
 var _save_warn_until := 0          # 显示到什么时候（Time.get_ticks_msec）
@@ -383,8 +384,6 @@ func _build_top_bar() -> void:
 	h.add_child(_btn_sound)
 	var b_save := _btn("存档 / 读档 (F9)", open_save_menu)
 	h.add_child(b_save)
-	var b_gym := _btn("机制场 (F1)", func(): get_tree().change_scene_to_file("res://scenes/gym.tscn"))
-	h.add_child(b_gym)
 
 func _toggle_sound() -> void:
 	sound_on = not sound_on
@@ -603,9 +602,9 @@ func _build_title() -> void:
 	pv.add_child(_sep())
 	pv.add_child(_label(_tr(
 		"WASD 移动 · Ctrl 潜行 · Shift 冲刺 · 鼠标瞄准 · 空格/左键 攻击 · 长按 E 交互\n" \
-		+ "Q 热水 · H 绷带 · G 扔空罐 · R 装弹 · Tab 日志 · Esc 取消 · F1 机制测试场",
+		+ "Q 热水 · H 绷带 · G 扔空罐 · R 装弹 · Tab 日志 · Esc 取消",
 		"WASD move · Ctrl sneak · Shift sprint · mouse aim · Space/LMB attack · hold E interact\n" \
-		+ "Q water · H bandage · G throw tin · R reload · Tab logbook · Esc cancel · F1 gym"),
+		+ "Q water · H bandage · G throw tin · R reload · Tab logbook · Esc cancel"),
 		FONT_SIZES["small"], Color("#6d6f66")))
 	p.add_child(pv)
 	c.add_child(p)
@@ -645,10 +644,6 @@ func _build_title() -> void:
 	var b_opening := _btn(_tr("回看序章", "Replay Prologue"), show_opening)
 	b_opening.custom_minimum_size = Vector2(160, 40)
 	row2.add_child(b_opening)
-	var b_gym := _btn(_tr("机制测试场（F1）", "Mechanics Gym (F1)"),
-		func(): get_tree().change_scene_to_file("res://scenes/gym.tscn"))
-	b_gym.custom_minimum_size = Vector2(240, 40)
-	row2.add_child(b_gym)
 	c.add_child(row2)
 
 ## 自动存档失败：顶栏副标题变红显示原因 8 秒（Campaign._autosave 调用）。
@@ -659,6 +654,7 @@ func warn_save(msg: String) -> void:
 
 func start_new_game() -> void:
 	_new_confirm = false
+	_departure_error = false
 	_close_tutorial()
 	sim.new_game()
 	sim.phase = "base"
@@ -991,7 +987,7 @@ func _build_base() -> void:
 			FONT_SIZES["small"], Color("#a8a294")))
 	rv.add_child(_sep())
 	var brow := _hbox(8)
-	var b_map := _btn(_tr("去城市地图（M）", "City map (M)"), func(): sim.phase = "map", true)
+	var b_map := _btn(_tr("去城市地图", "City map"), open_map, true)
 	b_map.custom_minimum_size = Vector2(300, 46)
 	brow.add_child(b_map)
 	brow.add_child(_btn(_tr("睡到明天（Enter）", "Sleep (Enter)"), _sleep))
@@ -1185,10 +1181,13 @@ func _build_map() -> void:
 		lrow.add_child(_load_slot(String(k)))
 	rv.add_child(lrow)
 
-	var depart := _btn(_tr("🗺 出发（Enter）", "🗺 DEPART (Enter)"), func(): _depart(L), true)
+	var depart := _btn(_tr("🗺 出发（Enter）", "🗺 DEPART (Enter)"), func(): depart_to(L), true)
 	depart.custom_minimum_size = Vector2(0, 54)
 	depart.disabled = not sim.can_depart(L)
 	rv.add_child(depart)
+	if _departure_error:
+		rv.add_child(_label(_tr("场景加载失败。携带物已退回，可以重新出发。", "The scene failed to load. Your supplies were returned. Try departing again."),
+			FONT_SIZES["small"], Color("#e0897e")))
 	if not sim.can_depart(L):
 		rv.add_child(_label(_tr("这个地点今晚去不了。", "This place is out of reach tonight."),
 			FONT_SIZES["small"], Color("#e0897e")))
@@ -1233,9 +1232,26 @@ func _adjust_load(id: String, d: int) -> void:
 	sim.adjust_load(id, d)
 	_sig = ""
 
-func _depart(L: Dictionary) -> void:
+func open_map() -> void:
+	if sim.first_act_pending():
+		sim.selected_loc = sim.FIRST_ACT_LOC
+	elif sim.selected_loc == "":
+		for L in Data.LOCS:
+			if sim.can_depart(L):
+				sim.selected_loc = String(L["id"])
+				break
+	sim.phase = "map"
+
+
+func depart_to(L: Dictionary) -> void:
 	if sim.depart(L):
+		_departure_error = false
 		_sig = ""
+
+
+func show_departure_error() -> void:
+	_departure_error = true
+	_sig = ""
 
 # ============================================================================
 # 夜潜 HUD
@@ -1558,8 +1574,6 @@ func _build_ending() -> void:
 	var row := _hbox(12)
 	row.add_child(_btn(_tr("回到 602 室", "Back to Room 602"), func(): sim.phase = "base"))
 	row.add_child(_btn(_tr("回标题页", "Title screen"), func(): sim.phase = "title"))   # 新开局在标题页确认，结局预览里点错不会盖掉存档
-	row.add_child(_btn(_tr("机制测试场（F1）", "Mechanics Gym (F1)"),
-		func(): get_tree().change_scene_to_file("res://scenes/gym.tscn")))
 	c.add_child(row)
 
 # ============================================================================
@@ -1657,7 +1671,7 @@ func _build_story_modal() -> void:
 	var masthead := _hbox(14)
 	var file_stamp := PanelContainer.new()
 	file_stamp.add_theme_stylebox_override("panel", SovietUI.stamp(6))
-	file_stamp.add_child(_label("ДЕЛО · 0420", 12, SovietUI.BONE))
+	file_stamp.add_child(_label("ДЕЛО · " + String(beat.get("file", "0420")), 12, SovietUI.BONE))
 	masthead.add_child(file_stamp)
 	masthead.add_child(_label(String(beat.get("title_zh" if sim.lang == "zh" else "title_en", "")),
 		24, SovietUI.OCHRE))
@@ -1710,12 +1724,13 @@ func _build_story_modal() -> void:
 
 	if lines.is_empty() or _story_line >= lines.size() - 1:
 		text_col.add_child(_sep())
-		text_col.add_child(_label(_tr("你写下 / 做了什么：", "What you write / do:"), FONT_SIZES["small"], Color("#6d6f66")))
 		var choices: Array = beat.get("choices", [])
+		text_col.add_child(_label(_tr("点击选项，或按 1–%d" % choices.size(), "Click an option or press 1–%d" % choices.size()),
+			FONT_SIZES["small"], Color("#a8a294")))
 		for i in choices.size():
 			var c: Dictionary = choices[i]
 			var cls := String(c.get("cls", ""))
-			var b := _btn(String(c.get("zh" if sim.lang == "zh" else "en", "")), func(): _resolve_story(i), cls == "good")
+			var b := _btn(String(c.get("zh" if sim.lang == "zh" else "en", "")), func(): choose_story(i), cls == "good")
 			b.custom_minimum_size = Vector2(0, 46)
 			SovietUI.dress_choice_button(b, cls, 16)
 			text_col.add_child(b)
@@ -1746,6 +1761,16 @@ func advance_story() -> bool:
 	ui_sfx.emit("beep")
 	_sig = ""
 	return true
+
+
+func choose_story(idx: int) -> void:
+	if not sim.story_open:
+		return
+	var beat: Dictionary = Data.STORY.get(sim.story_id, {})
+	var lines: Array = beat.get("lines", [])
+	var choices: Array = beat.get("choices", [])
+	if _story_line >= lines.size() - 1 and idx >= 0 and idx < choices.size():
+		_resolve_story(idx)
 
 
 func _resolve_story(idx: int) -> void:

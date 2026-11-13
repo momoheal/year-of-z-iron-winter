@@ -123,8 +123,11 @@ func _run_tests() -> void:
 	_assert(int(sim.stash.get("rye", 0)) == 3 and int(sim.stash.get("band", 0)) == 1,
 		"15. starting stash rye 3 / bandage 1")
 	_assert(sim.nodes.size() == 14, "16. 14 node states")
-	_assert(sim.unlocked_count() == 10, "17. 10 locations unlocked at start",
+	_assert(sim.unlocked_count() == 1 and sim.selected_loc == "coldstore"
+		and not sim.can_depart(Data.loc("yard")), "17. first act starts at Cold Storage only",
 		str(sim.unlocked_count()))
+	_assert(not sim.mates.get("ash", false), "17b. Ash joins through the first act")
+	sim.flags.erase("first_act_pending")
 
 	# --- 4. 解锁门槛 -------------------------------------------------------
 	var sanitarium: Dictionary = Data.loc("sanitarium")
@@ -345,6 +348,7 @@ func _run_tests() -> void:
 	_assert(sim.names.size() == 1, "68. choice A1 writes one real name")
 	_assert(int(sim.conscience) == 58, "69. A1 grants +8 conscience", str(sim.conscience))
 	_assert(bool(sim.mates.get("ash", false)), "70. A1 grants Ash via after_mate")
+	_assert(sim.mate == "ash" and sim.unlocked_count() == 10, "70b. Act I selects Ash and opens the rest of the city")
 	_assert(bool(sim.story_done.get("coldstore", false)), "71. the beat is marked done")
 	_assert(sim.objective()["zh"].find("疗养院") >= 0, "72. objective advances after a name is written")
 	var res2: Dictionary = sim.resolve_story(1)
@@ -433,6 +437,7 @@ func _run_tests() -> void:
 	# --- 18. 夜潜 HUD + 场景绘制 ------------------------------------------------
 	sim.new_game()
 	sim.phase = "base"
+	sim.story_done["coldstore"] = true
 	_fresh_raid(sim, "boiler")
 	hud.refresh()
 	await _frames(3)
@@ -445,15 +450,7 @@ func _run_tests() -> void:
 		sim.finish_raid("abort")
 	_assert(sim.phase == "report", "96. abort lands on the report screen")
 
-	# --- 19. 灰盒场回归 --------------------------------------------------------
 	scene.queue_free()
-	await _frames(2)
-	var gym_scene: PackedScene = load("res://scenes/gym.tscn")
-	var gym: Node = gym_scene.instantiate()
-	root.add_child(gym)
-	await _frames(3)
-	_assert(gym.get("sim") != null, "97. the greybox gym still assembles")
-	gym.queue_free()
 	await _frames(2)
 
 	print("")

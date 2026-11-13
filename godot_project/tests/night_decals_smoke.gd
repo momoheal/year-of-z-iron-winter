@@ -121,6 +121,18 @@ func _run() -> void:
 	_assert(s2._marks.size() == marks_before,
 		"footprints never evict blood marks", "%d -> %d" % [marks_before, s2._marks.size()])
 
+	# 复现长时间夜潜：旧脚印自然褪去，再继续走到容量上限。
+	var expired: Sprite2D = s2.add_decal("paw", at, 0.0, "tracks", 0.05)
+	await create_timer(0.15).timeout
+	_assert(not is_instance_valid(expired) and s2._tracks.size() == TRACKS_CAP - 1,
+		"faded footprint leaves the pool")
+	for i in range(TRACKS_CAP + 1):
+		var track: Sprite2D = s2.footprint(at + Vector2(i, 0), 0.0)
+		if not is_instance_valid(track):
+			_assert(false, "footprints continue after a faded entry reaches the head of the pool")
+			break
+	_assert(s2._tracks.size() == TRACKS_CAP, "tracks stay capped after fading and adding more prints")
+
 	# ---------------------------------------------------------------- 4. 脚印
 	var s3 := _scene()
 	await _physics(2)

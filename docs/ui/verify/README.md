@@ -112,7 +112,7 @@ python3 render_preview.py --level coldstore
    `Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_combat_smoke.gd`。
 2. **光照是近似**：只合成径向 / 光晕贴图，锥形光、遮挡阴影、bloom 都不在图上。
 3. **图里没有 UI**：HUD、武器栏、提示条请看 `docs/ui/soviet_ui_board.html`。
-4. **这四张场景仍是灰盒，没有出图**：`gym.tscn`、`main.tscn`、`campaign.tscn`、`event_demo.tscn`
+4. **这三张场景仍是灰盒，没有出图**：`main.tscn`、`campaign.tscn`、`event_demo.tscn`
    目前还是 `_draw()` 画的占位，属于下一批要美术化的对象。
 5. **分区色带是合成出来的**：引擎里由 `NightZoneField.gd` 每帧画（半透明矩形 + 虚线 + 雪面标签），
    预览图用 `render_preview.zone_layer()` 按同一份 `metadata/zones` 画在 `Ground` 之上。

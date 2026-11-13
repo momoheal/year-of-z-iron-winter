@@ -47,14 +47,15 @@ func _run() -> void:
 	_yard()
 	_melee()
 	_guns()
+	_weapon_pose()
 	_soldier()
 	_ammo()
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
-	if failures.size() > 0:
-		quit(1)
-	quit(0)
+	# quit() 不终止函数执行 —— 分开写 "if 有失败: quit(1)" 再 quit(0)，
+	# 后者会覆盖前者，退出码永远是 0，CI 的 rc 判断就成了摆设。用单表达式。
+	quit(0 if failures.is_empty() else 1)
 
 
 # ---------------------------------------------------------------------------
@@ -153,6 +154,26 @@ func _melee() -> void:
 # ---------------------------------------------------------------------------
 # 4) 枪械：扣弹 / 曳光 / 声纹 / 惊动巡逻
 # ---------------------------------------------------------------------------
+func _weapon_pose() -> void:
+	var s = _s
+	s._add_weapon("shotgun")
+	for slot in range(1, 4):
+		s.swap_weapon(slot)
+		for facing in [0.0, PI, PI / 2.0, -PI / 2.0]:
+			s.player.facing = facing
+			s.player._animate(0.0, 0.0)
+			s.muzzle_t = 0.07
+			s._update_combat(0.0)
+			var sprite: Sprite2D = s._w_sprite
+			var muzzle: Vector2 = s._flash_light.position
+			var aim := Vector2.from_angle(sprite.rotation)
+			_assert(sprite.position.y < -25.0,
+				"%s faces %.2f with the weapon held above the feet" % [s.weapon, facing])
+			_assert((muzzle - sprite.position).dot(aim) > 20.0
+				and is_equal_approx((s._flash_sprite.position - muzzle).dot(aim), 8.0),
+				"%s faces %.2f with the flash at the barrel" % [s.weapon, facing])
+
+
 func _guns() -> void:
 	print("[guns]")
 	var s = _s

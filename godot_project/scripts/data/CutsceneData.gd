@@ -1,7 +1,7 @@
 extends RefCounted
 ## CutsceneData.gd — 图片幻灯演出的数据表（由 scripts/ui/StorySlides.gd 播放）。
 ##
-##   PROLOGUE   新开局的故事开场（世界观 → 母亲 → 签字 → 拉娜 → 封楼 → 通风口）
+##   PROLOGUE   新开局的故事开场（世界观 → 母亲 → 签字 → 拉娜被带走 → 瞒下转运消息 → 封楼 → 通风口）
 ##   AFTERMATH  七段主线剧情每个抉择之后的「余波」：键 = "剧情 id:选项序号"
 ##   scene_image()  剧情对白框背后的场景插图
 ##
@@ -25,12 +25,15 @@ const PROLOGUE := [
 	{"img": CG + "cg_intro_lana.jpg", "focus": Vector2(0.42, 0.42),
 		"zh": "十天后的筛查里，妹妹拉娜被带走了。档案编号 0420。\n她被推上装甲列车「铁壳号」的第三节闷罐车厢——和你签过字的那种车皮，一模一样。",
 		"en": "Ten days later, your sister Lana was taken at screening. File 0420.\nShe was pushed into Boxcar 3 of the armoured train Buran. A car exactly like the one you signed for."},
+	{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.6, 0.55),
+		"zh": "卡佳：阿廖沙……拉娜还没回电报吗？\n你把转运单折好，塞进大衣内袋。\n阿列克谢：妈，铁路医院派她去外地支援医疗了。等忙完这阵，她就回来。",
+		"en": "Katya: Alyosha... still no telegram from Lana?\nYou fold the transfer notice and slip it into your inside coat pocket.\nAleksei: Mama, the railway hospital sent her out of town to help a medical team. She'll be home when the work is done."},
 	{"img": "res://art/60_ui/opening_courtyard.png", "focus": Vector2(0.62, 0.6), "actors": true,
 		"zh": "清杀队：封楼！所有人退回室内，天亮之前不许出门！\n焊枪封死了单元门。白天你替台账搬运物资；夜里，整栋楼只剩探照灯还醒着。",
 		"en": "OSK: Seal the building! Everyone inside. Nobody leaves before dawn!\nThe welders close the stairwell door. By day you haul for the ledger; by night only the searchlights are awake."},
 	{"img": CG + "cg_intro_vent.jpg", "focus": Vector2(0.72, 0.6),
-		"zh": "只有锅炉房那扇锈死的通风口，还通向外面。每一夜只够去一个地方，天亮之前必须回来。\n阿列克谢：妈，我会带着药回来……也会找到拉娜。",
-		"en": "Only the rusted vent of the boiler room still leads outside. One place per night, and back before dawn.\nAleksei: Mama, I'll bring the medicine back... and I will find Lana."},
+		"zh": "只有锅炉房那扇锈死的通风口，还通向外面。每一夜只够去一个地方，天亮之前必须回来。\n你在心里对自己说：先把药带回家，再找到拉娜。",
+		"en": "Only the rusted vent of the boiler room still leads outside. One place per night, and back before dawn.\nYou tell yourself: bring the medicine home first, then find Lana."},
 ]
 
 const AFTERMATH := {
@@ -39,8 +42,8 @@ const AFTERMATH := {
 			"zh": "钢笔尖刺破了纸背：谢尔盖、玛丽亚。\n电传机判了他们「零」。可在这张纸上，他们还在喘气。",
 			"en": "The nib bites through the page: Sergey. Maria.\nThe teletype counted them as zero. On this paper they are still breathing."},
 		{"img": CG + "cg_coldstore_scene.jpg", "focus": Vector2(0.2, 0.6),
-			"zh": "柱子后面，男人把儿子裹得更紧了一些。他不知道有人写下了他的名字——但名字从此有了去处。",
-			"en": "Behind the column the man pulls the coat tighter round his son. He does not know someone wrote his name down. But the name now has somewhere to live."},
+			"zh": "柱子后面，谢尔盖把袄子往玛丽亚肩上又拉了一点。他们还不知道，有人把这两个名字记了下来。",
+			"en": "Behind the column, Sergey pulls his coat a little higher over Maria's shoulders. Neither of them knows that someone has written down their names."},
 		{"img": CG + "cg_coldstore_c0.jpg", "focus": Vector2(0.18, 0.55), "zoom": Vector2(1.08, 1.2),
 			"zh": "那只脖子上嵌着断铁丝的灰狼犬无声地走上前，把冻湿的前爪按在你的靴面上。\n你叫它「灰烬」。",
 			"en": "The grey wolfdog with the snapped wire collar walks up without a sound and plants a wet paw on your boot.\nYou call him Ash."},
@@ -53,8 +56,8 @@ const AFTERMATH := {
 			"zh": "身后，配给箱的电子锁又响了一声。账本上写着「零」，没有人会来纠正它。",
 			"en": "Behind you the ration lock snaps shut again. The ledger says zero, and nobody will come to correct it."},
 		{"img": CG + "cg_coldstore_c1.jpg", "focus": Vector2(0.7, 0.62), "zoom": Vector2(1.08, 1.2),
-			"zh": "「灰烬」在风雪里静静地看着你。它没有账本——它还是踩着你的脚印，跟了上来。",
-			"en": "Ash watches you through the snow. He keeps no ledger. He steps into your footprints and follows anyway."},
+			"zh": "那只灰狼犬在风雪里静静地看着你。你叫它「灰烬」。它踩着你的脚印，跟了上来。",
+			"en": "The grey wolfdog watches you through the snow. You call him Ash. He steps into your footprints and follows."},
 	],
 	"yard:0": [
 		{"img": CG + "cg_yard_scene.jpg", "focus": Vector2(0.33, 0.62),

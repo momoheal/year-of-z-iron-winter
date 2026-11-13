@@ -320,15 +320,22 @@ const LOCS := [
 const STORY := {
 	"coldstore": {
 		"title_zh": "账面死人", "title_en": "The Paper Dead",
+		"file": "0892",
 		"lines": [
-			{"w": "", "zh": "南库 3 号水泥柱的阴影底下，一个男人正用那件破得露出了黑棉絮的袄子，死死裹紧怀里早已冻得不哭了的儿子。磁卡划过终端，屏幕上跳出一行叫人血液发冷的红字——",
-				"en": "Behind column 3 in the south hall, a man is wrapping his son inside his own padded coat. The terminal spits red:"},
-			{"w": "切尔诺夫中士", "mood": "intense", "zh": "档案 0892：昨日 22:00 已移交乌拉尔山线站。按主脑台账，当前坐标在册活人：0。听见没有？这里是空的，没人！",
-				"en": "File 0892: transferred to the Ural line yesterday at 22:00. Persons at this coordinate: 0."},
+			{"w": "", "zh": "白天，你领到一枚「二级留观·临时征召工」的蓝印。护卫班长切尔诺夫中士带你来到四号铁路冷库，搬运封口膜和医疗耗材。",
+				"en": "By daylight, you receive a blue stamp: Level Two Observation, Temporary Conscript Labour. Sergeant Chernov, the guard detail leader, takes you to Rail Cold Storage No.4 to move sealing film and medical supplies."},
+			{"w": "切尔诺夫中士", "zh": "莫罗佐夫，去南库。三号柱边上那批箱子，按清单点一遍。",
+				"en": "Morozov, south hall. Count the crates by column three against the manifest."},
+			{"w": "", "zh": "你绕过南库三号柱，听见一阵压得很低的咳嗽。一个男人正用露出黑棉絮的袄子裹紧怀里的孩子。他说自己叫谢尔盖，孩子叫玛丽亚，转运车走的时候把他们落下了。",
+				"en": "You round column three and hear a stifled cough. A man is wrapping his child in a coat split down to the stuffing. He says his name is Sergey, the child is Maria, and the transport left them behind."},
+			{"w": "", "zh": "你叫来切尔诺夫。中士接过谢尔盖递来的通行证，往磁卡终端上一划。屏幕亮起一行红字，他照着念了出来。",
+				"en": "You call Chernov over. The sergeant takes Sergey's pass and swipes it through the terminal. A line flashes red and he reads it aloud."},
+			{"w": "切尔诺夫中士", "mood": "intense", "zh": "档案 0892：昨日 22:00 已移交乌拉尔山线站。按主脑台账，当前坐标在册活人：0。莫罗佐夫，按清单办。继续搬箱子。",
+				"en": "File 0892: transferred to the Ural Line Station yesterday at 22:00. Persons registered at this coordinate: zero. Follow the manifest, Morozov. Keep moving those crates."},
 			{"w": "", "mood": "sad", "zh": "配给箱的电子锁「咔」地一声落了死栓——多么干脆、多么合乎规矩的一声响！那男人竟连头也没有抬一下，只是跪在结了黑冰的水泥地上，用冻裂的指甲一寸寸抠着冰缝里掉出来的两粒黑麦。既然账本上写着「零」，那他们就连喊饿的权利也一并被注销了。",
 				"en": "The ration crate's lock snaps shut. The man does not look up; he only feels in the ice for two spilled grains of buckwheat."},
-			{"w": "", "zh": "废弃收发亭旁，一只脖颈上还深深嵌着断铁丝血痕的灰狼犬，正一动不动地从风雪里盯着你掌心里那半块冰冷的黑麦饼。",
-				"en": "By the dispatch hut, a wolfdog with a snapped wire collar stares at the half loaf of cold rye in your hand."},
+			{"w": "", "zh": "傍晚，切尔诺夫带车队离开。你在废弃收发亭旁掰下半块冷黑麦饼，递给一只脖颈上还缠着断铁丝的灰狼犬。它叼走了饼。你想起柱子后面的两个人，摸到衣袋里的工作日志。",
+				"en": "At dusk, Chernov leaves with the convoy. By the abandoned dispatch hut, you break off half a piece of cold rye for a wolfdog with wire caught around its neck. It takes the bread. You think of the two people behind the column and reach for the logbook in your pocket."},
 		],
 		"choices": [
 			{"zh": "在《工作日志》背面写下：谢尔盖、玛丽亚，活人",

@@ -422,7 +422,7 @@ def build(standalone: bool) -> str:
     <p>重新生成：<span class="mono">python3 godot_project/tools/art_gen/render_preview.py</span>
        出图 · <span class="mono">python3 godot_project/tools/art_gen/build_acceptance_page.py</span>
        出页面。</p>
-    <p>仍然没美术化的场景：<span class="mono">gym.tscn / main.tscn / campaign.tscn / event_demo.tscn</span>
+    <p>仍然没美术化的场景：<span class="mono">main.tscn / campaign.tscn / event_demo.tscn</span>
        —— 还是 <span class="mono">_draw()</span> 灰盒，下一批处理。</p>
   </footer>
 </div>
