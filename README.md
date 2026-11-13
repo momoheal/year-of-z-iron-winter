@@ -59,8 +59,8 @@ year-of-z-iron-winter/
 │   ├── Z年纪事_结局分支与双线汇聚流程图.html                     # 俄式“卌”字划痕与五结局交互模拟器 (ZH)
 │   ├── Year_of_Z_Iron_Winter_Ending_Simulator_EN.html            # Dual-Anchor & 5-Ending Tally Simulator (EN)
 │   └── Z年纪事_核心关卡俯视角平面动线图.html                     # v4.0 核心关卡俯视角平面动线与战术沙盘，中英双语切换 (Tactical Blueprints)
-└── godot_project/                                                # ★ Godot 4.7.2 场景集：探索循环 + 5合1灰盒测试场 + Room A 夜潜切片 + 节点化夜潜六图（货场/调车场/庄园/矿坑/铁路黑市/冷库）
-    ├── project.godot                                             # 8 Physics Layers, 24 input actions, 1920x1080, main_scene = campaign.tscn
+└── godot_project/                                                # ★ Godot 4.7.2 场景集：探索循环 + Room A 夜潜切片 + 节点化夜潜六图（货场/调车场/庄园/矿坑/铁路黑市/冷库）
+    ├── project.godot                                             # 8 Physics Layers, 14 input actions, 1920x1080, main_scene = campaign.tscn
     ├── scenes/
     │   ├── campaign.tscn                                         # ★ 主场景：「一夜」探索循环（基地/地图/夜潜/结算/结局）
     │   ├── night_explore.tscn                                    # ★ L03 夜间广轨货场：节点化 2.5D 场景（管线生成，见 tools/art_gen）
@@ -71,7 +71,6 @@ year-of-z-iron-winter/
     │   ├── night_coldstore.tscn                                  # ★ L02 城北四号铁路冷库 · 账面死人（同管线）
     │   ├── night_canteen.tscn                                    # ★ L05 东街工人食堂 · 后厨（同管线）
     │   ├── night_sanitarium.tscn                                 # ★ L06 旧传染病疗养院 · 地下室（同管线）
-    │   ├── gym.tscn                                              # 5合1 灰盒测试场（Rooms A–E）
     │   └── main.tscn                                             # Room A 夜潜垂直切片
     ├── scripts/
     │   ├── CampaignData.gd                                       # ★ 24 物资 / 5 武器 / 5 伙伴 / 14 地点 / 7 剧情节拍数据表
@@ -80,9 +79,6 @@ year-of-z-iron-winter/
     │   ├── RaidSim.gd                                            # ★ 一夜运行时：视野雾/AI/搜刮/卡门/撤离/体温/抉择A
     │   ├── Campaign.gd                                           # ★ 城市地图 + 夜潜世界 _draw() 渲染与输入
     │   ├── CampaignHUD.gd                                        # ★ 基地三栏 / 地图节点卡 / 夜潜 HUD / 结算 / 5 个模态框
-    │   ├── GymSim.gd                                             # ★ 灰盒场纯逻辑（5房间/投罐/卡门/抉择A/三态嗅觉/QTE/卌）
-    │   ├── Gym.gd                                                # ★ 灰盒场输入 + 等比视口 + _draw() 全画面渲染
-    │   ├── GymHUD.gd                                             # ★ 顶栏/侧栏/清单/电传 + 日志/抉择A/QTE 模态框
     │   ├── Sfx.gd                                                # ★ 6 种程序化音效（启动时烘焙 AudioStreamWAV）
     │   ├── ui/                                                   # ★ 苏联化界面系统（全项目共用）
     │   │   ├── SovietUI.gd                                       #   调色板 / 字体栈 / 方形钢板 StyleBox / 方位·时钟·卌 文本工具
@@ -108,10 +104,9 @@ year-of-z-iron-winter/
     │   ├── night_level_smoke.gd                                  # ★ 347 项 headless 多关卡管线测试
     │   ├── night_beats_smoke.gd                                  # ★ 界面苏联化 + 关卡档案层 / 节拍状态机测试
     │   ├── night_combat_smoke.gd                                 # ★ 战斗切片：军械库 / 装备 / 命中 / 装填 / 击杀 / 补给
-    │   ├── gym_smoke.gd                                          # ★ 61 项 headless 机制冒烟测试
     │   ├── data_pipeline_smoke.gd                                # 71 项事件 / 数据管线测试
     │   └── room_a_smoke.gd                                       # 20 项 Room A 夜潜切片测试
-    ├── screenshots/                                              # 垂直切片实机截图（gym 截图待本机首跑补拍）
+    ├── screenshots/                                              # 垂直切片实机截图
     └── data/                                                      # novorsk17_campaign_data.json (L01–L10)
 ```
 
@@ -139,7 +134,7 @@ year-of-z-iron-winter/
 | **三方潜行** | 4 只灰鳞狂暴者（含守在三号车厢门口的壮硕变体）：360° 近距视线 + 循声调查（脚步 / 搜刮 / 罐头 / 枪声），0.45s 起跳预警红圈后扑咬；清杀兵光锥里出现狂暴者会瞄准 0.5s 击毙并留下血迹 → **借刀杀人**；枪声 10m 又会引来下一只。声纹三色：灰白=你 / 暗红=狂暴者 / 冷蓝=清杀队（淡琥珀=半人的呻吟） |
 | **道德抉择** | 两个回退半人（0388 缩在蒸汽管下、0507 在煤水塔东侧）：还有瞳孔、不咬人，但清杀队分不清 —— 光锥里一律开枪（误杀 良知 −4）。他们会被罐头声吸引，所以借刀杀人可能把他们一起引进光锥。靠近按 `E` 抉择：① 阿司匹林 + 热水退烧（良知 +7，他睡着后清杀队认不出，送你一张调度单）② 绕开（良知 −2）③ 撬棍灭口（良知 −10、卌 +1）。热水壶随身带，阿司匹林在西院木箱（旁边就是狂暴者）。口径与战役抉择 A 一致，结算显示良知 / 救下 / 误杀 / 卌 |
 
-**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · **左键 攻击（撬棍连挥 / 枪械单发）** · **`R` 装填** · **`1~4` 换家伙** · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `F5` 重来（原 `R` 让位给装填）· `Esc` 返回战役。战役里 `F1` 灰盒场 / `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园 / `F5` 3 号矿坑 / `F6` 铁路黑市（开发直开）。测试：`tests/night_explore_smoke.gd`（**133 项**，已加进一键跑批 `run_tests.bat`）。
+**运行**：`launch_night_scene.bat`，或在战役里按 `F2`（`F2` 是独立灰盒跑法：没有天亮倒计时，`R` 可以重来）。操作：`WASD` 移动 · 鼠标朝向 · **左键 攻击（撬棍连挥 / 枪械单发）** · **`R` 装填** · **`1~4` 换家伙** · `Ctrl` 蹲 · `Shift` 跑 · 长按 `E` 搜刮/撤离（靠近半人按 `E` 抉择，`1/2/3` 选择）· `G` 罐头 · `F` 手电 · `M` 静音 · `F5` 重来（原 `R` 让位给装填）· `Esc` 返回战役。战役里 `F2` 夜潜货场 / `F3` 西站调车场 / `F4` 松林庄园 / `F5` 3 号矿坑 / `F6` 铁路黑市（开发直开）。测试：`tests/night_explore_smoke.gd`（**133 项**，已加进一键跑批 `run_tests.bat`）。
 
 **美术管线**（`godot_project/tools/art_gen/`，Python 3 + numpy + Pillow，无需外部服务，**多关卡**）：
 
@@ -279,7 +274,6 @@ v4.2 七幕结构第三幕 3-3 前半的舞台（L07）：危险度 2 / 夜长 8
 
 **界面骨架**（`NightExplore.gd`）：左上「夜潜工作日志」档案牌（红章条：档案号 + 天亮倒计时 → 关卡名 → 体温/健康分段表尺 → 姿态与良知读数 → 背包）· 右上「任务卡」（目标 / **目标方位** / **撤离方位** / 威胁 / 勘踏进度）· 底部电传条（所有长按 E 的提示都从这台机器打出来）· 屏幕中央的结局读数 · 抉择面板做成一张 **问询单**。
 
-`CampaignHUD.gd` / `GymHUD.gd` / `HUD.gd` 全部改走同一套工厂（`_sb` / `_btn` / `_panel` / `_bar` / `_chip`），配色由 slate 蓝绿整表替换为铁灰 + 骨白 + 黄铜 + 军旗红；战役标题页变成一页**案卷封面**（`ЖЕЛЕЗНАЯ ЗИМА` 钢印大标题 + 斜盖的 `СЕКРЕТНО · 机密` 章）；地图节点卡新增「环境档案」块（这张图会怎么弄死你 + 有多少地标可勘）。
 
 ### 二、可玩可感：关卡导演（`LevelBeats.gd` + `NightExplore.gd`）
 
@@ -443,15 +437,12 @@ Open `index.html` (or enable GitHub Pages on branch `main`, root `/`) for the So
 | ![CON_01](assets/concept_art/CON_01_Novorsk17_Lighting_Script.jpg) | ![CON_02](assets/concept_art/CON_02_Character_TriState_Sheet.jpg) | ![CON_03](assets/concept_art/CON_03_Diegetic_Work_Logbook.jpg) |
 | **Khrushchyovka Blizzard / East St. Kitchen / Pine Manor** | **Aleksei / Sister Lana (`0420`) / O.S.K. Purge Squad / Wolfdog "Ash"** | **Left: Verified Real Names / Right: `卌` Tally** |
 
-## 🎮 Godot 4.7+ Exploration Loop + Greybox Gym + Room A Slice (`godot_project/`)
+## 🎮 Godot 4.7+ Exploration Loop and Room A Slice (`godot_project/`)
 
-`godot_project/` now ships **three playable scenes** sharing one immediate-mode architecture (a single `Node2D`, all entities as plain `RefCounted` data objects updated by hand every frame, and the entire frame rendered in `_draw()`; the HUD is the only `CanvasLayer`):
+`campaign.tscn` is the Godot entry point. Room A can be opened independently.
 
-0. **`scenes/campaign.tscn` — 「一夜」探索循环（新主场景）**: the full loop of `prototypes/Year_of_Z_Iron_Winter_Exploration_Demo.html`. Room 602 with your mother on dialysis (`dial` bags, one per day, two days without her and she dies), a 900×520 city map with 13 nodes gated by intel/medicine/flags, a procedural 64×48 block per node (streets → sectors → enterable buildings → containers → connectivity repair), a 90°-FOV fog-of-war raid with warmth/BPM, rabid packs, O.S.K. purge patrols you can bait with thrown tins, half-humans and Choice A, 1.7 s container searches, crowbar door wedges, welded-door prying, then four outcomes — extracted / dawn (keep every other item, −22 HP) / downed / abort — a report screen, next-day dialysis, and the TRUE-α / TRUE-β / B / C ending resolver. Every number is lifted from the prototype's `CFG`/`LOCS`/`STORY` tables.
-1. **`scenes/gym.tscn` — 5 合 1 灰盒测试场**: a 1:1 port of `prototypes/Year_of_Z_Iron_Winter_Playable_Greybox_Gym.html`. One 1100×680 arena with Rooms A–E, free walking plus `1~5` teleport, and all five signature loops live: searchlight *Borrowing the Knife* with tin cans, frozen slush and steam-pipe concealment; crowbar door wedge + 12 cm lunchbox delivery; the paper-dead teletype with Choice A and the 卌 tally; Ash's tri-state olfactory AI at three cages and Anna (0419); the East St. cleaver, Vasily's breach, the 6-press collarbone blade-jam QTE and the permanent PTSD thirst. A sidebar checklist tracks 5/5 verification; `Tab` opens the dual-sided Logbook; `L`/`F`/`M` toggle language, cracked glasses and SFX; `F5` resets.
-2. **`scenes/main.tscn` — Room A 夜潜垂直切片**: the original 1:1 port of `Exploration_Demo.html`'s single-room night-stalk loop (fog-of-war hole cutting, extruded walls, steam pipes, snow, extraction). `F1` from the campaign opens the gym; inside the gym `F1` returns to the campaign and `F2` opens Room A; inside Room A `F1` goes back to the gym and `F2` to the campaign.
-
-All three scenes draw **zero art assets** (pure `_draw()` geometry) and synthesize their own audio: `Sfx.gd` bakes six Web-Audio-style tones into `AudioStreamWAV` at startup. The campaign loop is fixed by **97 headless assertions**, the 5-in-1 gym by **61**, and the Room A slice keeps its **20**.
+1. **`scenes/campaign.tscn` — 「一夜」探索循环（新主场景）**: the full loop of `prototypes/Year_of_Z_Iron_Winter_Exploration_Demo.html`. Room 602 with your mother on dialysis (`dial` bags, one per day, two days without her and she dies), a 900×520 city map with 13 nodes gated by intel/medicine/flags, a procedural 64×48 block per node (streets → sectors → enterable buildings → containers → connectivity repair), a 90°-FOV fog-of-war raid with warmth/BPM, rabid packs, O.S.K. purge patrols you can bait with thrown tins, half-humans and Choice A, 1.7 s container searches, crowbar door wedges, welded-door prying, then four outcomes — extracted / dawn (keep every other item, −22 HP) / downed / abort — a report screen, next-day dialysis, and the TRUE-α / TRUE-β / B / C ending resolver. Every number is lifted from the prototype's `CFG`/`LOCS`/`STORY` tables.
+2. **`scenes/main.tscn` — Room A 夜潜垂直切片**: the original 1:1 port of `Exploration_Demo.html`'s single-room night-stalk loop (fog-of-war hole cutting, extruded walls, steam pipes, snow, extraction). Press `F2` to return to the campaign.
 
 | 文件 | 职责 |
 | :--- | :--- |
@@ -461,34 +452,26 @@ All three scenes draw **zero art assets** (pure `_draw()` geometry) and synthesi
 | `scripts/RaidSim.gd` | 一夜运行时：移动碰撞、噪声波纹、90° 视野与探索雾、狂暴者/清杀兵/半人/伙伴 AI、搜刮、卡门、破门、撤离、体温/心率 |
 | `scripts/Campaign.gd` | 城市地图与夜潜世界 `_draw()` 渲染（地面/立面/容器/火堆/雾/光锥/波纹） |
 | `scripts/CampaignHUD.gd` | 顶栏 + 基地三栏 + 地图节点卡 + 夜潜 HUD + 结算页 + 剧情/抉择A/日志/帮助/放弃 五个模态框 |
-| `scripts/GymSim.gd` | 灰盒场纯逻辑：5 个房间区域、玩家/灰烬/清杀兵/狂暴者、投罐声波、撬棍卡门、12cm 推饭盒、电传真名、抉择 A、三态嗅觉、砍骨刀与瓦西里破门、6 连按 QTE、PTSD、卌 划痕、验证清单、电传事件流 |
-| `scripts/Gym.gd` | 灰盒场渲染：等比视口变换、`_draw()` 房间底板/网格/蒸汽管阴影/三座铁笼/砧板、探照灯与视野扇形渐变、声波波纹、弹道曳光、浮字、PTSD 闪屏、破镜遮罩 |
-| `scripts/GymHUD.gd` | CanvasLayer：顶栏（区域/姿态/灰烬三态/HP/BPM/罐头/卌）+ 侧栏（体征/清单/简报/电传/按钮）+ 日志 / 抉择 A / QTE 模态框 |
 | `scripts/Sfx.gd` | 程序化音效：beep / can / wedge / akm / bonejam / thirst，启动时合成 `AudioStreamWAV`（对应 HTML Web Audio） |
 | `scripts/night/NightSfx.gd` | 夜潜场景的音效层：25 种音色 + `AudioStreamPlayer2D` 定位声部 + 实体循环声（面具呼吸）+ 环境层混音（`cfg.cold` / 天亮）+ 紧张度心跳 |
 | `scripts/Sim.gd` / `Main.gd` / `HUD.gd` | Room A 夜潜切片：纯逻辑 / 75° 斜俯视 `_draw()` 渲染 / HUD |
 | `tests/campaign_smoke.gd` | 97 项 headless 探索循环测试（成功打印 `CAMPAIGN_SMOKE_PASS`） |
 | `tests/night_level_smoke.gd` | 347 项 headless 多关卡管线测试（注册表 / metadata / 装配 / 脚步材质 / 边界） |
-| `tests/gym_smoke.gd` | 61 项 headless 冒烟测试（见下方命令；成功打印 `GYM_SMOKE_PASS`） |
 | `tests/room_a_smoke.gd` | 20 项 Room A 冒烟测试（成功打印 `ROOM_A_SMOKE_PASS`） |
 
 **Run / 运行**（with Godot 4.7.2-stable）:
+
+Godot 编辑器运行时会传入 `--ignore-error-breaks`。运行错误仍会记录，错误断点不会自动打开脚本编辑器。
 
 ```bash
 # 「一夜」exploration loop (new main scene)
 Godot_v4.7.2-stable_win64 --path godot_project
 
-# 5-in-1 greybox gym (or press F1 in-game)
-Godot_v4.7.2-stable_win64 --path godot_project res://scenes/gym.tscn
-
-# Room A night-stalk slice (or press F2 in the gym)
+# Room A night-stalk slice
 Godot_v4.7.2-stable_win64 --path godot_project res://scenes/main.tscn
 
 # Campaign loop: 97 headless assertions (prints CAMPAIGN_SMOKE_PASS on success)
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/campaign_smoke.gd
-
-# Greybox gym: 61 headless assertions (prints GYM_SMOKE_PASS on success)
-Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/gym_smoke.gd
 
 # Combat slice: arsenal / loadout / hitscan / reload / kills / ammo (headless)
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_combat_smoke.gd
@@ -500,19 +483,17 @@ Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_beats_s
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/room_a_smoke.gd
 ```
 
-**Controls 操作（「一夜」探索循环）**：`WASD` 移动 · 鼠标瞄准 / 地图点选 · `Ctrl` 潜行 · `Shift` 冲刺 · `Space` / 左键 攻击（砍骨刀卡刀连按 6 次）· 按住 `E` 搜刮 / 卡门 / 破门 / 撤离 / 抉择 A · `Q` 热水（体温 +22）· `H` 绷带（+26 HP）· `G` 扔空罐 · `R` 装弹 · `Tab` 《双面工作日志》· `L` 中英切换（非夜潜）· `Enter` 开始 / 睡到明天 · `Esc` 取消 / 放弃夜潜 · `F1` 灰盒测试场。
+**Controls 操作（「一夜」探索循环）**：`WASD` 移动 · 鼠标瞄准 / 地图点选 · `Ctrl` 潜行 · `Shift` 冲刺 · `Space` / 左键 攻击（砍骨刀卡刀连按 6 次）· 按住 `E` 搜刮 / 卡门 / 破门 / 撤离 / 抉择 A · `Q` 热水（体温 +22）· `H` 绷带（+26 HP）· `G` 扔空罐 · `R` 装弹 · `Tab` 《双面工作日志》· `L` 中英切换（非夜潜）· `Enter` 开始 / 睡到明天 · `Esc` 取消 / 放弃夜潜。
 
-**Controls 操作（5 合 1 灰盒场）**：`WASD` 移动 · 鼠标定朝向 · `Ctrl` 蹲伏（蒸汽管阴影 100% 免疫探照灯）· `Shift` 冲刺 · `G` 投掷空罐头（借刀杀人）· `E` 交互 / 撬棍卡门 / 门底推饭盒 · `Space` / 左键 挥刀（锁骨卡刀 6 连按）· `Q` 喝水（PTSD 耳鸣）· `Tab` 《双面工作日志》· `1~5` 传送 Room A–E · `L` 中英切换 · `F` 破眼镜 · `M` 音效 · `F5` 重置 · `F1` 回探索循环 · `F2` Room A 夜潜切片 · `Esc` 关闭模态框。
-
-**Controls 操作（Room A 夜潜切片）**：`WASD` 移动 · 鼠标定朝向 · `Ctrl` 蹲伏隐匿 · `Shift` 冲刺 · `G` 投掷空罐头（借刀杀人）· `Q` 喝水 · `E` 按住 1.5s 在绿色撤离点撤离 · `Enter` 重开 · `F1` 返回灰盒测试场 · `F2` 回探索循环。
+**Controls 操作（Room A 夜潜切片）**：`WASD` 移动 · 鼠标定朝向 · `Ctrl` 蹲伏隐匿 · `Shift` 冲刺 · `G` 投掷空罐头（借刀杀人）· `Q` 喝水 · `E` 按住 1.5s 在绿色撤离点撤离 · `Enter` 重开 · `F2` 回探索循环。
 
 | 借刀杀人构图（士兵黄色探照锥 + 玩家 90° 视野锥 + 蒸汽管阴影） | 出生点 HUD 与撤离点 |
 | :---: | :---: |
 | ![Room A vertical slice](godot_project/screenshots/room_a_vertical_slice.png) | ![Room A spawn HUD](godot_project/screenshots/room_a_spawn_hud.png) |
 
-> 说明：所有数值（速度、噪声半径、视野、锁定/射击间隔、掩体规则、雪泥减速、卡门时长、搜刮时长、夜长、QTE 次数等）均逐行对齐 HTML 原型，由 97 + 61 + 20 项 headless 测试固定行为；本仓库为无美术灰盒，画面全部为 `_draw()` 几何绘制，音效全部程序化合成。
+> 说明：所有数值（速度、噪声半径、视野、锁定/射击间隔、掩体规则、雪泥减速、卡门时长、搜刮时长、夜长、QTE 次数等）均逐行对齐 HTML 原型，由现行 headless 冒烟测试覆盖；本仓库为无美术灰盒，画面全部为 `_draw()` 几何绘制，音效全部程序化合成。
 > **探索循环移植细节 / 逐机制对照表 / 刻意偏差 / 测试清单**：`docs/zh/Z年纪事_Godot探索循环移植对照表.md` · `docs/en/Year_of_Z_Iron_Winter_Godot_Exploration_Loop_EN.md`
-> **灰盒场移植细节**：`docs/zh/Z年纪事_Godot灰盒5合1移植对照表.md` · `docs/en/Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md`
+> **灰盒场历史移植记录**：`docs/zh/Z年纪事_Godot灰盒5合1移植对照表.md` · `docs/en/Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md`
 > **后续节点化架构规范**：`docs/zh/Z年纪事_Godot4引擎迁移技术规范与架构指南.md` · `docs/en/Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md`
 >
 > ✅ **实测状态（2026-11-04，Godot 4.7.2）**：9 套 headless 冒烟测试全部通过，合计 **1148 条断言、0 失败、stderr 无 SCRIPT ERROR**（campaign 97 · 夜潜货场 133 · 多关卡 347 · 档案层/节拍 199 · 三区 162 · 战斗 58 · 灰盒 61 · 数据管线 71 · Room A 20）。生成侧校验 `tools/art_gen/check_levels.py` 8 关全过。

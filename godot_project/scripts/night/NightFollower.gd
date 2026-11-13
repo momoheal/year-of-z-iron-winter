@@ -26,6 +26,7 @@ const PIVOTS := {
 	"ivan": Vector2(36, 108),
 }
 const WALK_FRAME_TIME := 0.13
+const PAW_STEP_M := 1.4             # 爪印间距（米）；人形伙伴按靴印走同样的间距
 const SENSE_RANGE := 6.0            # 灰烬嗅觉半径（米）
 const ANNA_RANGE := 8.0             # 安娜辨认半人半径（米）
 const PPM := 64.0                   # 与 NightExplore 一致
@@ -49,6 +50,7 @@ var _frame := 0
 var _frame_t := 0.0
 
 var _sense_t := 0.0
+var _paw_m := 0.0                   # 距上一个爪印走了多少米
 var _marked := {}                   # Node2D -> Label（持续标记）
 var _barked := {}                   # 已叫声提示过的目标
 var _exit_beacon := false           # 伊万：撤离点光圈是否已放
@@ -106,8 +108,22 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, move_speed * delta * 6.0)
 	move_and_slide()
+	_drop_track(delta)
 	_update_walk_anim(delta)
 	_update_perks(delta)
+
+
+## 伙伴走过的痕迹。速度是「屏幕像素 / 秒」，y 已经被 SQ 压过 ——
+## 换算成米要分别除 PPM 和 PPM·SQ；朝向角也要反压缩（/ SQ），否则印子是歪的。
+func _drop_track(delta: float) -> void:
+	if not _moving or ctl == null or not ctl.has_method("footprint"):
+		return
+	_paw_m += Vector2(velocity.x / PPM, velocity.y / (PPM * SQ)).length() * delta
+	if _paw_m < PAW_STEP_M:
+		return
+	_paw_m = 0.0
+	ctl.footprint(global_position, atan2(velocity.y / SQ, velocity.x),
+		"paw" if mate_id == "ash" else "boot")
 
 
 func _update_walk_anim(delta: float) -> void:

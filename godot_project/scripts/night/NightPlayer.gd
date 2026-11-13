@@ -61,6 +61,10 @@ func _physics_process(delta: float) -> void:
 			if on_slush:
 				r *= 2.0
 			ctl.emit_noise(global_position, r, "step")
+			# 脚印踩在「落脚」这一帧，和脚步声明明同步 ——
+			# 一个 _step 是秒不是米（蹲 0.62 / 走 0.45 / 冲刺 0.3），
+			# 实际步距约 0.71 / 1.17 / 1.32 米，肉眼刚好。
+			ctl.footprint(global_position, facing)
 			_step = 0.62 if crouching else (0.3 if sprinting else 0.45)
 	else:
 		_step = 0.0

@@ -9,7 +9,7 @@
 
 用法：
     python godot_project/tools/run_tests.py                 # 全部
-    python godot_project/tools/run_tests.py campaign gym    # 只跑名字含这些关键字的
+    python godot_project/tools/run_tests.py campaign night_level    # 只跑名字含这些关键字的
     python godot_project/tools/run_tests.py --godot "C:\\path\\to\\godot_console.exe"
 环境变量 GODOT 可指定 Godot 可执行文件（console 版优先）。
 退出码 0 = 全绿且无脚本错误；否则 1（可用于 CI）。

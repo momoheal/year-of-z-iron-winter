@@ -1,7 +1,7 @@
 extends Node2D
 ## Campaign.gd — 「一夜」探索循环的渲染 / 输入层（对应 HTML Exploration Demo）。
 ##
-## 结构沿用 Gym.gd：CampaignSim（RefCounted 纯数据）+ 本文件的立即模式 _draw() + CampaignHUD（CanvasLayer）。
+## 战役由 CampaignSim（RefCounted 纯数据）、本文件的立即模式 _draw() 和 CampaignHUD（CanvasLayer）组成。
 ## 本文件负责三块视觉：
 ##   1. 城市地图（900×520，13 个节点 + 已解锁路径）
 ##   2. 夜潜世界（26px/米、y 轴 0.62 压缩的 75° 斜俯视，程序化街区 + 雾 + 探照锥 + 波纹）
@@ -53,6 +53,7 @@ const TOP := 74.0                    # 顶栏高度
 const VIEW_C := Vector2(960.0, 600.0)  # 世界投影中心（顶栏以下的视觉中心）
 const MAP_RECT := Rect2(30, 128, 900, 520)
 const MAP_PICK_R := 62.0
+const BREATH_PERIOD := 3.4           # 呼吸白气的周期，和夜潜场景的 Breath.gd 对齐
 
 const COL := {
 	"bg": Color("#05070a"),
@@ -136,8 +137,12 @@ func _process(delta: float) -> void:
 	if sim.pending_scene != "" and not sim.story_open and not hud.overlay_active():
 		var sc: String = sim.pending_scene
 		sim.pending_scene = ""
-		get_tree().change_scene_to_file(sc)
-		return
+		var err := get_tree().change_scene_to_file(sc)
+		if err == OK:
+			return
+		RaidBridge.clear()
+		sim.cancel_departure()
+		hud.show_departure_error()
 	t += delta
 	if sfx != null:
 		sfx.set_muted(not hud.sound_on)
@@ -187,28 +192,42 @@ func shimmy_snow(dt: float) -> void:
 			s.x = randf() * SCREEN.x
 		snow[i] = s
 
+func _input(event: InputEvent) -> void:
+	if sim == null or not sim.story_open or hud.overlay_active():
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		get_viewport().set_input_as_handled()
+		match event.keycode:
+			KEY_SPACE, KEY_ENTER, KEY_KP_ENTER:
+				hud.advance_story()
+			KEY_1, KEY_KP_1:
+				hud.choose_story(0)
+			KEY_2, KEY_KP_2:
+				hud.choose_story(1)
+			KEY_3, KEY_KP_3:
+				hud.choose_story(2)
+			KEY_ESCAPE:
+				if not sim.first_act_pending():
+					sim.close_story()
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if hud.overlay_active() or sim.pending_scene != "":
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		var k := (event as InputEventKey).keycode
 		if k == KEY_ESCAPE:
-			if sim.story_open:
-				# 剧情优先：出发前播的剧情此时 phase 已是 raid，不能让 Esc 去开「放弃夜潜」
-				sim.story_open = false
-			elif sim.phase == "raid":
+			if sim.phase == "raid":
 				sim.abort_confirm = not sim.abort_confirm
 			elif sim.help_open:
 				sim.help_open = false
 			elif sim.logbook_open:
 				sim.logbook_open = false
-			return
-		if (k == KEY_SPACE or k == KEY_ENTER or k == KEY_KP_ENTER) and sim.story_open:
-			hud.advance_story()
+			elif sim.phase == "map":
+				sim.phase = "base"
 			return
 		if k == KEY_F9:
 			hud.open_save_menu()               # 存档 / 读档面板（夜潜途中不开）
-			return
-		if k == KEY_F1:
-			get_tree().change_scene_to_file("res://scenes/gym.tscn")
 			return
 		if k == KEY_F2:
 			get_tree().change_scene_to_file("res://scenes/night_explore.tscn")
@@ -249,12 +268,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				sim.to_base()
 				sim.advance_day()
 			elif sim.phase == "base":
-				if sim.selected_loc == "":
-					for L in Data.LOCS:
-						if sim.loc_unlocked(L):
-							sim.selected_loc = String(L["id"])
-							break
-				sim.phase = "map"
+				hud.open_map()
+			elif sim.phase == "map" and not (sim.help_open or sim.logbook_open):
+				hud.depart_to(sim.location(sim.selected_loc))
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
 		if mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT:
@@ -697,12 +713,34 @@ func _draw_player(R, pw: float, ph: float) -> void:
 	if p.hurt > 0.0:
 		tint = Color(1.0, 0.55, 0.55)
 	_draw_char(s, "player", p.face, moving, 40.0 if p.sneak else 46.0, tint)
+	_draw_breath(s, p.face)
 	# 头顶血条（只在受伤时）
 	if p.hp < 100.0:
 		var wgt := 34.0
 		draw_rect(Rect2(s + Vector2(-wgt / 2.0, -40), Vector2(wgt, 4)), Color(0.0, 0.0, 0.0, 0.6), true)
 		draw_rect(Rect2(s + Vector2(-wgt / 2.0, -40), Vector2(wgt * clampf(p.hp / 100.0, 0.0, 1.0), 4)),
 			COL["good"] if p.hp > 45.0 else COL["bad"], true)
+
+## 严寒呼吸白气。战役这一层是纯 _draw() 灰盒，挂不了 Breath.gd 那个粒子节点，
+## 就用几层同心圆把同一口气画出来。两处刻意对齐夜潜的 Breath.gd：
+##   1) 往「上」飘（重力反向），只带一点朝向的倾斜 —— 不是沿地面朝前走；
+##   2) 边飘边胀边淡，一次呼出 3 团连成一串。
+## draw_circle 是硬边，单独一层会像塑料球，所以每团用 3 层递减半径叠出软边。
+func _draw_breath(s: Vector2, face: float) -> void:
+	var u := fmod(t, BREATH_PERIOD) / BREATH_PERIOD
+	if u > 0.5:
+		return                                  # 后半个周期是闭气，什么都不呼
+	var k := u / 0.5                            # 0 = 刚呼出，1 = 散尽
+	var lean := Vector2(cos(face), sin(face) * Data.SQUASH) * 0.30
+	var a := sin(k * PI)                        # 两头 0、中间最浓
+	for i in 3:
+		var d := k * (6.0 + i * 7.0)            # 越靠后的那团飘得越远
+		# 起点在头顶上方（角色高 46，嘴就在 42 附近），然后往上升 —— 不要贴着胸口冒
+		var c := s + Vector2(0, -42.0 - d) + lean * d
+		var r := 2.4 + k * (3.4 + i * 1.8)
+		for j in 3:
+			draw_circle(c, r * (1.0 - j * 0.32),
+				Color(0.92, 0.95, 1.0, a * (0.28 - 0.06 * i + j * 0.07)))
 
 func _draw_rabid(s: Vector2, e) -> void:
 	draw_circle(s + Vector2(0, 2), 11.0 if e.brute else 9.0, Color(0.0, 0.0, 0.0, 0.5))

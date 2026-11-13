@@ -2,7 +2,7 @@
 
 用法（在 godot_project/tools/art_gen 下）：
     python gen_assets.py                          # yard 全部
-    python gen_assets.py props vfx                # 只重出某几类：ground facade props chars vfx audio
+    python gen_assets.py props vfx                # 只重出某几类：ground facade props chars vfx decals audio weapons
     python gen_assets.py --level marshalling ground facade   # 新关卡的地面 + 立面
     python gen_assets.py --level marshalling props --only PRP_BrakeVan_Dead,PRP_SwitchStand
 
@@ -175,8 +175,25 @@ def build_weapons(man):
     _put(man, "VFX_MuzzleFlash_Sheet", _path("50_vfx", "VFX_MuzzleFlash_Sheet.png"), flash, fpiv, hframes=4)
 
 
+def build_decals(man):
+    """地面贴花（10 张，中心锚点）。
+
+    单开一步、不塞进 build_vfx：vfx 那一步会把 25 张既有 VFX 全部重写一遍，
+    而重跑会让它们出现「肉眼不可见但字节不同」的差异（同 build_weapons 的注释）。
+    仓库要求既有资产保持不变，所以新贴花只碰自己这 10 个键。
+
+    pivot 取画面中心而非脚底：这些贴花在运行时由 NightExplore.add_decal()
+    以 centered=true 落位；中心锚点让将来若改用 build_scene.sprite()
+    （centered=false + offset=-pivot）能得到完全相同的对位。
+    """
+    for key, fn in gen_vfx.DECALS.items():
+        img = fn()
+        _put(man, key, _path("50_vfx", key + ".png"), img,
+             (img.width // 2, img.height // 2))
+
+
 STEPS = dict(ground=build_ground, facade=build_facade, props=build_props, chars=build_chars,
-             vfx=build_vfx, audio=build_audio, weapons=build_weapons)
+             vfx=build_vfx, decals=build_decals, audio=build_audio, weapons=build_weapons)
 
 
 def main(argv):

@@ -132,12 +132,14 @@ func _run() -> void:
 	var key := InputEventKey.new()
 	key.keycode = KEY_SPACE
 	key.pressed = true
-	sc._unhandled_input(key)
+	root.push_input(key, true)
+	await _frames(2)
 	_assert(sc.hud._story_line == 1, "Space advances story")
 	var enter := InputEventKey.new()
 	enter.keycode = KEY_ENTER
 	enter.pressed = true
-	sc._unhandled_input(enter)
+	root.push_input(enter, true)
+	await _frames(2)
 	_assert(sc.hud._story_line == 2, "Enter advances story")
 	await _frames(3)
 	_assert(_has_button(sc.hud.modal, String(Data.STORY["sanitarium"]["choices"][0]["zh"])),

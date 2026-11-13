@@ -60,10 +60,6 @@ func _physics_process(delta: float) -> void:
 			sim.drink()
 		sim.update(dt, move, crouch, sprint, mouse_world, hold_e)
 	sim.shake = maxf(0.0, sim.shake - dt * 10.0)
-	if Input.is_action_just_pressed("gym_switch_scene"):
-		# F1：返回 5 合 1 灰盒测试场
-		get_tree().change_scene_to_file("res://scenes/gym.tscn")
-		return
 	if Input.is_physical_key_pressed(KEY_F2) and not _f2_latch:
 		_f2_latch = true
 		get_tree().change_scene_to_file("res://scenes/campaign.tscn")

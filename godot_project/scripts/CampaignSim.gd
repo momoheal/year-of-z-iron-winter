@@ -11,6 +11,7 @@ extends RefCounted
 
 const Data := preload("res://scripts/CampaignData.gd")
 const RaidSimScript := preload("res://scripts/RaidSim.gd")
+const FIRST_ACT_LOC := "coldstore"
 
 # ---------------- 战役状态 ----------------
 var day: int = 1
@@ -62,7 +63,7 @@ func new_game() -> void:
 	dial = 2.0
 	conscience = 50.0
 	tally = 0
-	flags = {}
+	flags = {"first_act_pending": true}
 	names = []
 	story_done = {}
 	seen = {}
@@ -73,8 +74,9 @@ func new_game() -> void:
 	last_report = {}
 	sound_on = true
 	phase = "title"
-	selected_loc = ""
+	selected_loc = FIRST_ACT_LOC
 	raid = null
+	pending_scene = ""
 	story_open = false
 	story_id = ""
 	story_result = {}
@@ -175,7 +177,12 @@ func node_state(id: String) -> Dictionary:
 func location(id: String) -> Dictionary:
 	return Data.loc(id)
 
+func first_act_pending() -> bool:
+	return bool(flags.get("first_act_pending", false)) and not bool(story_done.get(FIRST_ACT_LOC, false))
+
 func loc_unlocked(L: Dictionary) -> bool:
+	if first_act_pending() and String(L.get("id", "")) != FIRST_ACT_LOC:
+		return false
 	var rf: String = String(L.get("req_flag", ""))
 	if rf != "" and not bool(flags.get(rf, false)):
 		return false
@@ -187,6 +194,8 @@ func loc_unlocked(L: Dictionary) -> bool:
 	return true
 
 func lock_reason(L: Dictionary) -> String:
+	if first_act_pending() and String(L.get("id", "")) != FIRST_ACT_LOC:
+		return "先完成第一幕：四号铁路冷库" if lang == "zh" else "Finish Act I at Rail Cold Storage No.4 first"
 	var rf: String = String(L.get("req_flag", ""))
 	if rf == "manor_tip":
 		return "需要：黑市或安娜给出的松林庄园线索" if lang == "zh" \
@@ -260,7 +269,7 @@ func best_weapon() -> Dictionary:
 # 目标
 # ============================================================================
 func objective() -> Dictionary:
-	if names.is_empty():
+	if not bool(story_done.get(FIRST_ACT_LOC, false)) and names.is_empty():
 		return {
 			"zh": "去城北四号铁路冷库领今天的征召工物资——顺便查查拉娜被带上了哪趟车。",
 			"en": "Report to Cold Storage No.4 for conscript labour — and find out which train took Lana.",
@@ -316,7 +325,7 @@ func can_depart(L: Dictionary) -> bool:
 	return true
 
 func depart(L: Dictionary) -> bool:
-	if not can_depart(L):
+	if phase == "raid" or not can_depart(L):
 		return false
 	# 扣除携带物（与 HTML depart 一致）
 	for k in load.keys():
@@ -361,6 +370,16 @@ func depart(L: Dictionary) -> bool:
 			bridge.begin(self, cfg)
 		pending_scene = sc
 	return true
+
+func cancel_departure() -> void:
+	if raid == null:
+		return
+	for id in raid.load:
+		add_item(String(id), int(raid.load[id]))
+	raid = null
+	pending_scene = ""
+	story_open = false
+	phase = "map"
 
 # ============================================================================
 # 剧情节拍
@@ -418,6 +437,11 @@ func resolve_story(choice_index: int) -> Dictionary:
 	if after_mate != "" and not bool(mates.get(after_mate, false)):
 		mates[after_mate] = true
 		applied.append("+" + String(Data.mate(after_mate).get("zh" if lang == "zh" else "en", after_mate)))
+	if story_id == FIRST_ACT_LOC and after_mate == "ash":
+		select_mate("ash")
+		var bridge := (Engine.get_main_loop() as SceneTree).root.get_node_or_null("RaidBridge")
+		if bridge != null and bridge.sim == self:
+			bridge.cfg["mate"] = mate
 	story_done[story_id] = true
 	flags["story_" + story_id] = true
 	story_open = false

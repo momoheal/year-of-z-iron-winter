@@ -99,5 +99,51 @@ func _run() -> void:
 	check(not campaign.hud.cutscene_active(), "cutscene flag clears")
 	campaign.queue_free()
 	await process_frame
+	# 走实际场景树切换路径，验证序章、冷库选择、余波、伙伴与返回结算。
+	change_scene_to_file("res://scenes/campaign.tscn")
+	await scene_changed
+	campaign = current_scene
+	campaign.hud.start_new_game()
+	campaign.hud.cutscene.close()
+	campaign.sim.seen = {"base": true, "map": true, "night": true}
+	press_key(KEY_ENTER)
+	await process_frame
+	check(campaign.sim.phase == "map" and campaign.sim.selected_loc == "coldstore", "Enter opens the map at the first act")
+	press_key(KEY_ENTER)
+	await process_frame
+	check(campaign.sim.story_open and campaign.sim.story_id == "coldstore", "Enter starts the Cold Storage story")
+	press_key(KEY_ESCAPE)
+	press_key(KEY_2)
+	await process_frame
+	check(campaign.sim.story_open and not campaign.sim.mates.get("ash", false), "opening story cannot be skipped before the choice")
+	for i in Data.STORY["coldstore"]["lines"].size() - 1:
+		press_key(KEY_SPACE)
+		await process_frame
+	press_key(KEY_2)
+	await process_frame
+	check(campaign.sim.mate == "ash" and campaign.sim.names.is_empty(), "neutral choice also selects Ash")
+	check(campaign.hud.cutscene_active() and current_scene == campaign, "aftermath plays before the scene changes")
+	campaign.hud.cutscene.close()
+	for i in 4:
+		await process_frame
+	var night := current_scene
+	if night == null or night == campaign:
+		check(false, "the first playable scene loads")
+		quit(1)
+		return
+	check(night.level_id == "coldstore" and night.in_campaign and night.mate_id == "ash", "Ash follows in the first playable scene")
+	night._end("extracted")
+	press_key(KEY_ENTER)
+	for i in 4:
+		await process_frame
+	check(current_scene != null and current_scene != night and current_scene.sim.phase == "report"
+		and current_scene.sim.mate == "ash", "returns to campaign report with Ash")
 	print("==== RESULT: %d passed, %d failed ====" % [passes, failures])
 	quit(0 if failures == 0 else 1)
+
+
+func press_key(code: Key) -> void:
+	var event := InputEventKey.new()
+	event.keycode = code
+	event.pressed = true
+	root.push_input(event, true)
