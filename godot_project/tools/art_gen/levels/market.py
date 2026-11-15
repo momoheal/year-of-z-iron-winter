@@ -97,6 +97,8 @@ PROPS = [
          layer=1, cont="crate"),
     dict(id="QuackForge", art="PRP_QuackForge", pos=(7.0, 24.9), fp=(1.6, 1.0), layer=2,
          occlude=False),                            # 烫鳞炭炉（只有工具和痕迹）
+    dict(id="TradeScreen", art="PRP_Shanty_Shed", pos=(12.5, 27.0), fp=(3.6, 1.6),
+         layer=1, fade=True),
     dict(id="MedStall", art="PRP_Market_Stall", pos=(19.0, 23.0), fp=(1.8, 0.9), layer=1),
     dict(id="FakeMeds", art="PRP_MedCache", pos=(19.2, 24.0), fp=(1.2, 0.7), layer=1,
          cont="medcab"),                            # 假药（花哨商标——对照摆位）
@@ -157,9 +159,9 @@ AMBIENCE = ["wind", "fire", "steam", "buzz"]
 
 # 清杀队：棚户巷巡逻 + 铁路哨兵（C2 里被老谢苗引开的就是铁路哨兵——他沿着铁轨走）
 PATROLS = [
-    dict(id="OSK_Town", mode="loop", pts=[(12.0, 13.0), (36.0, 13.0), (36.0, 20.0), (12.0, 20.0)],
+    dict(id="OSK_Town", mode="loop", pts=[(25.0, 13.0), (36.0, 13.0), (36.0, 20.0), (27.0, 20.0)],
          pause=2.0),
-    dict(id="OSK_Rail", mode="pingpong", pts=[(20.0, 28.2), (42.0, 28.2)], pause=2.4),
+    dict(id="OSK_Rail", mode="pingpong", pts=[(32.0, 28.2), (42.0, 28.2)], pause=2.4),
 ]
 
 # 感染者：铁轨上的流浪者（低危交易关，尸是注脚）
@@ -190,8 +192,8 @@ ZONES = [
 
 # 黑市摊区（build_scene 自动装配：摊位 + 摊主 + 幸存者 + 马灯；烟测要求在黑区）
 MARKET = dict(
-    pos=(24.5, 24.4), trader=(25.5, 24.8),
-    survivors=[(23.0, 25.4), (26.2, 25.6), (12.5, 24.6), (17.5, 25.2)],
+    pos=(8.5, 28.8), trader=(9.8, 29.2),
+    survivors=[(7.0, 28.8), (9.3, 30.2), (12.5, 24.6), (17.5, 25.2)],
     cans=1, ammo=8,
     zh="黑市 · 一罐换八发", en="BLACK MARKET",
 )

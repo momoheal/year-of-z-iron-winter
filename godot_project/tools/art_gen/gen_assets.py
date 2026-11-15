@@ -18,6 +18,7 @@ import json
 import os
 import sys
 import time
+from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -115,10 +116,15 @@ def build_props(man, only=None):
 
 
 def build_chars(man):
-    for key, folder, P in (("CHR_01_Aleksei_Sheet", "CHR_01_Aleksei", gen_chars.ALEKSEI),
-                           ("CHR_05_OSK_Sheet", "CHR_05_OSK", gen_chars.OSK)):
-        _put(man, key, _path("10_characters", folder, key + ".png"), gen_chars.sheet(P),
-             (gen_chars.CX, gen_chars.GY_), hframes=8, vframes=3)
+    key = "CHR_01_Aleksei_Sheet"
+    path = _path("10_characters", "CHR_01_Aleksei", key + ".png")
+    # 阿列克谢使用已验收的美术精灵表，管线只登记，避免重新生成时覆盖。
+    with Image.open(path) as sheet:
+        man[key] = dict(path=_res(path), size=list(sheet.size),
+                        pivot=[gen_chars.CX, gen_chars.GY_], hframes=8, vframes=3)
+    key = "CHR_05_OSK_Sheet"
+    _put(man, key, _path("10_characters", "CHR_05_OSK", key + ".png"), gen_chars.sheet(gen_chars.OSK),
+         (gen_chars.CX, gen_chars.GY_), hframes=8, vframes=3)
     _put(man, "CHR_04_HalfHuman_Sheet", _path("10_characters", "CHR_04_HalfHuman", "CHR_04_HalfHuman_Sheet.png"),
          gen_chars.half_sheet(), (gen_chars.CX, gen_chars.GY_), hframes=8, vframes=3)
     _put(man, "CHR_03_Rabid_Sheet", _path("10_characters", "CHR_03_Rabid", "CHR_03_Rabid_Sheet.png"),

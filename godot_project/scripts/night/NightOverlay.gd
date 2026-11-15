@@ -5,6 +5,8 @@ extends Node2D
 const SQ := 0.62
 const REACH := 1.45
 const Data := preload("res://scripts/CampaignData.gd")
+## 声纹可访问性：六类声纹的非颜色冗余（线型 + 中心图标）。纯数据模块，见其内注释。
+const RippleStyle := preload("res://scripts/night/NightRippleStyle.gd")
 const CAN_TEX := preload("res://art/30_props/PRP_TinCan.png")
 const SPARK_TEX := preload("res://art/50_vfx/VFX_Impact_Spark.png")
 const BLOOD_TEX := preload("res://art/50_vfx/VFX_Blood_Mist.png")
@@ -24,6 +26,8 @@ func _draw() -> void:
 		var c: Color = r["col"]
 		c.a = 0.55 * float(r["life"])
 		_ellipse(r["pos"], rad, rad * SQ, c, 2.0)
+		# 原色椭圆之上叠一层「去色也读得懂」的形状冗余；无条件常开。
+		_draw_ripple_redundancy(r, rad, c)
 	# 战斗特效：曳光 / 弹着 / 血雾 / 弹壳 / 命中标记
 	for tr in ctl.tracers:
 		var ta: float = clampf(float(tr["life"]) / 0.07, 0.0, 1.0)
@@ -213,6 +217,114 @@ func _ellipse(c: Vector2, rx: float, ry: float, col: Color, w: float) -> void:
 		var a := TAU * float(i) / 40.0
 		pts.append(c + Vector2(cos(a) * rx, sin(a) * ry))
 	draw_polyline(pts, col, w, true)
+
+
+# ============================================================================
+# 声纹可访问性冗余层 —— 形状无条件常开，与颜色设置无关
+# ============================================================================
+## 在原色椭圆之上叠加「线型 + 中心图标」。冗余层统一用骨白高对比，不沿用声纹原色：
+## 否则暗红 #b91c1c（亮度约 50/255）在夜色里连形状一起糊掉，冗余等于没做。
+## 颜色 / 半径 / 寿命 / 监听规则全部不改，这里只画。
+func _draw_ripple_redundancy(r: Dictionary, rad: float, base: Color) -> void:
+	if not (r is Dictionary):
+		return
+	var cb := false
+	var sg := get_node_or_null("/root/SaveGame")
+	if sg != null:
+		cb = bool(sg.get("colorblind_mode"))
+	var v: Dictionary = RippleStyle.visual_for(r, cb)
+	# 骨白（SovietUI.BONE 同族）：去色后仍是与夜底反差最大的一档。
+	var col := Color(0.85, 0.82, 0.75, clampf(base.a * 1.8, 0.0, 1.0))
+	var c: Vector2 = r["pos"]
+	var w: float = float(v["width"])
+	_ellipse_styled(c, rad, rad * SQ, col, w, String(v["pattern"]))
+	_glyph(c, col, w, float(v["glyph_scale"]), String(v["glyph"]))
+	if bool(v["show_label"]):
+		_text(c + Vector2(0, -20.0), String(v["label"]), col, 15)
+
+
+## 六种互异线型：solid / dashed / double / dotted / dashdot / split。
+## 分段 draw_polyline，单条声纹最多 24 次绘制调用，不改帧逻辑。
+func _ellipse_styled(c: Vector2, rx: float, ry: float, col: Color, w: float, pattern: String) -> void:
+	var n := 96
+	var pts := PackedVector2Array()
+	for i in range(n + 1):
+		var a := TAU * float(i) / float(n)
+		pts.append(c + Vector2(cos(a) * rx, sin(a) * ry))
+	match pattern:
+		"solid":
+			draw_polyline(pts, col, w, true)
+		"double":
+			draw_polyline(pts, col, w, true)
+			var inner := PackedVector2Array()
+			for i in range(n + 1):
+				var a := TAU * float(i) / float(n)
+				inner.append(c + Vector2(cos(a) * rx * 0.86, sin(a) * ry * 0.86))
+			draw_polyline(inner, col, w * 0.8, true)
+		"dashed":
+			_segments(pts, col, w, 8, 0.62)
+		"dotted":
+			_segments(pts, col, w, 24, 0.28)
+		"dashdot":
+			_segments(pts, col, w, 12, 0.62, true)
+		"split":
+			# 上半（屏幕 y 更小）虚线、下半实线：不看颜色也能和 dashed / solid 分开
+			var upper := PackedVector2Array()
+			var lower := PackedVector2Array()
+			for i in range(n + 1):
+				if sin(TAU * float(i) / float(n)) < 0.0:
+					upper.append(pts[i])
+				else:
+					lower.append(pts[i])
+			draw_polyline(lower, col, w, true)
+			_segments(upper, col, w, 6, 0.55)
+		_:
+			draw_polyline(pts, col, w, true)
+
+
+## 取每段前 ratio 画一小截；alternating 时奇数段缩到 35%，做「长-短-长-短」。
+func _segments(pts: PackedVector2Array, col: Color, w: float, count: int, ratio: float, alternating := false) -> void:
+	var total := float(pts.size() - 1)
+	var seg := total / float(count)
+	for k in count:
+		var r := ratio
+		if alternating and k % 2 == 1:
+			r = ratio * 0.35
+		var a := int(round(float(k) * seg))
+		var b := int(round(float(k) * seg + seg * r))
+		if b <= a:
+			continue
+		var part := PackedVector2Array()
+		for i in range(a, mini(b, pts.size())):
+			part.append(pts[i])
+		if part.size() >= 2:
+			draw_polyline(part, col, w, true)
+
+
+## 六种互异中心图标，全部是几何形状，不依赖字体 / 颜色 / 贴图。
+func _glyph(c: Vector2, col: Color, w: float, s: float, glyph: String) -> void:
+	var u := 5.0 * s
+	match glyph:
+		"dot":
+			draw_circle(c, u * 0.8, col)
+		"triangle":
+			var t := PackedVector2Array([c + Vector2(0, -u), c + Vector2(u * 0.9, u * 0.7),
+				c + Vector2(-u * 0.9, u * 0.7), c + Vector2(0, -u)])
+			draw_polyline(t, col, w, true)
+		"square":
+			var q := PackedVector2Array([c + Vector2(-u, -u), c + Vector2(u, -u),
+				c + Vector2(u, u), c + Vector2(-u, u), c + Vector2(-u, -u)])
+			draw_polyline(q, col, w, true)
+		"diamond":
+			var d := PackedVector2Array([c + Vector2(0, -u * 1.2), c + Vector2(u, 0),
+				c + Vector2(0, u * 1.2), c + Vector2(-u, 0), c + Vector2(0, -u * 1.2)])
+			draw_polyline(d, col, w, true)
+		"cross":
+			draw_line(c + Vector2(-u, 0), c + Vector2(u, 0), col, w, true)
+			draw_line(c + Vector2(0, -u), c + Vector2(0, u), col, w, true)
+		"ring":
+			draw_arc(c, u, 0.0, TAU, 20, col, w, true)
+
 
 func _arc(c: Vector2, r: float, frac: float, col: Color, w: float) -> void:
 	draw_arc(c, r, -PI / 2.0, -PI / 2.0 + TAU * clampf(frac, 0.0, 1.0), 40, col, w, true)

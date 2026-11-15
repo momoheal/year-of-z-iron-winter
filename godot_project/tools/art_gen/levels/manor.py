@@ -167,7 +167,7 @@ AMBIENCE = ["wind", "fire", "buzz"]      # 高墙里风小（cfg.cold=0.3），�
 
 # 特勤巡逻：4 组。OSK_Depot 的环线正对着 409 托盘 —— 想拿货就得卡它的背身窗口。
 PATROLS = [
-    dict(id="OSK_Gate", mode="pingpong", pts=[(4.0, 32.6), (18.0, 32.6)], pause=2.4),
+    dict(id="OSK_Gate", mode="pingpong", pts=[(16.0, 33.6), (24.0, 33.6)], pause=2.4),
     dict(id="OSK_Depot", mode="loop", pts=[(6.0, 5.4), (24.0, 5.4), (24.0, 8.8), (6.0, 8.8)],
          pause=1.6),
     dict(id="OSK_Drive", mode="pingpong", pts=[(20.5, 10.0), (20.5, 30.0)], pause=2.0),
@@ -212,8 +212,8 @@ ZONES = [
 
 # 黑市：西松林深处的一处窝棚，靠一堆木箱挡风
 MARKET = dict(
-    pos=(11.8, 27.4), trader=(12.7, 27.9),      # 西松林里，紧着那堆木箱
-    survivors=[(10.6, 28.4), (13.3, 26.9)],
+    pos=(6.0, 23.6), trader=(7.0, 24.1),        # 西松林，离车道和大门巡逻线较远
+    survivors=[(4.8, 24.2), (7.5, 23.1)],
     cans=1, ammo=8,
     zh="黑市 · 一罐换八发", en="BLACK MARKET",
 )

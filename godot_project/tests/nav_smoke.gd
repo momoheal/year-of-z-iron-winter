@@ -13,6 +13,7 @@ extends SceneTree
 
 const PPM := 64.0
 const SQ := 0.62
+const NEW_LAYOUTS := ["boiler", "underpass", "birch", "workshop", "greenhouse", "archive"]
 const LEVELS := ["night_explore", "night_marshalling", "night_manor", "night_mine", "night_market",
 	"night_coldstore", "night_canteen", "night_sanitarium", "night_boiler", "night_underpass",
 	"night_birch", "night_workshop", "night_greenhouse", "night_archive"]
@@ -86,6 +87,34 @@ func _run() -> void:
 		var end: Vector2 = path[path.size() - 1] if path.size() > 0 else spawn
 		var reach: bool = nav.line_clear(spawn, exit) or _to_m(end - exit).length() <= 1.2
 		_assert(reach, "%s: exit reachable from spawn" % lv, "path end %.1fm from exit" % _to_m(end - exit).length())
+		if s.level_id in NEW_LAYOUTS:
+			var supply: Node2D = null
+			for container in s.containers:
+				if container.get_meta("guaranteed", "") == s.prize:
+					supply = container
+					break
+			var supply_reachable := false
+			if supply != null and not supply.get_meta("locked", false) and not supply.get_meta("hidden", false):
+				var target: Vector2 = s.interact_point(supply)
+				var supply_path: PackedVector2Array = nav.path_px(spawn, target)
+				var supply_end: Vector2 = supply_path[-1] if not supply_path.is_empty() else spawn
+				supply_reachable = _to_m(supply_end - target).length() <= s.REACH
+			_assert(supply_reachable, "%s: key supply reachable without a companion" % lv)
+		for stall in s.markets:
+			var at: Vector2 = _to_m(stall.global_position)
+			var gap := INF
+			for guard in s.soldiers:
+				var route: PackedVector2Array = guard.route
+				var edges := route.size() if guard.mode == "loop" else route.size() - 1
+				for i in edges:
+					var closest := Geometry2D.get_closest_point_to_segment(at, _to_m(route[i]),
+						_to_m(route[(i + 1) % route.size()]))
+					gap = minf(gap, at.distance_to(closest))
+			_assert(gap >= 12.0, "%s: trade stall separated from patrol routes" % lv, "%.1fm" % gap)
+			var trade_path: PackedVector2Array = nav.path_px(spawn, stall.global_position)
+			var trade_end: Vector2 = trade_path[-1] if not trade_path.is_empty() else spawn
+			_assert(_to_m(trade_end - stall.global_position).length() <= 1.45,
+				"%s: trade stall accessible" % lv)
 		_drop(s)
 		await _frames(1)
 

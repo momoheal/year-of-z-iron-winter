@@ -1,0 +1,574 @@
+{
+ "VFX_Light_Radial": {
+  "path": "res://art/50_vfx/VFX_Light_Radial.png",
+  "size": [
+   512,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Light_Radial_Soft": {
+  "path": "res://art/50_vfx/VFX_Light_Radial_Soft.png",
+  "size": [
+   512,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Light_Cone_Flashlight": {
+  "path": "res://art/50_vfx/VFX_Light_Cone_Flashlight.png",
+  "size": [
+   1024,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Light_Cone_OSK": {
+  "path": "res://art/50_vfx/VFX_Light_Cone_OSK.png",
+  "size": [
+   1024,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Searchlight_Cone": {
+  "path": "res://art/50_vfx/VFX_Searchlight_Cone.png",
+  "size": [
+   1024,
+   512
+  ],
+  "pivot": null
+ },
+ "VFX_Snow_Particle": {
+  "path": "res://art/50_vfx/VFX_Snow_Particle.png",
+  "size": [
+   16,
+   16
+  ],
+  "pivot": null
+ },
+ "VFX_Ember": {
+  "path": "res://art/50_vfx/VFX_Ember.png",
+  "size": [
+   8,
+   8
+  ],
+  "pivot": null
+ },
+ "VFX_Glow_Halo": {
+  "path": "res://art/50_vfx/VFX_Glow_Halo.png",
+  "size": [
+   128,
+   128
+  ],
+  "pivot": null
+ },
+ "VFX_Steam_Puff": {
+  "path": "res://art/50_vfx/VFX_Steam_Puff.png",
+  "size": [
+   64,
+   64
+  ],
+  "pivot": null
+ },
+ "VFX_FogNoise": {
+  "path": "res://art/50_vfx/VFX_FogNoise.png",
+  "size": [
+   512,
+   512
+  ],
+  "pivot": null
+ },
+ "AMB_Wind_Blizzard_Loop": {
+  "path": "res://art/70_audio/AMB_Wind_Blizzard_Loop.wav"
+ },
+ "AMB_Fire_Crackle_Loop": {
+  "path": "res://art/70_audio/AMB_Fire_Crackle_Loop.wav"
+ },
+ "AMB_Steam_Hiss_Loop": {
+  "path": "res://art/70_audio/AMB_Steam_Hiss_Loop.wav"
+ },
+ "AMB_Sodium_Buzz_Loop": {
+  "path": "res://art/70_audio/AMB_Sodium_Buzz_Loop.wav"
+ },
+ "CHR_01_Aleksei_Sheet": {
+  "path": "res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png",
+  "size": [
+   864,
+   336
+  ],
+  "pivot": [
+   36,
+   108
+  ],
+  "hframes": 12,
+  "vframes": 3
+ },
+ "CHR_05_OSK_Sheet": {
+  "path": "res://art/10_characters/CHR_05_OSK/CHR_05_OSK_Sheet.png",
+  "size": [
+   864,
+   336
+  ],
+  "pivot": [
+   36,
+   108
+  ],
+  "hframes": 12,
+  "vframes": 3
+ },
+ "PRP_Crate_Wood_Stack": {
+  "path": "res://art/30_props/PRP_Crate_Wood_Stack.png",
+  "size": [
+   132,
+   156
+  ],
+  "pivot": [
+   66.0,
+   148
+  ]
+ },
+ "PRP_SupplyCrates_Military": {
+  "path": "res://art/30_props/PRP_SupplyCrates_Military.png",
+  "size": [
+   150,
+   116
+  ],
+  "pivot": [
+   75.0,
+   108
+  ]
+ },
+ "PRP_Locker_ElectricCabinet": {
+  "path": "res://art/30_props/PRP_Locker_ElectricCabinet.png",
+  "size": [
+   84,
+   146
+  ],
+  "pivot": [
+   42.0,
+   138
+  ]
+ },
+ "PRP_Brazier_OilDrum": {
+  "path": "res://art/30_props/PRP_Brazier_OilDrum.png",
+  "size": [
+   68,
+   92
+  ],
+  "pivot": [
+   34,
+   86
+  ]
+ },
+ "VFX_Fire_Brazier_Sheet": {
+  "path": "res://art/50_vfx/VFX_Fire_Brazier_Sheet.png",
+  "size": [
+   336,
+   84
+  ],
+  "pivot": [
+   28.0,
+   80
+  ],
+  "hframes": 6
+ },
+ "CHR_03_Rabid_Sheet": {
+  "path": "res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png",
+  "size": [
+   864,
+   336
+  ],
+  "pivot": [
+   36,
+   108
+  ],
+  "hframes": 12,
+  "vframes": 3
+ },
+ "VFX_Blood_Splat": {
+  "path": "res://art/50_vfx/VFX_Blood_Splat.png",
+  "size": [
+   96,
+   96
+  ],
+  "pivot": null
+ },
+ "CHR_04_HalfHuman_Sheet": {
+  "path": "res://art/10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png",
+  "size": [
+   864,
+   336
+  ],
+  "pivot": [
+   36,
+   108
+  ],
+  "hframes": 12,
+  "vframes": 3
+ },
+ "VFX_Bullet_Tracer": {
+  "path": "res://art/50_vfx/VFX_Bullet_Tracer.png",
+  "size": [
+   128,
+   16
+  ],
+  "pivot": [
+   64.0,
+   8.0
+  ]
+ },
+ "VFX_Impact_Spark": {
+  "path": "res://art/50_vfx/VFX_Impact_Spark.png",
+  "size": [
+   64,
+   64
+  ],
+  "pivot": [
+   32.0,
+   32.0
+  ]
+ },
+ "VFX_Shell_Casing": {
+  "path": "res://art/50_vfx/VFX_Shell_Casing.png",
+  "size": [
+   22,
+   12
+  ],
+  "pivot": [
+   11.0,
+   6.0
+  ]
+ },
+ "VFX_Blood_Mist": {
+  "path": "res://art/50_vfx/VFX_Blood_Mist.png",
+  "size": [
+   72,
+   72
+  ],
+  "pivot": [
+   36.0,
+   36.0
+  ]
+ },
+ "VFX_MuzzleFlash_Sheet": {
+  "path": "res://art/50_vfx/VFX_MuzzleFlash_Sheet.png",
+  "size": [
+   384,
+   96
+  ],
+  "pivot": [
+   40.32,
+   48.0
+  ],
+  "hframes": 4
+ },
+ "TIL_Facade_Canteen_A": {
+  "path": "res://art/20_tileset/TIL_Facade_Canteen_A.png",
+  "size": [
+   2816,
+   600
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Facade_WindowGlow_Canteen": {
+  "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Canteen.png",
+  "size": [
+   2816,
+   770
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Decal_Footprint_Boot_L": {
+  "path": "res://art/50_vfx/VFX_Decal_Footprint_Boot_L.png",
+  "size": [
+   32,
+   32
+  ],
+  "pivot": [
+   16,
+   16
+  ]
+ },
+ "VFX_Decal_Footprint_Boot_R": {
+  "path": "res://art/50_vfx/VFX_Decal_Footprint_Boot_R.png",
+  "size": [
+   32,
+   32
+  ],
+  "pivot": [
+   16,
+   16
+  ]
+ },
+ "VFX_Decal_Footprint_Paw": {
+  "path": "res://art/50_vfx/VFX_Decal_Footprint_Paw.png",
+  "size": [
+   32,
+   32
+  ],
+  "pivot": [
+   16,
+   16
+  ]
+ },
+ "VFX_Decal_Bullet_Snow": {
+  "path": "res://art/50_vfx/VFX_Decal_Bullet_Snow.png",
+  "size": [
+   28,
+   28
+  ],
+  "pivot": [
+   14,
+   14
+  ]
+ },
+ "VFX_Decal_Bullet_Metal": {
+  "path": "res://art/50_vfx/VFX_Decal_Bullet_Metal.png",
+  "size": [
+   20,
+   20
+  ],
+  "pivot": [
+   10,
+   10
+  ]
+ },
+ "VFX_Decal_Bullet_Wood": {
+  "path": "res://art/50_vfx/VFX_Decal_Bullet_Wood.png",
+  "size": [
+   22,
+   22
+  ],
+  "pivot": [
+   11,
+   11
+  ]
+ },
+ "VFX_Decal_Blood_Pool_S": {
+  "path": "res://art/50_vfx/VFX_Decal_Blood_Pool_S.png",
+  "size": [
+   96,
+   64
+  ],
+  "pivot": [
+   48,
+   32
+  ]
+ },
+ "VFX_Decal_Blood_Pool_M": {
+  "path": "res://art/50_vfx/VFX_Decal_Blood_Pool_M.png",
+  "size": [
+   160,
+   104
+  ],
+  "pivot": [
+   80,
+   52
+  ]
+ },
+ "VFX_Decal_Blood_Pool_L": {
+  "path": "res://art/50_vfx/VFX_Decal_Blood_Pool_L.png",
+  "size": [
+   240,
+   152
+  ],
+  "pivot": [
+   120,
+   76
+  ]
+ },
+ "VFX_Decal_Blood_Trail": {
+  "path": "res://art/50_vfx/VFX_Decal_Blood_Trail.png",
+  "size": [
+   64,
+   40
+  ],
+  "pivot": [
+   32,
+   20
+  ]
+ },
+ "TIL_Facade_ColdStore_A": {
+  "path": "res://art/20_tileset/TIL_Facade_ColdStore_A.png",
+  "size": [
+   2944,
+   600
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Facade_WindowGlow_ColdStore": {
+  "path": "res://art/50_vfx/VFX_Facade_WindowGlow_ColdStore.png",
+  "size": [
+   2944,
+   770
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "TIL_Facade_Manor_A": {
+  "path": "res://art/20_tileset/TIL_Facade_Manor_A.png",
+  "size": [
+   2944,
+   600
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Facade_WindowGlow_Manor": {
+  "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Manor.png",
+  "size": [
+   2944,
+   770
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "TIL_Facade_Town_A": {
+  "path": "res://art/20_tileset/TIL_Facade_Town_A.png",
+  "size": [
+   2944,
+   600
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Facade_WindowGlow_Town": {
+  "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Town.png",
+  "size": [
+   2944,
+   770
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "PRP_DispatchBoard_Tin": {
+  "path": "res://art/30_props/PRP_DispatchBoard_Tin.png",
+  "size": [
+   190,
+   210
+  ],
+  "pivot": [
+   95,
+   202
+  ]
+ },
+ "TIL_Facade_Depot_A": {
+  "path": "res://art/20_tileset/TIL_Facade_Depot_A.png",
+  "size": [
+   2816,
+   600
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Facade_WindowGlow_Depot": {
+  "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Depot.png",
+  "size": [
+   2816,
+   770
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "TIL_Facade_Mine_A": {
+  "path": "res://art/20_tileset/TIL_Facade_Mine_A.png",
+  "size": [
+   2944,
+   600
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Facade_WindowGlow_Mine": {
+  "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Mine.png",
+  "size": [
+   2944,
+   770
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "TIL_Facade_Sanitarium_A": {
+  "path": "res://art/20_tileset/TIL_Facade_Sanitarium_A.png",
+  "size": [
+   2816,
+   600
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Facade_WindowGlow_Sanitarium": {
+  "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Sanitarium.png",
+  "size": [
+   2816,
+   770
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "TIL_Facade_Khrushchyovka_A": {
+  "path": "res://art/20_tileset/TIL_Facade_Khrushchyovka_A.png",
+  "size": [
+   3072,
+   600
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "VFX_Facade_WindowGlow": {
+  "path": "res://art/50_vfx/VFX_Facade_WindowGlow.png",
+  "size": [
+   3072,
+   770
+  ],
+  "pivot": [
+   0,
+   600
+  ]
+ },
+ "TIL_Ground_NightArchive_Baked": {
+  "path": "res://art/20_tileset/TIL_Ground_NightArchive_Baked.png",
+  "size": [
+   2112,
+   1032
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ }
+}

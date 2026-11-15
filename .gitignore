@@ -1,5 +1,8 @@
 # Godot generated / local
 .godot/
+# 导出产物（export_presets.cfg 的 export_path 指向 build/win64/）。
+# 只忽略产物目录，export_presets.cfg 本身必须纳入版本管理。
+build/
 # 注意：*.import 记录的是导入设置（res:// 相对路径 + 内容 UID，跨机器一致），
 # 按 Godot 官方建议应纳入版本管理，否则新克隆要重新探测导入参数。
 # .godot/ 里的导入缓存（.ctex 等）仍忽略，首次用 run_tests.bat 或 --import 生成。
@@ -12,3 +15,7 @@ __pycache__/
 
 # 验收页单文件离线版（由 build_acceptance_page.py 生成，2.4 MB，可随时重出）
 docs/ui/acceptance_standalone.html
+
+# 本地出图临时产物：诊断拼图、引擎截图、试切 A/B 对照（体积大且可随时重出）。
+# 注意：.artwork/src_gpt/（出图源图）与 .artwork/backup/（版本备份）仍需入库，便于资产溯源。
+.artwork/_tmp/

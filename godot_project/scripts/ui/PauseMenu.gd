@@ -21,6 +21,7 @@ var _btn_abort: Button
 var _lbl_hint: Label
 var _slider: HSlider
 var _lbl_vol: Label
+var _cb_colorblind: CheckBox
 var _abort_confirm := false
 
 
@@ -42,6 +43,8 @@ func open() -> void:
 	_sync_abort_button()
 	_slider.set_value_no_signal(SaveGame.master_volume * 100.0)
 	_sync_volume_label()
+	if _cb_colorblind != null:
+		_cb_colorblind.set_pressed_no_signal(SaveGame.colorblind_mode)
 	visible = true
 	get_tree().paused = true
 
@@ -156,6 +159,33 @@ func _build() -> void:
 	vrow.add_child(_lbl_vol)
 	v.add_child(vrow)
 
+	# 色觉辅助：形状冗余默认常开，这里只叠加单字标签并加粗线型（关掉也不丢冗余）
+	var arow := HBoxContainer.new()
+	arow.add_theme_constant_override("separation", 10)
+	var al := Label.new()
+	al.text = "色觉辅助"
+	SovietUI.label_font(al)
+	al.add_theme_font_size_override("font_size", 14)
+	al.add_theme_color_override("font_color", SovietUI.BONE)
+	arow.add_child(al)
+	_cb_colorblind = CheckBox.new()
+	_cb_colorblind.text = "声纹加注文字 / 加粗线型"
+	_cb_colorblind.focus_mode = Control.FOCUS_NONE
+	_cb_colorblind.add_theme_font_override("font", SovietUI.body_font())
+	_cb_colorblind.add_theme_font_size_override("font_size", 13)
+	_cb_colorblind.add_theme_color_override("font_color", SovietUI.BONE_DIM)
+	_cb_colorblind.toggled.connect(_on_colorblind)
+	arow.add_child(_cb_colorblind)
+	v.add_child(arow)
+
+	var ahint := Label.new()
+	ahint.text = "声纹的线型与图标始终显示，不依赖此开关。"
+	ahint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	SovietUI.label_font(ahint)
+	ahint.add_theme_font_size_override("font_size", 11)
+	ahint.add_theme_color_override("font_color", SovietUI.ASH)
+	v.add_child(ahint)
+
 	v.add_child(SovietUI.rule(SovietUI.STEEL))
 
 	_btn_abort = _button(abort_label)
@@ -206,6 +236,10 @@ func _sync_abort_button() -> void:
 func _on_volume(v: float) -> void:
 	SaveGame.set_master_volume(v / 100.0)
 	_sync_volume_label()
+
+
+func _on_colorblind(on: bool) -> void:
+	SaveGame.set_colorblind_mode(on)
 
 
 func _sync_volume_label() -> void:

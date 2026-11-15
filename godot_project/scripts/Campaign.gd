@@ -615,7 +615,7 @@ func _is_moving(key: Variant, s: Vector2) -> bool:
 	return mv
 
 
-## 角色 spritesheet（8列×3行 S/E/N，72×112/帧）：选方向行 + 站/走列 + 翻转 + 缩放
+## 角色 spritesheet（12列×3行 S/E/N，72×112/帧）：选方向行 + 站/走列 + 翻转 + 缩放
 func _draw_char(s: Vector2, kind: String, face: float, moving: bool, h: float, tint: Color = Color(1, 1, 1, 1)) -> void:
 	var deg := rad_to_deg(face)
 	var row := 0
@@ -631,7 +631,7 @@ func _draw_char(s: Vector2, kind: String, face: float, moving: bool, h: float, t
 		row = 2
 	var col := 0
 	if moving:
-		col = 1 + int(t * 7.0) % 4
+		col = 1 + int(t * 7.0) % 8
 	var fw := 72.0
 	var fh := 112.0
 	var dw := fw * (h / fh)

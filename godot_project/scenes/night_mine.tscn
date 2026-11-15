@@ -840,7 +840,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Player"]
 texture = ExtResource("28_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -896,7 +896,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/OSK_Shift"]
 texture = ExtResource("32_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -953,7 +953,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/OSK_Square"]
 texture = ExtResource("32_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1009,7 +1009,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Cart"]
 texture = ExtResource("36_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1032,7 +1032,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Cut"]
 texture = ExtResource("36_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1054,7 +1054,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Half_Boiko"]
 texture = ExtResource("38_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 

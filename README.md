@@ -1,9 +1,18 @@
-# Year of Z: Iron Winter (`Хроники Года Z: Железная Зима` / 《Z年纪事：凛冬铁轨》) — v4.2 Definitive Master Repository
+# Year of Z: Iron Winter (`Хроники Года Z: Железная Зима` / 《Z年纪事：凛冬铁轨》) — 构建 4.0.0 · 内容规格 v4.2
 
-[![Version](https://img.shields.io/badge/Version-v4.2_Definitive_Master-f59e0b?style=flat-square)](#)
+[![Build](https://img.shields.io/badge/Build-4.0.0-22c55e?style=flat-square)](#version-policy)
+[![Content Spec](https://img.shields.io/badge/Content_Spec-v4.2-f59e0b?style=flat-square)](#version-policy)
 [![Genre](https://img.shields.io/badge/Genre-2.5D_Stealth_Survival_RPG-3b82f6?style=flat-square)](#)
 [![Language](https://img.shields.io/badge/Docs_&_Prototypes-Bilingual_(ZH_%2F_EN)-10b981?style=flat-square)](#)
-[![Prototype](https://img.shields.io/badge/Prototype-Exploration_Demo_v0.1_(Greybox%2C_Zero_Art)-8b5cf6?style=flat-square)](#)
+[![Prototype](https://img.shields.io/badge/Prototype-HTML5_Greybox_Gym_(historical)-8b5cf6?style=flat-square)](#)
+
+<a id="version-policy"></a>
+
+> **版本口径 / Version Policy**
+> - **构建版本 `4.0.0`**：唯一真源是 `godot_project/project.godot` 的 `config/version="4.0.0"`。对外发布、商店页与补丁说明一律以此为准。
+> - **内容规格 `v4.2`**：指 `docs/` 下策划案、总剧本、美术风格参考等**文档与原型的内容规格版本**（历史称 Definitive Master）。它不是构建版本号，也不代表已发布的可执行版本；本轮保留该标签，取舍见 `CHANGELOG.md`，最终定位**待用户拍板**。
+> - **历史规格标签 `v4.0`**：`index.html` 与原型沙盘标题里的「v4.0 诺沃斯克-17 设定」，以及 `project.godot` 的 `config/name` 中的 `(v4.0 Novorsk-17)`，均为早期内容规格 / 命名遗留，**不是构建版本**。
+> - 测试结论不再写死；现行口径见下方「最近一次本地实跑基线」与 `godot_project/tests/logs/`。当前仓库无 CI、无 git tag、无 LICENSE。
 
 > **"In Novorsk-17, when the teletype terminal lights up green, everyone is fed; when a file number is crossed out, the person is zeroed."**
 >
@@ -25,7 +34,7 @@ By day, you play as former freight dispatcher **Aleksei "Alyosha" Morozov**, acc
 year-of-z-iron-winter/
 ├── README.md                                                     # Bilingual Project Overview & Push Guide
 ├── index.html                                                    # ★ Soviet Teletype Terminal GitHub Pages Portal (Bilingual ZH/EN)
-├── push_to_github.sh                                             # One-click GitHub repository creation & push script
+├── push_to_github.sh                                             # Safe push: current branch -> existing origin (no repo creation / no branch rename)
 ├── assets/
 │   └── concept_art/                                              # Concept Art (CON_01 ~ CON_03 + v4.2 风格参考概念图 01–11)
 │       ├── ART_STYLE_REFERENCE_v4.2.md                           # ★ 美术风格参考 v4.2（三色分区 / 原罪铭牌 / 待补图清单）
@@ -44,7 +53,7 @@ year-of-z-iron-winter/
 │   │   ├── Z年纪事_Godot探索循环移植对照表.md                     # ★ 探索循环（基地→地图→夜潜→结算）移植对照表 + 97 项测试清单 (ZH)
 │   │   ├── Z年纪事_苏联化界面与关卡节拍.md                        # ★ 苏联化前端（SovietUI/Chrome/Meter）+ 关卡档案层与环境节拍 (ZH)
 │   │   └── Z年纪事_武器与战斗切片.md                              # ★ 撬棍与枪械 / 灰盒美术扩展 / 命中与噪声规则 (ZH)
-│   └── en/                                                       # English Documentation (v4.2 Definitive Master)
+│   └── en/                                                       # English Documentation (v4.2 内容规格 · 历史文档版)
 │       ├── Year_of_Z_Iron_Winter_Master_Script_EN.md             # Full 7-Act Master Screenplay (EN · v4.2)
 │       ├── Year_of_Z_Iron_Winter_GDD_EN.md                       # Game Design Document (EN)
 │       ├── Year_of_Z_Iron_Winter_Greybox_Spec_EN.md              # Phase 1 Greybox Spec & Asset List (EN)
@@ -88,7 +97,7 @@ year-of-z-iron-winter/
     │   │   ├── NightExplore.gd                                   #   总控：三方潜行 / 搜刮 / 体温 / 天亮渐变 / 抉择 / 关卡导演 / 战役回写
     │   │   ├── LevelBeats.gd                                     #   ★ 关卡档案层：地标勘踏 / 环境节拍（驼峰溜放·炉口爆燃）/ 专属机关
     │   │   ├── Arsenal.gd                                        #   ★ 军械库：撬棍 / ТТ-33 / 莫辛纳甘 / 截短双管（伤害·射速·噪声·散布唯一数据源）
-    │   │   ├── NightSfx.gd                                       #   25 种程序化音色 + 定位声部 + 面具呼吸循环 + 心跳
+    │   │   ├── NightSfx.gd                                       #   程序化音色（数量以 CACHE 键数为准）+ 定位声部 + 面具呼吸循环 + 心跳
     │   │   ├── NightPlayer / NightSoldier / NightRabid / NightHalf.gd  # 玩家与三方 AI
     │   │   └── NightOverlay / NightFlicker / NightSearchlight / NightAnim.gd  # 世界空间读数 / 灯光调制 / 探照灯塔 / 帧动画
     │   ├── Sim.gd / Main.gd / HUD.gd                             # Room A 纯逻辑 / 渲染 / HUD（夜潜循环）
@@ -99,7 +108,7 @@ year-of-z-iron-winter/
     ├── tools/art_gen/                                            # ★ Python 美术管线：layout.py → gen_*.py → build_scene.py
     │   └── gen_weapons.py                                        # ★ P5 武器 / 弹药 / 靶场道具 / 战斗 VFX（13 件，独立 weapons 步骤）
     ├── tests/
-    │   ├── campaign_smoke.gd                                     # ★ 97 项 headless 探索循环测试
+    │   ├── campaign_smoke.gd                                     # ★ 战役探索循环冒烟测试
     │   ├── night_explore_smoke.gd                                # ★ 133 项 headless 夜潜货场测试
     │   ├── night_level_smoke.gd                                  # ★ 347 项 headless 多关卡管线测试
     │   ├── night_beats_smoke.gd                                  # ★ 界面苏联化 + 关卡档案层 / 节拍状态机测试
@@ -128,7 +137,7 @@ year-of-z-iron-winter/
 | **灯光** | `CanvasModulate` 夜色 + 成对 `PointLight2D`：Ground 灯只照地面并投影，Objects 灯只照立起的精灵不投影（避免 2.5D 立面被自己的遮挡体压黑）；手电/探照灯是按 0.62 压缩的锥形灯；窗光是一张整面墙的灯光贴图 |
 | **氛围** | GPU 雪粒子（世界层 + 屏幕前景层）、火星、蒸汽、后处理（冷调分级 / 世界锚定的雪雾 / 暗角 / 颗粒 / 失温霜边 / 警报红边 / **天亮渐变**）、4 段环境音循环 |
 | **天亮（P1.5）** | 战役里 `cfg.night` 是这一夜的秒数，最后 **20%** 开始天色渐变：`night_post.gdshader` 的 `dawn` 参数抬曝光、退回中性色、化掉霜边、雾与暗角变薄，北侧天际泛暖；`CanvasModulate` 由夜青 `#455273` 抬到黎明清灰，暴风雪粒子变薄，远处一声调车汽笛。到点按 `dawn` 结束（背包保留一半、生命 −22，由 `CampaignSim.finish_raid` 结） |
-| **声音（P2.5）** | `scripts/night/NightSfx.gd`：25 种音色在 `_ready()` 里程序化合成成 `AudioStreamWAV`（无新增二进制资产，headless 直接可测），一次性音效走 `AudioStreamPlayer2D` 定位衰减 —— 雪地 / 冰面 / 铁轨三种脚步、狂暴者低吼与嘶吼、扑咬、半人呻吟、撬棍挥击与闷响、翻找、罐头出手与落地、枪声（带楼群回响）、电台呼叫、警报、失温提示、天亮汽笛、心跳。`emit_noise()` 的三色声纹同时就是世界里的真声音；清杀兵的**面具呼吸**循环挂在兵身上（4 米内才听得见 = 潜行提示）；风雪音量跟着战役的 `cfg.cold` 走，天亮时退去 |
+| **声音（P2.5）** | `scripts/night/NightSfx.gd`：音色（数量以 `CACHE` 键数为准，不写死）在 `_ready()` 里程序化合成成 `AudioStreamWAV`（无新增二进制资产，headless 直接可测），一次性音效走 `AudioStreamPlayer2D` 定位衰减 —— 雪地 / 冰面 / 铁轨三种脚步、狂暴者低吼与嘶吼、扑咬、半人呻吟、撬棍挥击与闷响、翻找、罐头出手与落地、枪声（带楼群回响）、电台呼叫、警报、失温提示、天亮汽笛、心跳。`emit_noise()` 的三色声纹同时就是世界里的真声音；清杀兵的**面具呼吸**循环挂在兵身上（4 米内才听得见 = 潜行提示）；风雪音量跟着战役的 `cfg.cold` 走，天亮时退去 |
 | **镜头震动** | trauma 模型：被咬 0.55 + 推镜、枪声按距离 0.06–0.5、狂暴者起跳 0.34、被发现 / 警报 0.9、结局各自一档；位移按 `shake²` 落在 `Camera2D.offset`（不打架 `position_smoothing`），外加 ≤0.8° 的滚转，衰减到底自动归位 |
 | **玩法** | 潜行、手电开关（亮=好找路也好被发现）、脚步噪声、`G` 扔罐头引开清杀兵、探照灯扫描锁定（车厢/煤水塔挡光）、长按 E 搜刮（掉落表读 `CampaignData`）、火堆回温、锅炉房通风口撤离；目标是在三号车厢找到透析液 |
 | **三方潜行** | 4 只灰鳞狂暴者（含守在三号车厢门口的壮硕变体）：360° 近距视线 + 循声调查（脚步 / 搜刮 / 罐头 / 枪声），0.45s 起跳预警红圈后扑咬；清杀兵光锥里出现狂暴者会瞄准 0.5s 击毙并留下血迹 → **借刀杀人**；枪声 10m 又会引来下一只。声纹三色：灰白=你 / 暗红=狂暴者 / 冷蓝=清杀队（淡琥珀=半人的呻吟） |
@@ -439,7 +448,7 @@ Open `index.html` (or enable GitHub Pages on branch `main`, root `/`) for the So
 
 ## 🎮 Godot 4.7+ Exploration Loop and Room A Slice (`godot_project/`)
 
-`campaign.tscn` is the Godot entry point. Room A can be opened independently.
+`campaign.tscn` is the Godot entry point for the campaign and its night maps. Room A can be opened independently.
 
 1. **`scenes/campaign.tscn` — 「一夜」探索循环（新主场景）**: the full loop of `prototypes/Year_of_Z_Iron_Winter_Exploration_Demo.html`. Room 602 with your mother on dialysis (`dial` bags, one per day, two days without her and she dies), a 900×520 city map with 13 nodes gated by intel/medicine/flags, a procedural 64×48 block per node (streets → sectors → enterable buildings → containers → connectivity repair), a 90°-FOV fog-of-war raid with warmth/BPM, rabid packs, O.S.K. purge patrols you can bait with thrown tins, half-humans and Choice A, 1.7 s container searches, crowbar door wedges, welded-door prying, then four outcomes — extracted / dawn (keep every other item, −22 HP) / downed / abort — a report screen, next-day dialysis, and the TRUE-α / TRUE-β / B / C ending resolver. Every number is lifted from the prototype's `CFG`/`LOCS`/`STORY` tables.
 2. **`scenes/main.tscn` — Room A 夜潜垂直切片**: the original 1:1 port of `Exploration_Demo.html`'s single-room night-stalk loop (fog-of-war hole cutting, extruded walls, steam pipes, snow, extraction). Press `F2` to return to the campaign.
@@ -453,15 +462,15 @@ Open `index.html` (or enable GitHub Pages on branch `main`, root `/`) for the So
 | `scripts/Campaign.gd` | 城市地图与夜潜世界 `_draw()` 渲染（地面/立面/容器/火堆/雾/光锥/波纹） |
 | `scripts/CampaignHUD.gd` | 顶栏 + 基地三栏 + 地图节点卡 + 夜潜 HUD + 结算页 + 剧情/抉择A/日志/帮助/放弃 五个模态框 |
 | `scripts/Sfx.gd` | 程序化音效：beep / can / wedge / akm / bonejam / thirst，启动时合成 `AudioStreamWAV`（对应 HTML Web Audio） |
-| `scripts/night/NightSfx.gd` | 夜潜场景的音效层：25 种音色 + `AudioStreamPlayer2D` 定位声部 + 实体循环声（面具呼吸）+ 环境层混音（`cfg.cold` / 天亮）+ 紧张度心跳 |
+| `scripts/night/NightSfx.gd` | 夜潜场景的音效层：程序化音色（数量以 `CACHE` 键数为准，不写死）+ `AudioStreamPlayer2D` 定位声部 + 实体循环声（面具呼吸）+ 环境层混音（`cfg.cold` / 天亮）+ 紧张度心跳 |
 | `scripts/Sim.gd` / `Main.gd` / `HUD.gd` | Room A 夜潜切片：纯逻辑 / 75° 斜俯视 `_draw()` 渲染 / HUD |
-| `tests/campaign_smoke.gd` | 97 项 headless 探索循环测试（成功打印 `CAMPAIGN_SMOKE_PASS`） |
+| `tests/campaign_smoke.gd` | 战役探索循环冒烟测试（成功打印 `CAMPAIGN_SMOKE_PASS`） |
 | `tests/night_level_smoke.gd` | 347 项 headless 多关卡管线测试（注册表 / metadata / 装配 / 脚步材质 / 边界） |
 | `tests/room_a_smoke.gd` | 20 项 Room A 冒烟测试（成功打印 `ROOM_A_SMOKE_PASS`） |
 
 **Run / 运行**（with Godot 4.7.2-stable）:
 
-Godot 编辑器运行时会传入 `--ignore-error-breaks`。运行错误仍会记录，错误断点不会自动打开脚本编辑器。
+Godot 编辑器运行战役时，项目会传入 `--ignore-error-breaks`。运行错误仍会记录，但不会因错误自动断进脚本编辑器，避免测试时的移动键误写进源码。日常试玩也可以用外层工作目录的 `launch_game.bat` 独立启动。
 
 ```bash
 # 「一夜」exploration loop (new main scene)
@@ -470,7 +479,7 @@ Godot_v4.7.2-stable_win64 --path godot_project
 # Room A night-stalk slice
 Godot_v4.7.2-stable_win64 --path godot_project res://scenes/main.tscn
 
-# Campaign loop: 97 headless assertions (prints CAMPAIGN_SMOKE_PASS on success)
+# Campaign loop smoke test (prints CAMPAIGN_SMOKE_PASS on success)
 Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/campaign_smoke.gd
 
 # Combat slice: arsenal / loadout / hitscan / reload / kills / ammo (headless)
@@ -491,29 +500,32 @@ Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/room_a_smoke.
 | :---: | :---: |
 | ![Room A vertical slice](godot_project/screenshots/room_a_vertical_slice.png) | ![Room A spawn HUD](godot_project/screenshots/room_a_spawn_hud.png) |
 
-> 说明：所有数值（速度、噪声半径、视野、锁定/射击间隔、掩体规则、雪泥减速、卡门时长、搜刮时长、夜长、QTE 次数等）均逐行对齐 HTML 原型，由现行 headless 冒烟测试覆盖；本仓库为无美术灰盒，画面全部为 `_draw()` 几何绘制，音效全部程序化合成。
+> 说明：所有数值（速度、噪声半径、视野、锁定/射击间隔、掩体规则、雪泥减速、卡门时长、搜刮时长、夜长、QTE 次数等）均逐行对齐 HTML 原型，由 `godot_project/tests/` 下的 headless 冒烟测试固定行为。音效由 `NightSfx.gd` 程序化合成，数量以 `CACHE` 键数为准。
 > **探索循环移植细节 / 逐机制对照表 / 刻意偏差 / 测试清单**：`docs/zh/Z年纪事_Godot探索循环移植对照表.md` · `docs/en/Year_of_Z_Iron_Winter_Godot_Exploration_Loop_EN.md`
 > **灰盒场历史移植记录**：`docs/zh/Z年纪事_Godot灰盒5合1移植对照表.md` · `docs/en/Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md`
 > **后续节点化架构规范**：`docs/zh/Z年纪事_Godot4引擎迁移技术规范与架构指南.md` · `docs/en/Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md`
 >
-> ✅ **实测状态（2026-11-04，Godot 4.7.2）**：9 套 headless 冒烟测试全部通过，合计 **1148 条断言、0 失败、stderr 无 SCRIPT ERROR**（campaign 97 · 夜潜货场 133 · 多关卡 347 · 档案层/节拍 199 · 三区 162 · 战斗 58 · 灰盒 61 · 数据管线 71 · Room A 20）。生成侧校验 `tools/art_gen/check_levels.py` 8 关全过。
+> ✅ **最近一次本地实跑基线（非 CI，非永久结论）**：基线提交 `63709eb`（分支 `feat/nav-and-save-recovery`）· 执行日期 **2026-11-12** · 命令 `python godot_project/tools/run_tests.py` · 结果 **14 套 / 1683 通过 / 0 失败 / 0 脚本错误**。该数字只是**该基线在该日期的一次本地记录**，不保证对后续任何提交成立；每次发布前须重跑，并以 `godot_project/tests/logs/` 或 CI 产物为准（**当前仓库尚无 CI**）。依据：`docs/zh/项目架构评估与下一阶段实施计划_2026-11-11.md` §8.3「自动测试结果记录基线提交与执行日期，避免永久写死『全部通过』的结论」。
 >
-> 🚀 **一键跑通（推荐）**：新克隆直接双击仓库根的 **`run_tests.bat`**（或 `python godot_project/tools/run_tests.py`）。它会**先自动 `--import` 导入资产**（新克隆没有 `.godot/` 缓存，headless 直接 `-s` 会在 preload 阶段大面积失败），再枚举全部 `tests/*_smoke.gd` 逐个执行并扫 stderr。Godot 路径用环境变量 `GODOT` 或 `--godot` 指定；只跑部分套件用 `run_tests.bat campaign gym`。
+> 🚀 **一键跑通（推荐）**：新克隆直接双击仓库根的 **`run_tests.bat`**（或 `python godot_project/tools/run_tests.py`）。它会**先自动 `--import` 导入资产**（新克隆没有 `.godot/` 缓存，headless 直接 `-s` 会在 preload 阶段大面积失败），再枚举全部 `tests/*_smoke.gd` 逐个执行并扫 stderr。Godot 路径用环境变量 `GODOT` 或 `--godot` 指定；只跑部分套件用 `run_tests.bat campaign night_level`。
 >
-> ⚠️ 历史注记：本次新增的探索循环与灰盒场最初仅通过 gdtoolkit 解析校验、未在引擎首跑；上面的实测结果即首次验收。
+> ⚠️ 历史注记：探索循环与灰盒场最初仅通过 gdtoolkit 解析校验、未在引擎首跑；2026-11-04 那次首次引擎验收的旧结论**已作废、不再引用**。现行结论一律以上面标注了基线提交与执行日期的本地实跑，以及 `godot_project/tests/logs/` 产物为准。
 
 ---
 
-## 🚀 Quick Push to a New Public GitHub Repository | 一键推送至 GitHub 指南
+## 🚀 Push Guide | 仅推送当前分支的安全指南
 
-Unzip `year-of-z-iron-winter-github-repo.zip` on your machine and run either the included `./push_to_github.sh` script or the following commands:
+本仓库**已存在** `origin`（`https://github.com/momoheal/year-of-z-iron-winter.git`），且开发在功能分支上进行（当前 `feat/nav-and-save-recovery`）。`./push_to_github.sh` 与下列命令只做一件事：把**当前分支**推送到**已配置的 origin**；**不创建远端仓库、不覆盖 origin、不重命名分支**。
+
+> ⚠️ **不要**用 `gh repo create` 一键创建并覆盖远端（会重置现有 origin）、**不要**把功能分支强制改名为 `main`、**不要**删除后重建 origin 远端。推送、打 tag、发布与回滚均属高影响动作，执行前请人工确认目标远端、分支与待发布内容。
 
 ```bash
-# Option 1: Using GitHub CLI (gh) — creates a new public repo and pushes in one command
-gh repo create year-of-z-iron-winter --public --source=. --remote=origin --push
+# 1) 先确认目标远端与当前分支（只读，安全）
+git remote -v
+git branch --show-current
 
-# Option 2: Standard Git Remote Push
-git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/year-of-z-iron-winter.git
-git branch -M main
-git push -u origin main
+# 2) 仅推送当前分支（不创建仓库 / 不覆盖 origin / 不重命名分支）
+git push -u origin HEAD
+# 3) 如需把功能分支合入 main，走 Pull Request / 合并流程
+gh pr create --base main --head HEAD --fill
 ```

@@ -119,7 +119,7 @@ AMBIENCE = ["wind", "fire", "steam", "buzz"]
 
 # 清杀队巡逻（世界米坐标），mode: loop | pingpong
 PATROLS = [
-    dict(id="OSK_Rail", mode="pingpong", pts=[(4.0, 29.6), (42.0, 29.6)], pause=2.6),
+    dict(id="OSK_Rail", mode="pingpong", pts=[(18.0, 29.6), (42.0, 29.6)], pause=2.6),
     dict(id="OSK_Yard", mode="loop", pts=[(33.0, 7.6), (45.0, 7.6), (45.0, 19.2), (33.0, 19.2)],
          pause=1.8),
 ]
@@ -170,8 +170,8 @@ ZONES = [
 
 # 黑市：1 罐罐头换 8 发步枪弹，一夜一次。位置在黑区中段、豁口以南 3 m —— 过了网就能看见那盏灯。
 MARKET = dict(
-    pos=(26.5, 24.2), trader=(27.5, 24.6),
-    survivors=[(24.8, 25.0), (28.8, 25.4)],
+    pos=(5.5, 24.2), trader=(6.5, 24.6),
+    survivors=[(4.2, 25.0), (7.8, 25.4)],
     cans=1, ammo=8,
     zh="黑市 · 一罐换八发", en="BLACK MARKET",
 )

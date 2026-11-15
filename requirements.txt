@@ -1,0 +1,18 @@
+# 《Z年纪事：凛冬铁轨》Python 依赖
+#
+# 来源：godot_project/tools/ 下 28 个 .py 脚本的真实 import 逐条 grep 去重。
+# 除下面两个包外，其余 import 均为 Python 标准库（os/sys/json/re/math/time/
+# wave/io/base64/importlib/pathlib/subprocess/shutil/re/__future__）或仓库内
+# 本地模块（artlib/layout/levels/gen_*/build_*）。
+# 用法：python -m pip install -r requirements.txt
+# 只给最低可用版本，不锁精确版本。
+
+# 数组 / 噪声计算：artlib.py、gen_env.py、gen_chars.py、gen_market.py、
+# gen_props.py、gen_rabid.py、gen_vfx.py、gen_weapons.py、render_preview.py、
+# check_chars.py（共 10 处 import numpy as np）
+numpy>=1.23
+
+# 图像读写 / 绘制：PIL 由 Pillow 提供（共 12 处 import）。
+# 用到 Image.fromarray / Image.LANCZOS / ImageDraw.rounded_rectangle 等，
+# 这些 API 自 Pillow 9.0 起稳定可用。
+Pillow>=9.0

@@ -94,27 +94,27 @@
  "CHR_01_Aleksei_Sheet": {
   "path": "res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png",
   "size": [
-   576,
+   864,
    336
   ],
   "pivot": [
    36,
    108
   ],
-  "hframes": 8,
+  "hframes": 12,
   "vframes": 3
  },
  "CHR_05_OSK_Sheet": {
   "path": "res://art/10_characters/CHR_05_OSK/CHR_05_OSK_Sheet.png",
   "size": [
-   576,
+   864,
    336
   ],
   "pivot": [
    36,
    108
   ],
-  "hframes": 8,
+  "hframes": 12,
   "vframes": 3
  },
  "PRP_Crate_Wood_Stack": {
@@ -352,14 +352,14 @@
  "CHR_03_Rabid_Sheet": {
   "path": "res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png",
   "size": [
-   576,
+   864,
    336
   ],
   "pivot": [
    36,
    108
   ],
-  "hframes": 8,
+  "hframes": 12,
   "vframes": 3
  },
  "VFX_Blood_Splat": {
@@ -373,14 +373,14 @@
  "CHR_04_HalfHuman_Sheet": {
   "path": "res://art/10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png",
   "size": [
-   576,
+   864,
    336
   ],
   "pivot": [
    36,
    108
   ],
-  "hframes": 8,
+  "hframes": 12,
   "vframes": 3
  },
  "TIL_Ground_NightManor_Baked": {

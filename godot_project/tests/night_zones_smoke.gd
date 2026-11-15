@@ -320,6 +320,9 @@ func _coldstore() -> void:
 	print("[coldstore 专用]")
 	var s := _scene(SCENES["coldstore"])
 	var zs: Array = s.zones
+	_assert(Zones.zone_at(zs, Vector2(8.0, 16.0)) == "white"
+			and Zones.zone_at(zs, Vector2(18.0, 16.0)) == "red",
+			"coldstore 西侧通道可绕过堆场盘问")
 	var sv := get_nodes_in_group("night_survivor")
 	_assert(sv.size() == 2, "coldstore 3 号柱后的母子 2 人（账面在册 0 人）", str(sv.size()))
 	var near_col := 0

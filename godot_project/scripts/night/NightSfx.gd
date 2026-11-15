@@ -19,16 +19,21 @@ const POS_VOICES := 12
 const FLAT_VOICES := 6
 
 ## 每种音色的可闻半径（米）→ AudioStreamPlayer2D.max_distance
+## 契约：CACHE 里的每个音色都必须有显式键。缺键会被 play_at() 的
+## RADIUS_M.get(sname, 18.0) 静默回退到 18m —— 枪声就会比 Arsenal 的 noise 半径短，
+## 出现「AI 已被噪声吸引压过来，玩家却听不到枪声」的 P0。由 tests/night_sfx_radius_smoke.gd
+## 动态比对 Arsenal 与音色库守着，新增音色 / 武器时别只加 CACHE 忘了这里。
 const RADIUS_M := {
 	"step_snow": 13.0, "step_ice": 17.0, "step_rail": 19.0,
 	"step_tile": 13.0, "step_concrete": 13.0,
 	"growl": 20.0, "snarl": 22.0, "bite": 15.0,
 	"moan": 15.0, "radio": 22.0, "klaxon": 44.0, "mask_breath": 4.0,
-	"gunshot": 48.0, "akm": 48.0,
+	"gunshot": 48.0, "akm": 48.0, "rifle_shot": 48.0, "shotgun_shot": 48.0,
 	"swing": 11.0, "crowbar_hit": 17.0, "rummage": 11.0,
+	"reload": 13.0, "click": 11.0,
 	"can_throw": 13.0, "can": 28.0,
 	"bonejam": 17.0, "dawn_horn": 120.0, "freeze": 80.0, "chill": 40.0,
-	"beep": 40.0, "wedge": 22.0, "thirst": 40.0, "heartbeat": 8.0,
+	"beep": 40.0, "wedge": 22.0, "thirst": 40.0, "heartbeat": 8.0, "room_tone": 8.0,
 }
 
 # 烘焙结果跨实例复用：测试里反复 instantiate 场景时不必每次重合成 ~16 秒音频。

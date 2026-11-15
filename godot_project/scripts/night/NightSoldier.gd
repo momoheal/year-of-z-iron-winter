@@ -269,7 +269,7 @@ func die(by: String) -> void:
 	flash_pivot.rotation = facing
 	if muzzle != null:
 		muzzle.energy = 0.0
-	sprite.frame = sprite.frame - sprite.frame % 8 + 6
+	sprite.frame = sprite.frame - sprite.frame % 12 + 11   # 11 = 倒地尸体
 	if ctl != null:
 		ctl.on_soldier_killed(self, by)
 
@@ -293,5 +293,8 @@ func _animate(delta: float, k: float) -> void:
 		row = 2
 	if _moving:
 		_anim += delta * k
-	var col := 0 if not _moving else 1 + int(_anim * 6.0) % 4
-	sprite.frame = row * 8 + col
+	# 12 列：0 待机 / 1-8 行走 / 9 掎枪暗准 / 10 搜索 / 11 倒地
+	var col := 0 if not _moving else 1 + int(_anim * 6.0) % 8
+	if aim_target != null and not dead:
+		col = 9
+	sprite.frame = row * 12 + col

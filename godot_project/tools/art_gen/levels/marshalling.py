@@ -169,7 +169,7 @@ AMBIENCE = ["wind", "steam", "buzz", "fire"]
 PATROLS = [
     dict(id="OSK_Depot", mode="loop", pts=[(12.0, 6.0), (38.0, 6.0), (38.0, 9.0), (12.0, 9.0)],
          pause=1.6),
-    dict(id="OSK_Hump", mode="pingpong", pts=[(4.0, 22.5), (40.0, 22.5)], pause=2.2),
+    dict(id="OSK_Hump", mode="pingpong", pts=[(4.0, 22.5), (24.0, 22.5)], pause=2.2),
     dict(id="OSK_Culvert", mode="pingpong", pts=[(4.0, 32.2), (20.0, 32.2)], pause=2.8),
 ]
 
@@ -214,8 +214,8 @@ ZONES = [
 
 # 黑市：藏在东南角的火堆旁 —— 涵洞出来往东 24 m，靠火光认路
 MARKET = dict(
-    pos=(33.0, 29.6), trader=(34.0, 30.1),      # 挨着南侧那盆火 —— 黑区的灯就是路标
-    survivors=[(31.8, 30.2), (33.6, 28.6)],
+    pos=(38.5, 30.8), trader=(39.5, 31.3),
+    survivors=[(37.3, 31.4), (39.0, 29.9)],
     cans=1, ammo=8,
     zh="黑市 · 一罐换八发", en="BLACK MARKET",
 )
