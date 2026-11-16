@@ -9,8 +9,8 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     env:
-      # 由仓库变量注入 Godot 4.7.2 headless 可执行路径（见下方 TODO）。
-      GODOT: ${{ vars.GODOT_PATH }}
+      # 自托管 runner 可用仓库变量 GODOT_PATH 覆盖；默认由下面步骤下载官方 4.7.2 二进制。
+      GODOT_OVERRIDE: ${{ vars.GODOT_PATH }}
     steps:
       - uses: actions/checkout@v4
 
@@ -29,29 +29,53 @@ jobs:
         run: python godot_project/tools/art_gen/verify_assets.py
 
       # ------------------------------------------------------------------
-      # TODO(FIX-P0-4): 本轮无法核实 Godot 4.7.2.stable 官方 Linux headless
-      # 产物的发布 URL / 文件名，因此不写一个靠猜测、必然 404 的下载步骤。
-      # 可靠接入方式二选一（配置后本 workflow 即可完整跑通）：
-      #   a) 仓库变量 GODOT_PATH = runner 上预装的 Godot 4.7.2 可执行路径；
-      #   b) 用 actions/cache 预置 Godot 二进制并加入 PATH（godot / godot4）。
-      # 未配置时下面这步显式报错并退出 1，不产出「假绿」结果。
+      # Godot 4.7.2.stable 官方 Linux x86_64 编辑器可执行文件即支持 --headless，
+      # release 另有 SHA512-SUMS.txt 可校验下载完整性。二进制缓存到 runner.temp，
+      # 后续步骤通过环境变量 GODOT 传给 run_tests.py。
       # 另：导出链路(P0-1)还需 4.7.2.stable 导出模板，CI 暂不跑导出。
       # ------------------------------------------------------------------
+      - name: Cache Godot 4.7.2 binary
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/godot
+          key: godot-4.7.2-stable-linux-x86_64-v1
+
+      - name: Download and verify Godot 4.7.2
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          dest="${RUNNER_TEMP}/godot"
+          mkdir -p "$dest"
+          base="https://github.com/godotengine/godot/releases/download/4.7.2-stable"
+          asset="Godot_v4.7.2-stable_linux.x86_64.zip"
+          curl -fL --retry 3 --retry-delay 2 -o "$dest/$asset" "$base/$asset"
+          curl -fL --retry 3 --retry-delay 2 -o "$dest/SHA512-SUMS.txt" "$base/SHA512-SUMS.txt"
+          grep "  $asset\$" "$dest/SHA512-SUMS.txt" > "$dest/checksums.sha512"
+          (cd "$dest" && sha512sum -c checksums.sha512)
+          unzip -q -o "$dest/$asset" -d "$dest"
+          mv "$dest/Godot_v4.7.2-stable_linux.x86_64" "$dest/godot"
+          chmod +x "$dest/godot"
+          rm -f "$dest/$asset" "$dest/SHA512-SUMS.txt" "$dest/checksums.sha512"
+          "$dest/godot" --version
+
       - name: Resolve Godot 4.7.2 headless
         shell: bash
         run: |
-          if [ -n "$GODOT" ]; then
-            if [ -x "$GODOT" ]; then
-              echo "使用 GODOT_PATH: $GODOT"
-            else
-              echo "::error::GODOT_PATH 指向的文件不可执行: $GODOT"
-              exit 1
-            fi
+          set -euo pipefail
+          cached="${RUNNER_TEMP}/godot/godot"
+          if [ -x "$cached" ]; then
+            echo "GODOT=$cached" >> "$GITHUB_ENV"
+            echo "使用已缓存/下载的 Godot: $($cached --version)"
+          elif [ -n "${GODOT_OVERRIDE:-}" ] && [ -x "$GODOT_OVERRIDE" ]; then
+            echo "GODOT=$GODOT_OVERRIDE" >> "$GITHUB_ENV"
+            echo "使用 GODOT_PATH: $GODOT_OVERRIDE"
           elif command -v godot >/dev/null 2>&1; then
             echo "GODOT=$(command -v godot)" >> "$GITHUB_ENV"
-            echo "使用 PATH 中的 godot"
+            echo "使用 PATH 中的 godot: $(godot --version)"
           else
-            echo "::error::TODO(FIX-P0-4): 未提供 Godot 4.7.2 headless。请设置仓库变量 GODOT_PATH，或按上方 TODO(b) 预置 Godot 二进制。"
+            echo "::error::无法解析 Godot 4.7.2：缓存未命中、GODOT_PATH 无效且 PATH 中无 godot。"
             exit 1
           fi
 
