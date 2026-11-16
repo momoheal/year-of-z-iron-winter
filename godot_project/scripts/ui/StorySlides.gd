@@ -364,7 +364,7 @@ func _process(delta: float) -> void:
 func _animate_actors() -> void:
 	var frame := 0
 	if elapsed < 2.0:
-		frame = 1 + int(elapsed * 5.0) % 4
+		frame = 1 + int(elapsed * 5.0) % 8
 	(hero.texture as AtlasTexture).region.position.x = frame * 72
 	(soldier.texture as AtlasTexture).region.position.x = frame * 72
 	var hero_step := minf(elapsed * 28.0, 56.0)

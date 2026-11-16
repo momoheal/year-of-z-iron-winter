@@ -79,6 +79,8 @@ PROPS = [
          layer=1, cont="locker"),
     dict(id="DrainSlit", art="PRP_DrainSlit", pos=(33.5, 3.9), fp=(2.2, 0.5), layer=1,
          occlude=False),                            # ★ 12cm 排水窄缝 + 刮烂的铝饭盒
+    dict(id="WestDockCover", art="PRP_Crate_Wood_Stack", pos=(10.8, 10.4),
+         fp=(1.7, 0.85), layer=1),                   # 西侧绕行线的挡光箱堆
     # --- 堆场（红区，y 11~21）：「账上有货」的地方 ---
     dict(id="Rack01", art="PRP_Crate_Wood_Stack", pos=(10.0, 14.5), fp=(1.7, 0.85), layer=1,
          cont="crate"),
@@ -86,6 +88,8 @@ PROPS = [
          cont="crate"),
     dict(id="Rack03", art="PRP_Crate_Wood_Stack", pos=(38.0, 14.5), fp=(1.7, 0.85), layer=1,
          cont="crate"),
+    dict(id="WestYardCover", art="PRP_Crate_Wood_Stack", pos=(10.8, 18.8),
+         fp=(1.7, 0.85), layer=1),
     dict(id="Dumpster", art="PRP_Dumpster_Steel", pos=(43.0, 12.0), fp=(1.7, 0.9), layer=1,
          cont="dumpster"),
     # --- 南库（黑区，y 21~34）：「账面死人」的舞台 ---
@@ -105,6 +109,8 @@ PROPS = [
          cont="fridge"),
     dict(id="Corpse", art="PRP_Corpse_Tarp", pos=(28.5, 27.2), fp=(1.7, 0.5), layer=0,
          cont="corpse"),                            # 冻死在专用线上的装卸工
+    dict(id="RailExitCover", art="PRP_Crate_Wood_Stack", pos=(28.0, 29.4),
+         fp=(1.7, 0.85), layer=1),
     dict(id="WorkerFire", art="PRP_Brazier_OilDrum", pos=(41.0, 25.2), fp=(0.6, 0.45), layer=2,
          occlude=False, fire=True),                 # 工人火桶（回温点 2）
     dict(id="Reefer", art="PRP_Buran_Boxcar03", pos=(2.0, 27.0), fp=(10.8, 1.7), layer=1,
@@ -129,7 +135,7 @@ TAR_STAINS = [(20.0, 20.0, 1.2), (38.0, 17.0, 1.0), (9.0, 25.6, 1.1), (42.0, 25.
 
 # 踩出来的雪径（折线）
 PATHS = [
-    [(8.0, 4.8), (9.0, 9.0), (11.0, 14.0), (14.0, 19.0), (18.0, 21.5), (24.5, 24.2)],
+    [(8.0, 4.8), (8.0, 10.0), (8.0, 16.0), (9.0, 21.5), (11.5, 24.6)],
     [(24.5, 24.2), (18.0, 23.8), (11.5, 24.6)],          # → 封存医疗箱
     [(24.5, 24.2), (30.0, 23.8), (37.0, 23.6)],          # → 冷库铁门
     [(24.5, 24.2), (22.0, 27.5), (22.0, 32.2)],          # → 越过铁轨、撤离豁口
@@ -157,9 +163,9 @@ AMBIENCE = ["wind", "fire", "steam", "buzz"]
 
 # 清杀队：堆场巡逻 + 专用线哨兵
 PATROLS = [
-    dict(id="OSK_Dock", mode="loop", pts=[(12.0, 13.0), (36.0, 13.0), (36.0, 20.0), (12.0, 20.0)],
+    dict(id="OSK_Dock", mode="loop", pts=[(26.0, 13.0), (34.0, 13.0), (34.0, 17.0), (26.0, 17.0)],
          pause=2.0),
-    dict(id="OSK_Rail", mode="pingpong", pts=[(20.0, 28.2), (42.0, 28.2)], pause=2.4),
+    dict(id="OSK_Rail", mode="pingpong", pts=[(34.0, 28.2), (41.0, 28.2)], pause=2.4),
 ]
 
 # 感染者：专用线上的两只（低危关，尸是注脚）
@@ -173,16 +179,16 @@ HALFS = []
 
 # ===========================================================================
 # 三个区（白 / 红 / 黑）—— 账面死人版：轴 = 离「账面在册」的地方越远越黑
-#   white: 月台（收发亭 / 磁卡终端 / 配给箱——「在册」的地方）
+#   white: 月台（收发亭 / 磁卡终端 / 配给箱）与西侧绕行线
 #   red:   堆场（货架 / 托盘 / 车皮——「账上有货」的地方）
 #   black: 南库（柱列、3 号柱的活人、封存药、铁轨——「账面没人」的地方）
 # ===========================================================================
 ZONES = [
     dict(id="white", zh="白区 · 安全区", en="WHITE ZONE · SAFE", rule="safe",
-         rects=[(0.0, 0.0, 46.0, 11.0)],
-         note_zh="月台：磁卡终端管着的地方——「在册」的地方，可以站定了搜包"),
+         rects=[(0.0, 0.0, 46.0, 11.0), (0.0, 11.0, 13.0, 21.0)],
+         note_zh="月台和西侧通道不触发红区盘问，可沿箱堆绕去南库"),
     dict(id="red", zh="红区 · 管制带", en="RED ZONE · CURFEW", rule="curfew",
-         rects=[(0.0, 11.0, 46.0, 21.0)],
+         rects=[(13.0, 11.0, 46.0, 21.0)],
          note_zh="堆场：账上有货的地方 · 禁止停留"),
     dict(id="black", zh="黑区 · 沉降带", en="BLACK ZONE · SUNKEN", rule="sunken",
          rects=[(0.0, 21.0, 46.0, 34.0)],

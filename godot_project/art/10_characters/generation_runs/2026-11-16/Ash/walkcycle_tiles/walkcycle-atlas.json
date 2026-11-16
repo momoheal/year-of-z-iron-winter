@@ -1,0 +1,165 @@
+{
+  "schema": "winter-iron.partner-walkcycle.v1",
+  "source": "walkcycle_atlas_raw.png",
+  "source_sha256": "c93d24e6d548e09a60da8c9401822313ee13f55dc44cb28c77278472ca378f49",
+  "source_size": [
+    887,
+    1774
+  ],
+  "grid": [
+    2,
+    4
+  ],
+  "frame_count": 8,
+  "target_size": [
+    96,
+    80
+  ],
+  "foot_y": 79,
+  "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+  "scale": 0.214112,
+  "alpha_hygiene": {
+    "mode": "both",
+    "floor": 4,
+    "solid_min": 32,
+    "attach_radius": 2,
+    "connectivity": 8,
+    "floor_px": 416419,
+    "detached_px": 37,
+    "detached_components": 29,
+    "max_removed_alpha": 5
+  },
+  "subject_sizes": [
+    [
+      86,
+      67
+    ],
+    [
+      86,
+      67
+    ],
+    [
+      86,
+      67
+    ],
+    [
+      87,
+      67
+    ],
+    [
+      88,
+      67
+    ],
+    [
+      88,
+      67
+    ],
+    [
+      86,
+      66
+    ],
+    [
+      89,
+      66
+    ]
+  ],
+  "files": {
+    "Walk0": {
+      "path": "PRP_Ash_Walk0.png",
+      "size": [
+        96,
+        80
+      ],
+      "sha256": "a078f7f66f6b615e2f722648eb8919210f540fa4199e1145ea0eee5784c3771b",
+      "subject_size": [
+        86,
+        67
+      ]
+    },
+    "Walk1": {
+      "path": "PRP_Ash_Walk1.png",
+      "size": [
+        96,
+        80
+      ],
+      "sha256": "ecc089a48614c3325c5d36debce737e9ff8115e6b3c2bb86582be2172423351f",
+      "subject_size": [
+        86,
+        67
+      ]
+    },
+    "Walk2": {
+      "path": "PRP_Ash_Walk2.png",
+      "size": [
+        96,
+        80
+      ],
+      "sha256": "fc4d0ce26070b503dbe38bf7718ffc004de2691f25d43706181f139e47ba9a51",
+      "subject_size": [
+        86,
+        67
+      ]
+    },
+    "Walk3": {
+      "path": "PRP_Ash_Walk3.png",
+      "size": [
+        96,
+        80
+      ],
+      "sha256": "515bf8930c1ad92afa020c6f80c9b3558481ce18d44a8682e3b265ff49070a48",
+      "subject_size": [
+        87,
+        67
+      ]
+    },
+    "Walk4": {
+      "path": "PRP_Ash_Walk4.png",
+      "size": [
+        96,
+        80
+      ],
+      "sha256": "5d0583778d3529d44c2c2bcb29b8c65f3ddefa66e1faff3b85ddcb8addbdc0b8",
+      "subject_size": [
+        88,
+        67
+      ]
+    },
+    "Walk5": {
+      "path": "PRP_Ash_Walk5.png",
+      "size": [
+        96,
+        80
+      ],
+      "sha256": "284f6be21607cde8d4acccc418b3d2850012fdb422262031c2c2af5aee384f69",
+      "subject_size": [
+        88,
+        67
+      ]
+    },
+    "Walk6": {
+      "path": "PRP_Ash_Walk6.png",
+      "size": [
+        96,
+        80
+      ],
+      "sha256": "2e199ca682ac793679425ac80830ffebf7e066abecd0785c74a0dc4bf68e672c",
+      "subject_size": [
+        86,
+        66
+      ]
+    },
+    "Walk7": {
+      "path": "PRP_Ash_Walk7.png",
+      "size": [
+        96,
+        80
+      ],
+      "sha256": "3b95fcc7a450a064c2350d6a388bd28c57d1d8e8135e3fbe3be96d2b8307bc97",
+      "subject_size": [
+        89,
+        66
+      ]
+    }
+  },
+  "warnings": []
+}

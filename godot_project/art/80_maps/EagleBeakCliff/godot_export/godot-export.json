@@ -1,0 +1,142 @@
+{
+  "schema": "generate2dmap.engine_export.v1",
+  "tool": {
+    "name": "export_godot",
+    "version": "0.4.0"
+  },
+  "engine": {
+    "name": "godot",
+    "target": "4.3+",
+    "format": 3,
+    "verified": "parse-level (files re-read by this tool); Godot editor import not run"
+  },
+  "bundle": {
+    "path": "../map-bundle.json",
+    "sha256": "b74d36dcb6ec6ec6623238078c705e4bf6a7ae2b00129a40461ec5cca93caafa",
+    "bytes": 3049
+  },
+  "files": {
+    "scene": "EagleBeakCliff.tscn",
+    "tileset": null
+  },
+  "assets": [
+    {
+      "role": "layer",
+      "id": "painted_ground",
+      "path": "assets/layers/painted_ground.png",
+      "sha256": "1d61ff1115500a6ceffdae184d5538a6951222d8cef4744104bb09c621241d3e",
+      "source": "map.png"
+    }
+  ],
+  "tilesets": [],
+  "layers": [
+    {
+      "name": "painted_ground",
+      "kind": "image",
+      "node": "painted_ground",
+      "texture": "assets/layers/painted_ground.png"
+    }
+  ],
+  "counts": {
+    "objects": 0,
+    "solids": 3,
+    "footprints": 0,
+    "markers": 1,
+    "portals": 0,
+    "interactions": 3
+  },
+  "notExported": [
+    "nav: not exported (stays in the map bundle)",
+    "camera: not exported (stays in the map bundle)"
+  ],
+  "warnings": [],
+  "qa": {
+    "status": "pass",
+    "method": "export_godot: read collision through forge_nav (the D2 blocking set), wrote the TileSet and scene, re-read both with a Godot text-resource parser and compared tiles (decoded tile_map_data), terrain peering bits, physics polygons, prop anchors (flip_h included), collision shapes (solids, rects, solid footprints) and marker positions with the bundle.",
+    "notProven": [
+      "Parse-level only: the files are re-read by this tool's own reader; the Godot editor import was not run.",
+      "Terrain peering bits follow the documented Wang/blob mapping; painting with Godot's terrain brush is not verified (the centre terrain of a mixed Wang tile is its majority corner material).",
+      "Non-circular ellipse solids and footprints become 32-sided polygons inscribed in the ellipse; walk regions ride as metadata, and the material map and nav grid are not exported (see notExported).",
+      "Collision shapes are the forge_nav blocking set at export time; Godot's physics (body shapes, margins, one-way collision) is not simulated here."
+    ],
+    "checks": [
+      {
+        "id": "scene_parses",
+        "status": "pass",
+        "value": [],
+        "threshold": null
+      },
+      {
+        "id": "tile_map_data_roundtrip",
+        "status": "pass",
+        "value": [],
+        "threshold": null
+      },
+      {
+        "id": "prop_anchors_roundtrip",
+        "status": "pass",
+        "value": [],
+        "threshold": {
+          "max_error_px": 0.001
+        }
+      },
+      {
+        "id": "collision_shapes_roundtrip",
+        "status": "pass",
+        "value": [],
+        "threshold": {
+          "shapes": 3,
+          "max_error_px": 0.001
+        }
+      },
+      {
+        "id": "markers_roundtrip",
+        "status": "pass",
+        "value": [],
+        "threshold": {
+          "max_error_px": 0.001
+        }
+      },
+      {
+        "id": "assets_identical",
+        "status": "pass",
+        "value": [],
+        "threshold": null
+      },
+      {
+        "id": "objects_in_world",
+        "status": "pass",
+        "value": [],
+        "threshold": {
+          "world": [
+            1672.0,
+            941.0
+          ]
+        }
+      }
+    ],
+    "inputs": [
+      {
+        "path": "../map-bundle.json",
+        "sha256": "b74d36dcb6ec6ec6623238078c705e4bf6a7ae2b00129a40461ec5cca93caafa",
+        "bytes": 3049
+      }
+    ],
+    "outputs": [
+      {
+        "path": "EagleBeakCliff.tscn",
+        "sha256": "1c0fa838ecf585bb9b329e285784b88ac5e80d535ac457f46761123bcffc3107",
+        "bytes": 2654
+      },
+      {
+        "path": "assets/layers/painted_ground.png",
+        "sha256": "1d61ff1115500a6ceffdae184d5538a6951222d8cef4744104bb09c621241d3e",
+        "bytes": 3442435
+      }
+    ],
+    "tool": {
+      "name": "export_godot",
+      "version": "0.4.0"
+    }
+  }
+}

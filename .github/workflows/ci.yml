@@ -1,0 +1,60 @@
+name: CI - headless smoke tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    env:
+      # 由仓库变量注入 Godot 4.7.2 headless 可执行路径（见下方 TODO）。
+      GODOT: ${{ vars.GODOT_PATH }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+
+      # 资产体检：PNG IHDR / JPEG SOF 实读尺寸与 manifest 声明比对、pivot 越界、
+      # 孤儿资产、代码引用但文件缺失。纯标准库（re + struct + json + os），
+      # 不依赖 Godot，因此放在解析 Godot 之前 —— 资产层面出错时失败得更快。
+      - name: Verify asset manifest (IHDR / orphans)
+        run: python godot_project/tools/art_gen/verify_assets.py
+
+      # ------------------------------------------------------------------
+      # TODO(FIX-P0-4): 本轮无法核实 Godot 4.7.2.stable 官方 Linux headless
+      # 产物的发布 URL / 文件名，因此不写一个靠猜测、必然 404 的下载步骤。
+      # 可靠接入方式二选一（配置后本 workflow 即可完整跑通）：
+      #   a) 仓库变量 GODOT_PATH = runner 上预装的 Godot 4.7.2 可执行路径；
+      #   b) 用 actions/cache 预置 Godot 二进制并加入 PATH（godot / godot4）。
+      # 未配置时下面这步显式报错并退出 1，不产出「假绿」结果。
+      # 另：导出链路(P0-1)还需 4.7.2.stable 导出模板，CI 暂不跑导出。
+      # ------------------------------------------------------------------
+      - name: Resolve Godot 4.7.2 headless
+        shell: bash
+        run: |
+          if [ -n "$GODOT" ]; then
+            if [ -x "$GODOT" ]; then
+              echo "使用 GODOT_PATH: $GODOT"
+            else
+              echo "::error::GODOT_PATH 指向的文件不可执行: $GODOT"
+              exit 1
+            fi
+          elif command -v godot >/dev/null 2>&1; then
+            echo "GODOT=$(command -v godot)" >> "$GITHUB_ENV"
+            echo "使用 PATH 中的 godot"
+          else
+            echo "::error::TODO(FIX-P0-4): 未提供 Godot 4.7.2 headless。请设置仓库变量 GODOT_PATH，或按上方 TODO(b) 预置 Godot 二进制。"
+            exit 1
+          fi
+
+      # run_tests.py 退出码 1 会阻断本步骤（导入失败 / 零套件 / 用例失败 / SCRIPT ERROR）。
+      - name: Run headless smoke tests
+        run: python godot_project/tools/run_tests.py

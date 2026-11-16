@@ -73,7 +73,7 @@ PROPS = [
          occlude=False, ao="post"),
     # --- 卫兵哨位（P5 战斗切片）：沙袋 + 弹药箱 + 武器架 ---
     dict(id="Sandbags", art="PRP_Sandbag_Line", pos=(27.0, 12.6), fp=(3.2, 0.85), layer=2,
-         occlude=False),                       # 焚化院前的沙袋：和叉车一起构成两个掩体
+         occlude=True),                        # 焚化院前的沙袋：蹲伏时遮挡探照灯，和叉车构成掩体
     dict(id="AmmoBox", art="PRP_Ammo_Box_Open", pos=(21.0, 6.2), fp=(1.1, 0.5), layer=1,
          cont="crate", guaranteed="ammo"),
     dict(id="WeaponRack", art="PRP_WeaponRack", pos=(9.2, 4.2), fp=(1.3, 0.5), layer=1,
@@ -167,7 +167,7 @@ AMBIENCE = ["wind", "fire", "buzz"]      # 高墙里风小（cfg.cold=0.3），�
 
 # 特勤巡逻：4 组。OSK_Depot 的环线正对着 409 托盘 —— 想拿货就得卡它的背身窗口。
 PATROLS = [
-    dict(id="OSK_Gate", mode="pingpong", pts=[(4.0, 32.6), (18.0, 32.6)], pause=2.4),
+    dict(id="OSK_Gate", mode="pingpong", pts=[(16.0, 33.6), (24.0, 33.6)], pause=2.4),
     dict(id="OSK_Depot", mode="loop", pts=[(6.0, 5.4), (24.0, 5.4), (24.0, 8.8), (6.0, 8.8)],
          pause=1.6),
     dict(id="OSK_Drive", mode="pingpong", pts=[(20.5, 10.0), (20.5, 30.0)], pause=2.0),
@@ -212,8 +212,8 @@ ZONES = [
 
 # 黑市：西松林深处的一处窝棚，靠一堆木箱挡风
 MARKET = dict(
-    pos=(11.8, 27.4), trader=(12.7, 27.9),      # 西松林里，紧着那堆木箱
-    survivors=[(10.6, 28.4), (13.3, 26.9)],
+    pos=(6.0, 23.6), trader=(7.0, 24.1),        # 西松林，离车道和大门巡逻线较远
+    survivors=[(4.8, 24.2), (7.5, 23.1)],
     cans=1, ammo=8,
     zh="黑市 · 一罐换八发", en="BLACK MARKET",
 )

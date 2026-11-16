@@ -79,6 +79,13 @@ func hear(pos: Vector2, kind: String) -> void:
 		target = pos
 		_timer = 12.0
 
+func flee_from(pos: Vector2) -> void:
+	if state in ["dead", "saved"]:
+		return
+	state = "flinch"
+	target = pos
+	_timer = 2.2
+
 ## 喂过药：缩回蒸汽管下的雪窝里睡着，清杀队的光锥扫过也认不出他。
 func save() -> void:
 	state = "saved"
@@ -110,7 +117,7 @@ func die(by: String) -> void:
 	collision_layer = 0
 	collision_mask = 0
 	sprite.position = Vector2.ZERO
-	sprite.frame = sprite.frame - sprite.frame % 8 + 6
+	sprite.frame = sprite.frame - sprite.frame % 12 + 11   # 11 = 倒地尸体
 	sprite.self_modulate = Color(0.75, 0.75, 0.78)
 	ctl.on_half_killed(self, by)
 
@@ -151,14 +158,15 @@ func _animate(delta: float, moving: bool) -> void:
 	else:
 		row = 2
 	_anim += delta
-	var col := 5
+	# 12 列：0 待机 / 1-8 行走 / 9 蜷缩 / 10 硬直 / 11 倒地
+	var col := 9
 	if state == "flinch":
-		col = 7 if not moving else 1 + int(_anim * 9.0) % 4
+		col = 10 if not moving else 1 + int(_anim * 9.0) % 8
 	elif moving:
-		col = 1 + int(_anim * 4.5) % 4
+		col = 1 + int(_anim * 4.5) % 8
 	elif state == "saved":
-		col = 5
+		col = 9
 		row = 0
 	# 高烧发抖：没睡着的时候一直在抖
 	sprite.position.x = sin(_anim * 37.0) * 0.6 if state in ["huddle", "drift"] else 0.0
-	sprite.frame = row * 8 + col
+	sprite.frame = row * 12 + col

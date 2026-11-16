@@ -30,6 +30,24 @@
 
 新图第一次用编辑器打开工程（或跑 `godot --headless --import`）时会自动生成 `.import`。
 
+## 新增主线画面（2026-11-16）
+
+下列场景图统一导出为 **1376×768 JPG**；原始生成 PNG 保留在 `art/generation_runs/2026-11-16-assets/`。广播点旧图已归档到 `art/generation_runs/2026-11-16-assets/CG_Broadcast_Location/generated.png`，剧情运行时统一读取 `cg_broadcast_scene.jpg`。
+
+| 文件 | 场景 |
+| --- | --- |
+| `cg_pasha_watchtower_scene.jpg` | 帕沙哨塔与假人哨塔事件 |
+| `cg_apartment_exchange_scene.jpg` | 公寓配给交接 |
+| `cg_mine_sporeface_scene.jpg` | 矿坑孢子层发现 |
+| `cg_mine_detonator_scene.jpg` | 起爆室与铝热剂抉择 |
+| `cg_fire_rescue_scene.jpg` | 火场托孤 |
+| `cg_eaglecliff_derailment_scene.jpg` | 004 号车厢在鹰嘴崖脱轨 |
+| `cg_station_buran_scene.jpg` | 站场中的布拉风号装甲列车 |
+| `cg_broadcast_siege_scene.jpg` | 302 号广播塔围攻 |
+| `cg_broadcast_testimony_scene.jpg` | 终局播报与证词 |
+
+`CutsceneData.scene_image()` 为这些场景 ID 提供了显式映射；鹰嘴崖脱轨图也已接入 `marshalling:0` 的最后一页。其余图片目前作为可调用场景背景资产保留，尚无对应的剧情触发器。
+
 ## 一致性约定（重画或补图时照此写提示词，并把参考图一起喂进去）
 
 - 阿列克谢：灰色毛皮护耳帽（无帽徽）、圆框眼镜、深炭灰棉袄配灰毛领。参考 `PRT_Aleksei_Concept.png`、`../opening_dispatch.png`

@@ -56,8 +56,8 @@ const AFTERMATH := {
 			"zh": "身后，配给箱的电子锁又响了一声。账本上写着「零」，没有人会来纠正它。",
 			"en": "Behind you the ration lock snaps shut again. The ledger says zero, and nobody will come to correct it."},
 		{"img": CG + "cg_coldstore_c1.jpg", "focus": Vector2(0.7, 0.62), "zoom": Vector2(1.08, 1.2),
-			"zh": "那只灰狼犬在风雪里静静地看着你。你叫它「灰烬」。它踩着你的脚印，跟了上来。",
-			"en": "The grey wolfdog watches you through the snow. You call him Ash. He steps into your footprints and follows."},
+			"zh": "收发亭旁，那只灰狼犬仍缩在风雪里。你没有剪断锈铁丝，也没有把黑麦饼递过去；它留在原地，颈上的旧伤仍清晰可见。",
+			"en": "The wolfdog remains by the dispatch hut in the snow. You did not cut the wire or offer the bread; it stays where it is, its old neck scar still visible."},
 	],
 	"yard:0": [
 		{"img": CG + "cg_yard_scene.jpg", "focus": Vector2(0.33, 0.62),
@@ -86,7 +86,7 @@ const AFTERMATH := {
 			"zh": "伊万冷冷地收下废钢，用粗黑的指甲在油纸上划出一道线：\n「顺着西站水塔底下的排污检修沟摸过去。」",
 			"en": "Ivan takes the scrap without warmth and drags a black thumbnail across the oil paper:\n\"Follow the maintenance trench under the West Yard water tower.\""},
 		{"img": [CG + "cg_market_c0b.jpg", CG + "cg_market_c0.jpg"], "portrait": PRT + "PRT_Ivan_Intense.png",
-			"focus": Vector2(0.86, 0.32), "zoom": Vector2(1.12, 1.3),
+			"focus": Vector2(0.60, 0.45), "zoom": Vector2(1.12, 1.3),
 			"zh": "「记住——第三根冻裂的枕木底下埋着雷。不想死，就别往上踩。」",
 			"en": "\"And remember: there's a mine under the third cracked sleeper. Step on it if you want to die.\""},
 		{"img": CG + "cg_yard_scene.jpg", "focus": Vector2(0.5, 0.25),
@@ -98,11 +98,11 @@ const AFTERMATH := {
 			"zh": "你把救命的抗生素，塞进那些冻烂了脚趾的苦人手里。\n没有人道谢——他们只是不敢相信。",
 			"en": "You press your antibiotics into the hands of people whose toes have gone black with frost.\nNobody thanks you. They simply cannot believe it."},
 		{"img": [CG + "cg_market_c1b.jpg", CG + "cg_market_c1.jpg"], "portrait": PRT + "PRT_Ivan_Calm.png",
-			"focus": Vector2(0.84, 0.35), "zoom": Vector2(1.12, 1.3),
+			"focus": Vector2(0.62, 0.40), "zoom": Vector2(1.12, 1.3),
 			"zh": "「老轨」伊万浑浊的眼底狠狠颤了一下。他没有再提废钢的事。",
 			"en": "Something shakes loose behind Old Ivan's clouded eyes. He does not mention the scrap again."},
 		{"img": [CG + "cg_market_c1c.jpg", CG + "cg_market_scene.jpg"], "portrait": PRT + "PRT_Ivan_Intense.png",
-			"focus": Vector2(0.62, 0.45),
+			"focus": Vector2(0.50, 0.52),
 			"zh": "他把一只烤热了的厚帆布手套塞进你怀里，一言不发，跟上了你的脚步。",
 			"en": "He shoves a warmed canvas glove against your chest and, without a word, falls in behind you."},
 	],
@@ -111,20 +111,36 @@ const AFTERMATH := {
 			"zh": "他替你引开了哨兵。\n而你，从外面落下了铁门的锁。",
 			"en": "He drew the sentries off for you.\nAnd you dropped the bolt on the iron door from the outside."},
 		{"img": [CG + "cg_market_c2b.jpg", CG + "cg_market_c2.jpg"], "portrait": PRT + "PRT_Ivan_Sad.png",
-			"focus": Vector2(0.3, 0.85), "zoom": Vector2(1.14, 1.32),
+			"focus": Vector2(0.37, 0.72), "zoom": Vector2(1.14, 1.32),
 			"zh": "门后先是一声难以置信的闷哼，紧接着是微声步枪的点射——短促得像踩碎了冰碴。",
 			"en": "Behind the door: one grunt of disbelief, then a suppressed burst, as short as ice breaking underfoot."},
 		{"img": [CG + "cg_market_c2c.jpg", CG + "cg_market_c2.jpg"], "portrait": PRT + "PRT_Aleksei_Sad.png",
-			"focus": Vector2(0.72, 0.38), "zoom": Vector2(1.12, 1.28),
+			"focus": Vector2(0.58, 0.55), "zoom": Vector2(1.12, 1.28),
 			"zh": "背包被抢来的物资撑得满满当当。\n《工作日志》的背面，多了一道洗不掉的划痕。",
 			"en": "Your pack is stuffed with what you took.\nOn the back page of the logbook there is one more stroke that will not wash out."},
+	],
+	"broadcast:0": [
+		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.5, 0.48),
+			"zh": "短波信号的尽头，金发的叶莲娜关掉发射机。厚实、剪裁合身的冬衣让她看起来比棚外的人体面；她摘下耳机，主动把频率表递给你。",
+			"en": "At the end of the shortwave signal, blonde Yelena switches off the transmitter. Her well-cut winter coat is better kept than anything outside; she removes her headphones and hands you the frequency sheet."},
+		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.62, 0.55), "zoom": Vector2(1.06, 1.12),
+			"zh": "你选择带她同行。叶莲娜背起监听设备，交出进入松林庄园的排污路线；她也能用无线电命令一名 OSK 暂停行动。",
+			"en": "You invite her along. Yelena shoulders her listening gear and shares the drainage route into Pine Manor; her radio can halt one OSK patrol briefly."},
+	],
+	"broadcast:1": [
+		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.5, 0.48),
+			"zh": "叶莲娜把发射机的频率留给你，却没有交出自己的监听设备。你记下排污路线，庄园入口已经找到。",
+			"en": "Yelena leaves the transmitter frequency with you but keeps her listening gear. You copy the drainage route; the manor entrance is found."},
+		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.26, 0.6), "zoom": Vector2(1.08, 1.1),
+			"zh": "她留在秘密广播点继续监听。你独自离开，松林庄园已经解锁，但叶莲娜不会加入队伍。",
+			"en": "She stays at the hidden broadcast room to keep listening. You leave alone: Pine Manor is unlocked, but Yelena does not join the crew."},
 	],
 	"sanitarium:0": [
 		{"img": [CG + "cg_sanitarium_scene.jpg"], "portrait": PRT + "PRT_Anna_Sad.png", "focus": Vector2(0.72, 0.7),
 			"zh": "撬棍崩开了生锈的笼锁。你替她解开嵌进肉里的皮带——\n那是她怕自己伤人，亲手勒上去的。",
 			"en": "The crowbar breaks the rusted lock. You undo the straps sunk into her wrists.\nShe had tied them herself, afraid of what she might do."},
 		{"img": [CG + "cg_sanitarium_c0b.jpg", CG + "cg_sanitarium_scene.jpg"], "portrait": PRT + "PRT_Anna_Intense.png",
-			"focus": Vector2(0.8, 0.6), "zoom": Vector2(1.16, 1.34),
+			"focus": Vector2(0.48, 0.42), "zoom": Vector2(1.16, 1.34),
 			"zh": "「拉娜的烧退了，三十六度八！昨晚他们把她锁进了铁壳号——第三节车厢！」",
 			"en": "\"Lana's fever broke. Thirty-six point eight! Last night they locked her in the Buran. Boxcar Three!\""},
 		{"img": [CG + "cg_sanitarium_c0.jpg"], "portrait": PRT + "PRT_Gulya_Calm.png", "focus": Vector2(0.45, 0.6),
@@ -149,7 +165,7 @@ const AFTERMATH := {
 		{"img": [CG + "cg_marshalling_c0b.jpg"], "portrait": PRT + "PRT_Aleksei_Intense.png",
 			"zh": "报废守车的工具箱底，躺着几块抹了黄油的精钢枪机零件。\n你把它们一件一件拆走。",
 			"en": "In the toolbox of a dead brake van lie a few greased steel parts of a gun.\nYou take them out, one piece at a time."},
-		{"img": CG + "cg_intro_lana.jpg", "focus": Vector2(0.42, 0.42), "zoom": Vector2(1.06, 1.22),
+		{"img": CG + "cg_eaglecliff_derailment_scene.jpg", "focus": Vector2(0.66, 0.52), "zoom": Vector2(1.06, 1.22),
 			"zh": "所有的数字终于严丝合缝地扣上了。\n一百七十六条退了烧的性命——其中一个，叫拉娜。",
 			"en": "Every number finally locks into place.\nOne hundred seventy-six people whose fever has broken. One of them is called Lana."},
 	],
@@ -158,6 +174,19 @@ const AFTERMATH := {
 
 ## 剧情对白框背后的场景插图路径（文件可能还不存在，调用方用 StorySlides.tex_of 判空）。
 static func scene_image(story_id: String) -> String:
+	var story_cg := {
+		"pasha_watchtower": "cg_pasha_watchtower_scene.jpg",
+		"apartment_exchange": "cg_apartment_exchange_scene.jpg",
+		"mine_sporeface": "cg_mine_sporeface_scene.jpg",
+		"mine_detonator": "cg_mine_detonator_scene.jpg",
+		"fire_rescue": "cg_fire_rescue_scene.jpg",
+		"eaglecliff_derailment": "cg_eaglecliff_derailment_scene.jpg",
+		"station_buran": "cg_station_buran_scene.jpg",
+		"broadcast_siege": "cg_broadcast_siege_scene.jpg",
+		"broadcast_testimony": "cg_broadcast_testimony_scene.jpg",
+	}
+	if story_cg.has(story_id):
+		return CG + String(story_cg[story_id])
 	return CG + "cg_%s_scene.jpg" % story_id
 
 

@@ -1,0 +1,216 @@
+{
+  "standard_cg_size": [
+    1376,
+    768
+  ],
+  "cg_assets": [
+    {
+      "file": "cg_apartment_exchange_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "506d8825dc115d45e1e8a13261059e6317f7beadbdcabf8ec0b148a5508a19a1"
+    },
+    {
+      "file": "cg_broadcast_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "178abc3e21c1a6379590cac77ba8e7926cc020a9c572792d292f3cd55b70ddde"
+    },
+    {
+      "file": "cg_broadcast_siege_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "582b7c91751869bc2aa8501a46da0a734ad2e57e339068a47edd3a90582d7442"
+    },
+    {
+      "file": "cg_broadcast_testimony_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "befc96404dc72862869138477b994b6432ca801f5c9660456611482e53d64e17"
+    },
+    {
+      "file": "cg_canteen_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "bee5698443d1b72da6b0287548b395ca8ee91dca82d24ea140ef6e3540ea3702"
+    },
+    {
+      "file": "cg_coldstore_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "57950dbfca54492367ed1ab8bec7f2da08a5c4244168f9e3b1dbb7b8de631a2d"
+    },
+    {
+      "file": "cg_eaglecliff_derailment_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "7fc10f08ed6888061e1e0a2c7971948d9a3f80466d5ba4e956436bc4a7448dc1"
+    },
+    {
+      "file": "cg_fire_rescue_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "860e4bef6fb9362d64104990b1400091a77df50fbc59a6515998616ed9b26605"
+    },
+    {
+      "file": "cg_manor_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "b072f8df98c6449a043edb59c42bfbbc426f5561b00499faabb9bc28d4aae7ce"
+    },
+    {
+      "file": "cg_market_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "e763ad2b22adfa76849f69e7c6b847104fcc94e4ee38f3324bc4f03497ffe940"
+    },
+    {
+      "file": "cg_marshalling_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "f1a549c3b33b4c75c304ad8d315c9f4f7b8d557b9ae216395a4dbcc263fcbb05"
+    },
+    {
+      "file": "cg_mine_detonator_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "4e6e17e4235f80349486a9e86c8fca909f5c06168727a79ce8a11ef2feac79ab"
+    },
+    {
+      "file": "cg_mine_sporeface_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "a2b1f94bc6555267d2cab0137700925d700e0be366bb3b98051561d7c2df007c"
+    },
+    {
+      "file": "cg_pasha_watchtower_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "f971a193ce7a30635da2ffce4b29322d892e3d78b29c1c64835d8222d4128d72"
+    },
+    {
+      "file": "cg_sanitarium_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "adaa26c581502f8fd53f188ca9caabc18bcd9f18ccef91e11024e10475b0a072"
+    },
+    {
+      "file": "cg_station_buran_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "c04fcf8b4207bb800a5dec0c2040935803296f9f3b3af7ae93c9e01735d38d0f"
+    },
+    {
+      "file": "cg_yard_scene.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "3ffdc212afd607a83663950384afe018dbc701a5b97bd35a5ed36442fdb659dc"
+    }
+  ],
+  "broadcast_original_png": {
+    "archive_path": "godot_project/art/generation_runs/2026-11-16-assets/CG_Broadcast_Location/generated.png",
+    "runtime_export": "cg_broadcast_scene.jpg",
+    "source_sha256": "521398f8ff770f5f7fdbaeff12cfda0e19ea4c5e93b4f6f1988c020bc20de08f"
+  },
+  "maps": [
+    {
+      "id": "broadcast_tower_302",
+      "name": "302 Broadcast Tower · siege grounds",
+      "folder": "godot_project/art/80_maps/BroadcastTower302",
+      "map_png_sha256": "474e5ba3bf82c2253fcc939d155e7d5c21e3b4414cfc40dc57d5729a2baffc6d",
+      "map_bundle_sha256": "68737d04b27e7d776f59c865f268fb1b39485d42ac2f4838c11dd0221c849f93",
+      "bundle_status": "pass",
+      "nav_status": "pass",
+      "nav_targets": 4,
+      "nav_unreachable": 0,
+      "preview_status": "pass",
+      "browser_verify": "SKIPPED",
+      "godot_export_status": null,
+      "godot_scene": "godot_project/art/80_maps/BroadcastTower302/godot_export/BroadcastTower302.tscn"
+    },
+    {
+      "id": "eagle_beak_cliff",
+      "name": "Eagle Beak Cliff · Car 004 derailment",
+      "folder": "godot_project/art/80_maps/EagleBeakCliff",
+      "map_png_sha256": "1d61ff1115500a6ceffdae184d5538a6951222d8cef4744104bb09c621241d3e",
+      "map_bundle_sha256": "b74d36dcb6ec6ec6623238078c705e4bf6a7ae2b00129a40461ec5cca93caafa",
+      "bundle_status": "pass",
+      "nav_status": "pass",
+      "nav_targets": 3,
+      "nav_unreachable": 0,
+      "preview_status": "pass",
+      "browser_verify": "SKIPPED",
+      "godot_export_status": null,
+      "godot_scene": "godot_project/art/80_maps/EagleBeakCliff/godot_export/EagleBeakCliff.tscn"
+    },
+    {
+      "id": "station_buran_yard",
+      "name": "West Station · Buran rail yard",
+      "folder": "godot_project/art/80_maps/StationBuranYard",
+      "map_png_sha256": "e2ddb20de31211eaa8e5f20a279bd709e83e96513cbface117c98716fab80514",
+      "map_bundle_sha256": "dae94f94df1d8a51b5b087358d67670b38e81a11d9c53c7560f5a2a61605af79",
+      "bundle_status": "pass",
+      "nav_status": "pass",
+      "nav_targets": 4,
+      "nav_unreachable": 0,
+      "preview_status": "pass",
+      "browser_verify": "SKIPPED",
+      "godot_export_status": null,
+      "godot_scene": "godot_project/art/80_maps/StationBuranYard/godot_export/StationBuranYard.tscn"
+    }
+  ],
+  "character_identity_concepts": [
+    {
+      "name": "Yelena",
+      "image": "art/generation_runs/2026-11-16-assets/CharacterIdentity_Yelena/generated_output/generated.png",
+      "runtime_imported": false,
+      "reason": "model repeated front-facing orientation; map directions need explicit row-specific frames"
+    },
+    {
+      "name": "Zakhar",
+      "image": "art/generation_runs/2026-11-16-assets/CharacterIdentity_Zakhar/generated_output/generated.png",
+      "runtime_imported": false,
+      "reason": "model repeated front-facing orientation; map directions need explicit row-specific frames"
+    },
+    {
+      "name": "Ivan",
+      "image": "art/generation_runs/2026-11-16-assets/CharacterIdentity_Ivan/generated_output/generated.png",
+      "runtime_imported": false,
+      "reason": "model repeated front-facing orientation; map directions need explicit row-specific frames"
+    }
+  ]
+}

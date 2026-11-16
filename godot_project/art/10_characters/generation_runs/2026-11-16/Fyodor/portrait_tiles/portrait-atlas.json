@@ -1,0 +1,46 @@
+{
+  "schema": "winter-iron.character-portrait-atlas.v1",
+  "source": "portrait_atlas_raw.png",
+  "source_sha256": "2f04525fc05defda475ec8ef3761f9e4597dc6de2a1f47768e4bd19146c20fb9",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "tile_size": [
+    512,
+    512
+  ],
+  "layout": {
+    "top_left": "Calm",
+    "top_right": "Sad",
+    "bottom_left": "Intense",
+    "bottom_right": "Wry"
+  },
+  "files": {
+    "Calm": {
+      "path": "PRT_Fyodor_Calm.png",
+      "sha256": "8b837a4f176878e13dbd88c6b1d10acf4b9917984f00d5a1923de4c8c8a3e72a"
+    },
+    "Sad": {
+      "path": "PRT_Fyodor_Sad.png",
+      "sha256": "ce94d52bf15867597de0ad900d76857cad10056ce4905abf80d1dd3c739ffb73"
+    },
+    "Intense": {
+      "path": "PRT_Fyodor_Intense.png",
+      "sha256": "38c3df611d734c42218ad6b438eb09dc8377e6e87e0d89c3c8a1feeb993f7112"
+    },
+    "Wry": {
+      "path": "PRT_Fyodor_Wry.png",
+      "sha256": "36462f7f911aecbba58b38fffb884cc39c627198d39acf2dca44f7ef6b99b0a4"
+    },
+    "Base": {
+      "path": "PRT_Fyodor.png",
+      "sha256": "8b837a4f176878e13dbd88c6b1d10acf4b9917984f00d5a1923de4c8c8a3e72a"
+    }
+  },
+  "warnings": []
+}

@@ -90,7 +90,7 @@ PROPS = [
          fade=True),
     # --- 检修哨位（P5 战斗切片）：沙袋 + 弹药箱 + 武器架 ---
     dict(id="Sandbags", art="PRP_Sandbag_Line", pos=(33.0, 9.2), fp=(3.2, 0.85), layer=2,
-         occlude=False),                       # 低矮掩体：蹲下挡视线，站着能架枪打驼峰那头
+         occlude=True),                        # 低矮掩体：蹲下挡视线与探照灯，站着仍可观察驼峰
     dict(id="AmmoBox", art="PRP_Ammo_Box_Open", pos=(24.2, 5.6), fp=(1.1, 0.5), layer=1,
          cont="crate", guaranteed="ammo"),     # 调度塔下的弹药箱：补子弹，别在空枪时才发现
     dict(id="WeaponRack", art="PRP_WeaponRack", pos=(12.4, 4.1), fp=(1.3, 0.5), layer=1,
@@ -169,7 +169,7 @@ AMBIENCE = ["wind", "steam", "buzz", "fire"]
 PATROLS = [
     dict(id="OSK_Depot", mode="loop", pts=[(12.0, 6.0), (38.0, 6.0), (38.0, 9.0), (12.0, 9.0)],
          pause=1.6),
-    dict(id="OSK_Hump", mode="pingpong", pts=[(4.0, 22.5), (40.0, 22.5)], pause=2.2),
+    dict(id="OSK_Hump", mode="pingpong", pts=[(4.0, 22.5), (24.0, 22.5)], pause=2.2),
     dict(id="OSK_Culvert", mode="pingpong", pts=[(4.0, 32.2), (20.0, 32.2)], pause=2.8),
 ]
 
@@ -214,8 +214,8 @@ ZONES = [
 
 # 黑市：藏在东南角的火堆旁 —— 涵洞出来往东 24 m，靠火光认路
 MARKET = dict(
-    pos=(33.0, 29.6), trader=(34.0, 30.1),      # 挨着南侧那盆火 —— 黑区的灯就是路标
-    survivors=[(31.8, 30.2), (33.6, 28.6)],
+    pos=(38.5, 30.8), trader=(39.5, 31.3),
+    survivors=[(37.3, 31.4), (39.0, 29.9)],
     cans=1, ammo=8,
     zh="黑市 · 一罐换八发", en="BLACK MARKET",
 )

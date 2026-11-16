@@ -1,0 +1,5426 @@
+{
+ "_meta": {
+  "asset_count": 332,
+  "generated_by": "tools/art_gen/verify_assets.py",
+  "manifest_files": [
+   "night_archive_manifest.json",
+   "night_birch_manifest.json",
+   "night_boiler_manifest.json",
+   "night_canteen_manifest.json",
+   "night_coldstore_manifest.json",
+   "night_greenhouse_manifest.json",
+   "night_manor_manifest.json",
+   "night_market_manifest.json",
+   "night_marshalling_manifest.json",
+   "night_mine_manifest.json",
+   "night_sanitarium_manifest.json",
+   "night_underpass_manifest.json",
+   "night_workshop_manifest.json",
+   "night_yard_manifest.json"
+  ],
+  "note": "real_size 由 PNG IHDR / JPEG SOF 实读；declared_size 来自 night_*_manifest.json。ref 分级是静态分析的结论；runtime 级需人工确认参数取值是否覆盖到。",
+  "ref_levels": {
+   "code": "可静态确定：完整路径 / 完整文件名 / 前缀常量+后缀字面量",
+   "manifest": "仅 night_*_manifest.json 登记，运行时经 manifest 取用",
+   "none": "孤儿：无任何引用",
+   "runtime": "printf 模板拼接（如 PRT_%s_%s.png），参数运行时决定"
+  }
+ },
+ "assets": {
+  "10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png": {
+   "bytes": 308961,
+   "declared_size": [
+    864,
+    336
+   ],
+   "family": "character_sheet",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png",
+   "pivot": [
+    36,
+    108
+   ],
+   "real_size": [
+    864,
+    336
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png": {
+   "bytes": 349145,
+   "declared_size": [
+    864,
+    336
+   ],
+   "family": "character_sheet",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png",
+   "pivot": [
+    36,
+    108
+   ],
+   "real_size": [
+    864,
+    336
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png": {
+   "bytes": 359794,
+   "declared_size": [
+    864,
+    336
+   ],
+   "family": "character_sheet",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png",
+   "pivot": [
+    36,
+    108
+   ],
+   "real_size": [
+    864,
+    336
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/CHR_05_OSK/CHR_05_OSK_Sheet.png": {
+   "bytes": 325629,
+   "declared_size": [
+    864,
+    336
+   ],
+   "family": "character_sheet",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/10_characters/CHR_05_OSK/CHR_05_OSK_Sheet.png",
+   "pivot": [
+    36,
+    108
+   ],
+   "real_size": [
+    864,
+    336
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Aleksei.png": {
+   "bytes": 526435,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Aleksei.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "10_characters/portraits/PRT_Aleksei_Calm.png": {
+   "bytes": 526435,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Aleksei_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "10_characters/portraits/PRT_Aleksei_Concept.png": {
+   "bytes": 2696665,
+   "declared_size": null,
+   "family": "concept",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Aleksei_Concept.png",
+   "pivot": null,
+   "real_size": [
+    1254,
+    1254
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Aleksei_Intense.png": {
+   "bytes": 526966,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Aleksei_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Aleksei_Sad.png": {
+   "bytes": 523754,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Aleksei_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Aleksei_Wry.png": {
+   "bytes": 528961,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Aleksei_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Anna.png": {
+   "bytes": 523977,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Anna.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "10_characters/portraits/PRT_Anna_Calm.png": {
+   "bytes": 523977,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Anna_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Anna_Intense.png": {
+   "bytes": 508084,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Anna_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Anna_Sad.png": {
+   "bytes": 510792,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Anna_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Anna_Wry.png": {
+   "bytes": 513421,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Anna_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Ash_Calm.png": {
+   "bytes": 542360,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Ash_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Ash_Intense.png": {
+   "bytes": 544620,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Ash_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Ash_Sad.png": {
+   "bytes": 528324,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Ash_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Ash_Wry.png": {
+   "bytes": 539495,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Ash_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Chernov.png": {
+   "bytes": 528431,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Chernov.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "10_characters/portraits/PRT_Chernov_Calm.png": {
+   "bytes": 528431,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Chernov_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Chernov_Intense.png": {
+   "bytes": 534439,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Chernov_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Chernov_Sad.png": {
+   "bytes": 528618,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Chernov_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Chernov_Wry.png": {
+   "bytes": 528734,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Chernov_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Fyodor.png": {
+   "bytes": 562337,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Fyodor.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "10_characters/portraits/PRT_Fyodor_Calm.png": {
+   "bytes": 562337,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Fyodor_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Fyodor_Intense.png": {
+   "bytes": 560546,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Fyodor_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Fyodor_Sad.png": {
+   "bytes": 554201,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Fyodor_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Fyodor_Wry.png": {
+   "bytes": 550663,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Fyodor_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Gulya_Calm.png": {
+   "bytes": 548934,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Gulya_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Gulya_Intense.png": {
+   "bytes": 535173,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Gulya_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Gulya_Sad.png": {
+   "bytes": 544255,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Gulya_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Gulya_Wry.png": {
+   "bytes": 540825,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Gulya_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Ivan.png": {
+   "bytes": 536133,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Ivan.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "10_characters/portraits/PRT_Ivan_Calm.png": {
+   "bytes": 536133,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Ivan_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Ivan_Intense.png": {
+   "bytes": 523306,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Ivan_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Ivan_Sad.png": {
+   "bytes": 521160,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Ivan_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Ivan_Wry.png": {
+   "bytes": 522119,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Ivan_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Lana_Calm.png": {
+   "bytes": 560069,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Lana_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Lana_Intense.png": {
+   "bytes": 550041,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Lana_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Lana_Sad.png": {
+   "bytes": 545717,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Lana_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Lana_Wry.png": {
+   "bytes": 555163,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Lana_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Leonov_Calm.png": {
+   "bytes": 504398,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Leonov_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Leonov_Intense.png": {
+   "bytes": 503380,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Leonov_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Leonov_Sad.png": {
+   "bytes": 510531,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Leonov_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Leonov_Wry.png": {
+   "bytes": 503363,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Leonov_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_OSK_Calm.png": {
+   "bytes": 501890,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_OSK_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_OSK_Concept.png": {
+   "bytes": 2736776,
+   "declared_size": null,
+   "family": "concept",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_OSK_Concept.png",
+   "pivot": null,
+   "real_size": [
+    1254,
+    1254
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_OSK_Death.png": {
+   "bytes": 432887,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_OSK_Death.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "runtime",
+   "ref_by": "PRT_%s_%s.png"
+  },
+  "10_characters/portraits/PRT_OSK_Intense.png": {
+   "bytes": 502586,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_OSK_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_OSK_Sad.png": {
+   "bytes": 501593,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_OSK_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_OSK_Wry.png": {
+   "bytes": 504766,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_OSK_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "runtime",
+   "ref_by": "PRT_%s_%s.png"
+  },
+  "10_characters/portraits/PRT_Pasha_Calm.png": {
+   "bytes": 552529,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Pasha_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Pasha_Intense.png": {
+   "bytes": 548928,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Pasha_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Pasha_Sad.png": {
+   "bytes": 538507,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Pasha_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Pasha_Wry.png": {
+   "bytes": 546997,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Pasha_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Pavel_Calm.png": {
+   "bytes": 566142,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Pavel_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Pavel_Intense.png": {
+   "bytes": 571797,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Pavel_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Pavel_Sad.png": {
+   "bytes": 560445,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Pavel_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Pavel_Wry.png": {
+   "bytes": 562904,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Pavel_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Yelena.png": {
+   "bytes": 508908,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Yelena.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "10_characters/portraits/PRT_Yelena_Calm.png": {
+   "bytes": 508908,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Yelena_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Yelena_Intense.png": {
+   "bytes": 512284,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Yelena_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Yelena_Sad.png": {
+   "bytes": 514376,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Yelena_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Yelena_Wry.png": {
+   "bytes": 514896,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Yelena_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Zakhar.png": {
+   "bytes": 476665,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Zakhar.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "10_characters/portraits/PRT_Zakhar_Calm.png": {
+   "bytes": 476665,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Zakhar_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Zakhar_Intense.png": {
+   "bytes": 476824,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Zakhar_Intense.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Zakhar_Sad.png": {
+   "bytes": 476850,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Zakhar_Sad.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Zakhar_Wry.png": {
+   "bytes": 478713,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Zakhar_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Concrete_Tile.png": {
+   "bytes": 97089,
+   "declared_size": null,
+   "family": "tileset",
+   "manifest": null,
+   "path": "res://art/20_tileset/TIL_Concrete_Tile.png",
+   "pivot": null,
+   "real_size": [
+    256,
+    256
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Facade_Canteen_A.png": {
+   "bytes": 991986,
+   "declared_size": [
+    2816,
+    600
+   ],
+   "family": "tileset",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/20_tileset/TIL_Facade_Canteen_A.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2816,
+    600
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Facade_ColdStore_A.png": {
+   "bytes": 319823,
+   "declared_size": [
+    2944,
+    600
+   ],
+   "family": "tileset",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/20_tileset/TIL_Facade_ColdStore_A.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2944,
+    600
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Facade_Depot_A.png": {
+   "bytes": 1655852,
+   "declared_size": [
+    2816,
+    600
+   ],
+   "family": "tileset",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/20_tileset/TIL_Facade_Depot_A.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2816,
+    600
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Facade_Khrushchyovka_A.png": {
+   "bytes": 2048031,
+   "declared_size": [
+    3072,
+    600
+   ],
+   "family": "tileset",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/20_tileset/TIL_Facade_Khrushchyovka_A.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    3072,
+    600
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Facade_Manor_A.png": {
+   "bytes": 1186690,
+   "declared_size": [
+    2944,
+    600
+   ],
+   "family": "tileset",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/20_tileset/TIL_Facade_Manor_A.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2944,
+    600
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Facade_Mine_A.png": {
+   "bytes": 1797339,
+   "declared_size": [
+    2944,
+    600
+   ],
+   "family": "tileset",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/20_tileset/TIL_Facade_Mine_A.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2944,
+    600
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Facade_Sanitarium_A.png": {
+   "bytes": 1063747,
+   "declared_size": [
+    2816,
+    600
+   ],
+   "family": "tileset",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/20_tileset/TIL_Facade_Sanitarium_A.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2816,
+    600
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Facade_Town_A.png": {
+   "bytes": 1284986,
+   "declared_size": [
+    2944,
+    600
+   ],
+   "family": "tileset",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/20_tileset/TIL_Facade_Town_A.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2944,
+    600
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightArchive_Baked.png": {
+   "bytes": 2417421,
+   "declared_size": [
+    2112,
+    1032
+   ],
+   "family": "tileset",
+   "manifest": "night_archive_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightArchive_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2112,
+    1032
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightBirch_Baked.png": {
+   "bytes": 3813400,
+   "declared_size": [
+    2304,
+    1270
+   ],
+   "family": "tileset",
+   "manifest": "night_birch_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightBirch_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2304,
+    1270
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightBoiler_Baked.png": {
+   "bytes": 1923283,
+   "declared_size": [
+    1920,
+    992
+   ],
+   "family": "tileset",
+   "manifest": "night_boiler_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightBoiler_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    1920,
+    992
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightCanteen_Baked.png": {
+   "bytes": 4626268,
+   "declared_size": [
+    2816,
+    1270
+   ],
+   "family": "tileset",
+   "manifest": "night_canteen_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightCanteen_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2816,
+    1270
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightColdstore_Baked.png": {
+   "bytes": 5499605,
+   "declared_size": [
+    2944,
+    1349
+   ],
+   "family": "tileset",
+   "manifest": "night_coldstore_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightColdstore_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2944,
+    1349
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightGreenhouse_Baked.png": {
+   "bytes": 2511059,
+   "declared_size": [
+    1856,
+    1071
+   ],
+   "family": "tileset",
+   "manifest": "night_greenhouse_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightGreenhouse_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    1856,
+    1071
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightManor_Baked.png": {
+   "bytes": 6014768,
+   "declared_size": [
+    2944,
+    1508
+   ],
+   "family": "tileset",
+   "manifest": "night_manor_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightManor_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2944,
+    1508
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightMarket_Baked.png": {
+   "bytes": 5282867,
+   "declared_size": [
+    2944,
+    1349
+   ],
+   "family": "tileset",
+   "manifest": "night_market_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightMarket_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2944,
+    1349
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightMarshalling_Baked.png": {
+   "bytes": 5502050,
+   "declared_size": [
+    2816,
+    1428
+   ],
+   "family": "tileset",
+   "manifest": "night_marshalling_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightMarshalling_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2816,
+    1428
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightMine_Baked.png": {
+   "bytes": 5372520,
+   "declared_size": [
+    2944,
+    1349
+   ],
+   "family": "tileset",
+   "manifest": "night_mine_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightMine_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2944,
+    1349
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightSanitarium_Baked.png": {
+   "bytes": 3431722,
+   "declared_size": [
+    2816,
+    1190
+   ],
+   "family": "tileset",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightSanitarium_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2816,
+    1190
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightUnderpass_Baked.png": {
+   "bytes": 2147755,
+   "declared_size": [
+    2432,
+    794
+   ],
+   "family": "tileset",
+   "manifest": "night_underpass_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightUnderpass_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2432,
+    794
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightWorkshop_Baked.png": {
+   "bytes": 2460506,
+   "declared_size": [
+    2368,
+    952
+   ],
+   "family": "tileset",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightWorkshop_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    2368,
+    952
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Ground_NightYard_Baked.png": {
+   "bytes": 6561897,
+   "declared_size": [
+    3072,
+    1587
+   ],
+   "family": "tileset",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/20_tileset/TIL_Ground_NightYard_Baked.png",
+   "pivot": [
+    0,
+    0
+   ],
+   "real_size": [
+    3072,
+    1587
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "20_tileset/TIL_Snow_Tile.png": {
+   "bytes": 89965,
+   "declared_size": null,
+   "family": "tileset",
+   "manifest": null,
+   "path": "res://art/20_tileset/TIL_Snow_Tile.png",
+   "pivot": null,
+   "real_size": [
+    256,
+    256
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Ammo_Box_Open.png": {
+   "bytes": 5201,
+   "declared_size": [
+    58,
+    47
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Ammo_Box_Open.png",
+   "pivot": [
+    28.8,
+    43.2
+   ],
+   "real_size": [
+    58,
+    47
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Anna_Stand.png": {
+   "bytes": 8579,
+   "declared_size": [
+    72,
+    112
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_Anna_Stand.png",
+   "pivot": [
+    36,
+    108
+   ],
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Anna_Walk0.png": {
+   "bytes": 9138,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Anna_Walk0.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Anna_Walk1.png": {
+   "bytes": 8702,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Anna_Walk1.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Anna_Walk2.png": {
+   "bytes": 8203,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Anna_Walk2.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Anna_Walk3.png": {
+   "bytes": 8387,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Anna_Walk3.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Anna_Walk4.png": {
+   "bytes": 11127,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Anna_Walk4.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Anna_Walk5.png": {
+   "bytes": 10471,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Anna_Walk5.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Anna_Walk6.png": {
+   "bytes": 9963,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Anna_Walk6.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Anna_Walk7.png": {
+   "bytes": 9437,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Anna_Walk7.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ash_Stand.png": {
+   "bytes": 10226,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ash_Stand.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    80
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Ash_Walk0.png": {
+   "bytes": 11036,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ash_Walk0.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    80
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ash_Walk1.png": {
+   "bytes": 10342,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ash_Walk1.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    80
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ash_Walk2.png": {
+   "bytes": 10988,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ash_Walk2.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    80
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ash_Walk3.png": {
+   "bytes": 10925,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ash_Walk3.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    80
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ash_Walk4.png": {
+   "bytes": 10917,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ash_Walk4.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    80
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ash_Walk5.png": {
+   "bytes": 10826,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ash_Walk5.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    80
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ash_Walk6.png": {
+   "bytes": 11291,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ash_Walk6.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    80
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ash_Walk7.png": {
+   "bytes": 11154,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ash_Walk7.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    80
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Bench_Snowy.png": {
+   "bytes": 11184,
+   "declared_size": [
+    134,
+    92
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Bench_Snowy.png",
+   "pivot": [
+    67.0,
+    84
+   ],
+   "real_size": [
+    134,
+    92
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_BrakeVan_Dead.png": {
+   "bytes": 228401,
+   "declared_size": [
+    620,
+    400
+   ],
+   "family": "prop",
+   "manifest": "night_marshalling_manifest.json",
+   "path": "res://art/30_props/PRP_BrakeVan_Dead.png",
+   "pivot": [
+    310.0,
+    390
+   ],
+   "real_size": [
+    620,
+    400
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Brazier_OilDrum.png": {
+   "bytes": 6249,
+   "declared_size": [
+    68,
+    92
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Brazier_OilDrum.png",
+   "pivot": [
+    34,
+    86
+   ],
+   "real_size": [
+    68,
+    92
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Buran_Boxcar03.png": {
+   "bytes": 360364,
+   "declared_size": [
+    936,
+    420
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Buran_Boxcar03.png",
+   "pivot": [
+    468.0,
+    410
+   ],
+   "real_size": [
+    936,
+    420
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Bust_Marx_Ruined.png": {
+   "bytes": 92149,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Bust_Marx_Ruined.png",
+   "pivot": null,
+   "real_size": [
+    187,
+    300
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_CageBed.png": {
+   "bytes": 4682,
+   "declared_size": [
+    190,
+    124
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_CageBed.png",
+   "pivot": [
+    95.0,
+    116
+   ],
+   "real_size": [
+    190,
+    124
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_CageGate.png": {
+   "bytes": 4567,
+   "declared_size": [
+    220,
+    150
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_CageGate.png",
+   "pivot": [
+    110.0,
+    142
+   ],
+   "real_size": [
+    220,
+    150
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Canteen_BenchTable.png": {
+   "bytes": 19270,
+   "declared_size": [
+    340,
+    132
+   ],
+   "family": "prop",
+   "manifest": "night_greenhouse_manifest.json",
+   "path": "res://art/30_props/PRP_Canteen_BenchTable.png",
+   "pivot": [
+    170.0,
+    124
+   ],
+   "real_size": [
+    340,
+    132
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Canteen_Stove.png": {
+   "bytes": 26495,
+   "declared_size": [
+    220,
+    186
+   ],
+   "family": "prop",
+   "manifest": "night_canteen_manifest.json",
+   "path": "res://art/30_props/PRP_Canteen_Stove.png",
+   "pivot": [
+    110.0,
+    178
+   ],
+   "real_size": [
+    220,
+    186
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Canteen_Table.png": {
+   "bytes": 22579,
+   "declared_size": [
+    340,
+    132
+   ],
+   "family": "prop",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/30_props/PRP_Canteen_Table.png",
+   "pivot": [
+    170.0,
+    124
+   ],
+   "real_size": [
+    340,
+    132
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Car_Moskvich_Wreck.png": {
+   "bytes": 49446,
+   "declared_size": [
+    316,
+    196
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Car_Moskvich_Wreck.png",
+   "pivot": [
+    158.0,
+    186
+   ],
+   "real_size": [
+    316,
+    196
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_CardTerminal.png": {
+   "bytes": 15976,
+   "declared_size": [
+    170,
+    176
+   ],
+   "family": "prop",
+   "manifest": "night_coldstore_manifest.json",
+   "path": "res://art/30_props/PRP_CardTerminal.png",
+   "pivot": [
+    85.0,
+    168
+   ],
+   "real_size": [
+    170,
+    176
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_ChemDrum.png": {
+   "bytes": 11655,
+   "declared_size": [
+    130,
+    138
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_ChemDrum.png",
+   "pivot": [
+    65.0,
+    130
+   ],
+   "real_size": [
+    130,
+    138
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_CleaverBoard.png": {
+   "bytes": 11076,
+   "declared_size": [
+    170,
+    124
+   ],
+   "family": "prop",
+   "manifest": "night_canteen_manifest.json",
+   "path": "res://art/30_props/PRP_CleaverBoard.png",
+   "pivot": [
+    85.0,
+    116
+   ],
+   "real_size": [
+    170,
+    124
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_ColdStore_Chest.png": {
+   "bytes": 36216,
+   "declared_size": [
+    210,
+    150
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_ColdStore_Chest.png",
+   "pivot": [
+    105,
+    144
+   ],
+   "real_size": [
+    210,
+    150
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_ColdVaultDoor.png": {
+   "bytes": 60984,
+   "declared_size": [
+    300,
+    226
+   ],
+   "family": "prop",
+   "manifest": "night_coldstore_manifest.json",
+   "path": "res://art/30_props/PRP_ColdVaultDoor.png",
+   "pivot": [
+    150.0,
+    218
+   ],
+   "real_size": [
+    300,
+    226
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Corpse_Tarp.png": {
+   "bytes": 6978,
+   "declared_size": [
+    134,
+    70
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Corpse_Tarp.png",
+   "pivot": [
+    67.0,
+    62
+   ],
+   "real_size": [
+    134,
+    70
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Crate_Wood_Stack.png": {
+   "bytes": 19920,
+   "declared_size": [
+    132,
+    156
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Crate_Wood_Stack.png",
+   "pivot": [
+    66.0,
+    148
+   ],
+   "real_size": [
+    132,
+    156
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Crowbar_Rail.png": {
+   "bytes": 4110,
+   "declared_size": [
+    108,
+    82
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Crowbar_Rail.png",
+   "pivot": [
+    54,
+    76
+   ],
+   "real_size": [
+    108,
+    82
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Detonator_Rig.png": {
+   "bytes": 6415,
+   "declared_size": [
+    124,
+    92
+   ],
+   "family": "prop",
+   "manifest": "night_mine_manifest.json",
+   "path": "res://art/30_props/PRP_Detonator_Rig.png",
+   "pivot": [
+    62,
+    86
+   ],
+   "real_size": [
+    124,
+    92
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_DispatchBoard_Tin.png": {
+   "bytes": 29634,
+   "declared_size": [
+    190,
+    210
+   ],
+   "family": "prop",
+   "manifest": "night_mine_manifest.json",
+   "path": "res://art/30_props/PRP_DispatchBoard_Tin.png",
+   "pivot": [
+    95,
+    202
+   ],
+   "real_size": [
+    190,
+    210
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_DrainSlit.png": {
+   "bytes": 20318,
+   "declared_size": [
+    240,
+    96
+   ],
+   "family": "prop",
+   "manifest": "night_coldstore_manifest.json",
+   "path": "res://art/30_props/PRP_DrainSlit.png",
+   "pivot": [
+    120.0,
+    88
+   ],
+   "real_size": [
+    240,
+    96
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_DummyTower_Mannequin.png": {
+   "bytes": 21578,
+   "declared_size": [
+    152,
+    332
+   ],
+   "family": "prop",
+   "manifest": "night_mine_manifest.json",
+   "path": "res://art/30_props/PRP_DummyTower_Mannequin.png",
+   "pivot": [
+    76,
+    324
+   ],
+   "real_size": [
+    152,
+    332
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Dumpster_Steel.png": {
+   "bytes": 23691,
+   "declared_size": [
+    156,
+    156
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Dumpster_Steel.png",
+   "pivot": [
+    78.0,
+    146
+   ],
+   "real_size": [
+    156,
+    156
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Fence_ChainLink_A.png": {
+   "bytes": 37213,
+   "declared_size": [
+    266,
+    156
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Fence_ChainLink_A.png",
+   "pivot": [
+    5,
+    148
+   ],
+   "real_size": [
+    266,
+    156
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Fence_ChainLink_B.png": {
+   "bytes": 39082,
+   "declared_size": [
+    266,
+    156
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Fence_ChainLink_B.png",
+   "pivot": [
+    5,
+    148
+   ],
+   "real_size": [
+    266,
+    156
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Fence_ChainLink_Torn.png": {
+   "bytes": 35340,
+   "declared_size": [
+    266,
+    156
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Fence_ChainLink_Torn.png",
+   "pivot": [
+    5,
+    148
+   ],
+   "real_size": [
+    266,
+    156
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Fence_ChainLink_TornL.png": {
+   "bytes": 34883,
+   "declared_size": [
+    266,
+    156
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Fence_ChainLink_TornL.png",
+   "pivot": [
+    5,
+    148
+   ],
+   "real_size": [
+    266,
+    156
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Fence_Electric_A.png": {
+   "bytes": 41073,
+   "declared_size": [
+    266,
+    156
+   ],
+   "family": "prop",
+   "manifest": "night_manor_manifest.json",
+   "path": "res://art/30_props/PRP_Fence_Electric_A.png",
+   "pivot": [
+    5,
+    148
+   ],
+   "real_size": [
+    266,
+    156
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Fence_Electric_Cut.png": {
+   "bytes": 38127,
+   "declared_size": [
+    266,
+    156
+   ],
+   "family": "prop",
+   "manifest": "night_manor_manifest.json",
+   "path": "res://art/30_props/PRP_Fence_Electric_Cut.png",
+   "pivot": [
+    5,
+    148
+   ],
+   "real_size": [
+    266,
+    156
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Flag_Soviet_Tattered.png": {
+   "bytes": 52208,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Flag_Soviet_Tattered.png",
+   "pivot": null,
+   "real_size": [
+    198,
+    420
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Flag_Soviet_Tattered_Sheet.png": {
+   "bytes": 290273,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Flag_Soviet_Tattered_Sheet.png",
+   "pivot": null,
+   "real_size": [
+    1712,
+    436
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Forklift_Parked.png": {
+   "bytes": 20260,
+   "declared_size": [
+    220,
+    240
+   ],
+   "family": "prop",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/30_props/PRP_Forklift_Parked.png",
+   "pivot": [
+    120,
+    232
+   ],
+   "real_size": [
+    220,
+    240
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Gulya_Stand.png": {
+   "bytes": 9238,
+   "declared_size": [
+    72,
+    112
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_Gulya_Stand.png",
+   "pivot": [
+    36,
+    108
+   ],
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Gulya_Walk0.png": {
+   "bytes": 10421,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Gulya_Walk0.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Gulya_Walk1.png": {
+   "bytes": 9745,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Gulya_Walk1.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Gulya_Walk2.png": {
+   "bytes": 9209,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Gulya_Walk2.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Gulya_Walk3.png": {
+   "bytes": 9327,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Gulya_Walk3.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Gulya_Walk4.png": {
+   "bytes": 9745,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Gulya_Walk4.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Gulya_Walk5.png": {
+   "bytes": 9465,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Gulya_Walk5.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Gulya_Walk6.png": {
+   "bytes": 9385,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Gulya_Walk6.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Gulya_Walk7.png": {
+   "bytes": 8998,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Gulya_Walk7.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_HonorBoard.png": {
+   "bytes": 126169,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_HonorBoard.png",
+   "pivot": null,
+   "real_size": [
+    340,
+    189
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Incinerator_Feed.png": {
+   "bytes": 23345,
+   "declared_size": [
+    230,
+    200
+   ],
+   "family": "prop",
+   "manifest": "night_manor_manifest.json",
+   "path": "res://art/30_props/PRP_Incinerator_Feed.png",
+   "pivot": [
+    120,
+    194
+   ],
+   "real_size": [
+    230,
+    200
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_IronCage.png": {
+   "bytes": 5243,
+   "declared_size": [
+    176,
+    136
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_IronCage.png",
+   "pivot": [
+    88.0,
+    128
+   ],
+   "real_size": [
+    176,
+    136
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Ivan_Stand.png": {
+   "bytes": 9081,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ivan_Stand.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Ivan_Walk0.png": {
+   "bytes": 9988,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ivan_Walk0.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ivan_Walk1.png": {
+   "bytes": 9582,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ivan_Walk1.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ivan_Walk2.png": {
+   "bytes": 9595,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ivan_Walk2.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ivan_Walk3.png": {
+   "bytes": 9011,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ivan_Walk3.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ivan_Walk4.png": {
+   "bytes": 9783,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ivan_Walk4.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ivan_Walk5.png": {
+   "bytes": 9741,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ivan_Walk5.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ivan_Walk6.png": {
+   "bytes": 10099,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ivan_Walk6.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Ivan_Walk7.png": {
+   "bytes": 9906,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Ivan_Walk7.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Lenin_Head.png": {
+   "bytes": 66536,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Lenin_Head.png",
+   "pivot": null,
+   "real_size": [
+    270,
+    152
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Leonov_Stand.png": {
+   "bytes": 8695,
+   "declared_size": [
+    72,
+    112
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_Leonov_Stand.png",
+   "pivot": [
+    36,
+    108
+   ],
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Locker_ElectricCabinet.png": {
+   "bytes": 13796,
+   "declared_size": [
+    84,
+    146
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Locker_ElectricCabinet.png",
+   "pivot": [
+    42.0,
+    138
+   ],
+   "real_size": [
+    84,
+    146
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Market_Stall.png": {
+   "bytes": 6740,
+   "declared_size": [
+    118,
+    96
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Market_Stall.png",
+   "pivot": [
+    59.0,
+    88
+   ],
+   "real_size": [
+    118,
+    96
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_MedCabinet.png": {
+   "bytes": 7855,
+   "declared_size": [
+    150,
+    156
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_MedCabinet.png",
+   "pivot": [
+    75.0,
+    148
+   ],
+   "real_size": [
+    150,
+    156
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_MedCache.png": {
+   "bytes": 6183,
+   "declared_size": [
+    150,
+    108
+   ],
+   "family": "prop",
+   "manifest": "night_market_manifest.json",
+   "path": "res://art/30_props/PRP_MedCache.png",
+   "pivot": [
+    75.0,
+    100
+   ],
+   "real_size": [
+    150,
+    108
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_MedShed.png": {
+   "bytes": 73697,
+   "declared_size": [
+    260,
+    230
+   ],
+   "family": "prop",
+   "manifest": "night_market_manifest.json",
+   "path": "res://art/30_props/PRP_MedShed.png",
+   "pivot": [
+    130.0,
+    212
+   ],
+   "real_size": [
+    260,
+    230
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Mosaic_Wall.png": {
+   "bytes": 213150,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Mosaic_Wall.png",
+   "pivot": null,
+   "real_size": [
+    420,
+    217
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_NarrowDoor.png": {
+   "bytes": 27169,
+   "declared_size": [
+    180,
+    196
+   ],
+   "family": "prop",
+   "manifest": "night_canteen_manifest.json",
+   "path": "res://art/30_props/PRP_NarrowDoor.png",
+   "pivot": [
+    90.0,
+    188
+   ],
+   "real_size": [
+    180,
+    196
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_OreCart_Rusty.png": {
+   "bytes": 15889,
+   "declared_size": [
+    170,
+    118
+   ],
+   "family": "prop",
+   "manifest": "night_mine_manifest.json",
+   "path": "res://art/30_props/PRP_OreCart_Rusty.png",
+   "pivot": [
+    85,
+    110
+   ],
+   "real_size": [
+    170,
+    118
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Pavel_Stand.png": {
+   "bytes": 9895,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Pavel_Stand.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Pavel_Walk0.png": {
+   "bytes": 9975,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Pavel_Walk0.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Pavel_Walk1.png": {
+   "bytes": 9957,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Pavel_Walk1.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Pavel_Walk2.png": {
+   "bytes": 9883,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Pavel_Walk2.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Pavel_Walk3.png": {
+   "bytes": 9970,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Pavel_Walk3.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Pavel_Walk4.png": {
+   "bytes": 11702,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Pavel_Walk4.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Pavel_Walk5.png": {
+   "bytes": 11001,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Pavel_Walk5.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Pavel_Walk6.png": {
+   "bytes": 10445,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Pavel_Walk6.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Pavel_Walk7.png": {
+   "bytes": 11153,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Pavel_Walk7.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Pine_Snow.png": {
+   "bytes": 63708,
+   "declared_size": [
+    190,
+    430
+   ],
+   "family": "prop",
+   "manifest": "night_manor_manifest.json",
+   "path": "res://art/30_props/PRP_Pine_Snow.png",
+   "pivot": [
+    95,
+    424
+   ],
+   "real_size": [
+    190,
+    430
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Pistol_TT.png": {
+   "bytes": 4321,
+   "declared_size": [
+    104,
+    68
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Pistol_TT.png",
+   "pivot": [
+    30,
+    62
+   ],
+   "real_size": [
+    104,
+    68
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Playground_Dome.png": {
+   "bytes": 36534,
+   "declared_size": [
+    209,
+    180
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Playground_Dome.png",
+   "pivot": [
+    104.5,
+    172
+   ],
+   "real_size": [
+    209,
+    180
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Poster_Cosmos.png": {
+   "bytes": 23404,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Poster_Cosmos.png",
+   "pivot": null,
+   "real_size": [
+    84,
+    127
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Poster_Harvest.png": {
+   "bytes": 25641,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Poster_Harvest.png",
+   "pivot": null,
+   "real_size": [
+    84,
+    127
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Poster_Leader.png": {
+   "bytes": 24216,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Poster_Leader.png",
+   "pivot": null,
+   "real_size": [
+    84,
+    127
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Poster_Rail.png": {
+   "bytes": 29176,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Poster_Rail.png",
+   "pivot": null,
+   "real_size": [
+    84,
+    127
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Poster_Silence.png": {
+   "bytes": 22450,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Poster_Silence.png",
+   "pivot": null,
+   "real_size": [
+    84,
+    127
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Poster_Worker.png": {
+   "bytes": 21338,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Poster_Worker.png",
+   "pivot": null,
+   "real_size": [
+    70,
+    127
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_QuackForge.png": {
+   "bytes": 10790,
+   "declared_size": [
+    180,
+    158
+   ],
+   "family": "prop",
+   "manifest": "night_market_manifest.json",
+   "path": "res://art/30_props/PRP_QuackForge.png",
+   "pivot": [
+    90.0,
+    148
+   ],
+   "real_size": [
+    180,
+    158
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Radio666.png": {
+   "bytes": 56629,
+   "declared_size": [
+    240,
+    236
+   ],
+   "family": "prop",
+   "manifest": "night_market_manifest.json",
+   "path": "res://art/30_props/PRP_Radio666.png",
+   "pivot": [
+    120.0,
+    224
+   ],
+   "real_size": [
+    240,
+    236
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_RedStar_Snowy.png": {
+   "bytes": 75129,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_RedStar_Snowy.png",
+   "pivot": null,
+   "real_size": [
+    274,
+    270
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Rifle_Mosin.png": {
+   "bytes": 5609,
+   "declared_size": [
+    208,
+    48
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Rifle_Mosin.png",
+   "pivot": [
+    88,
+    42
+   ],
+   "real_size": [
+    208,
+    48
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_RyeVat.png": {
+   "bytes": 14499,
+   "declared_size": [
+    140,
+    148
+   ],
+   "family": "prop",
+   "manifest": "night_canteen_manifest.json",
+   "path": "res://art/30_props/PRP_RyeVat.png",
+   "pivot": [
+    70.0,
+    140
+   ],
+   "real_size": [
+    140,
+    148
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Sandbag_Line.png": {
+   "bytes": 23131,
+   "declared_size": [
+    208,
+    118
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Sandbag_Line.png",
+   "pivot": [
+    104.0,
+    110
+   ],
+   "real_size": [
+    208,
+    118
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_SealedMedCrate.png": {
+   "bytes": 7621,
+   "declared_size": [
+    150,
+    118
+   ],
+   "family": "prop",
+   "manifest": "night_coldstore_manifest.json",
+   "path": "res://art/30_props/PRP_SealedMedCrate.png",
+   "pivot": [
+    75.0,
+    110
+   ],
+   "real_size": [
+    150,
+    118
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Shanty_Shed.png": {
+   "bytes": 65223,
+   "declared_size": [
+    260,
+    260
+   ],
+   "family": "prop",
+   "manifest": "night_market_manifest.json",
+   "path": "res://art/30_props/PRP_Shanty_Shed.png",
+   "pivot": [
+    130.0,
+    242
+   ],
+   "real_size": [
+    260,
+    260
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Shotgun_Sawn.png": {
+   "bytes": 3797,
+   "declared_size": [
+    132,
+    58
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Shotgun_Sawn.png",
+   "pivot": [
+    28,
+    50
+   ],
+   "real_size": [
+    132,
+    58
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_SignalPost_Red.png": {
+   "bytes": 3878,
+   "declared_size": [
+    54,
+    252
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_SignalPost_Red.png",
+   "pivot": [
+    27,
+    246
+   ],
+   "real_size": [
+    54,
+    252
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_SporeFace.png": {
+   "bytes": 98005,
+   "declared_size": [
+    462,
+    192
+   ],
+   "family": "prop",
+   "manifest": "night_mine_manifest.json",
+   "path": "res://art/30_props/PRP_SporeFace.png",
+   "pivot": [
+    231,
+    184
+   ],
+   "real_size": [
+    462,
+    192
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Statue_Lenin.png": {
+   "bytes": 97265,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Statue_Lenin.png",
+   "pivot": null,
+   "real_size": [
+    165,
+    400
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Statue_Lenin_Toppled.png": {
+   "bytes": 106243,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Statue_Lenin_Toppled.png",
+   "pivot": null,
+   "real_size": [
+    430,
+    220
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_Statue_Pioneer.png": {
+   "bytes": 48811,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Statue_Pioneer.png",
+   "pivot": null,
+   "real_size": [
+    146,
+    250
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_SteamPipe_Long.png": {
+   "bytes": 84276,
+   "declared_size": [
+    1180,
+    128
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_SteamPipe_Long.png",
+   "pivot": [
+    590.0,
+    120
+   ],
+   "real_size": [
+    1180,
+    128
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Stele_HammerSickle.png": {
+   "bytes": 129836,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Stele_HammerSickle.png",
+   "pivot": null,
+   "real_size": [
+    231,
+    390
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "30_props/PRP_StreetLamp_Sodium.png": {
+   "bytes": 9738,
+   "declared_size": [
+    116,
+    384
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_StreetLamp_Sodium.png",
+   "pivot": [
+    24,
+    376
+   ],
+   "real_size": [
+    116,
+    384
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_SupplyCrates_Military.png": {
+   "bytes": 15409,
+   "declared_size": [
+    150,
+    116
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_SupplyCrates_Military.png",
+   "pivot": [
+    75.0,
+    108
+   ],
+   "real_size": [
+    150,
+    116
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Survivor_Stand.png": {
+   "bytes": 8460,
+   "declared_size": [
+    72,
+    112
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Survivor_Stand.png",
+   "pivot": [
+    36,
+    108
+   ],
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_SwitchStand.png": {
+   "bytes": 5815,
+   "declared_size": [
+    96,
+    150
+   ],
+   "family": "prop",
+   "manifest": "night_marshalling_manifest.json",
+   "path": "res://art/30_props/PRP_SwitchStand.png",
+   "pivot": [
+    48,
+    142
+   ],
+   "real_size": [
+    96,
+    150
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Target_Silhouette.png": {
+   "bytes": 11693,
+   "declared_size": [
+    77,
+    127
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Target_Silhouette.png",
+   "pivot": [
+    38.4,
+    121.10769230769229
+   ],
+   "real_size": [
+    77,
+    127
+   ],
+   "ref": "manifest",
+   "ref_by": "manifest 登记"
+  },
+  "30_props/PRP_Thermite_Charge.png": {
+   "bytes": 8933,
+   "declared_size": [
+    136,
+    96
+   ],
+   "family": "prop",
+   "manifest": "night_mine_manifest.json",
+   "path": "res://art/30_props/PRP_Thermite_Charge.png",
+   "pivot": [
+    68,
+    90
+   ],
+   "real_size": [
+    136,
+    96
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Timber_Support.png": {
+   "bytes": 11161,
+   "declared_size": [
+    150,
+    188
+   ],
+   "family": "prop",
+   "manifest": "night_mine_manifest.json",
+   "path": "res://art/30_props/PRP_Timber_Support.png",
+   "pivot": [
+    75,
+    180
+   ],
+   "real_size": [
+    150,
+    188
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_TinCan.png": {
+   "bytes": 417,
+   "declared_size": [
+    16,
+    16
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_TinCan.png",
+   "pivot": [
+    8,
+    13
+   ],
+   "real_size": [
+    16,
+    16
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Trader_Stand.png": {
+   "bytes": 9577,
+   "declared_size": [
+    72,
+    112
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Trader_Stand.png",
+   "pivot": [
+    36,
+    108
+   ],
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_VaultColumn.png": {
+   "bytes": 11282,
+   "declared_size": [
+    110,
+    182
+   ],
+   "family": "prop",
+   "manifest": "night_underpass_manifest.json",
+   "path": "res://art/30_props/PRP_VaultColumn.png",
+   "pivot": [
+    55.0,
+    174
+   ],
+   "real_size": [
+    110,
+    182
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Watchtower_Searchlight.png": {
+   "bytes": 57830,
+   "declared_size": [
+    236,
+    480
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_Watchtower_Searchlight.png",
+   "pivot": [
+    118,
+    470
+   ],
+   "real_size": [
+    236,
+    480
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_WaterTower.png": {
+   "bytes": 132221,
+   "declared_size": [
+    340,
+    560
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_WaterTower.png",
+   "pivot": [
+    170,
+    548
+   ],
+   "real_size": [
+    340,
+    560
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_WeaponRack.png": {
+   "bytes": 11085,
+   "declared_size": [
+    96,
+    94
+   ],
+   "family": "prop",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/30_props/PRP_WeaponRack.png",
+   "pivot": [
+    48.0,
+    89.45454545454545
+   ],
+   "real_size": [
+    96,
+    94
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_XrayLightbox.png": {
+   "bytes": 1162,
+   "declared_size": [
+    180,
+    148
+   ],
+   "family": "prop",
+   "manifest": "night_sanitarium_manifest.json",
+   "path": "res://art/30_props/PRP_XrayLightbox.png",
+   "pivot": [
+    90.0,
+    140
+   ],
+   "real_size": [
+    180,
+    148
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Yelena_Stand.png": {
+   "bytes": 9037,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Yelena_Stand.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Yelena_Walk0.png": {
+   "bytes": 9583,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Yelena_Walk0.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Yelena_Walk1.png": {
+   "bytes": 9283,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Yelena_Walk1.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Yelena_Walk2.png": {
+   "bytes": 9411,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Yelena_Walk2.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Yelena_Walk3.png": {
+   "bytes": 9007,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Yelena_Walk3.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Yelena_Walk4.png": {
+   "bytes": 10472,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Yelena_Walk4.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Yelena_Walk5.png": {
+   "bytes": 9250,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Yelena_Walk5.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Yelena_Walk6.png": {
+   "bytes": 10511,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Yelena_Walk6.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Yelena_Walk7.png": {
+   "bytes": 9971,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Yelena_Walk7.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Zakhar_Stand.png": {
+   "bytes": 9615,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Zakhar_Stand.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "30_props/PRP_Zakhar_Walk0.png": {
+   "bytes": 10167,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Zakhar_Walk0.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Zakhar_Walk1.png": {
+   "bytes": 9561,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Zakhar_Walk1.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Zakhar_Walk2.png": {
+   "bytes": 9850,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Zakhar_Walk2.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Zakhar_Walk3.png": {
+   "bytes": 9359,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Zakhar_Walk3.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Zakhar_Walk4.png": {
+   "bytes": 10651,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Zakhar_Walk4.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Zakhar_Walk5.png": {
+   "bytes": 10082,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Zakhar_Walk5.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Zakhar_Walk6.png": {
+   "bytes": 10983,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Zakhar_Walk6.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "30_props/PRP_Zakhar_Walk7.png": {
+   "bytes": 10398,
+   "declared_size": null,
+   "family": "prop",
+   "manifest": null,
+   "path": "res://art/30_props/PRP_Zakhar_Walk7.png",
+   "pivot": null,
+   "real_size": [
+    72,
+    112
+   ],
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+  },
+  "50_vfx/VFX_Blood_Mist.png": {
+   "bytes": 2792,
+   "declared_size": [
+    72,
+    72
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Blood_Mist.png",
+   "pivot": [
+    36.0,
+    36.0
+   ],
+   "real_size": [
+    72,
+    72
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Blood_Splat.png": {
+   "bytes": 11650,
+   "declared_size": [
+    96,
+    96
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Blood_Splat.png",
+   "pivot": null,
+   "real_size": [
+    96,
+    96
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Bullet_Tracer.png": {
+   "bytes": 213,
+   "declared_size": [
+    128,
+    16
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Bullet_Tracer.png",
+   "pivot": [
+    64.0,
+    8.0
+   ],
+   "real_size": [
+    128,
+    16
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Blood_Pool_L.png": {
+   "bytes": 36216,
+   "declared_size": [
+    240,
+    152
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Blood_Pool_L.png",
+   "pivot": [
+    120,
+    76
+   ],
+   "real_size": [
+    240,
+    152
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Blood_Pool_M.png": {
+   "bytes": 20582,
+   "declared_size": [
+    160,
+    104
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Blood_Pool_M.png",
+   "pivot": [
+    80,
+    52
+   ],
+   "real_size": [
+    160,
+    104
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Blood_Pool_S.png": {
+   "bytes": 10442,
+   "declared_size": [
+    96,
+    64
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Blood_Pool_S.png",
+   "pivot": [
+    48,
+    32
+   ],
+   "real_size": [
+    96,
+    64
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Blood_Trail.png": {
+   "bytes": 2841,
+   "declared_size": [
+    64,
+    40
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Blood_Trail.png",
+   "pivot": [
+    32,
+    20
+   ],
+   "real_size": [
+    64,
+    40
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Bullet_Metal.png": {
+   "bytes": 759,
+   "declared_size": [
+    20,
+    20
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Bullet_Metal.png",
+   "pivot": [
+    10,
+    10
+   ],
+   "real_size": [
+    20,
+    20
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Bullet_Snow.png": {
+   "bytes": 1221,
+   "declared_size": [
+    28,
+    28
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Bullet_Snow.png",
+   "pivot": [
+    14,
+    14
+   ],
+   "real_size": [
+    28,
+    28
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Bullet_Wood.png": {
+   "bytes": 679,
+   "declared_size": [
+    22,
+    22
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Bullet_Wood.png",
+   "pivot": [
+    11,
+    11
+   ],
+   "real_size": [
+    22,
+    22
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Footprint_Boot_L.png": {
+   "bytes": 632,
+   "declared_size": [
+    32,
+    32
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Footprint_Boot_L.png",
+   "pivot": [
+    16,
+    16
+   ],
+   "real_size": [
+    32,
+    32
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Footprint_Boot_R.png": {
+   "bytes": 664,
+   "declared_size": [
+    32,
+    32
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Footprint_Boot_R.png",
+   "pivot": [
+    16,
+    16
+   ],
+   "real_size": [
+    32,
+    32
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Decal_Footprint_Paw.png": {
+   "bytes": 1251,
+   "declared_size": [
+    32,
+    32
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Decal_Footprint_Paw.png",
+   "pivot": [
+    16,
+    16
+   ],
+   "real_size": [
+    32,
+    32
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Ember.png": {
+   "bytes": 174,
+   "declared_size": [
+    8,
+    8
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Ember.png",
+   "pivot": null,
+   "real_size": [
+    8,
+    8
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Facade_WindowGlow.png": {
+   "bytes": 192331,
+   "declared_size": [
+    3072,
+    770
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Facade_WindowGlow.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    3072,
+    770
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Facade_WindowGlow_Canteen.png": {
+   "bytes": 82374,
+   "declared_size": [
+    2816,
+    770
+   ],
+   "family": "vfx",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Canteen.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2816,
+    770
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Facade_WindowGlow_ColdStore.png": {
+   "bytes": 66834,
+   "declared_size": [
+    2944,
+    770
+   ],
+   "family": "vfx",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/50_vfx/VFX_Facade_WindowGlow_ColdStore.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2944,
+    770
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Facade_WindowGlow_Depot.png": {
+   "bytes": 100634,
+   "declared_size": [
+    2816,
+    770
+   ],
+   "family": "vfx",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Depot.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2816,
+    770
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Facade_WindowGlow_Manor.png": {
+   "bytes": 133487,
+   "declared_size": [
+    2944,
+    770
+   ],
+   "family": "vfx",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Manor.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2944,
+    770
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Facade_WindowGlow_Mine.png": {
+   "bytes": 53967,
+   "declared_size": [
+    2944,
+    770
+   ],
+   "family": "vfx",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Mine.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2944,
+    770
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Facade_WindowGlow_Sanitarium.png": {
+   "bytes": 66809,
+   "declared_size": [
+    2816,
+    770
+   ],
+   "family": "vfx",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Sanitarium.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2816,
+    770
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Facade_WindowGlow_Town.png": {
+   "bytes": 34439,
+   "declared_size": [
+    2944,
+    770
+   ],
+   "family": "vfx",
+   "manifest": "night_workshop_manifest.json",
+   "path": "res://art/50_vfx/VFX_Facade_WindowGlow_Town.png",
+   "pivot": [
+    0,
+    600
+   ],
+   "real_size": [
+    2944,
+    770
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Fire_Brazier_Sheet.png": {
+   "bytes": 27519,
+   "declared_size": [
+    336,
+    84
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Fire_Brazier_Sheet.png",
+   "pivot": [
+    28.0,
+    80
+   ],
+   "real_size": [
+    336,
+    84
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_FogNoise.png": {
+   "bytes": 63526,
+   "declared_size": [
+    512,
+    512
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_FogNoise.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Glow_Halo.png": {
+   "bytes": 3974,
+   "declared_size": [
+    128,
+    128
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Glow_Halo.png",
+   "pivot": null,
+   "real_size": [
+    128,
+    128
+   ],
+   "ref": "manifest",
+   "ref_by": "manifest 登记"
+  },
+  "50_vfx/VFX_Impact_Spark.png": {
+   "bytes": 1435,
+   "declared_size": [
+    64,
+    64
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Impact_Spark.png",
+   "pivot": [
+    32.0,
+    32.0
+   ],
+   "real_size": [
+    64,
+    64
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Light_Cone_Flashlight.png": {
+   "bytes": 54437,
+   "declared_size": [
+    1024,
+    512
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Light_Cone_Flashlight.png",
+   "pivot": null,
+   "real_size": [
+    1024,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Light_Cone_OSK.png": {
+   "bytes": 53405,
+   "declared_size": [
+    1024,
+    512
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Light_Cone_OSK.png",
+   "pivot": null,
+   "real_size": [
+    1024,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Light_Radial.png": {
+   "bytes": 25388,
+   "declared_size": [
+    512,
+    512
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Light_Radial.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Light_Radial_Soft.png": {
+   "bytes": 27345,
+   "declared_size": [
+    512,
+    512
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Light_Radial_Soft.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_MuzzleFlash_Sheet.png": {
+   "bytes": 11169,
+   "declared_size": [
+    384,
+    96
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_MuzzleFlash_Sheet.png",
+   "pivot": [
+    40.32,
+    48.0
+   ],
+   "real_size": [
+    384,
+    96
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Searchlight_Cone.png": {
+   "bytes": 41410,
+   "declared_size": [
+    1024,
+    512
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Searchlight_Cone.png",
+   "pivot": null,
+   "real_size": [
+    1024,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Shell_Casing.png": {
+   "bytes": 148,
+   "declared_size": [
+    22,
+    12
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Shell_Casing.png",
+   "pivot": [
+    11.0,
+    6.0
+   ],
+   "real_size": [
+    22,
+    12
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Snow_Particle.png": {
+   "bytes": 339,
+   "declared_size": [
+    16,
+    16
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Snow_Particle.png",
+   "pivot": null,
+   "real_size": [
+    16,
+    16
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "50_vfx/VFX_Steam_Puff.png": {
+   "bytes": 2340,
+   "declared_size": [
+    64,
+    64
+   ],
+   "family": "vfx",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/50_vfx/VFX_Steam_Puff.png",
+   "pivot": null,
+   "real_size": [
+    64,
+    64
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "60_ui/UI_City_Map.png": {
+   "bytes": 824998,
+   "declared_size": null,
+   "family": "ui",
+   "manifest": null,
+   "path": "res://art/60_ui/UI_City_Map.png",
+   "pivot": null,
+   "real_size": [
+    900,
+    520
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "60_ui/cg/cg_apartment_exchange_scene.jpg": {
+   "bytes": 531132,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_apartment_exchange_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_broadcast_scene.jpg": {
+   "bytes": 363130,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_broadcast_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_broadcast_siege_scene.jpg": {
+   "bytes": 526891,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_broadcast_siege_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_broadcast_testimony_scene.jpg": {
+   "bytes": 519011,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_broadcast_testimony_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_canteen_c0.jpg": {
+   "bytes": 176272,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_canteen_c0.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_canteen_c0b.jpg": {
+   "bytes": 189124,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_canteen_c0b.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_canteen_scene.jpg": {
+   "bytes": 228423,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_canteen_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_coldstore_c0.jpg": {
+   "bytes": 227370,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_coldstore_c0.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_coldstore_c1.jpg": {
+   "bytes": 208354,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_coldstore_c1.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_coldstore_scene.jpg": {
+   "bytes": 226920,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_coldstore_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_eaglecliff_derailment_scene.jpg": {
+   "bytes": 549020,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_eaglecliff_derailment_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_fire_rescue_scene.jpg": {
+   "bytes": 533804,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_fire_rescue_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_intro_city.jpg": {
+   "bytes": 279871,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_intro_city.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_intro_lana.jpg": {
+   "bytes": 240729,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_intro_lana.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_intro_mother.jpg": {
+   "bytes": 213780,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_intro_mother.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_intro_vent.jpg": {
+   "bytes": 206973,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_intro_vent.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_manor_c0.jpg": {
+   "bytes": 200610,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_manor_c0.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_manor_scene.jpg": {
+   "bytes": 339398,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_manor_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_market_c0.jpg": {
+   "bytes": 257275,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_market_c0.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_market_c0b.jpg": {
+   "bytes": 273616,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_market_c0b.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_market_c1.jpg": {
+   "bytes": 248905,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_market_c1.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_market_c1b.jpg": {
+   "bytes": 253703,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_market_c1b.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_market_c1c.jpg": {
+   "bytes": 325592,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_market_c1c.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_market_c2.jpg": {
+   "bytes": 195086,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_market_c2.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_market_c2b.jpg": {
+   "bytes": 239655,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_market_c2b.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_market_c2c.jpg": {
+   "bytes": 254973,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_market_c2c.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_market_scene.jpg": {
+   "bytes": 220064,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_market_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_marshalling_c0b.jpg": {
+   "bytes": 255994,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_marshalling_c0b.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_marshalling_scene.jpg": {
+   "bytes": 279458,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_marshalling_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_mine_detonator_scene.jpg": {
+   "bytes": 456086,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_mine_detonator_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_mine_sporeface_scene.jpg": {
+   "bytes": 523058,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_mine_sporeface_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_pasha_watchtower_scene.jpg": {
+   "bytes": 532685,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_pasha_watchtower_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_sanitarium_c0.jpg": {
+   "bytes": 229584,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_sanitarium_c0.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_sanitarium_c0b.jpg": {
+   "bytes": 300616,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_sanitarium_c0b.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_sanitarium_scene.jpg": {
+   "bytes": 253006,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_sanitarium_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_station_buran_scene.jpg": {
+   "bytes": 578078,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_station_buran_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_yard_c0.jpg": {
+   "bytes": 222248,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_yard_c0.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_yard_scene.jpg": {
+   "bytes": 256209,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_yard_scene.jpg",
+   "pivot": null,
+   "real_size": [
+    1376,
+    768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/opening_courtyard.png": {
+   "bytes": 2849439,
+   "declared_size": null,
+   "family": "ui",
+   "manifest": null,
+   "path": "res://art/60_ui/opening_courtyard.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "60_ui/opening_dispatch.png": {
+   "bytes": 2860691,
+   "declared_size": null,
+   "family": "ui",
+   "manifest": null,
+   "path": "res://art/60_ui/opening_dispatch.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "70_audio/AMB_Fire_Crackle_Loop.wav": {
+   "bytes": 264644,
+   "declared_size": null,
+   "family": "audio",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/70_audio/AMB_Fire_Crackle_Loop.wav",
+   "pivot": null,
+   "real_size": null,
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "70_audio/AMB_Sodium_Buzz_Loop.wav": {
+   "bytes": 88244,
+   "declared_size": null,
+   "family": "audio",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/70_audio/AMB_Sodium_Buzz_Loop.wav",
+   "pivot": null,
+   "real_size": null,
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "70_audio/AMB_Steam_Hiss_Loop.wav": {
+   "bytes": 176444,
+   "declared_size": null,
+   "family": "audio",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/70_audio/AMB_Steam_Hiss_Loop.wav",
+   "pivot": null,
+   "real_size": null,
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "70_audio/AMB_Wind_Blizzard_Loop.wav": {
+   "bytes": 529244,
+   "declared_size": null,
+   "family": "audio",
+   "manifest": "night_yard_manifest.json",
+   "path": "res://art/70_audio/AMB_Wind_Blizzard_Loop.wav",
+   "pivot": null,
+   "real_size": null,
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "80_maps/BroadcastTower302/godot_export/assets/layers/painted_ground.png": {
+   "bytes": 3837439,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/80_maps/BroadcastTower302/godot_export/assets/layers/painted_ground.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "80_maps/BroadcastTower302/map.png": {
+   "bytes": 3837439,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/80_maps/BroadcastTower302/map.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "80_maps/BroadcastTower302/qa/nav/nav-debug.png": {
+   "bytes": 2583730,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/80_maps/BroadcastTower302/qa/nav/nav-debug.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "80_maps/EagleBeakCliff/godot_export/assets/layers/painted_ground.png": {
+   "bytes": 3442435,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/80_maps/EagleBeakCliff/godot_export/assets/layers/painted_ground.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "80_maps/EagleBeakCliff/map.png": {
+   "bytes": 3442435,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/80_maps/EagleBeakCliff/map.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "80_maps/EagleBeakCliff/qa/nav/nav-debug.png": {
+   "bytes": 2376661,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/80_maps/EagleBeakCliff/qa/nav/nav-debug.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "80_maps/StationBuranYard/godot_export/assets/layers/painted_ground.png": {
+   "bytes": 3820992,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/80_maps/StationBuranYard/godot_export/assets/layers/painted_ground.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "80_maps/StationBuranYard/map.png": {
+   "bytes": 3820992,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/80_maps/StationBuranYard/map.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "80_maps/StationBuranYard/qa/nav/nav-debug.png": {
+   "bytes": 2627914,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/80_maps/StationBuranYard/qa/nav/nav-debug.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  }
+ }
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "a4a6ebdfc2b42319d4d2a3a8e21aa237e172f57081078a303988478858f8bb93",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:35:44.643Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:35:44.643Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "5-2 Car 004 derailment at Eagle Beak Cliff",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-cabb86d0-e31f-4fa5-b74e-85d787c76936.png",
+    "sourceSha256": "d449c8b6f14d05e141f1743506e6ecd5abd3dde6c30329535d6c368ac3b2bd25",
+    "sourceMtime": "2026-11-16T09:16:17Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "d449c8b6f14d05e141f1743506e6ecd5abd3dde6c30329535d6c368ac3b2bd25",
+    "bytes": 3461387,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

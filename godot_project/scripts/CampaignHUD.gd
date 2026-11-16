@@ -37,63 +37,93 @@ const MATE_ART := {
 	"gulya": "res://art/30_props/PRP_Gulya_Stand.png",
 	"pavel": "res://art/30_props/PRP_Pavel_Stand.png",
 	"ivan": "res://art/30_props/PRP_Ivan_Stand.png",
+	"yelena": "res://art/30_props/PRP_Yelena_Stand.png",
+	"zakhar": "res://art/30_props/PRP_Zakhar_Stand.png",
 }
-# 剧情角色三态胸像：calm 平静 / sad 悲伤 / intense 激动
+# 剧情角色四态胸像：calm 平静 / sad 悲伤 / intense 激动 / wry 苦笑
 const STORY_PORTRAITS := {
+	"osk": {
+		"calm": preload("res://art/10_characters/portraits/PRT_OSK_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_OSK_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_OSK_Intense.png"),
+	},
 	"aleksei": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Aleksei_Concept.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Aleksei_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Aleksei_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Aleksei_Wry.png"),
 	},
 	"chernov": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Chernov_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Chernov_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Chernov_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Chernov_Wry.png"),
 	},
 	"fyodor": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Fyodor_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Fyodor_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Fyodor_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Fyodor_Wry.png"),
 	},
 	"ivan": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Ivan_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Ivan_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Ivan_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Ivan_Wry.png"),
 	},
 	"anna": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Anna_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Anna_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Anna_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Anna_Wry.png"),
 	},
 	"pasha": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Pasha_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Pasha_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Pasha_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Pasha_Wry.png"),
 	},
 	"gulya": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Gulya_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Gulya_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Gulya_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Gulya_Wry.png"),
 	},
 	"lana": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Lana_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Lana_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Lana_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Lana_Wry.png"),
 	},
 	"pavel": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Pavel_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Pavel_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Pavel_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Pavel_Wry.png"),
 	},
 	"ash": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Ash_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Ash_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Ash_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Ash_Wry.png"),
 	},
 	"leonov": {
 		"calm": preload("res://art/10_characters/portraits/PRT_Leonov_Calm.png"),
 		"sad": preload("res://art/10_characters/portraits/PRT_Leonov_Sad.png"),
 		"intense": preload("res://art/10_characters/portraits/PRT_Leonov_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Leonov_Wry.png"),
+	},
+	"yelena": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Yelena_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Yelena_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Yelena_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Yelena_Wry.png"),
+	},
+	"zakhar": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Zakhar_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Zakhar_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Zakhar_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Zakhar_Wry.png"),
 	},
 }
 const STORY_SPEAKERS := {
@@ -116,6 +146,27 @@ const STORY_SPEAKERS := {
 	"灰狼犬灰烬": "ash",
 	"梁诺夫": "leonov",
 	"梁诺夫医生": "leonov",
+	"叶莲娜": "yelena",
+	"核算员扎哈尔": "zakhar",
+	"旁白 / 阿列克谢": "aleksei",
+	"旁白": "aleksei",
+	"阿列克谢": "aleksei",
+	"调度长": "",
+	"“老轨”伊万": "ivan",
+	"老轨伊万（列车长）": "ivan",
+	"卡佳妈妈": "",
+	"回退期的母亲": "",
+	"谢尔盖": "",
+	"核算员": "",
+	"柳德米拉大娘": "",
+	"费奥多尔": "fyodor",
+	"瓦西里": "",
+	"茹科夫专员": "",
+	"假药贩": "",
+	"博伊科": "",
+	"佳娜": "",
+	"督察专员": "osk",
+	"清杀队": "osk",
 }
 
 var sim
@@ -1648,7 +1699,7 @@ func _build_story_modal() -> void:
 	if _story_beat != sim.story_id:
 		_story_beat = sim.story_id
 		_story_line = 0
-	var lines: Array = beat.get("lines", [])
+	var lines: Array = sim.story_lines(String(sim.story_id))
 	_story_line = clampi(_story_line, 0, maxi(0, lines.size() - 1))
 
 	var dock := _vbox(0)
@@ -1706,7 +1757,8 @@ func _build_story_modal() -> void:
 		spoken.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		text_col.add_child(spoken)
 
-	if not lines.is_empty():
+	var story_portrait: Texture2D = _story_texture(lines[_story_line]) if not lines.is_empty() else null
+	if story_portrait != null:
 		var frame := PanelContainer.new()
 		frame.name = "StoryPortraitFrame"
 		frame.custom_minimum_size = Vector2(238, 238)
@@ -1714,7 +1766,7 @@ func _build_story_modal() -> void:
 		frame.add_theme_stylebox_override("panel", _sb(Color("#0d0f12"), Color("#c8a257"), 4))
 		frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var tr := TextureRect.new()
-		tr.texture = _story_texture(lines[_story_line])
+		tr.texture = story_portrait
 		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		tr.custom_minimum_size = Vector2(220, 220)
@@ -1745,7 +1797,12 @@ func _build_story_modal() -> void:
 
 
 func _story_texture(line: Dictionary) -> Texture2D:
-	var role := String(STORY_SPEAKERS.get(String(line.get("w", "")), "aleksei"))
+	var speaker := String(line.get("w", ""))
+	if speaker != "" and not STORY_SPEAKERS.has(speaker):
+		return null
+	var role := String(STORY_SPEAKERS.get(speaker, "aleksei"))
+	if role == "" or not STORY_PORTRAITS.has(role):
+		return null
 	var mood := String(line.get("mood", "calm"))
 	return STORY_PORTRAITS[role].get(mood, STORY_PORTRAITS[role]["calm"])
 
@@ -1754,7 +1811,7 @@ func advance_story() -> bool:
 	if not sim.story_open:
 		return false
 	var beat: Dictionary = Data.STORY.get(sim.story_id, {})
-	var lines: Array = beat.get("lines", [])
+	var lines: Array = sim.story_lines(String(sim.story_id))
 	if _story_line >= lines.size() - 1:
 		return false
 	_story_line += 1
@@ -1767,7 +1824,7 @@ func choose_story(idx: int) -> void:
 	if not sim.story_open:
 		return
 	var beat: Dictionary = Data.STORY.get(sim.story_id, {})
-	var lines: Array = beat.get("lines", [])
+	var lines: Array = sim.story_lines(String(sim.story_id))
 	var choices: Array = beat.get("choices", [])
 	if _story_line >= lines.size() - 1 and idx >= 0 and idx < choices.size():
 		_resolve_story(idx)

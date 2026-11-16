@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "2456d11d707c27feacb3966119f9326467729fc5d9f97c1e5be480720fa5d03f",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:31:40.422Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:31:40.422Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "4-2 thermite and detonator decision",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-c860a31b-6c9d-4168-a236-d7da39068ae3.png",
+    "sourceSha256": "f901ca1f3c8aee268dfc191313dd3101639cc2c28bfb7ba8ddbd4860e6e25a1a",
+    "sourceMtime": "2026-11-16T09:14:18Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "f901ca1f3c8aee268dfc191313dd3101639cc2c28bfb7ba8ddbd4860e6e25a1a",
+    "bytes": 2690145,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

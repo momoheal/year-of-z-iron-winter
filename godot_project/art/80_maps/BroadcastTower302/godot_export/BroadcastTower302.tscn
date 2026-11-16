@@ -1,0 +1,132 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Texture2D" path="assets/layers/painted_ground.png" id="1_painted_ground"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0"]
+size = Vector2(370, 245)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(190, 120)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
+size = Vector2(370, 245)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3"]
+size = Vector2(24, 660)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4"]
+size = Vector2(24, 660)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5"]
+size = Vector2(600, 18)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6"]
+size = Vector2(595, 18)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7"]
+size = Vector2(610, 18)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8"]
+size = Vector2(610, 18)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_9"]
+radius = 76.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_10"]
+radius = 92.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_11"]
+radius = 80.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_12"]
+radius = 72.0
+
+[node name="BroadcastTower302" type="Node2D"]
+texture_filter = 2
+metadata/map_bundle_sha256 = "68737d04b27e7d776f59c865f268fb1b39485d42ac2f4838c11dd0221c849f93"
+
+[node name="painted_ground" type="Sprite2D" parent="."]
+texture = ExtResource("1_painted_ground")
+centered = false
+
+[node name="collision" type="StaticBody2D" parent="."]
+metadata/actor_radius = 11.0
+metadata/y_squash = 0.75
+metadata/walk_regions = [{"polygon": PackedVector2Array(145, 132, 1518, 132, 1518, 742, 145, 742), "holes": []}]
+
+[node name="hq_west_wing" type="CollisionShape2D" parent="collision"]
+position = Vector2(550, 372.5)
+shape = SubResource("RectangleShape2D_0")
+
+[node name="hq_north_link" type="CollisionShape2D" parent="collision"]
+position = Vector2(830, 310)
+shape = SubResource("RectangleShape2D_1")
+
+[node name="hq_east_wing" type="CollisionShape2D" parent="collision"]
+position = Vector2(1110, 372.5)
+shape = SubResource("RectangleShape2D_2")
+
+[node name="west_fence" type="CollisionShape2D" parent="collision"]
+position = Vector2(132, 435)
+shape = SubResource("RectangleShape2D_3")
+
+[node name="east_fence" type="CollisionShape2D" parent="collision"]
+position = Vector2(1537, 435)
+shape = SubResource("RectangleShape2D_4")
+
+[node name="north_fence_west" type="CollisionShape2D" parent="collision"]
+position = Vector2(444, 114)
+shape = SubResource("RectangleShape2D_5")
+
+[node name="north_fence_east" type="CollisionShape2D" parent="collision"]
+position = Vector2(1227.5, 114)
+shape = SubResource("RectangleShape2D_6")
+
+[node name="south_fence_west" type="CollisionShape2D" parent="collision"]
+position = Vector2(449, 757)
+shape = SubResource("RectangleShape2D_7")
+
+[node name="south_fence_east" type="CollisionShape2D" parent="collision"]
+position = Vector2(1220, 757)
+shape = SubResource("RectangleShape2D_8")
+
+[node name="markers" type="Node2D" parent="."]
+
+[node name="start" type="Marker2D" parent="markers"]
+position = Vector2(835, 700)
+metadata/kind = "spawn"
+metadata/facing = "south"
+
+[node name="interactions" type="Node2D" parent="."]
+
+[node name="south_gate" type="Area2D" parent="interactions"]
+position = Vector2(835, 742)
+metadata/kind = "interaction"
+metadata/reach = 76.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/south_gate"]
+shape = SubResource("CircleShape2D_9")
+
+[node name="broadcast_console" type="Area2D" parent="interactions"]
+position = Vector2(835, 530)
+metadata/kind = "interaction"
+metadata/reach = 92.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/broadcast_console"]
+shape = SubResource("CircleShape2D_10")
+
+[node name="tower_relay" type="Area2D" parent="interactions"]
+position = Vector2(835, 155)
+metadata/kind = "interaction"
+metadata/reach = 80.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/tower_relay"]
+shape = SubResource("CircleShape2D_11")
+
+[node name="east_watchlight" type="Area2D" parent="interactions"]
+position = Vector2(1390, 430)
+metadata/kind = "interaction"
+metadata/reach = 72.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/east_watchlight"]
+shape = SubResource("CircleShape2D_12")

@@ -1,0 +1,227 @@
+{
+  "schema": "generate2dmap.map_bundle.v2",
+  "id": "broadcast_tower_302",
+  "name": "302 Broadcast Tower · siege grounds",
+  "world": {
+    "width": 1672,
+    "height": 941,
+    "unit": "px"
+  },
+  "layers": [
+    {
+      "name": "painted_ground",
+      "kind": "image",
+      "image": "map.png",
+      "offset": [
+        0,
+        0
+      ],
+      "sha256": "474e5ba3bf82c2253fcc939d155e7d5c21e3b4414cfc40dc57d5729a2baffc6d"
+    }
+  ],
+  "collision": {
+    "actorRadius": 11,
+    "ySquash": 0.75,
+    "walkRegions": [
+      {
+        "polygon": [
+          [
+            145,
+            132
+          ],
+          [
+            1518,
+            132
+          ],
+          [
+            1518,
+            742
+          ],
+          [
+            145,
+            742
+          ]
+        ]
+      }
+    ],
+    "solids": [
+      {
+        "shape": "rect",
+        "id": "hq_west_wing",
+        "x": 365,
+        "y": 250,
+        "w": 370,
+        "h": 245,
+        "material": "building"
+      },
+      {
+        "shape": "rect",
+        "id": "hq_north_link",
+        "x": 735,
+        "y": 250,
+        "w": 190,
+        "h": 120,
+        "material": "building"
+      },
+      {
+        "shape": "rect",
+        "id": "hq_east_wing",
+        "x": 925,
+        "y": 250,
+        "w": 370,
+        "h": 245,
+        "material": "building"
+      },
+      {
+        "shape": "rect",
+        "id": "west_fence",
+        "x": 120,
+        "y": 105,
+        "w": 24,
+        "h": 660,
+        "material": "fence"
+      },
+      {
+        "shape": "rect",
+        "id": "east_fence",
+        "x": 1525,
+        "y": 105,
+        "w": 24,
+        "h": 660,
+        "material": "fence"
+      },
+      {
+        "shape": "rect",
+        "id": "north_fence_west",
+        "x": 144,
+        "y": 105,
+        "w": 600,
+        "h": 18,
+        "material": "fence"
+      },
+      {
+        "shape": "rect",
+        "id": "north_fence_east",
+        "x": 930,
+        "y": 105,
+        "w": 595,
+        "h": 18,
+        "material": "fence"
+      },
+      {
+        "shape": "rect",
+        "id": "south_fence_west",
+        "x": 144,
+        "y": 748,
+        "w": 610,
+        "h": 18,
+        "material": "fence"
+      },
+      {
+        "shape": "rect",
+        "id": "south_fence_east",
+        "x": 915,
+        "y": 748,
+        "w": 610,
+        "h": 18,
+        "material": "fence"
+      }
+    ]
+  },
+  "nav": {
+    "cell": 6
+  },
+  "spawns": [
+    {
+      "id": "start",
+      "x": 835,
+      "y": 700,
+      "facing": "south"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "south_gate",
+      "x": 835,
+      "y": 742,
+      "reach": 76
+    },
+    {
+      "id": "broadcast_console",
+      "x": 835,
+      "y": 530,
+      "reach": 92
+    },
+    {
+      "id": "tower_relay",
+      "x": 835,
+      "y": 155,
+      "reach": 80
+    },
+    {
+      "id": "east_watchlight",
+      "x": 1390,
+      "y": 430,
+      "reach": 72
+    }
+  ],
+  "roads": [
+    {
+      "id": "central_approach",
+      "material": "packed_snow",
+      "width": 64,
+      "polyline": [
+        [
+          835,
+          700
+        ],
+        [
+          835,
+          630
+        ],
+        [
+          835,
+          555
+        ]
+      ]
+    },
+    {
+      "id": "yard_lane",
+      "material": "packed_snow",
+      "width": 72,
+      "polyline": [
+        [
+          220,
+          650
+        ],
+        [
+          500,
+          650
+        ],
+        [
+          835,
+          620
+        ],
+        [
+          1180,
+          650
+        ],
+        [
+          1450,
+          650
+        ]
+      ]
+    }
+  ],
+  "camera": {
+    "pixelToWorld": 1.0,
+    "bounds": [
+      0,
+      0,
+      1672,
+      941
+    ]
+  },
+  "art_source": "host_image",
+  "placeholder": false
+}

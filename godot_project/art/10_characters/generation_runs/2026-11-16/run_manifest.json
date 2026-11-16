@@ -1,0 +1,54 @@
+{
+  "schema": "winter-iron.character-art-run.v1",
+  "date": "2026-11-16",
+  "image_route": {
+    "tool": "Codex image_gen",
+    "entrypoint": "image_gen.imagegen",
+    "doctor_record": "doctor.json",
+    "doctor_status": "ready"
+  },
+  "video_route": {
+    "status": "unavailable",
+    "decision": "Use approved still-atlas generation and deterministic cropping; do not claim image-to-video animation."
+  },
+  "shared_style": {
+    "finish": "thick impasto oil painting with visible hand-painted brushwork and restrained winter colors",
+    "adult_proportions": "approximately 7 to 7.5 heads tall, natural head and hand size, clearly proportioned legs",
+    "nonhuman_exception": "preserve believable species and age proportions",
+    "identity_rule": "character references constrain identity and clothing; style references constrain finish only"
+  },
+  "portrait_workflow": {
+    "characters": [
+      "Aleksei", "Anna", "Ash", "Chernov", "Fyodor", "Gulya",
+      "Ivan", "Lana", "Leonov", "OSK", "Pasha", "Pavel", "Yelena", "Zakhar"
+    ],
+    "layout": "single-character 2x2 atlas: Calm, Sad, Intense, Wry",
+    "export": "512x512 RGBA images via process_portrait_atlas.py",
+    "prompt_pattern": "<character>/portrait_atlas_prompt.txt",
+    "source_pattern": "<character>/portrait_atlas_raw.png",
+    "processed_pattern": "<character>/portrait_tiles/"
+  },
+  "gameplay_sheet_workflow": {
+    "characters": ["Aleksei", "OSK", "Rabid", "HalfHuman"],
+    "layout": "12 columns x 3 directions, 72x112 frame, 864x336 sheet, pivot (36,108)",
+    "processing": "process_character_atlas.py applies alpha hygiene, common scale and foot anchor",
+    "runtime_paths": [
+      "CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png",
+      "CHR_05_OSK/CHR_05_OSK_Sheet.png",
+      "CHR_03_Rabid/CHR_03_Rabid_Sheet.png",
+      "CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png"
+    ]
+  },
+  "partner_workflow": {
+    "animated": ["Anna", "Ash", "Gulya", "Ivan", "Pavel", "Yelena", "Zakhar"],
+    "static": ["Leonov", "Trader", "Survivor"],
+    "layout": "single-character 2x2 transparent master atlas plus two 2x2 walk-cycle plates combined into Walk0..Walk7",
+    "processing": "process_partner_atlas.py preserves the existing target dimensions and aligns feet; process_partner_walkcycle_pair.py exports eight ordered, baseline-aligned frames",
+    "prompt_pattern": "<character>/partner_atlas_prompt.txt",
+    "source_pattern": "<character>/partner_atlas_raw.png",
+    "walk_prompt_pattern": "<character>/walkcycle_half_A_prompt.txt and walkcycle_half_B_prompt.txt",
+    "walk_source_pattern": "<character>/walkcycle_half_A_raw.png and walkcycle_half_B_raw.png",
+    "processed_pattern": "<character>/partner_tiles/ and <character>/walkcycle_accepted_tiles/"
+  },
+  "provenance_rule": "Keep prompts, identity references, raw output, processed output and QA records under this dated run. Replace only existing runtime paths unless an added asset is explicitly referenced."
+}

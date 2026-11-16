@@ -1,0 +1,201 @@
+{
+  "schema": "winter-iron.character-atlas.v1",
+  "source": "atlas_raw.png",
+  "source_sha256": "023109ab71b8de03cd609e0d7bd45c2aaffbed23832fe366bf7c68369ca47b00",
+  "output": "atlas_registered.png",
+  "frames_dir": "atlas_registered_frames",
+  "output_sha256": "d1dd11f5dfe4a20e44a64877724da6ddece4d1ab06195b24f4c9408e4ce99b21",
+  "source_size": [
+    2172,
+    724
+  ],
+  "output_size": [
+    864,
+    336
+  ],
+  "grid": [
+    12,
+    3
+  ],
+  "frame_size": [
+    72,
+    112
+  ],
+  "pivot": [
+    36,
+    108
+  ],
+  "alpha_threshold": 16,
+  "scale": 0.431034,
+  "median_idle_source_height": 232.0,
+  "max_source_body_width": 126,
+  "alpha_hygiene": {
+    "mode": "both",
+    "floor": 4,
+    "solid_min": 32,
+    "attach_radius": 2,
+    "connectivity": 8,
+    "floor_px": 91760,
+    "detached_px": 107,
+    "detached_components": 69,
+    "max_removed_alpha": 7
+  },
+  "frame_body_sizes": [
+    [
+      [
+        37,
+        100
+      ],
+      [
+        38,
+        101
+      ],
+      [
+        38,
+        102
+      ],
+      [
+        42,
+        102
+      ],
+      [
+        46,
+        100
+      ],
+      [
+        48,
+        99
+      ],
+      [
+        50,
+        97
+      ],
+      [
+        39,
+        100
+      ],
+      [
+        38,
+        101
+      ],
+      [
+        48,
+        74
+      ],
+      [
+        53,
+        72
+      ],
+      [
+        51,
+        72
+      ]
+    ],
+    [
+      [
+        36,
+        103
+      ],
+      [
+        37,
+        102
+      ],
+      [
+        39,
+        102
+      ],
+      [
+        45,
+        100
+      ],
+      [
+        53,
+        100
+      ],
+      [
+        56,
+        99
+      ],
+      [
+        56,
+        97
+      ],
+      [
+        42,
+        101
+      ],
+      [
+        37,
+        102
+      ],
+      [
+        49,
+        75
+      ],
+      [
+        55,
+        72
+      ],
+      [
+        56,
+        72
+      ]
+    ],
+    [
+      [
+        37,
+        102
+      ],
+      [
+        38,
+        101
+      ],
+      [
+        40,
+        102
+      ],
+      [
+        41,
+        102
+      ],
+      [
+        41,
+        102
+      ],
+      [
+        43,
+        102
+      ],
+      [
+        42,
+        99
+      ],
+      [
+        38,
+        101
+      ],
+      [
+        38,
+        102
+      ],
+      [
+        49,
+        74
+      ],
+      [
+        52,
+        70
+      ],
+      [
+        54,
+        70
+      ]
+    ]
+  ],
+  "special_frames_unified_across_rows": [
+    9,
+    10,
+    11
+  ],
+  "warnings": []
+}

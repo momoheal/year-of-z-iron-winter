@@ -1,0 +1,188 @@
+{
+  "schema": "winter-iron.partner-walkcycle.v1",
+  "sources": [
+    {
+      "path": "walkcycle_half_A_raw.png",
+      "sha256": "f3eac4890b5a9a373fc8821f7b57762b8dcfbaaf9aa0a09a68caae049dc51f50",
+      "size": [
+        1199,
+        1312
+      ],
+      "alpha_hygiene": {
+        "mode": "both",
+        "floor": 4,
+        "solid_min": 32,
+        "attach_radius": 2,
+        "connectivity": 8,
+        "floor_px": 28480,
+        "detached_px": 13,
+        "detached_components": 10,
+        "max_removed_alpha": 6
+      }
+    },
+    {
+      "path": "walkcycle_half_B_retry_raw.png",
+      "sha256": "8b19438c154dc23ec400c06a9b2ff88c4820c4965f622715813ac16feeb62184",
+      "size": [
+        1199,
+        1312
+      ],
+      "alpha_hygiene": {
+        "mode": "both",
+        "floor": 4,
+        "solid_min": 32,
+        "attach_radius": 2,
+        "connectivity": 8,
+        "floor_px": 47865,
+        "detached_px": 16,
+        "detached_components": 12,
+        "max_removed_alpha": 5
+      }
+    }
+  ],
+  "grid_per_source": [
+    2,
+    2
+  ],
+  "frame_count": 8,
+  "target_size": [
+    72,
+    112
+  ],
+  "foot_y": 110,
+  "layout": "first board Walk0..Walk3, second board Walk4..Walk7",
+  "scale": 0.165079,
+  "subject_sizes": [
+    [
+      39,
+      103
+    ],
+    [
+      39,
+      103
+    ],
+    [
+      33,
+      102
+    ],
+    [
+      35,
+      102
+    ],
+    [
+      48,
+      104
+    ],
+    [
+      50,
+      102
+    ],
+    [
+      46,
+      105
+    ],
+    [
+      47,
+      105
+    ]
+  ],
+  "files": {
+    "Walk0": {
+      "path": "PRP_Anna_Walk0.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "e768fb4af93cd0c5e2d7555a14f1aa728b2d40f069d65c482ac2f260363c1dab",
+      "subject_size": [
+        39,
+        103
+      ]
+    },
+    "Walk1": {
+      "path": "PRP_Anna_Walk1.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "3082b1d95b83b1d9e7cbbad33078a24cd591bc8299c2e84dbe559c6860a3afad",
+      "subject_size": [
+        39,
+        103
+      ]
+    },
+    "Walk2": {
+      "path": "PRP_Anna_Walk2.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "1c3088c397c1cd7a37fc0378891898f11794bd7f8285f9933c62dcaba8eb9f21",
+      "subject_size": [
+        33,
+        102
+      ]
+    },
+    "Walk3": {
+      "path": "PRP_Anna_Walk3.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "c2c6fb9b6d2bd39750986fb69fc8d69fc519981f45aecca3f1770a2a157cab9e",
+      "subject_size": [
+        35,
+        102
+      ]
+    },
+    "Walk4": {
+      "path": "PRP_Anna_Walk4.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "4a9621ee1c9b090faa7117790cf3ce1b15bc27287f9025645a8267674fe2f202",
+      "subject_size": [
+        48,
+        104
+      ]
+    },
+    "Walk5": {
+      "path": "PRP_Anna_Walk5.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "54fd43048cfef03c6792909aa7121c68abe373738c5d6dac4998840eaf46d3ab",
+      "subject_size": [
+        50,
+        102
+      ]
+    },
+    "Walk6": {
+      "path": "PRP_Anna_Walk6.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "0f1b970acdb75c1743f8254ad0efaf5f96c344b1bbf2d5f256afad0ff6cc82d4",
+      "subject_size": [
+        46,
+        105
+      ]
+    },
+    "Walk7": {
+      "path": "PRP_Anna_Walk7.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "f328519385d10d9d85db449add476ec813464b5fe0b7cf864cd6cf60b53e612d",
+      "subject_size": [
+        47,
+        105
+      ]
+    }
+  },
+  "warnings": []
+}

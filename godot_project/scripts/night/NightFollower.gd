@@ -1,14 +1,15 @@
 extends CharacterBody2D
 ## NightFollower.gd — 夜潜伙伴跟随者 + 伙伴实时特性。
 ##
-## 跟随：Stand 立绘 + Walk0/Walk1 两帧迈步 + 朝向翻转 + 走路浮动。
+## 跟随：Stand 立绘 + Walk0..Walk7 八帧步态 + 朝向翻转 + 走路浮动。
 ## 战役出发时由 RaidBridge.cfg.mate 决定带谁（"" = 没带，不生成）；
-## F2 独立跑默认灰烬，可用 --mate=ash/anna/gulya/pavel/ivan 指定。
+## F2 独立跑默认灰烬，可用 --mate=ash/anna/gulya/pavel/ivan/yelena/zakhar 指定。
 ##
 ## 实时特性（_update_perks，按 mate_id 分）：
 ##   ash  嗅觉：6m 内标出容器(📦)与生物；三态分辨——狂暴者"!"吠、半人"?"呜咽、幸存者"♥"摇尾。
-##   anna 辨认半人：8m 内把半人标成"半人"黄字，避免当成狂暴者误杀。
+##   anna 辨认半人：8m 内把半人标成"半人"黄字；狂暴者视听范围缩短由 NightExplore 处理。
 ##   ivan 撤离点常亮：在撤离点放常驻光圈 + "撤离"标记。
+##   yelena 的 C 停步命令和 zakhar 的搜尸/抢掠/背叛均由 NightExplore 处理。
 ## 注：帕维尔撬锁 / 伊万显隐藏容器需要夜潜先引入"上锁 / 隐藏容器"机制（当前没有），另批做。
 
 const PORTRAITS := {
@@ -17,6 +18,8 @@ const PORTRAITS := {
 	"gulya": "res://art/30_props/PRP_Gulya_Stand.png",
 	"pavel": "res://art/30_props/PRP_Pavel_Stand.png",
 	"ivan": "res://art/30_props/PRP_Ivan_Stand.png",
+	"yelena": "res://art/30_props/PRP_Yelena_Stand.png",
+	"zakhar": "res://art/30_props/PRP_Zakhar_Stand.png",
 }
 const PIVOTS := {
 	"ash": Vector2(48, 76),
@@ -24,8 +27,10 @@ const PIVOTS := {
 	"gulya": Vector2(36, 108),
 	"pavel": Vector2(36, 108),
 	"ivan": Vector2(36, 108),
+	"yelena": Vector2(36, 108),
+	"zakhar": Vector2(36, 108),
 }
-const WALK_FRAME_TIME := 0.13
+const WALK_FRAME_TIME := 0.125
 const PAW_STEP_M := 1.4             # 爪印间距（米）；人形伙伴按靴印走同样的间距
 const SENSE_RANGE := 6.0            # 灰烬嗅觉半径（米）
 const ANNA_RANGE := 8.0             # 安娜辨认半人半径（米）
@@ -65,7 +70,8 @@ func _ready() -> void:
 	if ResourceLoader.exists(stand_path):
 		_tex_stand = load(stand_path)
 		_sprite.texture = _tex_stand
-	for suffix in ["Walk0", "Walk1"]:
+	for i in range(8):
+		var suffix := "Walk%d" % i
 		var p := "res://art/30_props/PRP_%s_%s.png" % [mate_id.capitalize(), suffix]
 		if ResourceLoader.exists(p):
 			_tex_walk.append(load(p))
@@ -128,12 +134,12 @@ func _drop_track(delta: float) -> void:
 
 func _update_walk_anim(delta: float) -> void:
 	_t += delta
-	if _moving and _tex_walk.size() == 2:
+	if _moving and _tex_walk.size() >= 2:
 		_frame_t += delta
-		if _frame_t >= WALK_FRAME_TIME:
-			_frame_t = 0.0
-			_frame = 1 - _frame
-			_sprite.texture = _tex_walk[_frame]
+		while _frame_t >= WALK_FRAME_TIME:
+			_frame_t -= WALK_FRAME_TIME
+			_frame = (_frame + 1) % _tex_walk.size()
+		_sprite.texture = _tex_walk[_frame]
 		_sprite.position.y = sin(_t * 14.0) * 1.4
 	else:
 		if _tex_stand != null:

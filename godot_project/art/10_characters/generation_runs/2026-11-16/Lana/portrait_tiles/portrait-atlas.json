@@ -1,0 +1,46 @@
+{
+  "schema": "winter-iron.character-portrait-atlas.v1",
+  "source": "portrait_atlas_raw.png",
+  "source_sha256": "9ed2e56f356f15fc772386ac13de596e777b3ea1e53aaa9992cccf47bb332107",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "tile_size": [
+    512,
+    512
+  ],
+  "layout": {
+    "top_left": "Calm",
+    "top_right": "Sad",
+    "bottom_left": "Intense",
+    "bottom_right": "Wry"
+  },
+  "files": {
+    "Calm": {
+      "path": "PRT_Lana_Calm.png",
+      "sha256": "d4be2ac156e1efcf982c6a95a7e092551655dab5f27f98db97e35b341f85cb43"
+    },
+    "Sad": {
+      "path": "PRT_Lana_Sad.png",
+      "sha256": "33897f2d5dc589ea733f1d5bbd2ba6504655c6086a49d08430562881e26e9100"
+    },
+    "Intense": {
+      "path": "PRT_Lana_Intense.png",
+      "sha256": "0122988191726b6a592b99ccba61971063360ca3dfc753c05a38f520fa36b270"
+    },
+    "Wry": {
+      "path": "PRT_Lana_Wry.png",
+      "sha256": "10547fc8c37d0c091b46220cb16e5aefc1e243a28ee8de8178d0cb342b50d32a"
+    },
+    "Base": {
+      "path": "PRT_Lana.png",
+      "sha256": "d4be2ac156e1efcf982c6a95a7e092551655dab5f27f98db97e35b341f85cb43"
+    }
+  },
+  "warnings": []
+}

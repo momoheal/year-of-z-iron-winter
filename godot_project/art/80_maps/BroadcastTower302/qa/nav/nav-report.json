@@ -1,0 +1,229 @@
+{
+  "schema": "generate2dmap.nav_report.v1",
+  "status": "pass",
+  "method": "plan Appendix C validity (centre + 8 footprint samples against walk regions, solids, object footprints scaled once, tile collision and material classes) on a grid of cell max(1, round(r/2)) px; 4-neighbour moves open when segmentClear holds between node centres (samples every cell/2, plus the exact thin-gap centre path and one_way direction); BFS from every spawn and portal arrival to every interaction, exit, anchor slot and approach point",
+  "notProven": [
+    "that the collision data matches the painted art",
+    "positions closer than one grid cell to a blocker (the grid samples cell centres)",
+    "runtime movement code: map-runtime.mjs parity is tested during integration",
+    "links to maps not passed with --link"
+  ],
+  "checks": [
+    {
+      "id": "starts_valid",
+      "status": "pass",
+      "value": {
+        "starts": 1,
+        "blocked": []
+      },
+      "threshold": {
+        "blocked": 0
+      }
+    },
+    {
+      "id": "targets_reachable",
+      "status": "pass",
+      "value": {
+        "reachable": 4,
+        "total": 4,
+        "unreachable": []
+      },
+      "threshold": {
+        "unreachable": 0
+      }
+    },
+    {
+      "id": "portals_inside_world",
+      "status": "pass",
+      "value": {
+        "outside": []
+      },
+      "threshold": {
+        "outside": 0
+      }
+    },
+    {
+      "id": "arrivals_outside_triggers",
+      "status": "pass",
+      "value": {
+        "problems": 0
+      },
+      "threshold": {
+        "problems": 0
+      }
+    },
+    {
+      "id": "reciprocal_links",
+      "status": "pass",
+      "value": {
+        "links": [],
+        "notChecked": []
+      },
+      "threshold": {
+        "errors": 0
+      }
+    },
+    {
+      "id": "thin_gaps",
+      "status": "pass",
+      "value": 0,
+      "threshold": "reported: moves the thin-gap rule closed although every footprint sample was valid"
+    },
+    {
+      "id": "unreachable_walkable_area",
+      "status": "pass",
+      "value": {
+        "pockets": 0,
+        "cells": 0
+      },
+      "threshold": "reported"
+    },
+    {
+      "id": "blocked_rects_union",
+      "status": "pass",
+      "value": {
+        "rects": 13,
+        "blockedCells": 27923
+      },
+      "threshold": "union == blocked cells"
+    },
+    {
+      "id": "footprints_scaled_once",
+      "status": "pass",
+      "value": {
+        "objectSolids": 0
+      },
+      "threshold": "object footprint x scale, never inflated by the actor radius"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "../../map-bundle.json",
+      "sha256": "61fa7d907a4d83d55a6022abf8342cb5142c8dfb58f9775e6a3db28b71cb8f6d",
+      "bytes": 4180
+    },
+    {
+      "path": "../../map.png",
+      "sha256": "474e5ba3bf82c2253fcc939d155e7d5c21e3b4414cfc40dc57d5729a2baffc6d",
+      "bytes": 3837439
+    }
+  ],
+  "outputs": [
+    {
+      "path": "nav-grid.json",
+      "sha256": "1811d22986097efa05024403fb171452710776e7baa173c0bac2b1964319c6d3",
+      "bytes": 92017
+    },
+    {
+      "path": "nav-debug.png",
+      "sha256": "bed2a4a2923ed4227674c3e09130b1a37d5adf94a77929220cea53defc9e668c",
+      "bytes": 2583730
+    }
+  ],
+  "tool": {
+    "name": "map_nav.py",
+    "version": "0.4.0"
+  },
+  "map": "broadcast_tower_302",
+  "cell": 6,
+  "starts": [
+    {
+      "kind": "spawn",
+      "id": "start",
+      "point": [
+        835.0,
+        700.0
+      ],
+      "reachable": true,
+      "steps": 0,
+      "node": [
+        837.0,
+        699.0
+      ],
+      "reason": null
+    }
+  ],
+  "targets": [
+    {
+      "kind": "interaction",
+      "id": "south_gate",
+      "point": [
+        835.0,
+        742.0
+      ],
+      "reachable": true,
+      "steps": 0,
+      "node": [
+        825.0,
+        687.0
+      ],
+      "reason": null
+    },
+    {
+      "kind": "interaction",
+      "id": "broadcast_console",
+      "point": [
+        835.0,
+        530.0
+      ],
+      "reachable": true,
+      "steps": 11,
+      "node": [
+        825.0,
+        621.0
+      ],
+      "reason": null
+    },
+    {
+      "kind": "interaction",
+      "id": "tower_relay",
+      "point": [
+        835.0,
+        155.0
+      ],
+      "reachable": true,
+      "steps": 227,
+      "node": [
+        903.0,
+        195.0
+      ],
+      "reason": null
+    },
+    {
+      "kind": "interaction",
+      "id": "east_watchlight",
+      "point": [
+        1390.0,
+        430.0
+      ],
+      "reachable": true,
+      "steps": 117,
+      "node": [
+        1329.0,
+        465.0
+      ],
+      "reason": null
+    }
+  ],
+  "links": [],
+  "thinGaps": [],
+  "unreachablePockets": [],
+  "bundleNav": {
+    "cell": 6,
+    "grid": "nav-grid.json"
+  },
+  "problems": [
+    {
+      "severity": "warning",
+      "path": "$",
+      "message": "unknown top-level field(s) ignored: notes",
+      "code": "rule"
+    },
+    {
+      "severity": "warning",
+      "path": "$.nav.cell",
+      "message": "nav.cell 24 differs from max(1, round(actorRadius/2)) = 6, which map_nav uses",
+      "code": "rule"
+    }
+  ]
+}

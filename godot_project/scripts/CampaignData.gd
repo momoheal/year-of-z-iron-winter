@@ -168,10 +168,10 @@ const MATES := [
 	{"id": "ash", "ic": "🐺", "zh": "灰烬（灰狼犬）", "en": "Ash (Wolfdog)",
 		"zh_p": "嗅觉预警：6m 内标出容器/生物；三态叫声分辨狂暴者、半人、求救者。",
 		"en_p": "Olfactory warning: marks containers & creatures within 6m; tri-state bark separates rabid / half-human / kin.",
-		"lock_zh": "城北冷库事件后入队", "lock_en": "Joins after the Cold Storage beat"},
+		"lock_zh": "第一幕冷库：救下谢尔盖父女并喂灰犬后入队；低头离开则不加入", "lock_en": "Act I Cold Storage: joins only if you rescue Sergey and Maria and feed the wolfdog"},
 	{"id": "anna", "ic": "👩", "zh": "安娜（0419）", "en": "Anna (0419)",
-		"zh_p": "辨认半人：直接标注对方状态，避免误杀；背包 +4 格。",
-		"en_p": "Tri-state readout: labels every figure; +4 pack slots.",
+		"zh_p": "发热者视线与听觉警戒范围 -25%；辨认半人并标注状态；背包 +4 格。",
+		"en_p": "Rabid sight and hearing range -25%; identifies half-humans; +4 pack slots.",
 		"lock_zh": "疗养院地下室救援后入队", "lock_en": "Joins after the Sanatorium rescue"},
 	{"id": "gulya", "ic": "🩺", "zh": "古丽娅（医师）", "en": "Gulya (Medic)",
 		"zh_p": "每夜可救一次重伤；医疗类容器产出 +50%。",
@@ -184,8 +184,55 @@ const MATES := [
 	{"id": "ivan", "ic": "🚂", "zh": "老轨伊万（列车长）", "en": "Old Ivan (Conductor)",
 		"zh_p": "显示隐藏容器、撤离点常亮、路上耗时 -20%。",
 		"en_p": "Reveals hidden stashes, keeps extraction marked, -20% travel time.",
-		"lock_zh": "黑市抉择 C 后入队", "lock_en": "Joins after Black Market Choice C"},
+		"lock_zh": "黑市剧情中选择分给冻伤者抗生素后入队", "lock_en": "Joins if you give antibiotics to the frostbitten people at the market"},
+	{"id": "yelena", "ic": "🧥", "zh": "叶莲娜（秘密广播员）", "en": "Yelena (Hidden Broadcaster)",
+		"zh_p": "按 C 命令最近且视线可达的 OSK 停步 8 秒；冷却 25 秒。",
+		"en_p": "Press C to halt the nearest visible OSK for 8 seconds; 25-second cooldown.",
+		"lock_zh": "黑市图内发现 6.66 MHz 秘密广播点后，可选择邀请入队", "lock_en": "Can be recruited after finding the 6.66 MHz transmitter landmark in the market"},
+	{"id": "zakhar", "ic": "📣", "zh": "核算员扎哈尔", "en": "Zakhar (Quartermaster)",
+		"zh_p": "尸体搜刮多得 1 件；按 V 抢商人或半人可得额外物资。若阿列克谢走灭绝人性的路线，他会为换取冬季配额向清杀队举报并背叛。",
+		"en_p": "Finds one extra item on corpses; press V to rob traders or half-humans for extra supplies. On the ruthless route, he reports you to OSK in exchange for a winter ration quota.",
+		"lock_zh": "货场剧情后入队", "lock_en": "Joins after the freight yard story"},
 ]
+
+## 伙伴只在对应地图剧情节点后解锁；validator 会核对地点、剧情和选项。
+const MATE_UNLOCKS := {
+	"ash": {"location": "coldstore", "story": "coldstore", "choice": 0},
+	"zakhar": {"location": "yard", "story": "yard", "choice": 0},
+	"pavel": {"location": "canteen", "story": "canteen", "choice": 0},
+	"anna": {"location": "sanitarium", "story": "sanitarium", "choice": 0},
+	"gulya": {"location": "sanitarium", "story": "sanitarium", "choice": 0},
+	"ivan": {"location": "market", "story": "market", "choice": 1},
+	"yelena": {"location": "market", "story": "broadcast", "trigger": "landmark:6.66 电台棚", "choice": 0},
+}
+
+## 全量文学剧本的场景 ID 与战役内首次触发节拍的对应表。
+## 完整场景数据由 tools/sync_story_dialogue.py 生成到 data/story_dialogue.json。
+const STORY_SOURCE_SCENES := {
+	"coldstore": "1-2",
+	"yard": "1-4A",
+	"canteen": "2-2",
+	"sanitarium": "2-4",
+	"market": "3-2",
+	"broadcast": "3-2A",
+	"manor": "3-3",
+}
+
+static var _script_dialogue_cache: Dictionary = {}
+
+static func script_scene(scene_id: String) -> Array:
+	if _script_dialogue_cache.is_empty():
+		var file := FileAccess.open("res://data/story_dialogue.json", FileAccess.READ)
+		if file == null:
+			push_error("Missing res://data/story_dialogue.json; run tools/sync_story_dialogue.py --sync")
+			return []
+		var parsed = JSON.parse_string(file.get_as_text())
+		if not parsed is Dictionary:
+			push_error("Invalid res://data/story_dialogue.json")
+			return []
+		_script_dialogue_cache = parsed.get("scenes", {})
+	var record: Dictionary = _script_dialogue_cache.get(scene_id, {})
+	return (record.get("lines", []) as Array).duplicate(true)
 
 # ============================================================================
 # LOCS — 13 个 TWoM 式地图节点（x,y 为 900×520 城市地图坐标）
@@ -334,25 +381,25 @@ const STORY := {
 				"en": "File 0892: transferred to the Ural Line Station yesterday at 22:00. Persons registered at this coordinate: zero. Follow the manifest, Morozov. Keep moving those crates."},
 			{"w": "", "mood": "sad", "zh": "配给箱的电子锁「咔」地一声落了死栓——多么干脆、多么合乎规矩的一声响！那男人竟连头也没有抬一下，只是跪在结了黑冰的水泥地上，用冻裂的指甲一寸寸抠着冰缝里掉出来的两粒黑麦。既然账本上写着「零」，那他们就连喊饿的权利也一并被注销了。",
 				"en": "The ration crate's lock snaps shut. The man does not look up; he only feels in the ice for two spilled grains of buckwheat."},
-			{"w": "", "zh": "傍晚，切尔诺夫带车队离开。你在废弃收发亭旁掰下半块冷黑麦饼，递给一只脖颈上还缠着断铁丝的灰狼犬。它叼走了饼。你想起柱子后面的两个人，摸到衣袋里的工作日志。",
-				"en": "At dusk, Chernov leaves with the convoy. By the abandoned dispatch hut, you break off half a piece of cold rye for a wolfdog with wire caught around its neck. It takes the bread. You think of the two people behind the column and reach for the logbook in your pocket."},
+			{"w": "", "zh": "傍晚，切尔诺夫带车队离开。废弃收发亭旁，那只灰犬颈上缠着断铁丝，勒痕已经结痂，周围的毛长得稀疏。它没有靠近，只盯着你手里的黑麦饼。你摸到衣袋里的工作日志，决定要不要救人、喂它。",
+				"en": "At dusk, Chernov leaves with the convoy. By the abandoned dispatch hut, the grey wolfdog watches your rye bread. Rusted wire has left a healed ring around its neck, where the fur grows thin. You reach for your logbook and decide whether to help them."},
 		],
 		"choices": [
-			{"zh": "在《工作日志》背面写下：谢尔盖、玛丽亚，活人",
-				"en": "Write in the logbook: Sergey & Maria, alive",
-				"d_zh": "良知 ▲ · 记录一条真实姓名", "d_en": "Conscience ▲ · one real name survives",
+			{"zh": "救下谢尔盖父女，喂灰犬并写下他们的名字",
+				"en": "Rescue Sergey and Maria, feed the wolfdog, and record their names",
+				"d_zh": "良知 ▲ · 谢尔盖与玛丽亚获救 · 灰烬入队", "d_en": "Conscience ▲ · Sergey and Maria are saved · Ash joins",
 				"cls": "good",
 				"ops": [["name", "Сергей, Мария · 谢尔盖与玛丽亚"], ["conscience", 8], ["add", "scrap", 1]],
 				"after_mate": "ash",
-				"toast_zh": "钢笔尖刺破纸背：谢尔盖、玛丽亚——哪怕全世界的电传机都判了他们死刑，在这张纸上，他们还在喘气。「灰烬」无声地走上前，把冻湿的前爪轻轻按在了你的靴面上。",
-				"toast_en": "The pen scratches: another real name survives. Ash plants a paw on your boot."},
-			{"zh": "什么也不写，低头搬你的箱子", "en": "Write nothing. Keep hauling crates.",
-				"d_zh": "中立 · 省下麻烦", "d_en": "Neutral · save yourself the trouble",
+				"toast_zh": "你把饼分给谢尔盖父女，又把剩下的碎块放到灰犬鼻尖前。它吃完后，你剪断勒住脖子的锈铁丝；灰烬自己站起来，踩着你的脚印跟上。谢尔盖和玛丽亚的名字也留在了纸上。",
+				"toast_en": "You share the bread with Sergey and Maria, then feed the wolfdog. After you cut the wire from its scarred neck, Ash chooses to follow. Their names stay in your book."},
+			{"zh": "不救他们，低头搬你的箱子", "en": "Leave them behind and keep hauling crates.",
+				"d_zh": "不获得灰烬 · 谢尔盖父女仍被注销", "d_en": "Ash does not join · Sergey and Maria remain erased",
 				"cls": "",
 				"ops": [["add", "scrap", 2]],
-				"after_mate": "ash",
-				"toast_zh": "你卑怯地低下头，数清了公家的箱子，却唯独不敢去数近在咫尺的活人。「灰烬」在身后静静看着你，还是踩着你的脚印跟了上来。",
-				"toast_en": "You counted the crates. You did not count them. Ash follows anyway."},
+				"after_mate": "",
+				"toast_zh": "你低头推车，没有救谢尔盖父女，也没有喂那只灰犬。它留在收发亭旁，颈上的旧伤还在。灰烬没有跟上。",
+				"toast_en": "You keep hauling and leave Sergey, Maria, and the wolfdog behind. The dog stays by the dispatch hut. Ash does not follow."},
 		],
 	},
 	"yard": {
@@ -364,14 +411,16 @@ const STORY := {
 				"en": "[BURAN · Special Run 7 · Boxcar 03 · Files 0401–0576 · Terminus: Eagle's Crag, Urals]"},
 			{"w": "", "mood": "sad", "zh": "你的手指抖得几乎折不拢那张薄纸。拉娜的编号是 0420——不偏不倚，就像一颗被铁锤钉进棺木的钉子，死死夹在那串将死的数字中间。",
 				"en": "You fold it into your inner pocket. Lana is 0420. She is inside that range."},
+			{"w": "核算员扎哈尔", "mood": "calm", "zh": "账上少一件，谁也不会替死人追问。带我走吧——尸体和活人的口袋，我都知道该怎么翻。只要清杀队没盯上你，我就能替你多拿一份。",
+				"en": "One missing item is never queried on behalf of the dead. Take me with you. I know how to search the pockets of both corpses and the living. As long as OSK do not catch you, I can bring back more."},
 		],
 		"choices": [
 			{"zh": "收好编组单（+1 情报）", "en": "Pocket the consist (+1 Intel)",
 				"d_zh": "主线推进", "d_en": "Story lead", "cls": "good",
-				"ops": [["add", "intel", 1]],
+				"ops": [["add", "intel", 1], ["mate", "zakhar"]],
 				"after_mate": "",
-				"toast_zh": "那张冰凉的编组单隔着衬衣紧贴着你的肋骨，像一块烧红的烙铁。0420，你的亲妹妹，此刻正在第三节闷罐车厢里等着被抹去。",
-				"toast_en": "The consist sits against your ribs. 0420 is in that car."},
+				"toast_zh": "那张冰凉的编组单隔着衬衣紧贴着你的肋骨，像一块烧红的烙铁。0420，你的亲妹妹，此刻正在第三节闷罐车厢里等着被抹去。扎哈尔扯下蓝臂章，把扩音器塞进棉袄，跟上了你。",
+				"toast_en": "The consist sits against your ribs. 0420 is in that car. Zakhar removes his blue armband, hides the loudhailer under his coat, and follows."},
 		],
 	},
 	"canteen": {
@@ -403,28 +452,56 @@ const STORY := {
 		],
 		"choices": [
 			{"zh": "C1 公平交易：付 2 废钢买路线（中立）", "en": "C1 Fair trade: pay 2 Scrap for the route",
-				"d_zh": "情报 +1 · 解锁松林庄园线索", "d_en": "Intel +1 · unlocks the Pine Manor lead",
+				"d_zh": "情报 +1 · 获得 6.66 MHz 广播信号", "d_en": "Intel +1 · locate the 6.66 MHz broadcast signal",
 				"cls": "good",
-				"ops": [["take", "scrap", 2], ["add", "intel", 1], ["flag", "manor_tip"]],
+				"ops": [["take", "scrap", 2], ["add", "intel", 1], ["flag", "broadcast_signal"]],
 				"after_mate": "",
-				"toast_zh": "伊万冷冷收下废钢，用粗黑的指甲在油纸上划出一道死线：「顺着西站水塔底下的排污检修沟摸过去；记住，第三根冻裂的枕木底下埋着雷，不想死就别往上踩。」",
-				"toast_en": "Ivan sketches the route on the oil paper: use the maintenance trench under the water tower; skip the third sleeper."},
+				"toast_zh": "伊万收下废钢。油纸背面还多了一串短波坐标：6.66 MHz。那不是庄园路线，而是一处藏在市场里的信号源。",
+				"toast_en": "Ivan takes the scrap. On the back of the oil paper is a shortwave coordinate: 6.66 MHz. It points to a hidden transmitter in the market."},
 			{"zh": "C3 倾囊相助：把抗生素分给这里冻伤的人（良知▲）",
 				"en": "C3 Give everything: hand out your antibiotics",
-				"d_zh": "良知 ▲▲ · 伊万入队 · 解锁松林庄园", "d_en": "Conscience ▲▲ · Ivan joins · unlocks Pine Manor",
+				"d_zh": "良知 ▲▲ · 伊万入队 · 获得 6.66 MHz 广播信号", "d_en": "Conscience ▲▲ · Ivan joins · locate the 6.66 MHz broadcast signal",
 				"cls": "good",
-				"ops": [["take", "abx", 1], ["conscience", 10], ["flag", "manor_tip"], ["mate", "ivan"]],
+				"ops": [["take", "abx", 1], ["conscience", 10], ["flag", "broadcast_signal"], ["mate", "ivan"]],
 				"after_mate": "ivan",
-				"toast_zh": "看着你把救命的药塞进冻烂脚趾的苦人手里，「老轨」伊万浑浊的眼底狠狠颤了一下。他没再要你的废钢，一言不发地将一只烤热了的厚帆布手套塞进你怀里，跟上了你的脚步。",
-				"toast_en": "Old Ivan joins your crew. He shoves a frozen glove into your hands."},
+				"toast_zh": "看着你把救命的药塞进冻烂脚趾的苦人手里，伊万把一只烤热的厚帆布手套塞进你怀里。他还在油纸上圈出短波频率 6.66 MHz，告诉你去市场最深的电台棚找信号源。",
+				"toast_en": "Old Ivan joins your crew and marks a 6.66 MHz signal source at the deepest market stall."},
 			{"zh": "C2 背叛：趁他引开哨兵，锁死铁门拿走磁卡（良知▼·卌+1）",
 				"en": "C2 Betray: lock the door and take the keycard",
 				"d_zh": "物资暴涨 · 卌 +1", "d_en": "Huge haul · tally +1", "cls": "bad",
 				"ops": [["add", "abx", 2], ["add", "scrap", 3], ["add", "dial", 1],
-					["tally", 1], ["conscience", -14], ["flag", "manor_tip"], ["flag", "betrayed"]],
+					["tally", 1], ["conscience", -14], ["flag", "broadcast_signal"], ["flag", "betrayed"]],
 				"after_mate": "",
 				"toast_zh": "沉重的铁门被你从外头死死落了锁。门后先是一声难以置信的闷哼，紧接着是微声步枪短促得像踩碎冰碴似的点射声。你的背包被抢来的物资撑得满满当当，可你的灵魂却在日志背面多了一道洗不掉的血痕。",
 				"toast_en": "The door shuts behind you. The shots are very short."},
+		],
+	},
+	"broadcast": {
+		"title_zh": "6.66 MHz：秘密广播室", "title_en": "6.66 MHz: The Hidden Transmitter",
+		"file": "0666-B",
+		"lines": [
+			{"w": "", "mood": "calm", "zh": "你沿着市场最深处的 6.66 MHz 信号，找到一间封窗的旧铁路信号室。发射机刚被关掉，桌上压着松林庄园的排污管路线图。",
+				"en": "Following the 6.66 MHz signal to the market's deepest stall, you find a sealed railway signal room. The transmitter has just gone quiet; a drainage plan of Pine Manor lies on the desk."},
+			{"w": "叶莲娜", "mood": "calm", "zh": "你听见的不是求救，是我在确认谁还肯回应。庄园有我父亲的账本，也有你要找的车厢记录。排污管能送你进去，但我不再替他把活人写成零。",
+				"en": "You did not hear a plea for help. I was checking who would answer. My father's ledger and your boxcar records are in the manor. The drain will get you inside. I will not write the living down as zero for him anymore."},
+			{"w": "阿列克谢", "mood": "calm", "zh": "你知道这会让你失去什么吗？",
+				"en": "Do you know what this will cost you?"},
+			{"w": "叶莲娜", "mood": "intense", "zh": "知道。先把门打开，出去以后再算。",
+				"en": "I do. Open the door first. We can count the cost after we get out."},
+		],
+		"choices": [
+			{"zh": "带叶莲娜同行，按她的路线进入松林庄园", "en": "Take Yelena with you and follow her route into Pine Manor",
+				"d_zh": "叶莲娜入队 · 解锁松林庄园", "d_en": "Yelena joins · Pine Manor unlocked", "cls": "good",
+				"ops": [["mate", "yelena"], ["flag", "manor_tip"]],
+				"after_mate": "yelena",
+				"toast_zh": "叶莲娜把频率表和排污路线交给你，背起自己的监听设备，跟你一起离开信号室。松林庄园的路线现在开放。",
+				"toast_en": "Yelena gives you the frequency sheet and drainage route, shoulders her listening gear, and leaves with you. Pine Manor is now unlocked."},
+			{"zh": "只记下排污路线，不带叶莲娜同行", "en": "Copy the drainage route but leave Yelena behind",
+				"d_zh": "解锁松林庄园 · 叶莲娜不入队", "d_en": "Pine Manor unlocked · Yelena stays behind", "cls": "",
+				"ops": [["flag", "manor_tip"]],
+				"after_mate": "",
+				"toast_zh": "你记下排污管路线，没有接过她的监听设备。叶莲娜留在信号室，松林庄园的入口已经找到。",
+				"toast_en": "You copy the drainage route but leave her listening gear. Yelena stays behind; the manor entrance is found."},
 		],
 	},
 	"sanitarium": {
@@ -442,7 +519,7 @@ const STORY := {
 				"d_zh": "安娜 + 古丽娅 入队 · 解锁西站调车场", "d_en": "Anna + Dr. Gulya join · unlocks the marshalling yard",
 				"cls": "good",
 				"ops": [["mate", "anna"], ["mate", "gulya"], ["conscience", 6],
-					["flag", "lana_car3"], ["flag", "manor_tip"]],
+					["flag", "lana_car3"]],
 				"after_mate": "",
 				"toast_zh": "你用撬棍崩开了生锈的笼锁，替她解开了嵌进肉里的皮带。安娜（0419）与古丽娅医师搀扶着跟上了你，铁笼门轴在极夜的风雪里发出一声长长的、如释重负的悲鸣。",
 				"toast_en": "Anna (0419) and Dr. Gulya join. The cage hinge screams in the snow."},
@@ -468,8 +545,8 @@ const STORY := {
 				"cls": "good",
 				"ops": [["add", "dial", 2], ["add", "photo", 1], ["flag", "truth"], ["conscience", 5]],
 				"after_mate": "",
-				"toast_zh": "机械快门「咔嚓」一响，在轰鸣的火炉旁清脆得像一发顶上膛的子弹。你把拍下罪证的胶卷贴胸藏好，将两袋滚烫的 409 批腹透液死死塞进了背包。",
-				"toast_en": "The shutter sounds like a gunshot. You stuff Batch-409 into your pack."},
+				"toast_zh": "机械快门「咔嚓」一响。你把拍下罪证的胶卷贴胸藏好，将两袋 409 批腹透液塞进背包。",
+				"toast_en": "The shutter cracks beside the furnace. You hide the film and pack Batch-409 fluid."},
 		],
 	},
 	"marshalling": {

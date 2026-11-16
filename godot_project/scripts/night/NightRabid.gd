@@ -147,7 +147,7 @@ func die(by: String) -> void:
 	velocity = Vector2.ZERO
 	collision_layer = 0
 	collision_mask = 0
-	sprite.frame = sprite.frame - sprite.frame % 8 + 6
+	sprite.frame = sprite.frame - sprite.frame % 12 + 11   # 11 = 倒地尸体
 	sprite.self_modulate = Color(0.75, 0.75, 0.78)
 	ctl.on_rabid_killed(self, by)
 
@@ -194,13 +194,16 @@ func _animate(delta: float, moving: bool) -> void:
 		row = 0
 	else:
 		row = 2
+	# 12 列：0 待机 / 1-8 行走 / 9 蓄力·警嗜 / 10 前扑 / 11 倒地
 	var col := 0
-	if state in ["windup", "lunge"]:
-		col = 5
+	if state == "windup":
+		col = 9
+	elif state == "lunge":
+		col = 10
 	elif moving:
 		_anim += delta * (1.6 if state == "chase" else 0.8)
-		col = 1 + int(_anim * 7.0) % 4
+		col = 1 + int(_anim * 7.0) % 8
 	else:
 		_anim += delta
-		col = 7 if fmod(_anim, 2.4) < 0.25 else 0
-	sprite.frame = row * 8 + col
+		col = 9 if fmod(_anim, 2.4) < 0.25 else 0
+	sprite.frame = row * 12 + col

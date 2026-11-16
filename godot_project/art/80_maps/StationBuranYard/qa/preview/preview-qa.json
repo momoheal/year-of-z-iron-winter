@@ -1,0 +1,157 @@
+{
+  "schema": "generate2dmap.scene_preview_qa.v1",
+  "status": "pass",
+  "method": "build_scene_preview: bundle files resolved relative to the bundle and checked against their sha256 when given; collision read through forge_nav (the D2 blocking set; tile collision converted into world solids, material classes into BLOCK and one_way pixel planes); tiles layers pre-rendered from tileset manifests; art found in the D6 order and embedded as data URIs; map-runtime.mjs inlined verbatim; the page scanned for anything that loads from outside it; size gate; optional headless-Chromium run (--verify).",
+  "notProven": [
+    "Collision is forge_nav's D2 blocking set and the page walks it with map-runtime.mjs, which mirrors forge_nav rule for rule; their agreement is tested on synthetic fixtures (tests/test_map_runtime_js.py), not on this map. Rotated shapes can differ by one ulp of sin and cos between a browser and Python.",
+    "Without --verify, or when it prints SKIPPED, the page was assembled and scanned but never run in a browser.",
+    "The actor is a debug marker sized from collision.actorRadius, not character art; animation, lights, atmosphere, stage data, camera bounds and occluder masks are not drawn.",
+    "Draw order is whole-object Y-sort by (sortY, x, id); per-pixel occlusion, fades and cut-aways are not simulated.",
+    "Route checks walk the forge_nav grid with the runtime walker at --speed; an engine controller (acceleration, physics colliders, other speeds) may behave differently. one_way material blocks moving down onto it on every map (N11); a top-down map should not use it.",
+    "Footprint samples lie half a nav cell apart (N10): a solid thinner than that can fall between the samples of the footprint's rim; the actor's centre path is tested exactly (thin-gap rule).",
+    "Only headless Chromium is exercised (with --verify); other browsers, devices and touch input are not tested."
+  ],
+  "checks": [
+    {
+      "id": "html-size",
+      "status": "pass",
+      "value": 5204102,
+      "threshold": 16000000
+    },
+    {
+      "id": "external-references",
+      "status": "pass",
+      "value": [],
+      "threshold": []
+    },
+    {
+      "id": "ascii-only",
+      "status": "pass",
+      "value": true,
+      "threshold": true
+    },
+    {
+      "id": "single-inline-script",
+      "status": "pass",
+      "value": true,
+      "threshold": true
+    },
+    {
+      "id": "runtime-inlined",
+      "status": "pass",
+      "value": "map-runtime.mjs",
+      "threshold": null
+    },
+    {
+      "id": "object-art",
+      "status": "pass",
+      "value": [],
+      "threshold": []
+    },
+    {
+      "id": "browser-verify",
+      "status": "skipped",
+      "value": "the playwright npm package was not found (npm install playwright, then npx playwright install chromium)",
+      "threshold": null
+    },
+    {
+      "id": "build-warnings",
+      "status": "pass",
+      "value": 0,
+      "threshold": 0
+    }
+  ],
+  "inputs": [
+    {
+      "path": "../../map-bundle.json",
+      "sha256": "3620215b55796d4106e4e75b3aafc49d457b4ef80eb753a4d96ae77adc744217",
+      "bytes": 3525
+    },
+    {
+      "path": "../../map.png",
+      "sha256": "e2ddb20de31211eaa8e5f20a279bd709e83e96513cbface117c98716fab80514",
+      "bytes": 3820992
+    }
+  ],
+  "outputs": [
+    {
+      "path": "preview.html",
+      "sha256": "bc9d984eaa40f5ce4cfa15a9092874a60c61b66089cb0c452912f1c072a002da",
+      "bytes": 5204102
+    }
+  ],
+  "tool": {
+    "name": "build_scene_preview",
+    "version": "0.4.0"
+  },
+  "preview": {
+    "file": "preview.html",
+    "bytes": 5204102,
+    "sha256": "bc9d984eaa40f5ce4cfa15a9092874a60c61b66089cb0c452912f1c072a002da",
+    "runtime": {
+      "file": "map-runtime.mjs",
+      "version": "1.1.2",
+      "sha256": "c1fc3d9bf15cfa53fdfeb050ce4252f7ace4c923066ca4e135dea576e7445273"
+    },
+    "world": [
+      1672,
+      941
+    ],
+    "zoom": 1,
+    "speed": 132.0,
+    "actorHeight": 49.5,
+    "actorRadius": 11,
+    "ySquash": 0.75,
+    "start": "start",
+    "layers": [
+      {
+        "name": "painted_ground",
+        "source": "image",
+        "size": [
+          1672,
+          941
+        ]
+      },
+      {
+        "name": "objects",
+        "source": "objects"
+      }
+    ],
+    "drawOrder": [],
+    "objectArt": {
+      "object.image": 0,
+      "props": 0,
+      "prop-pack": 0,
+      "occluder.source": 0,
+      "missing": []
+    },
+    "counts": {
+      "objects": 0,
+      "portals": 0,
+      "spawns": 1,
+      "interactions": 4,
+      "anchors": 0
+    },
+    "images": {
+      "count": 1,
+      "bytes": 3820992
+    },
+    "materialMap": null,
+    "collision": {
+      "collisionSolids": 5,
+      "rects": 0,
+      "footprints": 0,
+      "tileSolids": 0,
+      "blockingMaterialClasses": []
+    },
+    "hashes": {
+      "checked": 1,
+      "unchecked": 0
+    }
+  },
+  "warnings": [],
+  "verify": {
+    "status": "SKIPPED",
+    "reason": "the playwright npm package was not found (npm install playwright, then npx playwright install chromium)"
+  }
+}

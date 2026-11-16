@@ -10,6 +10,7 @@ extends Node2D
 ##
 ## 操作：WASD 移动 · 鼠标朝向 · Ctrl 蹲伏 · Shift 冲刺 · 长按 E 搜刮/撤离 · G 扔罐头
 ##       F 手电 · M 静音 · F5 重来（仅独立跑）· Esc 暂停菜单（继续 / 音量 / 放弃夜潜 / 退出）
+##       叶莲娜伙伴：C 命令最近可见 OSK 停步 8 秒（冷却 25 秒）；扎哈尔伙伴：V 抢商人/半人物资，尸体额外 +1
 ##       靠近半人按 E → 抉择面板：1 喂药退烧 / 2 绕开 / 3 撬棍灭口 / Esc 先不决定
 ##
 ## P1.5 天亮：战役里 cfg.night 是这一夜的秒数，最后 DAWN_WINDOW（20%）开始「天色渐变」——
@@ -46,6 +47,9 @@ const WARMTH_FIRE := 7.0
 const CAN_RANGE := 9.0
 const CAN_NOISE := 9.0
 const CORPSE_CATS := ["med", "val", "intel"]
+const YELENA_STOP_RANGE := 12.0
+const YELENA_STOP_SECONDS := 8.0
+const YELENA_STOP_COOLDOWN := 25.0
 # ---- 天亮（P1.5）----
 const DAWN_WINDOW := 0.2                                  # 夜长最后 20% 开始天亮
 const NIGHT_MOD := Color(0.27, 0.32, 0.45)                # 与场景里 CanvasModulate 的初值一致
@@ -120,11 +124,15 @@ var pack: Array[String] = []
 var warmth := 100.0
 var hp := 100.0
 var mate_id := ""                # 本夜所带伙伴（_spawn_follower 写入；gulya 用于急救）
+var follower: Node2D = null
 var _gulya_used := false         # 古丽娅「每夜救一次重伤」是否已用
+var _zakhar_betrayed := false
+var _yelena_stop_cooldown := 0.0
 var hurt := 0.0                # 受伤闪红计时
 var borrowed := 0              # 借刀杀人：清杀队替你清掉的狂暴者
 var rabids: Array = []
 var halfs: Array = []
+var searchlights: Array = []
 # 道德账（接进战役时按同样口径回写 CampaignSim：raid_add_conscience / raid_add_tally）
 # --- 三区（白 / 红 / 黑）---
 var zones: Array = []          # [{id, rects:[Rect2 米]}]，来自场景根的 metadata/zones
@@ -135,6 +143,7 @@ var zone_curfew := false       # 红区：已经被清杀队盯上
 var zone_seen := {}            # 已经进过的区（只报一次「进入黑区」）
 var markets: Array = []        # 黑市（night_market）
 var market_used := false       # 黑市一夜只做一次买卖
+var robbed_markets := {}
 var survivors: Array = []      # 黑区的幸存者（night_survivor）
 var survivor_seen := {}
 
@@ -313,6 +322,7 @@ func _ready() -> void:
 		soldiers.append(s)
 	for n in get_tree().get_nodes_in_group("night_searchlight"):
 		n.ctl = self
+		searchlights.append(n)
 	for r in get_tree().get_nodes_in_group("night_rabid"):
 		r.ctl = self
 		rabids.append(r)
@@ -389,6 +399,7 @@ func _spawn_follower() -> void:
 	f.mate_id = mate_id
 	f.player_target = player
 	f.ctl = self
+	follower = f
 	$World.add_child(f)
 	f.global_position = player.global_position + Vector2(-48, 28)
 	f.z_index = player.z_index
@@ -512,6 +523,7 @@ func _setup_breath() -> void:
 func _process(delta: float) -> void:
 	t += delta
 	hurt = maxf(0.0, hurt - delta)
+	_yelena_stop_cooldown = maxf(0.0, _yelena_stop_cooldown - delta)
 	if _osk_bark_life > 0.0:
 		_osk_bark_life = maxf(0.0, _osk_bark_life - delta)
 		if _osk_bark_life <= 0.0:
@@ -580,7 +592,11 @@ func _update_interact(delta: float) -> void:
 		return
 	var holding := Input.is_action_pressed("interact")
 	var near_exit := dist_m(player.global_position, exit_px) <= REACH
-	var c := nearest_container()
+	var c: Node2D = nearest_container()
+	var corpse := nearest_corpse()
+	if corpse != null and (c == null or dist_m(player.global_position, corpse.global_position) <
+		dist_m(player.global_position, interact_point(c))):
+		c = corpse
 	player.frozen = false
 	if holding and near_exit and c == null:
 		extract_prog += delta / EXTRACT_TIME
@@ -643,6 +659,21 @@ func nearest_container() -> Node2D:
 		if d < bd:
 			bd = d
 			best = c
+	return best
+
+
+func nearest_corpse() -> Node2D:
+	var best: Node2D = null
+	var bd := REACH
+	for n in soldiers + rabids + halfs:
+		if not is_instance_valid(n) or not n.has_method("is_alive") or n.is_alive():
+			continue
+		if bool(n.get_meta("corpse_searched", false)):
+			continue
+		var d := dist_m(player.global_position, n.global_position)
+		if d < bd:
+			bd = d
+			best = n as Node2D
 	return best
 
 # ============================================================================
@@ -855,6 +886,9 @@ func interact_point(c: Node2D) -> Vector2:
 	return c.global_position + Vector2(c.get_meta("interact_offset", Vector2.ZERO))
 
 func _finish_search(c: Node2D) -> void:
+	if soldiers.has(c) or rabids.has(c) or halfs.has(c):
+		_finish_corpse_search(c)
+		return
 	if bool(c.get_meta("locked", false)):
 		c.set_meta("locked", false)
 		spawn_float(c.global_position + Vector2(0, -120), "帕维尔撬开了焊死的箱子", Color("#7fb2e0"))
@@ -892,6 +926,41 @@ func _finish_search(c: Node2D) -> void:
 	sfx.play("beep")
 	search_target = null
 	search_prog = 0.0
+
+
+func _finish_corpse_search(body: Node2D) -> void:
+	body.set_meta("corpse_searched", true)
+	var count := 2 if mate_id == "zakhar" else 1
+	var got := _roll_items(CORPSE_CATS, count)
+	_award_loot_items(got, body.global_position, "尸体搜刮")
+	emit_noise(body.global_position, 1.5, "search")
+	sfx.play("beep")
+	search_target = null
+	search_prog = 0.0
+
+
+func _roll_items(cats: Array, count: int) -> Array[String]:
+	var got: Array[String] = []
+	for _i in count:
+		if cats.is_empty():
+			break
+		var cat := String(cats[rng.randi_range(0, cats.size() - 1)])
+		var pool: Array = Data.LOOT_CATS.get(cat, [])
+		if not pool.is_empty():
+			got.append(String(pool[rng.randi_range(0, pool.size() - 1)]))
+	return got
+
+
+func _award_loot_items(got: Array[String], pos: Vector2, source: String) -> void:
+	var names: Array[String] = []
+	for id in got:
+		if pack.size() >= bag_max:
+			break
+		pack.append(id)
+		names.append(item_name(id))
+		ammo_from_item(id)
+	var note := "%s · +%s" % [source, "、".join(names)] if not names.is_empty() else "背包满了 · Bag full"
+	spawn_float(pos + Vector2(0, -104), note, Color("#fde68a"))
 
 func item_name(id: String) -> String:
 	var it: Dictionary = Data.ITEMS.get(id, {})
@@ -933,6 +1002,9 @@ func is_lit(p: Vector2) -> bool:
 	for w in warm_lights:
 		if dist_m(p, w[0]) <= float(w[1]) * 1.8:
 			return true
+	for light in searchlights:
+		if is_instance_valid(light) and light.has_method("illuminates_point") and light.illuminates_point(p):
+			return true
 	return false
 
 # ============================================================================
@@ -942,21 +1014,12 @@ func can_see_player(origin: Vector2, range_m: float, half: float, facing: float,
 	if state != "play":
 		return 0.0
 	var p: Vector2 = player.global_position
-	var d := to_m(p - origin)
-	var dist := d.length()
 	var rng_m := range_m * (1.3 if (player.flashlight_on and not is_beam) else 1.0)
-	if dist > rng_m:
-		return 0.0
-	var in_cone := absf(angle_difference(facing, d.angle())) <= half
-	if not in_cone:
-		if is_beam or dist > 1.6:
-			return 0.0
-	var mask := 1 | (2 if player.crouching else 0)
-	var q := PhysicsRayQueryParameters2D.create(origin, p, mask)
-	if not get_world_2d().direct_space_state.intersect_ray(q).is_empty():
+	if not has_clear_vision(origin, p, rng_m, half, facing, is_beam):
 		return 0.0
 	if is_beam:
 		return 1.0
+	var dist := dist_m(p, origin)
 	var f := 1.0 - dist / rng_m * 0.55
 	if player.crouching:
 		f *= 0.5
@@ -968,6 +1031,22 @@ func can_see_player(origin: Vector2, range_m: float, half: float, facing: float,
 		f *= 0.7
 	return f
 
+## Shared cone and occlusion test for OSK vision and searchlight beams.
+## The searchlight keeps its own reach/angle, but a lit point and an OSK
+## sight check use the same world scale, crouch cover layer, and raycast.
+func has_clear_vision(origin: Vector2, target: Vector2, range_m: float, half: float,
+		facing: float, is_beam: bool) -> bool:
+	var d := to_m(target - origin)
+	var dist := d.length()
+	if dist > range_m:
+		return false
+	var in_cone := absf(angle_difference(facing, d.angle())) <= half
+	if not in_cone and (is_beam or dist > 1.6):
+		return false
+	var mask := 1 | (2 if player != null and player.crouching else 0)
+	var q := PhysicsRayQueryParameters2D.create(origin, target, mask)
+	return get_world_2d().direct_space_state.intersect_ray(q).is_empty()
+
 func los_clear(a: Vector2, b: Vector2, mask: int) -> bool:
 	var q := PhysicsRayQueryParameters2D.create(a, b, mask)
 	return get_world_2d().direct_space_state.intersect_ray(q).is_empty()
@@ -978,7 +1057,8 @@ func rabid_sees_player(r: Node2D) -> bool:
 		return false
 	var p: Vector2 = player.global_position
 	var dist := dist_m(p, r.global_position)
-	var rng_m: float = r.SIGHT * (1.3 if player.flashlight_on else 1.0) * (0.7 if player.crouching else 1.0)
+	var anna_factor := 0.75 if mate_id == "anna" else 1.0
+	var rng_m: float = r.SIGHT * anna_factor * (1.3 if player.flashlight_on else 1.0) * (0.7 if player.crouching else 1.0)
 	if dist > rng_m:
 		return false
 	return los_clear(r.global_position, p, 1 | (2 if player.crouching else 0))
@@ -1008,8 +1088,9 @@ func emit_noise(pos: Vector2, radius_m: float, kind: String, quiet := false) -> 
 			if dist_m(s.global_position, pos) <= radius_m:
 				s.hear(pos, kind)
 	if kind not in ["rabid", "half"]:
+		var rabid_hearing_radius := radius_m * (0.75 if mate_id == "anna" else 1.0)
 		for r in rabids:
-			if r.is_alive() and dist_m(r.global_position, pos) <= radius_m:
+			if r.is_alive() and dist_m(r.global_position, pos) <= rabid_hearing_radius:
 				r.hear(pos, kind)
 		for h in halfs:
 			if h.is_alive() and dist_m(h.global_position, pos) <= radius_m:
@@ -1248,9 +1329,24 @@ func on_soldier_warning(_s: Node) -> void:
 	sfx.play("radio", -8.0)
 
 func on_soldier_alert(_s: Node) -> void:
+	if mate_id == "zakhar" and not _zakhar_betrayed:
+		_betray_zakhar(_s)
 	show_osk_bark("chase")
 	sfx.play("radio", -3.0)          # 面具里的电台叫了一声：他们开始喊人了
 	add_shake(0.16)
+
+
+func _betray_zakhar(source: Node) -> void:
+	_zakhar_betrayed = true
+	if is_instance_valid(follower):
+		follower.queue_free()
+	follower = null
+	for s in soldiers:
+		if s == source or not s.is_alive():
+			continue
+		s.alert_to(player.global_position, false)
+	spawn_float(player.global_position + Vector2(0, -158),
+		"扎哈尔用扩音器报出你的位置，转投了清杀队。", SovietUI.SIGNAL)
 
 func caught(by: Node) -> void:
 	if state != "play":
@@ -1438,6 +1534,12 @@ func _unhandled_input(event: InputEvent) -> void:
 				muted = not muted
 				sfx.set_muted(muted)
 				AudioServer.set_bus_mute(0, muted)
+			KEY_C:
+				if state == "play" and mate_id == "yelena":
+					_command_yelena_stop()
+			KEY_V:
+				if state == "play" and mate_id == "zakhar":
+					_rob_nearest_target()
 			KEY_1, KEY_KP_1, KEY_2, KEY_KP_2, KEY_3, KEY_KP_3, KEY_4, KEY_KP_4:
 				# 1~4 换家伙（撬棍 / ТТ / 莫辛 / 双管）—— 只切已经到手的
 				if state == "play":
@@ -1465,6 +1567,70 @@ func _unhandled_input(event: InputEvent) -> void:
 						_return_to_campaign(state)
 					else:
 						get_tree().reload_current_scene()
+
+
+func _command_yelena_stop() -> void:
+	if _yelena_stop_cooldown > 0.0:
+		spawn_float(player.global_position + Vector2(0, -120),
+			"叶莲娜还需要 %.0f 秒才能再次发令" % ceilf(_yelena_stop_cooldown), Color("#94a3b8"))
+		return
+	var best: Node2D = null
+	var bd := YELENA_STOP_RANGE
+	for s in soldiers:
+		if not s.is_alive():
+			continue
+		var d := dist_m(player.global_position, s.global_position)
+		if d >= bd or not los_clear(player.global_position, s.global_position, 1):
+			continue
+		bd = d
+		best = s
+	if best == null:
+		spawn_float(player.global_position + Vector2(0, -120), "叶莲娜看不到可下令的清杀兵", Color("#94a3b8"))
+		return
+	best.call("command_stop", YELENA_STOP_SECONDS)
+	_yelena_stop_cooldown = YELENA_STOP_COOLDOWN
+	spawn_float(best.global_position + Vector2(0, -122), "叶莲娜喝令：停步！", Color("#7dd3fc"))
+	sfx.play("radio", -10.0)
+
+
+func _rob_nearest_target() -> void:
+	var h = nearest_half()
+	if h != null and bool(h.get_meta("zakhar_robbed", false)):
+		h = null
+	var m := nearest_market()
+	var half_dist := dist_m(player.global_position, h.global_position) if h != null else INF
+	var market_dist := dist_m(player.global_position, m.global_position) if m != null else INF
+	if h != null and half_dist <= market_dist:
+		_rob_half(h)
+	elif m != null:
+		_rob_market(m)
+	else:
+		spawn_float(player.global_position + Vector2(0, -120), "附近没有能下手的商人或半人", Color("#94a3b8"))
+
+
+func _rob_market(m: Node2D) -> void:
+	var key := m.get_instance_id()
+	if bool(robbed_markets.get(key, false)):
+		spawn_float(m.global_position + Vector2(0, -110), "扎哈尔已经翻过这个摊位", Color("#94a3b8"))
+		return
+	robbed_markets[key] = true
+	market_used = true
+	_award_loot_items(_roll_items(["food", "med", "val"], 2), m.global_position, "扎哈尔抢走商人物资")
+	spawn_float(m.global_position + Vector2(0, -142), "摊主：抓住那个戴蓝臂章的！", SovietUI.SIGNAL)
+	emit_noise(m.global_position, 5.0, "search")
+	sfx.play("radio", -7.0)
+
+
+func _rob_half(h: Node2D) -> void:
+	if bool(h.get_meta("zakhar_robbed", false)):
+		spawn_float(h.global_position + Vector2(0, -100), "扎哈尔已经翻过他的口袋", Color("#94a3b8"))
+		return
+	h.set_meta("zakhar_robbed", true)
+	if h.has_method("flee_from"):
+		h.call("flee_from", player.global_position)
+	_award_loot_items(_roll_items(CORPSE_CATS, 2), h.global_position, "扎哈尔抢走半人物资")
+	emit_noise(h.global_position, 4.0, "search")
+
 
 func _throw_can(target: Vector2) -> void:
 	if cans <= 0:
@@ -2171,6 +2337,16 @@ func _update_landmarks() -> void:
 			var note := String(l.get("note", ""))
 			if note != "":
 				spawn_float(player.global_position + Vector2(0, -136), note, SovietUI.BONE_DIM)
+			var story_trigger := String(l.get("story_trigger", ""))
+			if story_trigger == "broadcast" and in_campaign:
+				var tree := Engine.get_main_loop() as SceneTree
+				var bridge := tree.root.get_node_or_null("RaidBridge") if tree != null else null
+				var campaign_sim = bridge.get("sim") if bridge != null else null
+				if campaign_sim != null and bool(campaign_sim.flags.get(String(l.get("requires_flag", "")), false)) \
+					and not bool(campaign_sim.story_done.get(story_trigger, false)):
+					campaign_sim.flags["broadcast_pending"] = true
+					spawn_float(player.global_position + Vector2(0, -190),
+						"频率确认：撤离后前往信号室", SovietUI.OCHRE)
 
 
 # ---------------------------------------------------------------------------
@@ -2862,6 +3038,21 @@ func _refresh_hud() -> void:
 		_lbl_hint.text = "长按 E · " + extract_zh
 	else:
 		_lbl_hint.text = objective_zh + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电　Esc 暂停"
+	if state == "play" and mate_id == "yelena":
+		_lbl_hint.text += "　·　C 命令 OSK 停步 8 秒（冷却 %.0f 秒）" % ceilf(_yelena_stop_cooldown)
+	elif state == "play" and mate_id == "zakhar":
+		var near_trader := nearest_market()
+		var near_body := nearest_corpse()
+		var zakhar_hint := "V 抢劫商人/半人"
+		if near_half != null and not bool(near_half.get_meta("zakhar_robbed", false)):
+			zakhar_hint = "V 抢半人物资"
+		elif near_trader != null:
+			zakhar_hint = "V 抢商人物资"
+		elif near_half != null:
+			zakhar_hint = "E 半人抉择"
+		elif near_body != null:
+			zakhar_hint = "尸体搜刮额外 +1"
+		_lbl_hint.text += "　·　" + zakhar_hint
 
 	# --- 屏幕边框：警报时边缘渗红 ---
 	if _chrome != null:

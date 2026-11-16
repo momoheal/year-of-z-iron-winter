@@ -42,6 +42,7 @@ var _timer := 0.0
 var _look_base := 0.0
 var _anim := 0.0
 var _moving := false
+var _command_stop_t := 0.0
 
 @onready var sprite: Sprite2D = $Sprite
 @onready var flash_pivot: Node2D = $Flashlight/Pivot
@@ -68,6 +69,13 @@ func _physics_process(delta: float) -> void:
 		return
 	_perceive(delta)
 	muzzle.energy = maxf(0.0, muzzle.energy - delta * 30.0)
+	if _command_stop_t > 0.0:
+		_command_stop_t = maxf(0.0, _command_stop_t - delta)
+		velocity = Vector2.ZERO
+		_moving = false
+		flash_pivot.rotation = facing
+		_animate(delta, 1.0)
+		return
 	if _engage_rabids(delta):
 		velocity = Vector2.ZERO
 		_moving = false
@@ -185,13 +193,18 @@ func hear(pos: Vector2, kind: String) -> void:
 	state = "investigate"
 	suspicion = maxf(suspicion, 0.3 if kind == "can" else 0.18)
 
-func alert_to(pos: Vector2) -> void:
-	if state != "alert" and ctl != null and ctl.has_method("on_soldier_alert"):
+func alert_to(pos: Vector2, report := true) -> void:
+	if report and state != "alert" and ctl != null and ctl.has_method("on_soldier_alert"):
 		ctl.on_soldier_alert(self)
 	target = pos
 	state = "alert"
 	suspicion = maxf(suspicion, 1.0)
 	lost_time = 0.0
+
+func command_stop(seconds: float) -> void:
+	_command_stop_t = maxf(_command_stop_t, seconds)
+	velocity = Vector2.ZERO
+	_moving = false
 
 func _move_to(p: Vector2, spd_m: float, arrive_px: float = 6.0) -> bool:
 	var d := p - global_position
@@ -269,7 +282,7 @@ func die(by: String) -> void:
 	flash_pivot.rotation = facing
 	if muzzle != null:
 		muzzle.energy = 0.0
-	sprite.frame = sprite.frame - sprite.frame % 8 + 6
+	sprite.frame = sprite.frame - sprite.frame % 12 + 11   # 11 = 倒地尸体
 	if ctl != null:
 		ctl.on_soldier_killed(self, by)
 
@@ -293,5 +306,8 @@ func _animate(delta: float, k: float) -> void:
 		row = 2
 	if _moving:
 		_anim += delta * k
-	var col := 0 if not _moving else 1 + int(_anim * 6.0) % 4
-	sprite.frame = row * 8 + col
+	# 12 列：0 待机 / 1-8 行走 / 9 掎枪暗准 / 10 搜索 / 11 倒地
+	var col := 0 if not _moving else 1 + int(_anim * 6.0) % 8
+	if aim_target != null and not dead:
+		col = 9
+	sprite.frame = row * 12 + col

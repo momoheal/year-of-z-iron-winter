@@ -6,12 +6,13 @@
   2. 旧的 run_smoke_tests.bat 只列了 5 套老测试，本脚本自动枚举全部 *_smoke.gd。
   3. 测试全绿不代表没错误：stderr 里仍可能有 SCRIPT ERROR（每帧报错不影响 PASS），
      本脚本单独统计 stderr 的 SCRIPT ERROR / Parse Error 并计入失败。
+  4. 导入阶段失败、零套件匹配都返回失败，避免 CI 假绿。
 
 用法：
     python godot_project/tools/run_tests.py                 # 全部
     python godot_project/tools/run_tests.py campaign night_level    # 只跑名字含这些关键字的
     python godot_project/tools/run_tests.py --godot "C:\\path\\to\\godot_console.exe"
-环境变量 GODOT 可指定 Godot 可执行文件（console 版优先）。
+查找顺序：--godot 参数 > 环境变量 GODOT > PATH > 本机常见安装位置自动探测。
 退出码 0 = 全绿且无脚本错误；否则 1（可用于 CI）。
 """
 from __future__ import annotations
@@ -27,32 +28,60 @@ PROJ = os.path.abspath(os.path.join(HERE, ".."))          # godot_project/
 TESTS = os.path.join(PROJ, "tests")
 TIMEOUT = 240  # 单套测试超时秒数
 
-# 候选 Godot 路径（console 版优先，headless 下输出更干净）
-GODOT_CANDIDATES = [
-    os.environ.get("GODOT", ""),
-    r"C:\Users\admin\Downloads\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe",
-    r"C:\Users\admin\Downloads\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe",
-    "godot", "godot4", "godot-console", "Godot",
-]
+# PATH 中常见的 Godot 可执行名（console 版优先，headless 下输出更干净）
+GODOT_PATH_NAMES = ["godot", "godot4", "godot-console", "Godot"]
+
+
+def _probe_local_godot() -> list[str]:
+    """自动探测本机常见安装位置：用 glob 模式，不写死任何用户名或绝对路径。"""
+    from glob import glob
+    home = os.path.expanduser("~")
+    patterns = [
+        os.path.join(home, "Downloads", "Godot_v*", "*console.exe"),
+        os.path.join(home, "Downloads", "Godot_v*", "*.exe"),
+        os.path.join(home, "Downloads", "Godot*", "*console.exe"),
+        os.path.join(home, "Downloads", "Godot*", "*.exe"),
+        os.path.join(home, "AppData", "Local", "Programs", "Godot*", "*.exe"),
+        "/usr/bin/godot*",
+        "/usr/local/bin/godot*",
+        "/Applications/Godot*.app/Contents/MacOS/Godot",
+    ]
+    found: list[str] = []
+    for pattern in patterns:
+        for hit in sorted(glob(pattern), reverse=True):
+            if os.path.isfile(hit) and hit not in found:
+                found.append(hit)
+    return found
 
 
 def find_godot() -> str:
+    from shutil import which
+    # 1) 命令行 --godot / --godot=
     for i, a in enumerate(sys.argv):
         if a == "--godot" and i + 1 < len(sys.argv):
             return sys.argv[i + 1]
         if a.startswith("--godot="):
             return a.split("=", 1)[1]
-    for c in GODOT_CANDIDATES:
-        if not c:
-            continue
-        if os.path.isabs(c) or os.path.sep in c:
-            if os.path.exists(c):
-                return c
+    # 2) 环境变量 GODOT（CI 注入）
+    env = os.environ.get("GODOT", "").strip().strip('"')
+    if env:
+        if os.path.isabs(env) or os.path.sep in env or (os.altsep and os.altsep in env):
+            if os.path.exists(env):
+                return env
+            print(f"[warn] GODOT 指向的路径不存在，忽略：{env}", flush=True)
         else:
-            from shutil import which
-            hit = which(c)
+            hit = which(env)
             if hit:
                 return hit
+            print(f"[warn] GODOT 指定的命令不在 PATH，忽略：{env}", flush=True)
+    # 3) PATH 上的可执行名
+    for name in GODOT_PATH_NAMES:
+        hit = which(name)
+        if hit:
+            return hit
+    # 4) 本机常见安装位置自动探测（回退，保证不传参也能一键跑通）
+    for hit in _probe_local_godot():
+        return hit
     sys.exit("找不到 Godot：用 --godot 指定，或设环境变量 GODOT。")
 
 
@@ -91,13 +120,19 @@ def main() -> int:
     rc, out, err = run(godot, ["--import"], TIMEOUT)
     steps = len(re.findall(r"Import|import", out))
     print(f"  import 退出码 {rc}（约 {steps} 条导入日志）", flush=True)
-    if rc != 0 and "ERROR" in err:
-        print(err[-2000:], flush=True)
+    import_errs = len(re.findall(r"SCRIPT ERROR|Parse Error", err))
+    if rc != 0 or import_errs > 0:
+        print((err + "\n" + out)[-2000:], flush=True)
+        print(f"结果：导入阶段失败（退出码 {rc} / 脚本错误 {import_errs}）❌", flush=True)
+        return 1
 
     suites = sorted(f for f in os.listdir(TESTS) if f.endswith("_smoke.gd"))
     if filters:
         suites = [s for s in suites if any(k in s for k in filters)]
     print(f"\n=== 2) 跑 {len(suites)} 套测试 ===", flush=True)
+    if not suites:
+        print("结果：零套件匹配 ❌", flush=True)
+        return 1
 
     rows = []
     all_ok = True

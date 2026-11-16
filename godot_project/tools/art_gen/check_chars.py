@@ -4,11 +4,13 @@
     python3 check_chars.py
 
 检查项（任一失败 → 退出码 1，杜绝“不一致”混进场景）：
-  A. 硬规格：文件名/路径、576×336、RGBA、8 列 × 3 行、每帧 72×112、pivot (36,108)
+  A. 硬规格：文件名/路径、864×336、RGBA、12 列 × 3 行、每帧 72×112、pivot (36,108)
   B. 可用性：24 帧均非空；脚底落在地面线；帧内容不越出单元格（不串帧）；背景透明
   C. 一致性：站立帧高/落地线一致；S/E/N 剪影量级一致；两张表地面线互相一致；
-     冷调低饱和风格带；阿列克谢大衣为深蓝黑、ОСК 为中性铅灰
-  D. 装配：manifest 尺寸/pivot/frames 与实际文件一致；night_explore.tscn 引用存在、
+     冷调低饱和风格带；阿列克谢为灰橄榄工装棉服、ОСК 为中性铅灰
+  D. 语义红线（2026-11-14 新增，覆盖全部 4 张表）：帧内容宽度 ≤ 66px；
+     S/E 行走剪影 IoU ≤ 0.90；敌人第 11 列帧高 40~75px、宽/高 ≥ 1.15 且 c9-11 三行统一
+  E. 装配：manifest 尺寸/pivot/frames 与实际文件一致；night_explore.tscn 引用存在、
      hframes/vframes/offset 与精灵表布局一致
 """
 from __future__ import annotations
@@ -24,7 +26,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PROJ = os.path.abspath(os.path.join(HERE, "..", ".."))
 
 FW, FH = 72, 112
-GX, GY = 8, 3
+GX, GY = 12, 3
 PIVOT = (36, 108)
 SHEET_W, SHEET_H = FW * GX, FH * GY
 
@@ -50,7 +52,7 @@ def check(cond: bool, name: str, detail: str = "") -> None:
 
 
 def frames_of(img: Image.Image):
-    """按 8×3 切帧，返回 24 个 (row, col, rgba-ndarray)。"""
+    """按 8×3 切帧，返回 36 个 (row, col, rgba-ndarray)。"""
     a = np.asarray(img, np.float32)
     out = []
     for r in range(GY):
@@ -83,16 +85,16 @@ def main() -> int:
         data[key] = cells
 
         empty = [(r, c) for r, c, a in cells if (a[..., 3] > 16).mean() < 0.004]
-        check(not empty, f"{key}: 24 帧均非空", str(empty[:4]))
+        check(not empty, f"{key}: {GX*GY} 帧均非空", str(empty[:4]))
 
-        # 脚底落地线：站立帧（列 0-4）alpha 下沿应贴住 pivot y=108（±4px）
+        # 脚底落地线：站立/行走帧（列 0-8）alpha 下沿应贴住 pivot y=108（±4px）
         bad_feet, bottoms = [], []
         for r, c, a in cells:
             bb = bbox_of(a)
             if bb is None:
                 continue
             bottoms.append(bb[3])
-            if c <= 4 and not (PIVOT[1] - 5 <= bb[3] <= PIVOT[1] + 4):
+            if c <= 8 and not (PIVOT[1] - 5 <= bb[3] <= PIVOT[1] + 4):
                 bad_feet.append((r, c, bb[3]))
         check(not bad_feet, f"{key}: 站立帧脚底贴住 pivot y={PIVOT[1]}（±5）", str(bad_feet[:4]))
         check(max(bottoms) - min(bottoms) <= 8, f"{key}: 全表落地线离散 ≤ 8px",
@@ -125,7 +127,7 @@ def main() -> int:
         # 走路帧（列 1-4）高度稳定
         hs = []
         for r, c, a in cells:
-            if 1 <= c <= 4:
+            if 1 <= c <= 8:
                 bb = bbox_of(a)
                 hs.append(bb[3] - bb[1])
         check(max(hs) - min(hs) <= 14, f"{key}: 行走帧高度稳定", f"spread={max(hs) - min(hs)}")
@@ -136,6 +138,75 @@ def main() -> int:
         check(abs(sum(b1) / len(b1) - sum(b2) / len(b2)) <= 3.0,
               "两角色地面线互相一致（同场景同地平）",
               f"{sum(b1)/len(b1):.1f} vs {sum(b2)/len(b2):.1f}")
+
+    print("== semantic / pose red lines (2026-11-14 复核) ==")
+    # 2026-11-14 复核发现：原脚本只查硬规格，查不出「尸体像活人 / 侧面没转身 /
+    # 三行特殊姿势打架 / 内容贴边」。这四条属于语义红线，覆盖全部 4 张表。
+    all_sheets = dict(SHEETS)
+    all_sheets.update({
+        "CHR_03_Rabid_Sheet": os.path.join(PROJ, "art", "10_characters", "CHR_03_Rabid", "CHR_03_Rabid_Sheet.png"),
+        "CHR_04_HalfHuman_Sheet": os.path.join(PROJ, "art", "10_characters", "CHR_04_HalfHuman", "CHR_04_HalfHuman_Sheet.png"),
+    })
+    enemy_keys = ("CHR_03_Rabid_Sheet", "CHR_04_HalfHuman_Sheet", "CHR_05_OSK_Sheet")
+
+    def _mask(block):
+        return block[..., 3] > 16
+
+    for key, path in all_sheets.items():
+        if not os.path.isfile(path):
+            check(False, f"{key}: 语义检查文件存在", path)
+            continue
+        arr = np.asarray(Image.open(path).convert("RGBA"))
+
+        # 红线 1：任意帧内容宽度 ≤ 66px（72px 单元至少留 6px 呼吸位）
+        over = []
+        for r in range(GY):
+            for c in range(GX):
+                ys, xs = np.where(_mask(arr[r * FH:(r + 1) * FH, c * FW:(c + 1) * FW]))
+                if ys.size == 0:
+                    continue
+                w = int(xs.max() - xs.min() + 1)
+                if w > 66:
+                    over.append((r, c, w))
+        check(not over, f"{key}: 帧内容宽度 ≤ 66px（不贴边）", str(over[:4]))
+
+        # 红线 2：S/E 行走帧剪影 IoU ≤ 0.90，否则「向右走不转身」
+        # 只比 c0-8；c9-11 是设计上共用的特殊姿势，不参与。
+        ious = []
+        for c in range(9):
+            m0 = _mask(arr[0:FH, c * FW:(c + 1) * FW])
+            m1 = _mask(arr[FH:2 * FH, c * FW:(c + 1) * FW])
+            uni = float((m0 | m1).sum())
+            ious.append(float((m0 & m1).sum() / uni) if uni else 1.0)
+        avg = float(np.mean(ious))
+        check(avg <= 0.90, f"{key}: S/E 行走剪影 IoU ≤ 0.90（有真实转身）",
+              f"mean={avg:.3f} max={max(ious):.3f}")
+
+        # 红线 3/4（仅敌人）：第 11 列是倒地尸体，且三行特殊姿势统一
+        if key in enemy_keys:
+            hs = []
+            for r in range(GY):
+                ys, _ = np.where(_mask(arr[r * FH:(r + 1) * FH, 11 * FW:12 * FW]))
+                hs.append(int(ys.max() - ys.min() + 1) if ys.size else 0)
+            # 体量双向红线：上限排除 104px 的跪姿活人；下限排除 30px 的贴地扁片。
+            # v2.2 只设了 <=80 上限，结果 62x30px 的扁片照样通过，是假阳性。
+            check(max(hs) <= 75 and min(hs) >= 40,
+                  f"{key}: 尸体帧高 40~75px（既非跪姿活人，也非贴地扁片）",
+                  f"heights={hs}")
+            ratios = []
+            for r in range(GY):
+                sub = _mask(arr[r * FH:(r + 1) * FH, 11 * FW:12 * FW])
+                ys, xs = np.where(sub)
+                ratios.append(float((xs.max() - xs.min() + 1) /
+                                    max(1, ys.max() - ys.min() + 1)) if ys.size else 0.0)
+            check(min(ratios) >= 1.15, f"{key}: 尸体帧横向（宽/高 ≥ 1.15）",
+                  f"ratios={[round(x, 2) for x in ratios]}")
+            base_tail = arr[0:FH, 9 * FW:12 * FW]
+            unified = all(np.array_equal(base_tail,
+                                         arr[r * FH:(r + 1) * FH, 9 * FW:12 * FW])
+                          for r in (1, 2))
+            check(unified, f"{key}: 特殊姿势 c9-11 三行统一",
+                  "N 行被 tail2 单独覆盖会导致转向时姿势/尺寸跳变")
 
     print("== palette / style band ==")
     for key, path in SHEETS.items():
@@ -148,10 +219,15 @@ def main() -> int:
         check(float(sat.mean()) < 0.42, f"{key}: 冷调低饱和（mean sat {sat.mean():.2f} < 0.42）",
               f"{sat.mean():.2f}")
         if "Aleksei" in key:
-            coat = px[(px[:, 2] > px[:, 0])]                      # 偏蓝像素（大衣）
-            check(len(coat) > 0.15 * len(px) and float(coat[:, 2].mean() - coat[:, 0].mean()) > 0.04,
-                  f"{key}: 大衣为深蓝-黑（非旧绿棉服）",
-                  f"blue_px={len(coat)/len(px):.2f}")
+            coat = px[(px[:, 0] > 0.12) & (px[:, 0] < 0.68) &
+                      (px[:, 1] > 0.12) & (px[:, 1] < 0.65) &
+                      (px[:, 2] < 0.50) & (px[:, 1] > px[:, 2] + 0.04) &
+                      (px[:, 0] > px[:, 2] + 0.04) &
+                      (np.abs(px[:, 1] - px[:, 0]) < 0.12)]       # 灰橄榄棉布，过滤肤色和高光
+            check(len(coat) > 0.15 * len(px) and
+                  float(coat[:, 1].mean() - coat[:, 2].mean()) > 0.04,
+                  f"{key}: 棉工装夹克为灰橄榄色",
+                  f"olive_px={len(coat)/len(px):.2f}")
         else:
             grey = px[abs(px[:, 0] - px[:, 2]) < 0.08]
             check(len(grey) > 0.45 * len(px), f"{key}: 铅灰中性色为主（防护服）",
@@ -208,9 +284,9 @@ def main() -> int:
                            "CHR_05_OSK_Sheet" in id_of.get(i, "") for i in _tex_ids(b))]
         check(len(char_sp) >= 3, "模板中角色 Sprite 节点 ≥ 3（1 玩家 + 2 ОСК）", str(len(char_sp)))
         bad = [b.split("\n")[0] for b in char_sp
-               if "hframes = 8" not in b or "vframes = 3" not in b
+               if "hframes = 12" not in b or "vframes = 3" not in b
                or f"offset = Vector2(0, {- (PIVOT[1] - FH // 2)})" not in b]
-        check(not bad, f"角色 Sprite hframes=8 vframes=3 offset=(0,{-(PIVOT[1]-FH//2)})（pivot {PIVOT}）",
+        check(not bad, f"角色 Sprite hframes=12 vframes=3 offset=(0,{-(PIVOT[1]-FH//2)})（pivot {PIVOT}）",
               str(bad[:2]))
     else:
         check(False, "night_explore.tscn 存在", SCENE)

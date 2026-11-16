@@ -60,9 +60,9 @@ func _run() -> void:
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
-	if failures.size() > 0:
-		quit(1)
-	quit(0)
+	# quit() 不终止函数执行 —— 分开写 "if 有失败: quit(1)" 再 quit(0)，
+	# 后者会覆盖前者，退出码永远是 0，CI 的 rc 判断就成了摆设。用单表达式。
+	quit(0 if failures.is_empty() else 1)
 
 
 # ---------------------------------------------------------------------------

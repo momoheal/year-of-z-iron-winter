@@ -86,11 +86,12 @@ func _animate(delta: float, spd: float) -> void:
 	var col := 0
 	if moving:
 		_anim += delta * spd / SPEED_WALK
+	# 12 列：0 待机 / 1-8 行走 / 9 蹲伏 / 10-11 蹲走
 	if crouching:
-		col = 5 if not moving else 6 + int(_anim * 4.0) % 2
+		col = 9 if not moving else 10 + int(_anim * 4.0) % 2
 	else:
-		col = 0 if not moving else 1 + int(_anim * 7.0) % 4
-	sprite.frame = row * 8 + col
+		col = 0 if not moving else 1 + int(_anim * 7.0) % 8
+	sprite.frame = row * 12 + col
 
 func toggle_flashlight() -> void:
 	flashlight_on = not flashlight_on

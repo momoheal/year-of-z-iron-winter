@@ -305,6 +305,9 @@ color = Color(0.85, 0.9, 1, 0.3)
 shader = ExtResource("52_shad")
 shader_parameter/fog_tex = ExtResource("53_text")
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_SearchlightLowCover"]
+polygon = PackedVector2Array(-102.4, -33.7, 102.4, -33.7, 102.4, 0, -102.4, 0)
+
 [node name="NightExplore" type="Node2D"]
 texture_filter = 2
 script = ExtResource("1_scri")
@@ -459,6 +462,7 @@ shape = SubResource("RectangleShape2D_11")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/SteamPipe"]
 occluder = SubResource("OccluderPolygon2D_12")
+occluder_light_mask = 2
 
 [node name="LampWest" type="StaticBody2D" parent="World/Props"]
 position = Vector2(384, 174.59)
@@ -584,6 +588,10 @@ offset = Vector2(-104, -110)
 [node name="Shape" type="CollisionShape2D" parent="World/Props/Sandbags"]
 position = Vector2(0, -16.86)
 shape = SubResource("RectangleShape2D_23")
+
+[node name="Occluder" type="LightOccluder2D" parent="World/Props/Sandbags"]
+occluder = SubResource("OccluderPolygon2D_SearchlightLowCover")
+occluder_light_mask = 2
 
 [node name="AmmoBox" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
 position = Vector2(1548.8, 222.21)
@@ -900,7 +908,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Player"]
 texture = ExtResource("32_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -956,7 +964,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/OSK_Depot"]
 texture = ExtResource("36_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1003,7 +1011,7 @@ collision_mask = 7
 motion_mode = 1
 script = ExtResource("35_scri")
 position = Vector2(256, 892.8)
-route = PackedVector2Array(256, 892.8, 2560, 892.8)
+route = PackedVector2Array(256, 892.8, 1536, 892.8)
 mode = "pingpong"
 pause_time = 2.2
 
@@ -1013,7 +1021,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/OSK_Hump"]
 texture = ExtResource("36_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1070,7 +1078,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/OSK_Culvert"]
 texture = ExtResource("36_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1126,7 +1134,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Van"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1149,7 +1157,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Hump"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1172,7 +1180,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Tower"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1195,7 +1203,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Culvert"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1218,7 +1226,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Tender"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1241,7 +1249,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Ballast"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1264,7 +1272,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_South"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1287,7 +1295,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Mast"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1310,7 +1318,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Corner"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1333,7 +1341,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Rabid_Shed"]
 texture = ExtResource("40_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1355,7 +1363,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Half_0613"]
 texture = ExtResource("42_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1377,7 +1385,7 @@ polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, 
 
 [node name="Sprite" type="Sprite2D" parent="World/Half_0244"]
 texture = ExtResource("42_text")
-hframes = 8
+hframes = 12
 vframes = 3
 offset = Vector2(0, -52)
 
@@ -1386,7 +1394,7 @@ position = Vector2(0, -2)
 shape = SubResource("CircleShape2D_60")
 
 [node name="Market" type="Node2D" parent="World" groups=["night_market"]]
-position = Vector2(2112, 1174.53)
+position = Vector2(2464, 1222.14)
 metadata/cans = 1
 metadata/ammo = 8
 metadata/zh = "黑市 · 一罐换八发"
@@ -1405,7 +1413,7 @@ energy = 1.15
 range_item_cull_mask = 3
 
 [node name="Trader" type="Node2D" parent="World" groups=["night_survivor"]]
-position = Vector2(2176, 1194.37)
+position = Vector2(2528, 1241.98)
 metadata/role = "trader"
 
 [node name="Sprite" type="Sprite2D" parent="World/Trader"]
@@ -1414,7 +1422,7 @@ centered = false
 offset = Vector2(-36, -108)
 
 [node name="Survivor_0" type="Node2D" parent="World" groups=["night_survivor"]]
-position = Vector2(2035.2, 1198.34)
+position = Vector2(2387.2, 1245.95)
 metadata/role = "survivor"
 
 [node name="Sprite" type="Sprite2D" parent="World/Survivor_0"]
@@ -1423,7 +1431,7 @@ centered = false
 offset = Vector2(-36, -108)
 
 [node name="Survivor_1" type="Node2D" parent="World" groups=["night_survivor"]]
-position = Vector2(2150.4, 1134.85)
+position = Vector2(2496, 1186.43)
 metadata/role = "survivor"
 
 [node name="Sprite" type="Sprite2D" parent="World/Survivor_1"]
@@ -1487,7 +1495,7 @@ range_item_cull_mask = 1
 position = Vector2(6, -347)
 texture = ExtResource("38_text")
 texture_scale = 0.22
-color = Color(1, 0.8, 0.5, 1)
+color = Color(1, 0.784, 0.448, 1)
 energy = 2.2
 range_item_cull_mask = 1
 
@@ -1519,7 +1527,7 @@ range_item_cull_mask = 1
 position = Vector2(6, -347)
 texture = ExtResource("38_text")
 texture_scale = 0.22
-color = Color(1, 0.8, 0.5, 1)
+color = Color(1, 0.784, 0.448, 1)
 energy = 2.2
 range_item_cull_mask = 1
 

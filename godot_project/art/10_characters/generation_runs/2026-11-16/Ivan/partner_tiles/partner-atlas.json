@@ -1,0 +1,75 @@
+{
+  "schema": "winter-iron.partner-atlas.v1",
+  "source": "partner_atlas_raw.png",
+  "source_sha256": "d038b60f272756e6c1b46d0f979dee940cff35e9250127a57694a68bbc311d22",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "target_size": [
+    72,
+    112
+  ],
+  "foot_y": 110,
+  "poses": {
+    "top_left": "Stand",
+    "top_right": "Walk0",
+    "bottom_left": "Walk1",
+    "bottom_right": "unused"
+  },
+  "scale": 0.172471,
+  "alpha_hygiene": {
+    "mode": "both",
+    "floor": 4,
+    "solid_min": 32,
+    "attach_radius": 2,
+    "connectivity": 8,
+    "floor_px": 24343,
+    "detached_px": 8,
+    "detached_components": 7,
+    "max_removed_alpha": 5
+  },
+  "files": {
+    "Stand": {
+      "path": "PRP_Ivan_Stand.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "8865e0fadcf54d415452dd0a3e216156937708a5d8c5a280218db082b24aaa51",
+      "subject_size": [
+        39,
+        105
+      ]
+    },
+    "Walk0": {
+      "path": "PRP_Ivan_Walk0.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "c48627f69237f78c0efc9ee92ef8765f771165025c3ccd2b61413fbe3e2d0410",
+      "subject_size": [
+        42,
+        105
+      ]
+    },
+    "Walk1": {
+      "path": "PRP_Ivan_Walk1.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "3d28b6a0f1dff88e12020bcbfd679b1a9eaf073b9a72bad75e13199b55a08ab3",
+      "subject_size": [
+        42,
+        104
+      ]
+    }
+  },
+  "warnings": []
+}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOVORSK-17 TELETYPE TERMINAL // 《Z年纪事：凛冬铁轨 v4.0》GitHub 门户与在线试玩中心</title>
+  <title>NOVORSK-17 TELETYPE TERMINAL // 《Z年纪事：凛冬铁轨》构建 4.0.0 · GitHub 门户与在线试玩中心</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,7 +38,7 @@
         <div class="w-3 h-9 bg-emerald-400 rounded-sm shadow-[0_0_14px_rgba(16,185,129,0.85)]"></div>
         <div>
           <div class="flex flex-wrap items-center gap-2">
-            <span class="mono text-xs font-bold text-emerald-400 tracking-wider">ТЕЛЕТАЙП НОВОРСК-17 // V4.0 MASTER REPOSITORY</span>
+            <span class="mono text-xs font-bold text-emerald-400 tracking-wider">ТЕЛЕТАЙП НОВОРСК-17 // BUILD 4.0.0</span>
             <span class="mono text-[11px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">GODOT 4.3+ READY</span>
           </div>
           <h1 class="text-base sm:text-xl font-bold text-white tracking-tight mt-0.5" id="hdrTitle">
@@ -57,6 +57,14 @@
       </div>
     </div>
   </header>
+
+  <!-- Version Policy: build 4.0.0 is the single source of truth; v4.2 / v4.0 are content-spec labels. -->
+  <div class="border-b border-amber-500/30 bg-[#17130a]/95 px-4 py-2.5">
+    <div class="max-w-[1440px] mx-auto mono text-[11px] sm:text-xs text-amber-200/90 leading-relaxed">
+      <span class="font-bold text-amber-300">版本口径 / VERSION POLICY：</span>
+      构建版本 <b class="text-emerald-300">4.0.0</b>（唯一真源 <code class="text-emerald-300">godot_project/project.godot → config/version</code>）｜ 内容规格 <b>v4.2</b>（docs 策划案 / 总剧本 / 美术风格参考的文档规格，非构建版本）｜ 本页原型与文档标签里的「v4.0 诺沃斯克-17 设定」为早期<b>内容规格标签</b>，同样不是构建版本。详见 <a class="underline text-amber-300 hover:text-amber-100" href="README.md">README.md</a> · <a class="underline text-amber-300 hover:text-amber-100" href="CHANGELOG.md">CHANGELOG.md</a>。
+    </div>
+  </div>
 
   <!-- Main Portal Content -->
   <main class="flex-1 max-w-[1440px] w-full mx-auto p-4 sm:p-6 space-y-8">
@@ -254,15 +262,15 @@
             </li>
             <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
               <span>📘 Godot 4 引擎迁移技术规范与架构指南 (ZH/EN)</span>
-              <span class="mono text-emerald-400">NEW v4.0</span>
+              <span class="mono text-emerald-400">MIGRATION GUIDE</span>
             </li>
             <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
               <span>🎬 《Z年纪事：凛冬铁轨》五幕完整总剧本 (ZH/EN)</span>
-              <span class="mono text-slate-400">v4.0 Master</span>
+              <span class="mono text-slate-400">内容规格 v4.2</span>
             </li>
             <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
               <span>📐 游戏总策划案 GDD & 10大关卡蓝图 (ZH/EN)</span>
-              <span class="mono text-slate-400">v4.0 Master</span>
+              <span class="mono text-slate-400">内容规格 v4.2</span>
             </li>
             <li class="flex items-center justify-between p-2 rounded bg-slate-900/80 border border-slate-800">
               <span>🔧 第一阶段灰盒原型规格书与美术清单 (ZH/EN)</span>
@@ -302,7 +310,7 @@
         gdTitle: "已内置可直接导入 Godot 4.3+ 的核心脚本、Shader 与配置 (`godot_project/`)"
       },
       en: {
-        hdrTitle: "Year of Z: Iron Winter (v4.0) — Interactive Prototype Portal & Godot 4 Hub",
+        hdrTitle: "Year of Z: Iron Winter (Build 4.0.0) — Interactive Prototype Portal & Godot 4 Hub",
         secProtoTitle: "Three Interactive HTML5 Prototype Sandboxes (Aligned to v4.0 Novorsk-17 Bilingual Spec)",
         p1Title: "5-in-1 Playable Greybox Prototype Gym (Rooms A–E)",
         p1Desc: "Playable verification of O.S.K. 45° searchlight 'Borrowing the Knife' (Room A), Railway Crowbar Door Wedge & 12cm Gap Lunchbox Push (Room B), Paper Dead & Choice A (Room C), Wolfdog 'Ash' Tri-State AI (Room D), and Vasily's Collarbone Blade Jam QTE + 'Пить' PTSD (Room E).",

@@ -28,6 +28,10 @@ var settings_path := ""
 ## 主音量 0..1（暂停菜单里的滑块）；只作用于主总线音量，M 键静音另算。
 var master_volume := 1.0
 
+## 色觉辅助（暂停菜单里的勾选）。只影响声纹冗余层的线宽 / 图标尺寸 / 单字标签；
+## 声纹的线型与图标形状**无条件常开**，与本开关无关，关掉也不会丢失冗余。
+var colorblind_mode := false
+
 
 func _ready() -> void:
 	load_settings()
@@ -338,11 +342,19 @@ static func _log_entry(e) -> Dictionary:
 
 
 # ============================================================================
-# 设置（音量）—— ConfigFile 只存几个标量
+# 设置（音量 / 色觉辅助）—— ConfigFile 只存几个标量
+# 只往 settings.cfg 加一个 section/key；战役存档 campaign_save.json 的格式与
+# VERSION(:=1) 均不变。老 settings.cfg 读不到新键时退回默认值 false。
 # ============================================================================
 func set_master_volume(v: float) -> void:
 	master_volume = clampf(v, 0.0, 1.0)
 	_apply_volume()
+	save_settings()
+
+
+## 色觉辅助开关。形状冗余不在这里切换 —— 它默认常开，这里只是增强。
+func set_colorblind_mode(on: bool) -> void:
+	colorblind_mode = on
 	save_settings()
 
 
@@ -354,10 +366,12 @@ func load_settings() -> void:
 	var cfg := ConfigFile.new()
 	if cfg.load(_settings_file()) == OK:
 		master_volume = clampf(float(cfg.get_value("audio", "master_volume", 1.0)), 0.0, 1.0)
+		colorblind_mode = bool(cfg.get_value("accessibility", "colorblind_mode", false))
 	_apply_volume()
 
 
 func save_settings() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("audio", "master_volume", master_volume)
+	cfg.set_value("accessibility", "colorblind_mode", colorblind_mode)
 	cfg.save(_settings_file())

@@ -1,0 +1,79 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Texture2D" path="assets/layers/painted_ground.png" id="1_painted_ground"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0"]
+size = Vector2(420, 160)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(410, 160)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
+size = Vector2(300, 125)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3"]
+radius = 96.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4"]
+radius = 72.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5"]
+radius = 72.0
+
+[node name="EagleBeakCliff" type="Node2D"]
+texture_filter = 2
+metadata/map_bundle_sha256 = "b74d36dcb6ec6ec6623238078c705e4bf6a7ae2b00129a40461ec5cca93caafa"
+
+[node name="painted_ground" type="Sprite2D" parent="."]
+texture = ExtResource("1_painted_ground")
+centered = false
+
+[node name="collision" type="StaticBody2D" parent="."]
+metadata/actor_radius = 11.0
+metadata/y_squash = 0.75
+metadata/walk_regions = [{"polygon": PackedVector2Array(95, 220, 1370, 188, 1595, 365, 1580, 705, 1450, 790, 1200, 815, 930, 830, 650, 825, 390, 790, 155, 710, 90, 500), "holes": []}]
+
+[node name="approach_train_01" type="CollisionShape2D" parent="collision"]
+position = Vector2(420, 352)
+shape = SubResource("RectangleShape2D_0")
+
+[node name="derailed_car_004" type="CollisionShape2D" parent="collision"]
+position = Vector2(865, 525)
+shape = SubResource("RectangleShape2D_1")
+
+[node name="trailing_car" type="CollisionShape2D" parent="collision"]
+position = Vector2(1180, 627.5)
+shape = SubResource("RectangleShape2D_2")
+
+[node name="markers" type="Node2D" parent="."]
+
+[node name="start" type="Marker2D" parent="markers"]
+position = Vector2(145, 620)
+metadata/kind = "spawn"
+metadata/facing = "south"
+
+[node name="interactions" type="Node2D" parent="."]
+
+[node name="car004_evidence" type="Area2D" parent="interactions"]
+position = Vector2(590, 675)
+metadata/kind = "interaction"
+metadata/reach = 96.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/car004_evidence"]
+shape = SubResource("CircleShape2D_3")
+
+[node name="switchback_route" type="Area2D" parent="interactions"]
+position = Vector2(1440, 330)
+metadata/kind = "interaction"
+metadata/reach = 72.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/switchback_route"]
+shape = SubResource("CircleShape2D_4")
+
+[node name="north_cut" type="Area2D" parent="interactions"]
+position = Vector2(1090, 250)
+metadata/kind = "interaction"
+metadata/reach = 72.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/north_cut"]
+shape = SubResource("CircleShape2D_5")

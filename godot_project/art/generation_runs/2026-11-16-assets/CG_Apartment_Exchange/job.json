@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "dce9548e7fde946c5240a5454f400485b42e7bead4a43163fa091ddac8cd9938",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:31:40.419Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:31:40.419Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "2-1 apartment ration handoff",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-24624bd6-5055-4663-ac2f-fed8066d3257.png",
+    "sourceSha256": "5732275acdc9fea2762b0b19a78b5b923447863cee73beb4dd8de99b0679322c",
+    "sourceMtime": "2026-11-16T09:12:24Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "5732275acdc9fea2762b0b19a78b5b923447863cee73beb4dd8de99b0679322c",
+    "bytes": 3221118,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

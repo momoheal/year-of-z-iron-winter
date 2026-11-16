@@ -56,9 +56,9 @@ func _run() -> void:
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])
 	for f in failures:
 		print("   FAILED: ", f)
-	if failures.size() > 0:
-		quit(1)
-	quit(0)
+	# quit() 不终止函数执行 —— 分开写 "if 有失败: quit(1)" 再 quit(0)，
+	# 后者会覆盖前者，退出码永远是 0，CI 的 rc 判断就成了摆设。用单表达式。
+	quit(0 if failures.is_empty() else 1)
 
 # ---------------------------------------------------------------------------
 func _registry() -> void:
@@ -536,6 +536,17 @@ func _coldstore() -> void:
 	_assert(g.rail_y.size() == 1, "coldstore 铁路专用线 1 道", str(g.rail_y))
 	# 装配：2 组清杀队 / 2 只感染者 / 无半人（半人在 yard）/ 9 个容器 / 4 块冻雪泥
 	_assert(g.soldiers.size() == 2, "coldstore 2 组清杀队", str(g.soldiers.size()))
+	for guard in g.soldiers:
+		var min_x := 26.0 if guard.name == &"OSK_Dock" else 34.0
+		var max_x := 34.0 if guard.name == &"OSK_Dock" else 41.0
+		var inside_patrol: bool = guard.route.size() >= 2
+		for waypoint in guard.route:
+			inside_patrol = inside_patrol and waypoint.x >= min_x * PPM and waypoint.x <= max_x * PPM
+		_assert(inside_patrol, "coldstore %s 巡逻远离西侧通道和撤离豁口" % guard.name)
+	for cover in ["WestDockCover", "WestYardCover", "RailExitCover"]:
+		var prop := g.get_node_or_null("World/Props/" + cover) as StaticBody2D
+		_assert(prop != null and prop.collision_layer == 1 and prop.has_node("Occluder"),
+				"coldstore %s 能遮挡视线和灯光" % cover)
 	_assert(g.rabids.size() == 2, "coldstore 2 只感染者", str(g.rabids.size()))
 	var brutes := 0
 	for r in g.rabids:

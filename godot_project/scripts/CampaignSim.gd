@@ -86,7 +86,9 @@ func new_game() -> void:
 	day_message = ""
 	events_log = []
 	stash = {"rye": 3, "can": 2, "water": 1, "band": 1, "scrap": 2}
-	mates = {"ash": false, "anna": false, "gulya": false, "pavel": false, "ivan": false}
+	mates.clear()
+	for m in Data.MATES:
+		mates[String(m["id"])] = false
 	for l in Data.LOCS:
 		nodes[l["id"]] = {"visits": 0, "left": 1.0, "hint": 0}
 	add_log("你回到 602 室。母亲在透析机旁睡着了，眉头仍因疼痛紧锁；你放轻脚步，仿佛连呼吸也会成为一笔开销。",
@@ -346,7 +348,7 @@ func depart(L: Dictionary) -> bool:
 		"weapon": best_weapon(),
 		"load": load.duplicate(),
 		"cold": float(L["cold"]),
-		"danger": int(L["dg"]),
+		"danger": clampi(int(L["dg"]) + (1 if bool(flags.get("osk_alert", false)) else 0), 1, 5),
 		"time": travel_minutes(L),
 		"glasses": bool(flags.get("glasses", false)),
 		"night": maxf(90.0, travel_minutes(L) * 2.4),
@@ -388,6 +390,69 @@ func story_of(id: String) -> Dictionary:
 	if not Data.STORY.has(id):
 		return {}
 	return Data.STORY[id]
+
+func story_lines(id: String) -> Array:
+	var beat := story_of(id)
+	if beat.is_empty():
+		return []
+	var lines: Array = beat.get("lines", []).duplicate(true)
+	if lang == "zh":
+		var source_id := String(Data.STORY_SOURCE_SCENES.get(id, ""))
+		if source_id != "":
+			var source_lines := Data.script_scene(source_id)
+			if not source_lines.is_empty():
+				lines = source_lines
+	if id == "marshalling":
+		lines.append_array(_route_reaction_lines())
+	return lines
+
+func _route_is_ruthless() -> bool:
+	return tally >= 2 or conscience <= 25.0
+
+func _route_is_compassionate() -> bool:
+	return tally == 0 and conscience >= 65.0
+
+func _route_reaction_lines() -> Array:
+	var out: Array = []
+	var ruthless := _route_is_ruthless()
+	var compassionate := _route_is_compassionate()
+	var reactions := {
+		"ash": ["灰烬", "灰烬贴着你的靴边低低呜咽，项圈下那圈旧伤被炉火照得发白。", "Ash presses against your boot and whines softly. The old ring of scar tissue pales in the furnace light."],
+		"anna": ["安娜", "安娜", "Anna"],
+		"gulya": ["古丽娅", "古丽娅", "Gulya"],
+		"ivan": ["老轨伊万", "伊万", "Old Ivan"],
+		"pavel": ["帕维尔老爹", "帕维尔", "Pavel"],
+		"yelena": ["叶莲娜", "叶莲娜", "Yelena"],
+	}
+	for id in reactions:
+		if not bool(mates.get(id, false)):
+			continue
+		var row: Array = reactions[id]
+		var zh := String(row[1])
+		var en := String(row[2])
+		if id == "ash":
+			out.append({"w": row[0], "mood": "sad" if ruthless else "calm", "zh": zh, "en": en})
+			continue
+		if ruthless:
+			zh = "%s看着你，仍记得你救过车厢里的人；可你一路把其他人当成东西，他/她不会再把后背交给你。" % String(row[1])
+			en = "%s remembers that you saved the boxcar, but will not trust you with their back after the people you treated as things." % String(row[2])
+		elif compassionate:
+			zh = "%s把手搭上你的肩。你一路留下的名字和救过的人，让他/她愿意与你一起守住广播。" % String(row[1])
+			en = "%s rests a hand on your shoulder. The names you kept and lives you saved make them ready to defend the broadcast with you." % String(row[2])
+		else:
+			zh = "%s没有靠近也没有离开，只说：先把这一夜撑过去，之后再谈信任。" % String(row[1])
+			en = "%s neither comes closer nor leaves. " + String(row[2]) + " says: survive this night first; we can speak of trust later."
+		out.append({"w": row[0], "mood": "intense" if ruthless else ("sad" if not compassionate else "calm"), "zh": zh, "en": en})
+	if bool(mates.get("zakhar", false)):
+		if ruthless:
+			out.append({"w": "核算员扎哈尔", "mood": "intense",
+				"zh": "清杀队答应给我冬季配额。你把我带到这里，我就把你的坐标报给他们。",
+				"en": "OSK offered me a winter ration quota. You brought me here; I will give them your position."})
+		else:
+			out.append({"w": "核算员扎哈尔", "mood": "calm",
+				"zh": "只要配额还比不上活命，我就跟着你。别把这当忠诚。",
+				"en": "As long as the quota is worth less than staying alive, I will follow. Do not mistake that for loyalty."})
+	return out
 
 func resolve_story(choice_index: int) -> Dictionary:
 	if story_id == "" or not Data.STORY.has(story_id):
@@ -442,6 +507,8 @@ func resolve_story(choice_index: int) -> Dictionary:
 		var bridge := (Engine.get_main_loop() as SceneTree).root.get_node_or_null("RaidBridge")
 		if bridge != null and bridge.sim == self:
 			bridge.cfg["mate"] = mate
+	if story_id == "marshalling" and _route_is_ruthless() and bool(mates.get("zakhar", false)):
+		flags["zakhar_betrayal_pending"] = true
 	story_done[story_id] = true
 	flags["story_" + story_id] = true
 	story_open = false
@@ -487,6 +554,12 @@ func finish_raid(reason: String) -> Dictionary:
 	if raid == null:
 		return {}
 	var r = raid
+	if bool(flags.get("broadcast_pending", false)) and bool(flags.get("broadcast_signal", false)) \
+		and not bool(story_done.get("broadcast", false)) \
+		and reason != "downed" and reason != "abort":
+		story_id = "broadcast"
+		story_open = true
+		flags.erase("broadcast_pending")
 	var kept: Array = []
 	match reason:
 		"downed", "abort":
@@ -525,6 +598,16 @@ func finish_raid(reason: String) -> Dictionary:
 	var st: Dictionary = node_state(String(loc["id"]))
 	st["visits"] = int(st["visits"]) + 1
 	st["left"] = clampf(float(st["left"]) - 0.5, 0.05, 1.0)
+	if bool(flags.get("zakhar_betrayal_pending", false)) and bool(mates.get("zakhar", false)):
+		mates["zakhar"] = false
+		if mate == "zakhar":
+			select_mate("none")
+		flags.erase("zakhar_betrayal_pending")
+		flags["zakhar_betrayed"] = true
+		flags["osk_alert"] = true
+		flags["betrayed"] = true
+		add_log("扎哈尔把你的位置报给清杀队，换取冬季配额。他离开了队伍；清杀队已提高警戒。",
+			"Zakhar reported your position to OSK for a winter ration quota and left the crew. OSK is now more alert.")
 	last_report = {
 		"reason": reason,
 		"loc": loc,

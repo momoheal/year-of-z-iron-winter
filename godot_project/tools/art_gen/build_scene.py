@@ -213,7 +213,8 @@ for p in LY.PROPS:
         S.node("Shape", "CollisionShape2D", n, position=v2((0, round(-fd / 2, 2))), shape=rect_shape(fw, fd))
     if p["layer"] in (1, 2) and p.get("occlude", True):
         S.node("Occluder", "LightOccluder2D", n,
-               occluder=occluder(round(-fw / 2, 1), round(-fd, 1), round(fw / 2, 1), 0))
+               occluder=occluder(round(-fw / 2, 1), round(-fd, 1), round(fw / 2, 1), 0),
+               occluder_light_mask=str(2 if p["layer"] == 2 else 1))
     if p.get("fire"):
         # 火苗高度按油桶本身定：桶身 54 px，火只从桶口（-56）往上蹿 35 px ——
         # 之前整簇 84 px、顶到 -130，比桶还高一倍多，看着像烧到墙上了。

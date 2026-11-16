@@ -1,0 +1,195 @@
+{
+  "schema": "generate2dmap.map_bundle.v2",
+  "id": "station_buran_yard",
+  "name": "West Station · Buran rail yard",
+  "world": {
+    "width": 1672,
+    "height": 941,
+    "unit": "px"
+  },
+  "layers": [
+    {
+      "name": "painted_ground",
+      "kind": "image",
+      "image": "map.png",
+      "offset": [
+        0,
+        0
+      ],
+      "sha256": "e2ddb20de31211eaa8e5f20a279bd709e83e96513cbface117c98716fab80514"
+    }
+  ],
+  "collision": {
+    "actorRadius": 11,
+    "ySquash": 0.75,
+    "walkRegions": [
+      {
+        "polygon": [
+          [
+            40,
+            20
+          ],
+          [
+            1630,
+            20
+          ],
+          [
+            1630,
+            920
+          ],
+          [
+            40,
+            920
+          ]
+        ]
+      }
+    ],
+    "solids": [
+      {
+        "shape": "rect",
+        "id": "station_building",
+        "x": 220,
+        "y": 28,
+        "w": 1040,
+        "h": 198,
+        "material": "building"
+      },
+      {
+        "shape": "rect",
+        "id": "water_tower",
+        "x": 45,
+        "y": 555,
+        "w": 235,
+        "h": 270,
+        "material": "structure"
+      },
+      {
+        "shape": "rect",
+        "id": "buran_train",
+        "x": 210,
+        "y": 390,
+        "w": 1260,
+        "h": 145,
+        "material": "train"
+      },
+      {
+        "shape": "rect",
+        "id": "south_fence_west",
+        "x": 30,
+        "y": 827,
+        "w": 720,
+        "h": 18,
+        "material": "fence"
+      },
+      {
+        "shape": "rect",
+        "id": "south_fence_east",
+        "x": 918,
+        "y": 827,
+        "w": 720,
+        "h": 18,
+        "material": "fence"
+      }
+    ]
+  },
+  "nav": {
+    "cell": 6
+  },
+  "spawns": [
+    {
+      "id": "start",
+      "x": 835,
+      "y": 890,
+      "facing": "south"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "dispatch_timetable",
+      "x": 455,
+      "y": 250,
+      "reach": 84
+    },
+    {
+      "id": "buran_boxcar_03",
+      "x": 1350,
+      "y": 550,
+      "reach": 92
+    },
+    {
+      "id": "water_tower_trench",
+      "x": 180,
+      "y": 780,
+      "reach": 78
+    },
+    {
+      "id": "west_platform",
+      "x": 900,
+      "y": 290,
+      "reach": 72
+    }
+  ],
+  "roads": [
+    {
+      "id": "platform_route",
+      "material": "packed_snow",
+      "width": 84,
+      "polyline": [
+        [
+          835,
+          890
+        ],
+        [
+          835,
+          760
+        ],
+        [
+          835,
+          600
+        ],
+        [
+          835,
+          350
+        ],
+        [
+          835,
+          270
+        ]
+      ]
+    },
+    {
+      "id": "yard_route",
+      "material": "packed_snow",
+      "width": 72,
+      "polyline": [
+        [
+          835,
+          760
+        ],
+        [
+          500,
+          760
+        ],
+        [
+          250,
+          760
+        ],
+        [
+          180,
+          780
+        ]
+      ]
+    }
+  ],
+  "camera": {
+    "pixelToWorld": 1.0,
+    "bounds": [
+      0,
+      0,
+      1672,
+      941
+    ]
+  },
+  "art_source": "host_image",
+  "placeholder": false
+}

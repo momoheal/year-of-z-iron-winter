@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "5276d5c207953c6e779080bfb4b49d008d779f0d806cd4552edd660f91e07dcb",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:31:41.589Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:31:41.589Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "6-2 final testimony broadcast",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-7c8e932e-f17d-406b-811f-6f84649e3a5d.png",
+    "sourceSha256": "9476b97390def08364e328d63c3dadd3c664f908b3c2035ceb744970def76754",
+    "sourceMtime": "2026-11-16T09:19:07Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "9476b97390def08364e328d63c3dadd3c664f908b3c2035ceb744970def76754",
+    "bytes": 2911129,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

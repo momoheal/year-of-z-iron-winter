@@ -1,0 +1,75 @@
+{
+  "schema": "winter-iron.partner-atlas.v1",
+  "source": "partner_atlas_raw.png",
+  "source_sha256": "50e081ca4c393079ec86382e30e86f4f0affa90f287261bcc5a142da5de63bbe",
+  "source_size": [
+    1006,
+    1564
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "target_size": [
+    72,
+    112
+  ],
+  "foot_y": 110,
+  "poses": {
+    "top_left": "Stand",
+    "top_right": "Walk0",
+    "bottom_left": "Walk1",
+    "bottom_right": "unused"
+  },
+  "scale": 0.142466,
+  "alpha_hygiene": {
+    "mode": "both",
+    "floor": 4,
+    "solid_min": 32,
+    "attach_radius": 2,
+    "connectivity": 8,
+    "floor_px": 32527,
+    "detached_px": 24,
+    "detached_components": 14,
+    "max_removed_alpha": 6
+  },
+  "files": {
+    "Stand": {
+      "path": "PRP_Yelena_Stand.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "684209702631ed5466c192ed397b16b80f661b0339877421b6465d84bd3c260e",
+      "subject_size": [
+        37,
+        104
+      ]
+    },
+    "Walk0": {
+      "path": "PRP_Yelena_Walk0.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "9af740b870b131c488b31269a1ccfbf4d6c3a1c09cc4f9ccd6fa9942391200ce",
+      "subject_size": [
+        39,
+        104
+      ]
+    },
+    "Walk1": {
+      "path": "PRP_Yelena_Walk1.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "8685ac9ed50f45d03d39b4f7eadf7a9951eff73b94497317ea7c4eb31878e7f0",
+      "subject_size": [
+        39,
+        105
+      ]
+    }
+  },
+  "warnings": []
+}
