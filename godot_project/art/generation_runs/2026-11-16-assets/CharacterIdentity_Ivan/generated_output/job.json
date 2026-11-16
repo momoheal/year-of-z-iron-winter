@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "5baaf3cac257176e0042a75eaf98eacb470da36e5762838f86ea3d7cc87bb731",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:44:44.855Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:44:44.855Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "Ivan 3x3 gameplay identity concept; no runtime import until directions are fixed",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-5a08711e-1083-4443-8750-3cb5af19dfbe.png",
+    "sourceSha256": "87245c3428ff0dc84020cdd053bc65c82ce4c2c2cf111a279509fe1b634331d6",
+    "sourceMtime": "2026-11-16T09:43:58Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "87245c3428ff0dc84020cdd053bc65c82ce4c2c2cf111a279509fe1b634331d6",
+    "bytes": 1432139,
+    "format": "PNG",
+    "size": [
+      1013,
+      1553
+    ]
+  }
+}

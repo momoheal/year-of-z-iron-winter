@@ -305,6 +305,9 @@ color = Color(0.85, 0.9, 1, 0.3)
 shader = ExtResource("52_shad")
 shader_parameter/fog_tex = ExtResource("53_text")
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_SearchlightLowCover"]
+polygon = PackedVector2Array(-102.4, -33.7, 102.4, -33.7, 102.4, 0, -102.4, 0)
+
 [node name="NightExplore" type="Node2D"]
 texture_filter = 2
 script = ExtResource("1_scri")
@@ -459,6 +462,7 @@ shape = SubResource("RectangleShape2D_11")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/SteamPipe"]
 occluder = SubResource("OccluderPolygon2D_12")
+occluder_light_mask = 2
 
 [node name="LampWest" type="StaticBody2D" parent="World/Props"]
 position = Vector2(384, 174.59)
@@ -584,6 +588,10 @@ offset = Vector2(-104, -110)
 [node name="Shape" type="CollisionShape2D" parent="World/Props/Sandbags"]
 position = Vector2(0, -16.86)
 shape = SubResource("RectangleShape2D_23")
+
+[node name="Occluder" type="LightOccluder2D" parent="World/Props/Sandbags"]
+occluder = SubResource("OccluderPolygon2D_SearchlightLowCover")
+occluder_light_mask = 2
 
 [node name="AmmoBox" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
 position = Vector2(1548.8, 222.21)

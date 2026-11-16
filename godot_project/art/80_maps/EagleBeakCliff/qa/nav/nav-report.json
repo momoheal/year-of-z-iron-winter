@@ -1,0 +1,214 @@
+{
+  "schema": "generate2dmap.nav_report.v1",
+  "status": "pass",
+  "method": "plan Appendix C validity (centre + 8 footprint samples against walk regions, solids, object footprints scaled once, tile collision and material classes) on a grid of cell max(1, round(r/2)) px; 4-neighbour moves open when segmentClear holds between node centres (samples every cell/2, plus the exact thin-gap centre path and one_way direction); BFS from every spawn and portal arrival to every interaction, exit, anchor slot and approach point",
+  "notProven": [
+    "that the collision data matches the painted art",
+    "positions closer than one grid cell to a blocker (the grid samples cell centres)",
+    "runtime movement code: map-runtime.mjs parity is tested during integration",
+    "links to maps not passed with --link"
+  ],
+  "checks": [
+    {
+      "id": "starts_valid",
+      "status": "pass",
+      "value": {
+        "starts": 1,
+        "blocked": []
+      },
+      "threshold": {
+        "blocked": 0
+      }
+    },
+    {
+      "id": "targets_reachable",
+      "status": "pass",
+      "value": {
+        "reachable": 3,
+        "total": 3,
+        "unreachable": []
+      },
+      "threshold": {
+        "unreachable": 0
+      }
+    },
+    {
+      "id": "portals_inside_world",
+      "status": "pass",
+      "value": {
+        "outside": []
+      },
+      "threshold": {
+        "outside": 0
+      }
+    },
+    {
+      "id": "arrivals_outside_triggers",
+      "status": "pass",
+      "value": {
+        "problems": 0
+      },
+      "threshold": {
+        "problems": 0
+      }
+    },
+    {
+      "id": "reciprocal_links",
+      "status": "pass",
+      "value": {
+        "links": [],
+        "notChecked": []
+      },
+      "threshold": {
+        "errors": 0
+      }
+    },
+    {
+      "id": "thin_gaps",
+      "status": "pass",
+      "value": 0,
+      "threshold": "reported: moves the thin-gap rule closed although every footprint sample was valid"
+    },
+    {
+      "id": "unreachable_walkable_area",
+      "status": "pass",
+      "value": {
+        "pockets": 0,
+        "cells": 0
+      },
+      "threshold": "reported"
+    },
+    {
+      "id": "blocked_rects_union",
+      "status": "pass",
+      "value": {
+        "rects": 98,
+        "blockedCells": 26205
+      },
+      "threshold": "union == blocked cells"
+    },
+    {
+      "id": "footprints_scaled_once",
+      "status": "pass",
+      "value": {
+        "objectSolids": 0
+      },
+      "threshold": "object footprint x scale, never inflated by the actor radius"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "../../map-bundle.json",
+      "sha256": "7667bc9f9cea8bd3d6a8e2c3f19850dc735d763a464a8b8e4be4483bc00f3a3f",
+      "bytes": 3247
+    },
+    {
+      "path": "../../map.png",
+      "sha256": "1d61ff1115500a6ceffdae184d5538a6951222d8cef4744104bb09c621241d3e",
+      "bytes": 3442435
+    }
+  ],
+  "outputs": [
+    {
+      "path": "nav-grid.json",
+      "sha256": "1efde04278e5cec726bfff2216f99c7f8bd21e4bae81838510e11d941a8c39ba",
+      "bytes": 96677
+    },
+    {
+      "path": "nav-debug.png",
+      "sha256": "ee7e320968e74a75aa30d86410cb178dd20f78bf802a22bf58914e7612361d14",
+      "bytes": 2376661
+    }
+  ],
+  "tool": {
+    "name": "map_nav.py",
+    "version": "0.4.0"
+  },
+  "map": "eagle_beak_cliff",
+  "cell": 6,
+  "starts": [
+    {
+      "kind": "spawn",
+      "id": "start",
+      "point": [
+        145.0,
+        620.0
+      ],
+      "reachable": true,
+      "steps": 0,
+      "node": [
+        147.0,
+        621.0
+      ],
+      "reason": null
+    }
+  ],
+  "targets": [
+    {
+      "kind": "interaction",
+      "id": "car004_evidence",
+      "point": [
+        590.0,
+        675.0
+      ],
+      "reachable": true,
+      "steps": 58,
+      "node": [
+        507.0,
+        627.0
+      ],
+      "reason": null
+    },
+    {
+      "kind": "interaction",
+      "id": "switchback_route",
+      "point": [
+        1440.0,
+        330.0
+      ],
+      "reachable": true,
+      "steps": 244,
+      "node": [
+        1377.0,
+        363.0
+      ],
+      "reason": null
+    },
+    {
+      "kind": "interaction",
+      "id": "north_cut",
+      "point": [
+        1090.0,
+        250.0
+      ],
+      "reachable": true,
+      "steps": 199,
+      "node": [
+        1029.0,
+        285.0
+      ],
+      "reason": null
+    }
+  ],
+  "links": [],
+  "thinGaps": [],
+  "unreachablePockets": [],
+  "bundleNav": {
+    "cell": 6,
+    "grid": "nav-grid.json"
+  },
+  "problems": [
+    {
+      "severity": "warning",
+      "path": "$",
+      "message": "unknown top-level field(s) ignored: notes",
+      "code": "rule"
+    },
+    {
+      "severity": "warning",
+      "path": "$.nav.cell",
+      "message": "nav.cell 24 differs from max(1, round(actorRadius/2)) = 6, which map_nav uses",
+      "code": "rule"
+    }
+  ]
+}

@@ -40,12 +40,14 @@ const TEX_CHR := {
 	"half": preload("res://art/10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png"),
 }
 const TEX_SURVIVOR := preload("res://art/30_props/PRP_Survivor_Stand.png")
-const MATE_TEX := {   # 伙伴立绘前缀（+ Stand/Walk0/Walk1.png）
+const MATE_TEX := {   # 伙伴立绘前缀（+ Stand/Walk0..Walk7.png）
 	"ash": "res://art/30_props/PRP_Ash_",
 	"anna": "res://art/30_props/PRP_Anna_",
 	"gulya": "res://art/30_props/PRP_Gulya_",
 	"pavel": "res://art/30_props/PRP_Pavel_",
 	"ivan": "res://art/30_props/PRP_Ivan_",
+	"yelena": "res://art/30_props/PRP_Yelena_",
+	"zakhar": "res://art/30_props/PRP_Zakhar_",
 }
 
 const SCREEN := Vector2(1920, 1080)
@@ -657,7 +659,7 @@ func _draw_still(s: Vector2, tex: Texture2D, flip: bool, h: float, tint: Color =
 func _mate_tex(id: String, moving: bool) -> Texture2D:
 	var suffix := "Stand"
 	if moving:
-		suffix = "Walk0" if int(t * 5.0) % 2 == 0 else "Walk1"
+		suffix = "Walk%d" % (int(t * 8.0) % 8)
 	var key := id + "_" + suffix
 	if not _mate_cache.has(key):
 		var base: String = MATE_TEX.get(id, "")

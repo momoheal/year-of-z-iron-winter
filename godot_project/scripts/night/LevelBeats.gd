@@ -305,7 +305,8 @@ const LEVELS := {
 		],
 		"landmarks": [
 			{"name": "6.66 电台棚", "pos": [36.5, 25.0], "radius": 4.5,
-			 "note": "老式短波收音机，指针钉死在 6.66。女声说喝下去立竿见影 —— 那是防冻液。"},
+			 "note": "老式短波收音机，指针钉死在 6.66。女声说喝下去立竿见影 —— 那是防冻液。",
+			 "story_trigger": "broadcast", "requires_flag": "broadcast_signal"},
 			{"name": "烫鳞后巷", "pos": [7.0, 24.9], "radius": 4.0,
 			 "note": "炭炉上烧着一枚马蹄铁。赤脚医生把它按在病人的手背上，把灰鳞烫死。收费三罐罐头。"},
 			{"name": "药棚铁门", "pos": [12.0, 23.2], "radius": 4.0,

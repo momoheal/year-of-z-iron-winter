@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "e127a38a89ff37cc0f1247ef22be30f36855c791ad6ab3b3558c0cc9f672f4e6",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:44:44.858Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:44:44.858Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "Zakhar 3x3 gameplay identity concept; no runtime import until directions are fixed",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-fe2939bb-3f8c-4be4-964f-2be3a6151496.png",
+    "sourceSha256": "c342c6f32c6b21e42dfd9529cb600a45776ebe50737a5ddb2503900d348807e3",
+    "sourceMtime": "2026-11-16T09:42:35Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "c342c6f32c6b21e42dfd9529cb600a45776ebe50737a5ddb2503900d348807e3",
+    "bytes": 1744563,
+    "format": "PNG",
+    "size": [
+      1013,
+      1553
+    ]
+  }
+}

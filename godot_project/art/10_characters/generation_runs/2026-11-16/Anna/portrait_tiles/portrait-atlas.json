@@ -1,0 +1,46 @@
+{
+  "schema": "winter-iron.character-portrait-atlas.v1",
+  "source": "portrait_atlas_raw.png",
+  "source_sha256": "c1f69190ba19221494c4ab98477ade4a8b965872ee659ec49b17ec704616af22",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "tile_size": [
+    512,
+    512
+  ],
+  "layout": {
+    "top_left": "Calm",
+    "top_right": "Sad",
+    "bottom_left": "Intense",
+    "bottom_right": "Wry"
+  },
+  "files": {
+    "Calm": {
+      "path": "PRT_Anna_Calm.png",
+      "sha256": "b342408522938dffb661bee3a738a02e4a369b7481d0623654e65e65c42e448d"
+    },
+    "Sad": {
+      "path": "PRT_Anna_Sad.png",
+      "sha256": "3d44093551bfbf1c187f4345fa1127c5d7def3af2e671773122a0ecfb54bfaf8"
+    },
+    "Intense": {
+      "path": "PRT_Anna_Intense.png",
+      "sha256": "50d1016a8699c46f53800ccb29ef7b91ee4f0f0351aae4f3c7697b9696fa6e62"
+    },
+    "Wry": {
+      "path": "PRT_Anna_Wry.png",
+      "sha256": "01eec44593a0abd671aec1f87ec49140cd92d9d79ad514e55bfd8c809926e690"
+    },
+    "Base": {
+      "path": "PRT_Anna.png",
+      "sha256": "b342408522938dffb661bee3a738a02e4a369b7481d0623654e65e65c42e448d"
+    }
+  },
+  "warnings": []
+}

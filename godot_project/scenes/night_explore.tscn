@@ -457,6 +457,7 @@ shape = SubResource("RectangleShape2D_16")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/SteamPipe"]
 occluder = SubResource("OccluderPolygon2D_17")
+occluder_light_mask = 2
 
 [node name="FrozenBody" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
 position = Vector2(2022.4, 753.92)

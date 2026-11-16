@@ -58,7 +58,7 @@ func _run() -> void:
 		return
 	_assert(f.mate_id == "ash", "default mate is ash", f.mate_id)
 	_assert(f.player_target == s.player, "follower targets the player")
-	_assert(f._tex_walk.size() == 2, "ash has Walk0/Walk1 frames", str(f._tex_walk.size()))
+	_assert(f._tex_walk.size() == 8, "ash has Walk0..Walk7 frames", str(f._tex_walk.size()))
 
 	# 2. 跟随移动：玩家移远，跟随者追上（与移动后的距离比，不是移动前）
 	s.player.global_position += Vector2(400, 0)

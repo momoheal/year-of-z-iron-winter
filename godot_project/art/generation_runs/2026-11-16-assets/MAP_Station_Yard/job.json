@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "0ae3f4edef0e4a50b0d4e4cd6c20213182db6775804a86a99b871bc4659887f4",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:31:42.713Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:31:42.713Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "overhead rail station and Buran yard map plate",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-25966cc8-f9e5-49ce-9ac4-3f8d5760e20d.png",
+    "sourceSha256": "e2ddb20de31211eaa8e5f20a279bd709e83e96513cbface117c98716fab80514",
+    "sourceMtime": "2026-11-16T09:23:07Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "e2ddb20de31211eaa8e5f20a279bd709e83e96513cbface117c98716fab80514",
+    "bytes": 3820992,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "winter-iron.partner-atlas.v1",
+  "source": "partner_atlas_raw.png",
+  "source_sha256": "d016e76526d849d5f7a1e5cfb4f12c4ec737b040e4bc5eea7f46f183e7f88f0d",
+  "source_size": [
+    1199,
+    1312
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "target_size": [
+    72,
+    112
+  ],
+  "foot_y": 110,
+  "poses": {
+    "top_left": "Stand",
+    "top_right": "Walk0",
+    "bottom_left": "Walk1",
+    "bottom_right": "unused"
+  },
+  "scale": 0.167472,
+  "alpha_hygiene": {
+    "mode": "both",
+    "floor": 4,
+    "solid_min": 32,
+    "attach_radius": 2,
+    "connectivity": 8,
+    "floor_px": 29804,
+    "detached_px": 12,
+    "detached_components": 11,
+    "max_removed_alpha": 6
+  },
+  "files": {
+    "Stand": {
+      "path": "PRP_Anna_Stand.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "4f6f7024fd771f4e5c5a67cdf090bbb7319984ae07eacd9e34c6398a34b1591c",
+      "subject_size": [
+        34,
+        104
+      ]
+    },
+    "Walk0": {
+      "path": "PRP_Anna_Walk0.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "90d447207b4664a17daa6e144eb50623c55e237a3fc01f7808c05855a9985076",
+      "subject_size": [
+        39,
+        104
+      ]
+    },
+    "Walk1": {
+      "path": "PRP_Anna_Walk1.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "6b45f7bc68150dd6ad774cf57bfcf4b5a6ad84f02bde02348549ea3da5cfab78",
+      "subject_size": [
+        40,
+        105
+      ]
+    }
+  },
+  "warnings": []
+}

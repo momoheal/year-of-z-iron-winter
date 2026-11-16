@@ -1,0 +1,188 @@
+{
+  "schema": "winter-iron.partner-walkcycle.v1",
+  "sources": [
+    {
+      "path": "walkcycle_half_A_raw.png",
+      "sha256": "9dfc7f456cd388112760592c903300dcf65035ab8fe16de7262bb97ff2b88e3c",
+      "size": [
+        1199,
+        1312
+      ],
+      "alpha_hygiene": {
+        "mode": "both",
+        "floor": 4,
+        "solid_min": 32,
+        "attach_radius": 2,
+        "connectivity": 8,
+        "floor_px": 24090,
+        "detached_px": 7,
+        "detached_components": 7,
+        "max_removed_alpha": 5
+      }
+    },
+    {
+      "path": "walkcycle_half_B_raw.png",
+      "sha256": "d56eebea4b9c3dfbd30bdada5a48de41b2f5d82d8232252eef2a2fb2056b90b3",
+      "size": [
+        1199,
+        1312
+      ],
+      "alpha_hygiene": {
+        "mode": "both",
+        "floor": 4,
+        "solid_min": 32,
+        "attach_radius": 2,
+        "connectivity": 8,
+        "floor_px": 23514,
+        "detached_px": 2,
+        "detached_components": 2,
+        "max_removed_alpha": 5
+      }
+    }
+  ],
+  "grid_per_source": [
+    2,
+    2
+  ],
+  "frame_count": 8,
+  "target_size": [
+    72,
+    112
+  ],
+  "foot_y": 110,
+  "layout": "first board Walk0..Walk3, second board Walk4..Walk7",
+  "scale": 0.164818,
+  "subject_sizes": [
+    [
+      54,
+      104
+    ],
+    [
+      45,
+      104
+    ],
+    [
+      57,
+      104
+    ],
+    [
+      35,
+      104
+    ],
+    [
+      61,
+      105
+    ],
+    [
+      36,
+      104
+    ],
+    [
+      60,
+      103
+    ],
+    [
+      47,
+      104
+    ]
+  ],
+  "files": {
+    "Walk0": {
+      "path": "PRP_Zakhar_Walk0.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "c4210e5bf0726002ebee6679934264e255e140d90c7690c3b7a810110cdee47d",
+      "subject_size": [
+        54,
+        104
+      ]
+    },
+    "Walk1": {
+      "path": "PRP_Zakhar_Walk1.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "b1b7e54ceba274087644b703d1ea826d24a976ab9e740047a7ee9e310a8ec7a0",
+      "subject_size": [
+        45,
+        104
+      ]
+    },
+    "Walk2": {
+      "path": "PRP_Zakhar_Walk2.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "ca6a79adf1675c903de7e8f0de88108c7adb996f002ead23936e805fbcf46b27",
+      "subject_size": [
+        57,
+        104
+      ]
+    },
+    "Walk3": {
+      "path": "PRP_Zakhar_Walk3.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "461f3215b5246a50695546233877ea2f108b254ef9844a9607f3b22495ef6872",
+      "subject_size": [
+        35,
+        104
+      ]
+    },
+    "Walk4": {
+      "path": "PRP_Zakhar_Walk4.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "0b45ef1ae8abda68b2c1e49d0c4fb741b5099842598fcbe76215d0bf39d00043",
+      "subject_size": [
+        61,
+        105
+      ]
+    },
+    "Walk5": {
+      "path": "PRP_Zakhar_Walk5.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "68d192200ab433099f1fe06f2e02dca382f5d5ad9209a4aea291a5b8a6232bbb",
+      "subject_size": [
+        36,
+        104
+      ]
+    },
+    "Walk6": {
+      "path": "PRP_Zakhar_Walk6.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "42910ce1c37463d0adce5edc3cece936ffdaebbaf02df655ec588b3e084163c4",
+      "subject_size": [
+        60,
+        103
+      ]
+    },
+    "Walk7": {
+      "path": "PRP_Zakhar_Walk7.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "dd6206cbb4e2ffde80d36c92e76e06fb13bd884f79671da8093f9771930867eb",
+      "subject_size": [
+        47,
+        104
+      ]
+    }
+  },
+  "warnings": []
+}

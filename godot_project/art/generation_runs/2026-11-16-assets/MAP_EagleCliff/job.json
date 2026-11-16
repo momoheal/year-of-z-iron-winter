@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "4d0bded5959cdd608e448d600900a770ce5e7fcd9c44009e63accf70f74d5eaa",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:31:42.452Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:31:42.452Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "overhead Eagle Beak Cliff map plate",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-031cdd41-d2ce-4b53-af68-326ddd810f6f.png",
+    "sourceSha256": "1d61ff1115500a6ceffdae184d5538a6951222d8cef4744104bb09c621241d3e",
+    "sourceMtime": "2026-11-16T09:21:03Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "1d61ff1115500a6ceffdae184d5538a6951222d8cef4744104bb09c621241d3e",
+    "bytes": 3442435,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

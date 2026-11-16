@@ -1,0 +1,46 @@
+{
+  "schema": "winter-iron.character-portrait-atlas.v1",
+  "source": "portrait_atlas_raw.png",
+  "source_sha256": "09abae42c7600b21979613d31e6090c76c44d7905a3a77def00bf86aa32bb823",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "tile_size": [
+    512,
+    512
+  ],
+  "layout": {
+    "top_left": "Calm",
+    "top_right": "Sad",
+    "bottom_left": "Intense",
+    "bottom_right": "Wry"
+  },
+  "files": {
+    "Calm": {
+      "path": "PRT_Chernov_Calm.png",
+      "sha256": "59c71a531f3c86d89840582270f87f0998569dd5a60c1ced02ccc723ee9cd272"
+    },
+    "Sad": {
+      "path": "PRT_Chernov_Sad.png",
+      "sha256": "97198474a5d016d1acbae7e7a27464a12fc60d6e9ef884f20d0525515aed3c74"
+    },
+    "Intense": {
+      "path": "PRT_Chernov_Intense.png",
+      "sha256": "5f29abf20f681f0b3c31af1d3ddd09c880ffdf51f11ddb413b7e1ddbf5e2916a"
+    },
+    "Wry": {
+      "path": "PRT_Chernov_Wry.png",
+      "sha256": "d23f59bdcdaadeab06961a83b699983e1d0a81de474c8a24a41fabc60968a364"
+    },
+    "Base": {
+      "path": "PRT_Chernov.png",
+      "sha256": "59c71a531f3c86d89840582270f87f0998569dd5a60c1ced02ccc723ee9cd272"
+    }
+  },
+  "warnings": []
+}

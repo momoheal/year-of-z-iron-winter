@@ -56,8 +56,8 @@ const AFTERMATH := {
 			"zh": "身后，配给箱的电子锁又响了一声。账本上写着「零」，没有人会来纠正它。",
 			"en": "Behind you the ration lock snaps shut again. The ledger says zero, and nobody will come to correct it."},
 		{"img": CG + "cg_coldstore_c1.jpg", "focus": Vector2(0.7, 0.62), "zoom": Vector2(1.08, 1.2),
-			"zh": "那只灰狼犬在风雪里静静地看着你。你叫它「灰烬」。它踩着你的脚印，跟了上来。",
-			"en": "The grey wolfdog watches you through the snow. You call him Ash. He steps into your footprints and follows."},
+			"zh": "收发亭旁，那只灰狼犬仍缩在风雪里。你没有剪断锈铁丝，也没有把黑麦饼递过去；它留在原地，颈上的旧伤仍清晰可见。",
+			"en": "The wolfdog remains by the dispatch hut in the snow. You did not cut the wire or offer the bread; it stays where it is, its old neck scar still visible."},
 	],
 	"yard:0": [
 		{"img": CG + "cg_yard_scene.jpg", "focus": Vector2(0.33, 0.62),
@@ -119,6 +119,22 @@ const AFTERMATH := {
 			"zh": "背包被抢来的物资撑得满满当当。\n《工作日志》的背面，多了一道洗不掉的划痕。",
 			"en": "Your pack is stuffed with what you took.\nOn the back page of the logbook there is one more stroke that will not wash out."},
 	],
+	"broadcast:0": [
+		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.5, 0.48),
+			"zh": "短波信号的尽头，金发的叶莲娜关掉发射机。厚实、剪裁合身的冬衣让她看起来比棚外的人体面；她摘下耳机，主动把频率表递给你。",
+			"en": "At the end of the shortwave signal, blonde Yelena switches off the transmitter. Her well-cut winter coat is better kept than anything outside; she removes her headphones and hands you the frequency sheet."},
+		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.62, 0.55), "zoom": Vector2(1.06, 1.12),
+			"zh": "你选择带她同行。叶莲娜背起监听设备，交出进入松林庄园的排污路线；她也能用无线电命令一名 OSK 暂停行动。",
+			"en": "You invite her along. Yelena shoulders her listening gear and shares the drainage route into Pine Manor; her radio can halt one OSK patrol briefly."},
+	],
+	"broadcast:1": [
+		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.5, 0.48),
+			"zh": "叶莲娜把发射机的频率留给你，却没有交出自己的监听设备。你记下排污路线，庄园入口已经找到。",
+			"en": "Yelena leaves the transmitter frequency with you but keeps her listening gear. You copy the drainage route; the manor entrance is found."},
+		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.26, 0.6), "zoom": Vector2(1.08, 1.1),
+			"zh": "她留在秘密广播点继续监听。你独自离开，松林庄园已经解锁，但叶莲娜不会加入队伍。",
+			"en": "She stays at the hidden broadcast room to keep listening. You leave alone: Pine Manor is unlocked, but Yelena does not join the crew."},
+	],
 	"sanitarium:0": [
 		{"img": [CG + "cg_sanitarium_scene.jpg"], "portrait": PRT + "PRT_Anna_Sad.png", "focus": Vector2(0.72, 0.7),
 			"zh": "撬棍崩开了生锈的笼锁。你替她解开嵌进肉里的皮带——\n那是她怕自己伤人，亲手勒上去的。",
@@ -149,7 +165,7 @@ const AFTERMATH := {
 		{"img": [CG + "cg_marshalling_c0b.jpg"], "portrait": PRT + "PRT_Aleksei_Intense.png",
 			"zh": "报废守车的工具箱底，躺着几块抹了黄油的精钢枪机零件。\n你把它们一件一件拆走。",
 			"en": "In the toolbox of a dead brake van lie a few greased steel parts of a gun.\nYou take them out, one piece at a time."},
-		{"img": CG + "cg_intro_lana.jpg", "focus": Vector2(0.42, 0.42), "zoom": Vector2(1.06, 1.22),
+		{"img": CG + "cg_eaglecliff_derailment_scene.jpg", "focus": Vector2(0.66, 0.52), "zoom": Vector2(1.06, 1.22),
 			"zh": "所有的数字终于严丝合缝地扣上了。\n一百七十六条退了烧的性命——其中一个，叫拉娜。",
 			"en": "Every number finally locks into place.\nOne hundred seventy-six people whose fever has broken. One of them is called Lana."},
 	],
@@ -158,6 +174,19 @@ const AFTERMATH := {
 
 ## 剧情对白框背后的场景插图路径（文件可能还不存在，调用方用 StorySlides.tex_of 判空）。
 static func scene_image(story_id: String) -> String:
+	var story_cg := {
+		"pasha_watchtower": "cg_pasha_watchtower_scene.jpg",
+		"apartment_exchange": "cg_apartment_exchange_scene.jpg",
+		"mine_sporeface": "cg_mine_sporeface_scene.jpg",
+		"mine_detonator": "cg_mine_detonator_scene.jpg",
+		"fire_rescue": "cg_fire_rescue_scene.jpg",
+		"eaglecliff_derailment": "cg_eaglecliff_derailment_scene.jpg",
+		"station_buran": "cg_station_buran_scene.jpg",
+		"broadcast_siege": "cg_broadcast_siege_scene.jpg",
+		"broadcast_testimony": "cg_broadcast_testimony_scene.jpg",
+	}
+	if story_cg.has(story_id):
+		return CG + String(story_cg[story_id])
 	return CG + "cg_%s_scene.jpg" % story_id
 
 

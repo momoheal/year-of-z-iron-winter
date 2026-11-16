@@ -1,0 +1,184 @@
+{
+  "schema": "generate2dmap.map_bundle.v2",
+  "id": "eagle_beak_cliff",
+  "name": "Eagle Beak Cliff · Car 004 derailment",
+  "world": {
+    "width": 1672,
+    "height": 941,
+    "unit": "px"
+  },
+  "layers": [
+    {
+      "name": "painted_ground",
+      "kind": "image",
+      "image": "map.png",
+      "offset": [
+        0,
+        0
+      ],
+      "sha256": "1d61ff1115500a6ceffdae184d5538a6951222d8cef4744104bb09c621241d3e"
+    }
+  ],
+  "collision": {
+    "actorRadius": 11,
+    "ySquash": 0.75,
+    "walkRegions": [
+      {
+        "polygon": [
+          [
+            95,
+            220
+          ],
+          [
+            1370,
+            188
+          ],
+          [
+            1595,
+            365
+          ],
+          [
+            1580,
+            705
+          ],
+          [
+            1450,
+            790
+          ],
+          [
+            1200,
+            815
+          ],
+          [
+            930,
+            830
+          ],
+          [
+            650,
+            825
+          ],
+          [
+            390,
+            790
+          ],
+          [
+            155,
+            710
+          ],
+          [
+            90,
+            500
+          ]
+        ]
+      }
+    ],
+    "solids": [
+      {
+        "shape": "rect",
+        "id": "approach_train_01",
+        "x": 210,
+        "y": 272,
+        "w": 420,
+        "h": 160,
+        "material": "railcar"
+      },
+      {
+        "shape": "rect",
+        "id": "derailed_car_004",
+        "x": 660,
+        "y": 445,
+        "w": 410,
+        "h": 160,
+        "material": "railcar"
+      },
+      {
+        "shape": "rect",
+        "id": "trailing_car",
+        "x": 1030,
+        "y": 565,
+        "w": 300,
+        "h": 125,
+        "material": "railcar"
+      }
+    ]
+  },
+  "nav": {
+    "cell": 6
+  },
+  "spawns": [
+    {
+      "id": "start",
+      "x": 145,
+      "y": 620,
+      "facing": "south"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "car004_evidence",
+      "x": 590,
+      "y": 675,
+      "reach": 96
+    },
+    {
+      "id": "switchback_route",
+      "x": 1440,
+      "y": 330,
+      "reach": 72
+    },
+    {
+      "id": "north_cut",
+      "x": 1090,
+      "y": 250,
+      "reach": 72
+    }
+  ],
+  "roads": [
+    {
+      "id": "snow_path",
+      "material": "packed_snow",
+      "width": 80,
+      "polyline": [
+        [
+          145,
+          620
+        ],
+        [
+          390,
+          720
+        ],
+        [
+          650,
+          745
+        ],
+        [
+          1030,
+          755
+        ],
+        [
+          1390,
+          690
+        ],
+        [
+          1450,
+          500
+        ],
+        [
+          1440,
+          330
+        ]
+      ]
+    }
+  ],
+  "camera": {
+    "pixelToWorld": 1.0,
+    "bounds": [
+      0,
+      0,
+      1672,
+      941
+    ]
+  },
+  "art_source": "host_image",
+  "placeholder": false
+}

@@ -79,6 +79,13 @@ func hear(pos: Vector2, kind: String) -> void:
 		target = pos
 		_timer = 12.0
 
+func flee_from(pos: Vector2) -> void:
+	if state in ["dead", "saved"]:
+		return
+	state = "flinch"
+	target = pos
+	_timer = 2.2
+
 ## 喂过药：缩回蒸汽管下的雪窝里睡着，清杀队的光锥扫过也认不出他。
 func save() -> void:
 	state = "saved"

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "1495957a50535ca2d31a313c003fe94bb1ef3abdb78680ba6ceba80c313f8c62",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:31:41.571Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:31:41.571Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "Buran armoured train at station yard",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-0069364a-959a-4c01-ab72-fb229964d988.png",
+    "sourceSha256": "1ef5962d6fb49c25cfff8e0c25e4f69f5a9f736007acdbca5223b71fbecb574a",
+    "sourceMtime": "2026-11-16T09:17:05Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "1ef5962d6fb49c25cfff8e0c25e4f69f5a9f736007acdbca5223b71fbecb574a",
+    "bytes": 3377510,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

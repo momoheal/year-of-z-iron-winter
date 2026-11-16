@@ -20,6 +20,12 @@ func _frames(n: int) -> void:
 	for i in n:
 		await process_frame
 
+func _press_key(code: Key) -> void:
+	var event := InputEventKey.new()
+	event.keycode = code
+	event.pressed = true
+	root.push_input(event, true)
+
 func _has_button(node: Node, text: String) -> bool:
 	if node is Button and String(node.text) == text:
 		return true
@@ -82,10 +88,84 @@ func _run() -> void:
 	for speaker_name in aliases:
 		_assert(speakers.get(speaker_name, "") == aliases[speaker_name], "speaker alias %s" % speaker_name)
 
+	# 全量剧本的每个场次均进入 Godot 对话数据，且每句都有明确说话者映射与受支持情绪。
+	var scripted = JSON.parse_string(FileAccess.get_file_as_string("res://data/story_dialogue.json"))
+	_assert(scripted is Dictionary, "canonical dialogue JSON loads")
+	if scripted is Dictionary:
+		var scenes: Dictionary = scripted.get("scenes", {})
+		var expected_scene_ids := ["0-1", "1-1", "1-2", "1-3", "1-4", "1-4A", "2-1", "2-2", "2-3", "2-4",
+			"3-1", "3-2", "3-2A", "3-3", "4-1", "4-2", "5-1", "5-2", "6-1", "6-2"]
+		var actual_scene_ids: Array = scenes.keys()
+		actual_scene_ids.sort()
+		expected_scene_ids.sort()
+		_assert(actual_scene_ids == expected_scene_ids, "all 20 canonical scene IDs are present")
+		for sid in scenes:
+			var source_lines: Array = scenes[sid].get("lines", [])
+			_assert(not source_lines.is_empty(), "source scene %s has dialogue" % String(sid))
+			for i in source_lines.size():
+				var source_line: Dictionary = source_lines[i]
+				var source_speaker := String(source_line.get("w", ""))
+				var source_mood := String(source_line.get("mood", ""))
+				_assert(speakers.has(source_speaker), "%s line %d has speaker mapping" % [String(sid), i + 1])
+				_assert(source_mood in ["calm", "sad", "intense"], "%s line %d has allowed mood" % [String(sid), i + 1])
+				_assert(not String(source_line.get("zh", "")).strip_edges().is_empty(),
+					"%s line %d is not empty" % [String(sid), i + 1])
+		for story_id in Data.STORY_SOURCE_SCENES:
+			_assert(scenes.has(String(Data.STORY_SOURCE_SCENES[story_id])),
+				"playable story %s references an existing canonical scene" % String(story_id))
+		_assert(sc.sim.story_lines("coldstore").size() > Data.STORY["coldstore"]["lines"].size(),
+			"Cold Storage uses the complete literary scene")
+		_assert(sc.sim.story_lines("broadcast").size() > Data.STORY["broadcast"]["lines"].size(),
+			"Yelena broadcast uses the complete literary scene")
+	var yelena_unlock: Dictionary = Data.MATE_UNLOCKS["yelena"]
+	_assert(String(yelena_unlock.get("trigger", "")) == "landmark:6.66 电台棚"
+		and String(Data.loc("manor").get("req_flag", "")) == "manor_tip",
+		"Yelena is found at the broadcast landmark and unlocks Pine Manor")
+	var broadcast_sim = load("res://scripts/CampaignSim.gd").new()
+	broadcast_sim.phase = "map"
+	broadcast_sim.flags["first_act_pending"] = false
+	broadcast_sim.flags["broadcast_signal"] = true
+	broadcast_sim.flags["broadcast_pending"] = true
+	broadcast_sim.story_done["market"] = true
+	_assert(broadcast_sim.depart(Data.loc("market")), "market raid can carry the broadcast discovery home")
+	broadcast_sim.finish_raid("extracted")
+	_assert(broadcast_sim.story_open and broadcast_sim.story_id == "broadcast"
+		and not bool(broadcast_sim.flags.get("broadcast_pending", false)),
+		"extracting after finding the landmark opens Yelena's scene")
+
+	# 晚期队伍台词与扎哈尔举报由道德路线驱动，举报后清杀队警戒标志留存。
+	var route_sim = load("res://scripts/CampaignSim.gd").new()
+	route_sim.phase = "map"
+	route_sim.flags["first_act_pending"] = false
+	route_sim.flags["lana_car3"] = true
+	route_sim.mates["anna"] = true
+	route_sim.mates["zakhar"] = true
+	route_sim.select_mate("zakhar")
+	route_sim.tally = 2
+	route_sim.conscience = 20.0
+	var route_lines: Array = route_sim.story_lines("marshalling")
+	var anna_reacts := false
+	var zakhar_threatens := false
+	for reaction in route_lines:
+		var reaction_line: Dictionary = reaction
+		if String(reaction_line.get("w", "")) == "安娜":
+			anna_reacts = String(reaction_line.get("zh", "")).contains("不会再把后背交给你")
+		if String(reaction_line.get("w", "")) == "核算员扎哈尔":
+			zakhar_threatens = String(reaction_line.get("zh", "")).contains("冬季配额")
+	_assert(anna_reacts and zakhar_threatens, "ruthless route changes Anna's trust and Zakhar's motive")
+	route_sim.story_id = "marshalling"
+	route_sim.story_open = true
+	route_sim.resolve_story(0)
+	_assert(bool(route_sim.flags.get("zakhar_betrayal_pending", false)), "ruthless route schedules Zakhar's betrayal")
+	_assert(route_sim.depart(Data.loc("marshalling")), "dispatch scene can launch after its choice")
+	route_sim.finish_raid("extracted")
+	_assert(not bool(route_sim.mates.get("zakhar", false)) and bool(route_sim.flags.get("osk_alert", false))
+		and route_sim.mate == "none", "Zakhar reports for quota and leaves the crew")
+
 	# 每一句：游标正确、头像角色与情绪正确、末句前无选项、末句后有选项。
 	for sid in Data.STORY:
 		var beat: Dictionary = Data.STORY[sid]
-		var lines: Array = beat["lines"]
+		var lines: Array = sc.sim.story_lines(String(sid))
 		sc.sim.story_id = sid
 		sc.sim.story_open = true
 		sc.hud._story_beat = ""
@@ -101,7 +181,11 @@ func _run() -> void:
 			var role := String(speakers.get(String(line.get("w", "")), "aleksei"))
 			var mood := String(line.get("mood", "calm"))
 			var tex: Texture2D = sc.hud._story_texture(line)
-			_assert(tex == portraits[role][mood], "%s line %d portrait %s/%s" % [sid, i + 1, role, mood])
+			_assert(mood in ["calm", "sad", "intense"], "%s line %d uses supported mood" % [sid, i + 1])
+			if role == "":
+				_assert(tex == null, "%s line %d does not borrow another character portrait" % [sid, i + 1])
+			else:
+				_assert(tex == portraits[role][mood], "%s line %d portrait %s/%s" % [sid, i + 1, role, mood])
 			_assert(_has_label(sc.hud.modal, String(line["zh"])), "%s line %d full text visible" % [sid, i + 1])
 			if i > 0:
 				_assert(not _has_label(sc.hud.modal, String(lines[i - 1]["zh"])), "%s line %d previous text cleared" % [sid, i + 1])
@@ -141,6 +225,9 @@ func _run() -> void:
 	root.push_input(enter, true)
 	await _frames(2)
 	_assert(sc.hud._story_line == 2, "Enter advances story")
+	for i in range(sc.hud._story_line, sc.sim.story_lines("sanitarium").size() - 1):
+		_press_key(KEY_SPACE)
+		await process_frame
 	await _frames(3)
 	_assert(_has_button(sc.hud.modal, String(Data.STORY["sanitarium"]["choices"][0]["zh"])),
 		"keyboard final choices visible")

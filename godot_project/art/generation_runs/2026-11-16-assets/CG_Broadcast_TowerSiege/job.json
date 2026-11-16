@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "51c5ce76f4eb8af3dddf1c67a2f1f1ed292e5a430b0cb7cbaa64802ba52467c4",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:31:41.550Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:31:41.550Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "6-1 broadcast tower siege",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-d2836e2d-5513-4903-b128-757ea8843c5e.png",
+    "sourceSha256": "306ddc4d11cdbc5bff8016531ef9c265e306028e37a73e676b91587b3b9f1e75",
+    "sourceMtime": "2026-11-16T09:18:18Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "306ddc4d11cdbc5bff8016531ef9c265e306028e37a73e676b91587b3b9f1e75",
+    "bytes": 3027122,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "964089f13ea275e3b805f04993535887611d31fcf5591e0f2524e3585a5468b0",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:52:43.269Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:52:43.269Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "Broadcast location CG with Yelena; preserve as full-size source for standardized JPG",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-c16d1060-5e4e-4952-8fb2-dc1fd34bc0c3.png",
+    "sourceSha256": "521398f8ff770f5f7fdbaeff12cfda0e19ea4c5e93b4f6f1988c020bc20de08f",
+    "sourceMtime": "2026-11-16T07:30:41Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "521398f8ff770f5f7fdbaeff12cfda0e19ea4c5e93b4f6f1988c020bc20de08f",
+    "bytes": 2377015,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

@@ -116,12 +116,12 @@ func _run() -> void:
 	press_key(KEY_2)
 	await process_frame
 	check(campaign.sim.story_open and not campaign.sim.mates.get("ash", false), "opening story cannot be skipped before the choice")
-	for i in Data.STORY["coldstore"]["lines"].size() - 1:
+	for i in campaign.sim.story_lines("coldstore").size() - 1:
 		press_key(KEY_SPACE)
 		await process_frame
-	press_key(KEY_2)
+	press_key(KEY_1)
 	await process_frame
-	check(campaign.sim.mate == "ash" and campaign.sim.names.is_empty(), "neutral choice also selects Ash")
+	check(campaign.sim.mate == "ash" and campaign.sim.names.size() == 1, "rescue and feeding choice selects Ash and records the family")
 	check(campaign.hud.cutscene_active() and current_scene == campaign, "aftermath plays before the scene changes")
 	campaign.hud.cutscene.close()
 	for i in 4:
@@ -138,6 +138,13 @@ func _run() -> void:
 		await process_frame
 	check(current_scene != null and current_scene != night and current_scene.sim.phase == "report"
 		and current_scene.sim.mate == "ash", "returns to campaign report with Ash")
+	var declined = load("res://scripts/CampaignSim.gd").new()
+	declined.new_game()
+	declined.story_id = "coldstore"
+	declined.story_open = true
+	declined.resolve_story(1)
+	check(not bool(declined.mates.get("ash", false)) and declined.mate == "none",
+		"leaving the family does not recruit Ash")
 	print("==== RESULT: %d passed, %d failed ====" % [passes, failures])
 	quit(0 if failures == 0 else 1)
 

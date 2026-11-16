@@ -19,3 +19,8 @@ docs/ui/acceptance_standalone.html
 # 本地出图临时产物：诊断拼图、引擎截图、试切 A/B 对照（体积大且可随时重出）。
 # 注意：.artwork/src_gpt/（出图源图）与 .artwork/backup/（版本备份）仍需入库，便于资产溯源。
 .artwork/_tmp/
+
+# Codex 生成演示稿的中间产物与 node_modules（361 MB，可重出；最终稿在 presentations/）。
+.codex/presentation_build/
+# Office 打开时生成的临时锁文件。
+~$*.pptx

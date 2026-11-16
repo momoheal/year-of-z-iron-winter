@@ -1,0 +1,104 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Texture2D" path="assets/layers/painted_ground.png" id="1_painted_ground"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0"]
+size = Vector2(1040, 198)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(235, 270)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
+size = Vector2(1260, 145)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3"]
+size = Vector2(720, 18)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4"]
+size = Vector2(720, 18)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5"]
+radius = 84.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6"]
+radius = 92.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7"]
+radius = 78.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8"]
+radius = 72.0
+
+[node name="StationBuranYard" type="Node2D"]
+texture_filter = 2
+metadata/map_bundle_sha256 = "dae94f94df1d8a51b5b087358d67670b38e81a11d9c53c7560f5a2a61605af79"
+
+[node name="painted_ground" type="Sprite2D" parent="."]
+texture = ExtResource("1_painted_ground")
+centered = false
+
+[node name="collision" type="StaticBody2D" parent="."]
+metadata/actor_radius = 11.0
+metadata/y_squash = 0.75
+metadata/walk_regions = [{"polygon": PackedVector2Array(40, 20, 1630, 20, 1630, 920, 40, 920), "holes": []}]
+
+[node name="station_building" type="CollisionShape2D" parent="collision"]
+position = Vector2(740, 127)
+shape = SubResource("RectangleShape2D_0")
+
+[node name="water_tower" type="CollisionShape2D" parent="collision"]
+position = Vector2(162.5, 690)
+shape = SubResource("RectangleShape2D_1")
+
+[node name="buran_train" type="CollisionShape2D" parent="collision"]
+position = Vector2(840, 462.5)
+shape = SubResource("RectangleShape2D_2")
+
+[node name="south_fence_west" type="CollisionShape2D" parent="collision"]
+position = Vector2(390, 836)
+shape = SubResource("RectangleShape2D_3")
+
+[node name="south_fence_east" type="CollisionShape2D" parent="collision"]
+position = Vector2(1278, 836)
+shape = SubResource("RectangleShape2D_4")
+
+[node name="markers" type="Node2D" parent="."]
+
+[node name="start" type="Marker2D" parent="markers"]
+position = Vector2(835, 890)
+metadata/kind = "spawn"
+metadata/facing = "south"
+
+[node name="interactions" type="Node2D" parent="."]
+
+[node name="dispatch_timetable" type="Area2D" parent="interactions"]
+position = Vector2(455, 250)
+metadata/kind = "interaction"
+metadata/reach = 84.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/dispatch_timetable"]
+shape = SubResource("CircleShape2D_5")
+
+[node name="buran_boxcar_03" type="Area2D" parent="interactions"]
+position = Vector2(1350, 550)
+metadata/kind = "interaction"
+metadata/reach = 92.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/buran_boxcar_03"]
+shape = SubResource("CircleShape2D_6")
+
+[node name="water_tower_trench" type="Area2D" parent="interactions"]
+position = Vector2(180, 780)
+metadata/kind = "interaction"
+metadata/reach = 78.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/water_tower_trench"]
+shape = SubResource("CircleShape2D_7")
+
+[node name="west_platform" type="Area2D" parent="interactions"]
+position = Vector2(900, 290)
+metadata/kind = "interaction"
+metadata/reach = 72.0
+
+[node name="reach" type="CollisionShape2D" parent="interactions/west_platform"]
+shape = SubResource("CircleShape2D_8")

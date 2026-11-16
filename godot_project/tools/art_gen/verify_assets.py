@@ -49,6 +49,7 @@ OUT = os.path.join(ART, "asset_manifest.json")
 CODE_EXTS = (".gd", ".tscn", ".tres")
 # 不参与扫描的文件
 SKIP_NAMES = {"asset_manifest.json"}
+SKIP_DIRS = {"generation_runs"}
 # 测试里故意构造的缺失路径，不是真缺陷
 STUB_PAT = re.compile(r"__(?:missing|nonexistent|dummy|placeholder|test)__", re.I)
 # 媒体扩展名
@@ -156,7 +157,9 @@ STRICT_FAMILIES = ("portrait", "character_sheet", "cg")
 # ---------------------------------------------------------------------------
 def scan_assets() -> dict:
     out = {}
-    for root, _dirs, files in os.walk(ART):
+    for root, dirs, files in os.walk(ART):
+        # Raw generation sources and QA renders are provenance, not runtime assets.
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
         for fn in files:
             if fn.endswith(".import") or fn in SKIP_NAMES:
                 continue

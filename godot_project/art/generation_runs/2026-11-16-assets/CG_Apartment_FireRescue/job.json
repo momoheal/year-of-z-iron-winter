@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "84410a7da59418f2f33e9b27a54b508a3ab929d43fccfc38e20c7e80d46e1f34",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:31:40.422Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:31:40.422Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "5-1 fire rescue and child handoff",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-290e0f9d-1351-4297-9a8a-8ec2e896b30a.png",
+    "sourceSha256": "3280d1386678ff652d9c5b249bb9ff927f997585864fb358850d552fa615577c",
+    "sourceMtime": "2026-11-16T09:15:03Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "3280d1386678ff652d9c5b249bb9ff927f997585864fb358850d552fa615577c",
+    "bytes": 2893318,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

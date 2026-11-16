@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "provider": "openai",
+  "kind": "image",
+  "requestedModel": "codex-image_gen",
+  "status": "done",
+  "artSource": "host_image",
+  "fingerprint": "91640412a602ef3344183f3c0084950683978265e072d479fb22d4c9ca04fadc",
+  "estimate": {
+    "usd": 0.0,
+    "currency": "USD",
+    "pricesVersion": "none",
+    "items": [],
+    "basis": "adopted: the image was generated earlier in the user's own Codex thread; this tool made and counted no call"
+  },
+  "receipt": {
+    "startedAt": "2026-11-16T09:31:40.420Z",
+    "submittedAt": null,
+    "completedAt": "2026-11-16T09:31:40.420Z",
+    "wallMs": 0,
+    "providerMs": null,
+    "attempt": 1,
+    "purpose": "4-1 mine spore stratum discovery",
+    "toolVersion": "cli_media/0.4.0",
+    "outcomeCode": "adopted"
+  },
+  "adoption": {
+    "method": "codex-thread-folder",
+    "threadId": "01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee",
+    "source": "CODEX_HOME/generated_images/01a1d2a9-cdd1-7713-aafc-8c0d2d1681ee/exec-a576ec02-11c8-468a-80e9-75a06bb2cf46.png",
+    "sourceSha256": "dd3c4f8d9b161cccaa114ec9e04f99912129d98a2c348ea54c428a23f5fef76a",
+    "sourceMtime": "2026-11-16T09:12:59Z"
+  },
+  "artifact": {
+    "path": "generated.png",
+    "sha256": "dd3c4f8d9b161cccaa114ec9e04f99912129d98a2c348ea54c428a23f5fef76a",
+    "bytes": 3368451,
+    "format": "PNG",
+    "size": [
+      1672,
+      941
+    ]
+  }
+}

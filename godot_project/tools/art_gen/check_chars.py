@@ -7,7 +7,7 @@
   A. 硬规格：文件名/路径、864×336、RGBA、12 列 × 3 行、每帧 72×112、pivot (36,108)
   B. 可用性：24 帧均非空；脚底落在地面线；帧内容不越出单元格（不串帧）；背景透明
   C. 一致性：站立帧高/落地线一致；S/E/N 剪影量级一致；两张表地面线互相一致；
-     冷调低饱和风格带；阿列克谢大衣为深蓝黑、ОСК 为中性铅灰
+     冷调低饱和风格带；阿列克谢为灰橄榄工装棉服、ОСК 为中性铅灰
   D. 语义红线（2026-11-14 新增，覆盖全部 4 张表）：帧内容宽度 ≤ 66px；
      S/E 行走剪影 IoU ≤ 0.90；敌人第 11 列帧高 40~75px、宽/高 ≥ 1.15 且 c9-11 三行统一
   E. 装配：manifest 尺寸/pivot/frames 与实际文件一致；night_explore.tscn 引用存在、
@@ -219,10 +219,15 @@ def main() -> int:
         check(float(sat.mean()) < 0.42, f"{key}: 冷调低饱和（mean sat {sat.mean():.2f} < 0.42）",
               f"{sat.mean():.2f}")
         if "Aleksei" in key:
-            coat = px[(px[:, 2] > px[:, 0])]                      # 偏蓝像素（大衣）
-            check(len(coat) > 0.15 * len(px) and float(coat[:, 2].mean() - coat[:, 0].mean()) > 0.04,
-                  f"{key}: 大衣为深蓝-黑（非旧绿棉服）",
-                  f"blue_px={len(coat)/len(px):.2f}")
+            coat = px[(px[:, 0] > 0.12) & (px[:, 0] < 0.68) &
+                      (px[:, 1] > 0.12) & (px[:, 1] < 0.65) &
+                      (px[:, 2] < 0.50) & (px[:, 1] > px[:, 2] + 0.04) &
+                      (px[:, 0] > px[:, 2] + 0.04) &
+                      (np.abs(px[:, 1] - px[:, 0]) < 0.12)]       # 灰橄榄棉布，过滤肤色和高光
+            check(len(coat) > 0.15 * len(px) and
+                  float(coat[:, 1].mean() - coat[:, 2].mean()) > 0.04,
+                  f"{key}: 棉工装夹克为灰橄榄色",
+                  f"olive_px={len(coat)/len(px):.2f}")
         else:
             grey = px[abs(px[:, 0] - px[:, 2]) < 0.08]
             check(len(grey) > 0.45 * len(px), f"{key}: 铅灰中性色为主（防护服）",

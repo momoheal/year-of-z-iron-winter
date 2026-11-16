@@ -73,7 +73,7 @@ PROPS = [
          occlude=False, ao="post"),
     # --- 卫兵哨位（P5 战斗切片）：沙袋 + 弹药箱 + 武器架 ---
     dict(id="Sandbags", art="PRP_Sandbag_Line", pos=(27.0, 12.6), fp=(3.2, 0.85), layer=2,
-         occlude=False),                       # 焚化院前的沙袋：和叉车一起构成两个掩体
+         occlude=True),                        # 焚化院前的沙袋：蹲伏时遮挡探照灯，和叉车构成掩体
     dict(id="AmmoBox", art="PRP_Ammo_Box_Open", pos=(21.0, 6.2), fp=(1.1, 0.5), layer=1,
          cont="crate", guaranteed="ammo"),
     dict(id="WeaponRack", art="PRP_WeaponRack", pos=(9.2, 4.2), fp=(1.3, 0.5), layer=1,

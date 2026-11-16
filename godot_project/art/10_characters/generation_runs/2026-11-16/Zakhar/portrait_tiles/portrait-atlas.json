@@ -1,0 +1,46 @@
+{
+  "schema": "winter-iron.character-portrait-atlas.v1",
+  "source": "portrait_atlas_raw.png",
+  "source_sha256": "d7869c3c3fafeb920d4eda71e49bb6a6da58253e4a789d064d32f4ff267146ae",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "tile_size": [
+    512,
+    512
+  ],
+  "layout": {
+    "top_left": "Calm",
+    "top_right": "Sad",
+    "bottom_left": "Intense",
+    "bottom_right": "Wry"
+  },
+  "files": {
+    "Calm": {
+      "path": "PRT_Zakhar_Calm.png",
+      "sha256": "622b256f36d8515889465f9669062c8b71dab3010a0d50537341e6c0c5cf9652"
+    },
+    "Sad": {
+      "path": "PRT_Zakhar_Sad.png",
+      "sha256": "6cffae1c293d8201a4224849a83d6dbc2efdc8206566cc1999628f7e128e4d2e"
+    },
+    "Intense": {
+      "path": "PRT_Zakhar_Intense.png",
+      "sha256": "d58b1e69021338a9e26230c1c102586b6376faa348d57dba17a4ce5d612360c9"
+    },
+    "Wry": {
+      "path": "PRT_Zakhar_Wry.png",
+      "sha256": "38992c138914ca443b76f8a294a153593ec3707e395b0f72701ced5bfb147914"
+    },
+    "Base": {
+      "path": "PRT_Zakhar.png",
+      "sha256": "622b256f36d8515889465f9669062c8b71dab3010a0d50537341e6c0c5cf9652"
+    }
+  },
+  "warnings": []
+}

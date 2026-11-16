@@ -36,7 +36,6 @@ def _argv(argv, flag):
 _LEVEL = _argv(sys.argv, "--level") or os.environ.get("NOVORSK_LEVEL") or "yard"
 os.environ["NOVORSK_LEVEL"] = _LEVEL        # layout 在 import 时就灌关卡数据，必须先设好
 
-import gen_chars  # noqa: E402
 import gen_env  # noqa: E402
 import gen_market  # noqa: E402
 import gen_npcs  # noqa: E402
@@ -116,19 +115,21 @@ def build_props(man, only=None):
 
 
 def build_chars(man):
-    key = "CHR_01_Aleksei_Sheet"
-    path = _path("10_characters", "CHR_01_Aleksei", key + ".png")
-    # 阿列克谢使用已验收的美术精灵表，管线只登记，避免重新生成时覆盖。
-    with Image.open(path) as sheet:
-        man[key] = dict(path=_res(path), size=list(sheet.size),
-                        pivot=[gen_chars.CX, gen_chars.GY_], hframes=8, vframes=3)
-    key = "CHR_05_OSK_Sheet"
-    _put(man, key, _path("10_characters", "CHR_05_OSK", key + ".png"), gen_chars.sheet(gen_chars.OSK),
-         (gen_chars.CX, gen_chars.GY_), hframes=8, vframes=3)
-    _put(man, "CHR_04_HalfHuman_Sheet", _path("10_characters", "CHR_04_HalfHuman", "CHR_04_HalfHuman_Sheet.png"),
-         gen_chars.half_sheet(), (gen_chars.CX, gen_chars.GY_), hframes=8, vframes=3)
-    _put(man, "CHR_03_Rabid_Sheet", _path("10_characters", "CHR_03_Rabid", "CHR_03_Rabid_Sheet.png"),
-         gen_rabid.sheet(), (gen_chars.CX, gen_chars.GY_), hframes=8, vframes=3)
+    # 人物精灵表由经过审阅的绘制流程维护，批量重烘焙只登记，不能改写原图。
+    characters = (
+        ("CHR_01_Aleksei_Sheet", "CHR_01_Aleksei"),
+        ("CHR_03_Rabid_Sheet", "CHR_03_Rabid"),
+        ("CHR_04_HalfHuman_Sheet", "CHR_04_HalfHuman"),
+        ("CHR_05_OSK_Sheet", "CHR_05_OSK"),
+    )
+    for key, folder in characters:
+        path = _path("10_characters", folder, key + ".png")
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f"缺少已验收角色精灵表：{path}")
+        with Image.open(path) as sheet:
+            man[key] = dict(path=_res(path), size=list(sheet.size), pivot=[36, 108],
+                            hframes=12, vframes=3)
+        print(f"  {key:34s} registered existing 12x3 sheet -> {_res(path)}", flush=True)
 
 
 def build_vfx(man):
