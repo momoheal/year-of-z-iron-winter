@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "underpass",
+  "name": "铁道下穿积冰道",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Underpass/map.png",
+    "sha256": "8ff0b0e50dea326329928c4797fafc8258ecba03190d1ccf012b1e7541a6cbfd",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1774,
+      887
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Underpass_ConcretePier",
+      "path": "res://art/30_props/PRP_Underpass_ConcretePier.png",
+      "size": [
+        274,
+        464
+      ],
+      "pivot": [
+        137.0,
+        464
+      ],
+      "label": "concrete rail support pier",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Underpass_SteamPipe",
+      "path": "res://art/30_props/PRP_Underpass_SteamPipe.png",
+      "size": [
+        1242,
+        330
+      ],
+      "pivot": [
+        621.0,
+        330
+      ],
+      "label": "rusted steam pipe",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Underpass_SandbagLine",
+      "path": "res://art/30_props/PRP_Underpass_SandbagLine.png",
+      "size": [
+        483,
+        203
+      ],
+      "pivot": [
+        241.5,
+        203
+      ],
+      "label": "low sandbag barrier",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Underpass_DispatchLocker",
+      "path": "res://art/30_props/PRP_Underpass_DispatchLocker.png",
+      "size": [
+        270,
+        303
+      ],
+      "pivot": [
+        135.0,
+        303
+      ],
+      "label": "dispatch locker cabinet",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Underpass_SupplyCrates",
+      "path": "res://art/30_props/PRP_Underpass_SupplyCrates.png",
+      "size": [
+        328,
+        246
+      ],
+      "pivot": [
+        164.0,
+        246
+      ],
+      "label": "supply crate stack",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Underpass_HeaterDrum",
+      "path": "res://art/30_props/PRP_Underpass_HeaterDrum.png",
+      "size": [
+        188,
+        410
+      ],
+      "pivot": [
+        94.0,
+        410
+      ],
+      "label": "oil-drum brazier",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Underpass_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Underpass/map_night.png",
+      "sha256": "640c71b311deea6d94534f222a916ce7ae4d7efe15b2a81b9097fcf9b372a435",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

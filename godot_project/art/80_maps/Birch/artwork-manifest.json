@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "birch",
+  "name": "白桦林废弃板房",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Birch/map.png",
+    "sha256": "10cb25d2c4d9e044eaaad7544a58e5dbc9863522f4596ba06d9aa23de5856b8c",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1752,
+      897
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Birch_WhiteBarkedTree",
+      "path": "res://art/30_props/PRP_Birch_WhiteBarkedTree.png",
+      "size": [
+        305,
+        474
+      ],
+      "pivot": [
+        152.5,
+        474
+      ],
+      "label": "white-barked birch tree",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Birch_HunterShack",
+      "path": "res://art/30_props/PRP_Birch_HunterShack.png",
+      "size": [
+        519,
+        530
+      ],
+      "pivot": [
+        259.5,
+        530
+      ],
+      "label": "abandoned hunter shack",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Birch_AidCache",
+      "path": "res://art/30_props/PRP_Birch_AidCache.png",
+      "size": [
+        291,
+        258
+      ],
+      "pivot": [
+        145.5,
+        258
+      ],
+      "label": "medical cache",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Birch_WoodCrateStack",
+      "path": "res://art/30_props/PRP_Birch_WoodCrateStack.png",
+      "size": [
+        338,
+        335
+      ],
+      "pivot": [
+        169.0,
+        335
+      ],
+      "label": "rough wooden crate stack",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Birch_ElectricLocker",
+      "path": "res://art/30_props/PRP_Birch_ElectricLocker.png",
+      "size": [
+        351,
+        442
+      ],
+      "pivot": [
+        175.5,
+        442
+      ],
+      "label": "old electric locker",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Birch_Brazier",
+      "path": "res://art/30_props/PRP_Birch_Brazier.png",
+      "size": [
+        194,
+        366
+      ],
+      "pivot": [
+        97.0,
+        366
+      ],
+      "label": "oil-drum brazier",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Birch_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Birch/map_night.png",
+      "sha256": "ad8ccd29f5bad71df649f37c547a54ca3e8f55abf68c786d03b24691fb1a444e",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

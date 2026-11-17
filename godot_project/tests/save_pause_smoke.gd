@@ -5,7 +5,7 @@ extends SceneTree
 ##   Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/save_pause_smoke.gd
 ##
 ## 覆盖：测试隔离（不碰玩家真实存档）/ 存读往返与类型还原 / 只在安全点存档 /
-##       结算页存档读回 = 补走过夜 / 坏档与版本不符 / 战役场景自动存档 /
+##       结算页存档读回 = 回 602、不自动过夜 / 坏档与版本不符 / 战役场景自动存档 /
 ##       标题页继续 + 新开局二次确认 / 主音量设置 /
 ##       夜潜 Esc 暂停冻结世界 / 菜单 Esc 继续 / 放弃夜潜二次确认 / 离场自动解除暂停。
 ##
@@ -68,6 +68,11 @@ func _run() -> void:
 	a.conscience = 61.0
 	a.tally = 2
 	a.stash = {"vodka": 3, "dial": 1, "rye": 2}
+	a.weapon_mods = {"rifle": ["suppressor", "scope"]}
+	a.base_display.append("item:vodka")
+	a.base_display.append("weapon:crowbar")
+	a.dial_machine_bags = 2
+	a.night_complete = true
 	a.names.append("Ivanova L.")
 	a.flags["truth"] = true
 	a.mates["ash"] = true
@@ -101,6 +106,9 @@ func _run() -> void:
 	_assert(b.log.size() == a.log.size() and String(b.log[-1]["zh"]) == "测试日志" and typeof(b.log[-1]["day"]) == TYPE_INT,
 		"12. campaign log round-trips")
 	_assert(b.lang == "en" and b.sound_on == false, "13. language + sound toggle round-trip")
+	_assert(b.weapon_mods == a.weapon_mods, "weapon attachments survive save / load", str(b.weapon_mods))
+	_assert(b.base_display == a.base_display and b.dial_machine_bags == 2 and b.night_complete,
+		"Room 602 display, prepared dialysis bags and nightly lock round-trip")
 	_assert(b.rng.randi() == a.rng.randi() and b.rng.randi() == a.rng.randi(),
 		"14. RNG continues from the same state (64-bit state survives JSON)")
 
@@ -112,18 +120,24 @@ func _run() -> void:
 	_assert(not SG.save(a), "16. save() refuses mid-raid")
 	_assert(FileAccess.get_file_as_string(SG._save_file()) == before, "17. refused saves leave the file untouched")
 
-	# --- 4. 结算页的档 = 读回后补走过夜 ----------------------------------------
+	# --- 4. 结算页的档 = 回到 602，但日期等玩家睡觉后再推进 --------------------
 	a.phase = "report"
 	a.day = 3
 	a.stash["dial"] = 1
 	a.dial = 1.0
+	a.dial_machine_bags = 0
+	_assert(a.hand_dial_to_mother(), "18a. dialysis fluid can be handed over before sleeping")
 	_assert(SG.save(a), "18. save() on the report screen succeeds")
 	var c = SimScript.new()
 	SG.load_into(c)
-	_assert(c.phase == "base" and c.day == 4, "19. report save loads as the next morning (day 3 → 4)",
+	_assert(c.phase == "base" and c.day == 3 and c.night_complete,
+		"19. report save returns to Room 602 on the same day",
 		"phase=%s day=%d" % [c.phase, c.day])
-	_assert(int(c.stash.get("dial", 0)) == 0 and is_equal_approx(c.dial, 2.0),
-		"20. the overnight dialysis bag was consumed on load", "dial=%s" % c.dial)
+	_assert(int(c.stash.get("dial", 0)) == 0 and c.dial_machine_bags == 1 and is_equal_approx(c.dial, 1.0),
+		"20. prepared fluid waits by the machine until the player sleeps", "dial=%s" % c.dial)
+	c.advance_day()
+	_assert(c.day == 4 and not c.night_complete and c.dial_machine_bags == 0 and is_equal_approx(c.dial, 2.0),
+		"20a. sleeping consumes the prepared bag and unlocks the next night")
 
 	# --- 5. 坏档 / 版本不符（且没有备份可退）------------------------------------
 	SG.delete_save()                     # 清掉上面几次保存留下的 .bak：这里测的是「真的无档可读」

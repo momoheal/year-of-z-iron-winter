@@ -3,7 +3,7 @@ extends CharacterBody2D
 ##
 ## 视野 = 手电锥（45° 全角，11m；玩家开手电时 ×1.3）。感知走 NightExplore.can_see_player()
 ## （射线检测：墙/车厢/煤水塔挡视线；玩家蹲下时低矮掩体也挡）。
-## 警戒状态下持续看到玩家 0.9s = 开枪（本切片直接判定被发现）。
+## 警戒状态下持续看到玩家 0.9s 后开火；枪击造成伤害，归零才会击倒玩家。
 ## 借刀杀人：光锥里（或 2.5m 内）出现狂暴者 → 停步瞄准 0.5s → 点射击毙；枪声 10m 会引来别的狂暴者。
 
 const PPM := 64.0
@@ -35,6 +35,9 @@ var aim_target: Node2D = null
 var kills := 0
 var hp := 100.0                 # P5：清杀兵也会被打死（撬棍 3 下 / 莫辛 1 枪）
 var dead := false
+var loot_weapon_id := "rifle"  # 清杀兵尸体可搜缴的武器
+var _player_fire_t := 0.7
+var _player_engaged := false
 
 var _wp := 0
 var _dir := 1
@@ -133,7 +136,13 @@ func _perceive(delta: float) -> void:
 			var to_p: Vector2 = ctl.player.global_position - global_position
 			facing = lerp_angle(facing, atan2(to_p.y / SQ, to_p.x), minf(1.0, 8.0 * delta))
 			if seen_time >= 0.9:
-				ctl.caught(self)
+				if not _player_engaged:
+					_player_engaged = true
+					ctl.on_soldier_opened_fire(self)
+				_player_fire_t -= delta
+				if _player_fire_t <= 0.0:
+					_player_fire_t = 1.45
+					ctl.soldier_fire_player(self, ctl.player.global_position)
 	else:
 		seen_time = maxf(0.0, seen_time - delta * 0.5)
 		suspicion = maxf(0.0, suspicion - (0.08 if state == "alert" else 0.22) * delta)

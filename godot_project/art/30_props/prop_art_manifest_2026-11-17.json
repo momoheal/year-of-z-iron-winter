@@ -1,0 +1,2734 @@
+{
+  "schema": "year_of_z_shared_prop_batch.v1",
+  "created_on": "2026-11-17",
+  "assets": [
+    {
+      "id": "PRP_SearchlightCone_Cold",
+      "file": "PRP_SearchlightCone_Cold.png",
+      "path": "res://art/30_props/PRP_SearchlightCone_Cold.png",
+      "size": [
+        1086,
+        1448
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        543.0,
+        0
+      ],
+      "label": "cold white rotating searchlight beam overlay",
+      "sha256": "4ecc3f6f3c4fde02b3cdad78ba0e735c1037afb72b77fd3f91e6aea7c9105f5e",
+      "prompt_file": "PRP_SearchlightCone_Cold.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual only; no dynamic light or sight-cone behavior"
+    },
+    {
+      "id": "PRP_SearchlightCone_Warm",
+      "file": "PRP_SearchlightCone_Warm.png",
+      "path": "res://art/30_props/PRP_SearchlightCone_Warm.png",
+      "size": [
+        1086,
+        1448
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        543.0,
+        0
+      ],
+      "label": "warm amber rotating searchlight beam overlay",
+      "sha256": "0dba51e2c16847afa07ae8bcf833eb863715656e9968c982b1ac0c1fabad57ce",
+      "prompt_file": "PRP_SearchlightCone_Warm.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual only; no dynamic light or sight-cone behavior"
+    },
+    {
+      "id": "PRP_MineNo3_OreCart_SporeDust",
+      "file": "PRP_MineNo3_OreCart_SporeDust.png",
+      "path": "res://art/30_props/PRP_MineNo3_OreCart_SporeDust.png",
+      "size": [
+        338,
+        261
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        169.0,
+        261
+      ],
+      "label": "ore cart carrying a small amount of matte grey-black spore dust",
+      "sha256": "b7b2a8c4a43b34ce8e2d152360e6d4a9019b922a8cfe6ec9d6d11e908565b6be",
+      "prompt_file": "PRP_MineNo3_OreCart_SporeDust.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_MineNo3_DetonatorRig_FieldUsed",
+      "file": "PRP_MineNo3_DetonatorRig_FieldUsed.png",
+      "path": "res://art/30_props/PRP_MineNo3_DetonatorRig_FieldUsed.png",
+      "size": [
+        506,
+        368
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        253.0,
+        368
+      ],
+      "label": "field-used detonator rig with a cracked gauge and disconnected lead",
+      "sha256": "0e8a9513529a68d314f48ce006d34a482bc500a3bacadf33d0ca185724d5a286",
+      "prompt_file": "PRP_MineNo3_DetonatorRig_FieldUsed.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_MineNo3_TimberSupport_FieldRepaired",
+      "file": "PRP_MineNo3_TimberSupport_FieldRepaired.png",
+      "path": "res://art/30_props/PRP_MineNo3_TimberSupport_FieldRepaired.png",
+      "size": [
+        459,
+        277
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        229.5,
+        277
+      ],
+      "label": "field-repaired timber support with steel splints and rope brace",
+      "sha256": "b6b4ea7cf20b7c9cdc723c6b2f2965d8c9fb80dc63061a28312de3d741b4719b",
+      "prompt_file": "PRP_MineNo3_TimberSupport_FieldRepaired.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_MineNo3_SporeFace_Fractured",
+      "file": "PRP_MineNo3_SporeFace_Fractured.png",
+      "path": "res://art/30_props/PRP_MineNo3_SporeFace_Fractured.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "fractured frozen-earth face with a matte spore band and powder spill",
+      "sha256": "d5a46f3b5528693c967d82a3627876f9fa3c81dd131bfa2efba20acfb0cb68d6",
+      "prompt_file": "PRP_MineNo3_SporeFace_Fractured.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_RationCoupon_Sooted",
+      "file": "PRP_RationCoupon_Sooted.png",
+      "path": "res://art/30_props/PRP_RationCoupon_Sooted.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "soot-stained paper ration coupon with singed corners",
+      "sha256": "10289c018d8da12a6e10083963d604f7cc3bcc4952788b101df8c0dbc7092776",
+      "prompt_file": "PRP_RationCoupon_Sooted.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_MineNo3_SporeSampleVial",
+      "file": "PRP_MineNo3_SporeSampleVial.png",
+      "path": "res://art/30_props/PRP_MineNo3_SporeSampleVial.png",
+      "size": [
+        247,
+        469
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        123.5,
+        469
+      ],
+      "label": "sealed frosted evidence vial with matte grey-black mineral dust",
+      "sha256": "d4e1eb14bd2bdf12faeb1792801a9179ae02a462ed4341b0b4ccceef47fbd7cb",
+      "prompt_file": "PRP_MineNo3_SporeSampleVial.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_004_BrassPlaque_Evidence",
+      "file": "PRP_004_BrassPlaque_Evidence.png",
+      "path": "res://art/30_props/PRP_004_BrassPlaque_Evidence.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "aged brass freight plate with the engraved identifier 004",
+      "sha256": "8ca94e229a7afe2fc6ca0f1950214dda72abd327b1484b18665cfa8687d0f41b",
+      "prompt_file": "PRP_004_BrassPlaque_Evidence.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Market_Radio666_ColdWorn",
+      "file": "PRP_Market_Radio666_ColdWorn.png",
+      "path": "res://art/30_props/PRP_Market_Radio666_ColdWorn.png",
+      "size": [
+        363,
+        309
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        181.5,
+        309
+      ],
+      "label": "frosted shortwave radio with a dim green tube indicator and unreadable dial marks",
+      "sha256": "3da491369d249163d67c5f2ed3a75e32a8d98010fc6d3ea4a268f973e9e866e7",
+      "prompt_file": "PRP_Market_Radio666_ColdWorn.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Ash_BrokenWireCollar",
+      "file": "PRP_Ash_BrokenWireCollar.png",
+      "path": "res://art/30_props/PRP_Ash_BrokenWireCollar.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "snapped frost-covered iron dog collar with a small grey fur strand",
+      "sha256": "4f18589d37bd3412a0c291ac0cf9adaae23015da912540a273e8990ab83d0716",
+      "prompt_file": "PRP_Ash_BrokenWireCollar.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Broadcast_TelegraphReceiver",
+      "file": "PRP_Broadcast_TelegraphReceiver.png",
+      "path": "res://art/30_props/PRP_Broadcast_TelegraphReceiver.png",
+      "size": [
+        542,
+        419
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        271.0,
+        419
+      ],
+      "label": "isolated frost-worn field telegraph receiver; the attached cable is clearly joined to the receiver",
+      "sha256": "da3f9bcdb1a72451833fb5401924d71d66245575c9ef28de1c4d56842c3b768b",
+      "prompt_file": "PRP_Broadcast_TelegraphReceiver.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Broadcast_FieldHeadset",
+      "file": "PRP_Broadcast_FieldHeadset.png",
+      "path": "res://art/30_props/PRP_Broadcast_FieldHeadset.png",
+      "size": [
+        542,
+        419
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        271.0,
+        419
+      ],
+      "label": "isolated worn field-radio headset with attached microphone cup and connected coiled cord",
+      "sha256": "5c78a8a833bb43fce41b4f5c5d84fa4bd4c8ea2544a2749bd7a9603a591c55a0",
+      "prompt_file": "PRP_Broadcast_FieldHeadset.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Zakhar_RationLedger_Armband",
+      "file": "PRP_Zakhar_RationLedger_Armband.png",
+      "path": "res://art/30_props/PRP_Zakhar_RationLedger_Armband.png",
+      "size": [
+        294,
+        396
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        147.0,
+        396
+      ],
+      "label": "worn ration ledger with abstract ruled pages, a blue cloth armband and attached tally pouch",
+      "sha256": "43b8b117e87d35347824911f3587ff6d9b1bd6452e669896375bcef327f938a5",
+      "prompt_file": "PRP_Zakhar_RationLedger_Armband.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Manor_CharredEvidenceTray",
+      "file": "PRP_Manor_CharredEvidenceTray.png",
+      "path": "res://art/30_props/PRP_Manor_CharredEvidenceTray.png",
+      "size": [
+        419,
+        319
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        209.5,
+        319
+      ],
+      "label": "grouped soot-marked evidence tray with a blank-line ration ledger, closed film canister, and sealed medicine vial",
+      "sha256": "0e85cb83f5d3d5f82eabad8db8412735b8d2d171fb3eeb65ecc8c756a0ceb907",
+      "prompt_file": "PRP_Manor_CharredEvidenceTray.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Broadcast_MorseKey",
+      "file": "PRP_Broadcast_MorseKey.png",
+      "path": "res://art/30_props/PRP_Broadcast_MorseKey.png",
+      "size": [
+        542,
+        419
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        271.0,
+        419
+      ],
+      "label": "isolated brass-and-bakelite Morse telegraph key with attached short cable",
+      "sha256": "cd34ad12346c8ce555f43ef7ba2747963dfdda28d70a63b3792170af871bbc27",
+      "prompt_file": "PRP_Broadcast_MorseKey.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Zakhar_SalvageSack",
+      "file": "PRP_Zakhar_SalvageSack.png",
+      "path": "res://art/30_props/PRP_Zakhar_SalvageSack.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "worn clerk salvage sack with blue repair patch and a few harmless recovered fittings",
+      "sha256": "89ee20abc213fe90454f8c43d149f016ee2f16d29893cfb534b6c6597b3844e2",
+      "prompt_file": "PRP_Zakhar_SalvageSack.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Anna_FieldMedicalSatchel",
+      "file": "PRP_Anna_FieldMedicalSatchel.png",
+      "path": "res://art/30_props/PRP_Anna_FieldMedicalSatchel.png",
+      "size": [
+        419,
+        319
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        209.5,
+        319
+      ],
+      "label": "compact maintained field medical satchel with a rolled bandage and folded cloth",
+      "sha256": "86bc7ec2b944a8077223b039435cfab6ca0b261819e06110d0b4ab9a8d81d485",
+      "prompt_file": "PRP_Anna_FieldMedicalSatchel.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Yard_RailwaySnowBarricade",
+      "file": "PRP_Yard_RailwaySnowBarricade.png",
+      "path": "res://art/30_props/PRP_Yard_RailwaySnowBarricade.png",
+      "size": [
+        391,
+        306
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        195.5,
+        306
+      ],
+      "label": "low timber-and-corrugated-metal snow barricade for railway-yard visual cover",
+      "sha256": "d2c19342ee4cc3128b5bc94e050ddad439b85b54904619cdc1dc2783f799e22b",
+      "prompt_file": "PRP_Yard_RailwaySnowBarricade.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Manor_BurnedFamilyPhotograph",
+      "file": "PRP_Manor_BurnedFamilyPhotograph.png",
+      "path": "res://art/30_props/PRP_Manor_BurnedFamilyPhotograph.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "isolated cracked and slightly singed family photograph in a dark frame",
+      "sha256": "394194434de4fe064b4ba0630dc5df288a206b0a1bbb57eb2fe76347d2dad75d",
+      "prompt_file": "PRP_Manor_BurnedFamilyPhotograph.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Greenhouse_RyeSeedTin",
+      "file": "PRP_Greenhouse_RyeSeedTin.png",
+      "path": "res://art/30_props/PRP_Greenhouse_RyeSeedTin.png",
+      "size": [
+        349,
+        335
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        174.5,
+        335
+      ],
+      "label": "frosted open seed tin with rye seeds and a folded blank packet",
+      "sha256": "b888c2c7e41da0cae0dc87e39d2f77a069352f52e946be458aa6a1fec1633151",
+      "prompt_file": "PRP_Greenhouse_RyeSeedTin.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Market_BrassTradeWeights",
+      "file": "PRP_Market_BrassTradeWeights.png",
+      "path": "res://art/30_props/PRP_Market_BrassTradeWeights.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "grouped brass merchant scale weights and iron pan for market trade scenes",
+      "sha256": "25ea092a5e503a87f8afa0293ba9608f3a936b342146864be5991f594a32748c",
+      "prompt_file": "PRP_Market_BrassTradeWeights.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Ivan_HandSignalLantern",
+      "file": "PRP_Ivan_HandSignalLantern.png",
+      "path": "res://art/30_props/PRP_Ivan_HandSignalLantern.png",
+      "size": [
+        247,
+        469
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        123.5,
+        469
+      ],
+      "label": "isolated 1930s railway hand signal lantern with an amber glass pane",
+      "sha256": "79364700f489b2c4854a2a388f558909c2a5515bbe1aac36bb80bf3a423887f5",
+      "prompt_file": "PRP_Ivan_HandSignalLantern.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Archive_FieldCableReel",
+      "file": "PRP_Archive_FieldCableReel.png",
+      "path": "res://art/30_props/PRP_Archive_FieldCableReel.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "wooden field-telephone cable reel with attached bakelite plug and connected wire",
+      "sha256": "1680310b94745b2776e6afcee6d879bd8c7bc340842efcef1205bfdfa20b57ca",
+      "prompt_file": "PRP_Archive_FieldCableReel.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_RyeBread_ClothWrapped",
+      "file": "PRP_RyeBread_ClothWrapped.png",
+      "path": "res://art/30_props/PRP_RyeBread_ClothWrapped.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "dark rye bread loaf and cut heel in a plain cloth wrapper",
+      "sha256": "3279686b7e53c1ae78f04cdb23603619ea50a8168350991e542d6a7b7935c8d9",
+      "prompt_file": "PRP_RyeBread_ClothWrapped.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Underpass_HeaterDrum_EmberGlow",
+      "file": "PRP_Underpass_HeaterDrum_EmberGlow.png",
+      "path": "res://art/30_props/PRP_Underpass_HeaterDrum_EmberGlow.png",
+      "size": [
+        188,
+        410
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        94.0,
+        410
+      ],
+      "label": "alternate closed heater drum with a faint contained ember glow at the vents",
+      "sha256": "196fcb300c2dd7947276495f291f5a272d2d786ac7380a51636eaad806328ee1",
+      "prompt_file": "PRP_Underpass_HeaterDrum_EmberGlow.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Canteen_RyeSoupBowl",
+      "file": "PRP_Canteen_RyeSoupBowl.png",
+      "path": "res://art/30_props/PRP_Canteen_RyeSoupBowl.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "chipped enamel bowl of dark rye soup with attached spoon and folded cloth",
+      "sha256": "01c4cb828224c6879d398464a25543d1d0e222aeae3c64d6ac2bb49eda33def4",
+      "prompt_file": "PRP_Canteen_RyeSoupBowl.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Birch_AidCache_Opened",
+      "file": "PRP_Birch_AidCache_Opened.png",
+      "path": "res://art/30_props/PRP_Birch_AidCache_Opened.png",
+      "size": [
+        291,
+        258
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        145.5,
+        258
+      ],
+      "label": "opened snowy-forest aid cache with a gauze roll and folded cloth",
+      "sha256": "5c51ca6d37fd8faeae87e9138de1c215792a5f063397aeebbb63a20ef6a86209",
+      "prompt_file": "PRP_Birch_AidCache_Opened.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Ash_RescueFeedingBowl",
+      "file": "PRP_Ash_RescueFeedingBowl.png",
+      "path": "res://art/30_props/PRP_Ash_RescueFeedingBowl.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "worn enamel dog bowl with rye bread, water and a snapped wire loop",
+      "sha256": "2d6c6289e831c6d820145e4b53ffbbd1d99b223045cd1451a7c5e4fa94088518",
+      "prompt_file": "PRP_Ash_RescueFeedingBowl.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Broadcast_CarbonMicrophone",
+      "file": "PRP_Broadcast_CarbonMicrophone.png",
+      "path": "res://art/30_props/PRP_Broadcast_CarbonMicrophone.png",
+      "size": [
+        247,
+        469
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        123.5,
+        469
+      ],
+      "label": "isolated carbon microphone on a weighted stand with a connected cable",
+      "sha256": "175ef5a0005cd42e561d19c61781c2cfd8af9a4ca31e51b657fa0ee99566ff23",
+      "prompt_file": "PRP_Broadcast_CarbonMicrophone.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_004_FreightSealAssembly",
+      "file": "PRP_004_FreightSealAssembly.png",
+      "path": "res://art/30_props/PRP_004_FreightSealAssembly.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "old freight-door security seal with attached hasp and closed twisted-wire loop",
+      "sha256": "e18e641754b9766a6c35b6fc925269cdc814dd698c396854bc3e31381f49e854",
+      "prompt_file": "PRP_004_FreightSealAssembly.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Canteen_StoveSolo_EmberGlow",
+      "file": "PRP_Canteen_StoveSolo_EmberGlow.png",
+      "path": "res://art/30_props/PRP_Canteen_StoveSolo_EmberGlow.png",
+      "size": [
+        372,
+        298
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        186.0,
+        298
+      ],
+      "label": "alternate cast-iron canteen stove with a low contained ember glow",
+      "sha256": "444a8230bff4037b06f01c387915515254bab31d20fe5c60e4ca139a4498538d",
+      "prompt_file": "PRP_Canteen_StoveSolo_EmberGlow.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_CageGate_Open",
+      "file": "PRP_CageGate_Open.png",
+      "path": "res://art/30_props/PRP_CageGate_Open.png",
+      "size": [
+        220,
+        150
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        110.0,
+        150
+      ],
+      "label": "open sanitarium cage gate with hinges and latch attached",
+      "sha256": "c436b9aeaa878c96e8d036234501763917346597d2079e4af08df08accc3b079",
+      "prompt_file": "PRP_CageGate_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Sanitarium_OldKeyring",
+      "file": "PRP_Sanitarium_OldKeyring.png",
+      "path": "res://art/30_props/PRP_Sanitarium_OldKeyring.png",
+      "size": [
+        294,
+        396
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        147.0,
+        396
+      ],
+      "label": "iron ward and cabinet keys on a single frosted ring",
+      "sha256": "1286f159136a9d6bc9a85210ac738940a75207db4eb42e2b21813e10c71c095d",
+      "prompt_file": "PRP_Sanitarium_OldKeyring.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_004_BrakeHandwheel",
+      "file": "PRP_004_BrakeHandwheel.png",
+      "path": "res://art/30_props/PRP_004_BrakeHandwheel.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "isolated freight-car brake handwheel with attached mounting shaft",
+      "sha256": "ab660d35d524c3bbe18853e668943130a5b3df45c62b18668791b744ca100aa6",
+      "prompt_file": "PRP_004_BrakeHandwheel.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_MineNo3_CarbideLamp",
+      "file": "PRP_MineNo3_CarbideLamp.png",
+      "path": "res://art/30_props/PRP_MineNo3_CarbideLamp.png",
+      "size": [
+        247,
+        469
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        123.5,
+        469
+      ],
+      "label": "isolated 1930s miner carbide hand lamp with a dim warm lens",
+      "sha256": "4663f414264ee1cba6c13b9365ff885b93e7a4c840cf4b1697b6679877d5f04c",
+      "prompt_file": "PRP_MineNo3_CarbideLamp.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Zakhar_BlueClerkArmband",
+      "file": "PRP_Zakhar_BlueClerkArmband.png",
+      "path": "res://art/30_props/PRP_Zakhar_BlueClerkArmband.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "standalone worn blue clerk armband with plain stitched loops and no insignia",
+      "sha256": "96595e24cc94cffef828fc90eb91fc34a8bd6786a9ed71cd495ac63ce4eed1bb",
+      "prompt_file": "PRP_Zakhar_BlueClerkArmband.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Manor_NegativeStrip",
+      "file": "PRP_Manor_NegativeStrip.png",
+      "path": "res://art/30_props/PRP_Manor_NegativeStrip.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "curled monochrome film negative strip with indistinct winter frames and a metal clip",
+      "sha256": "2e34de7ba3ff9dd7e09f1a443f2a12f8a15f822364d1cd43a7171f201a230208",
+      "prompt_file": "PRP_Manor_NegativeStrip.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Greenhouse_IcedGlassPane_Broken",
+      "file": "PRP_Greenhouse_IcedGlassPane_Broken.png",
+      "path": "res://art/30_props/PRP_Greenhouse_IcedGlassPane_Broken.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "intact rusted frame holding a frosted cracked greenhouse pane with one missing corner",
+      "sha256": "cc4a5fad31105a77dc89e64c505768d9fe99d4fa5720973dcfa191d22c93984e",
+      "prompt_file": "PRP_Greenhouse_IcedGlassPane_Broken.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Chernov_SergeantSleeveStripe",
+      "file": "PRP_Chernov_SergeantSleeveStripe.png",
+      "path": "res://art/30_props/PRP_Chernov_SergeantSleeveStripe.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "plain two-chevron sergeant sleeve stripe cloth patch with no insignia or lettering",
+      "sha256": "49cd1ca3a8018ba1582990fce3f08b3f3591db6fbfa0fa4a15cd91473e37b477",
+      "prompt_file": "PRP_Chernov_SergeantSleeveStripe.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Aleksei_SisterPocketPhoto",
+      "file": "PRP_Aleksei_SisterPocketPhoto.png",
+      "path": "res://art/30_props/PRP_Aleksei_SisterPocketPhoto.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "small black-and-white portrait of Lana in a worn metal pocket frame",
+      "sha256": "62de3fa442182e6023c5dd91299cb6055be8baaed959caa577574aeac39c97b2",
+      "prompt_file": "PRP_Aleksei_SisterPocketPhoto.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Aleksei_BrassFieldCompass",
+      "file": "PRP_Aleksei_BrassFieldCompass.png",
+      "path": "res://art/30_props/PRP_Aleksei_BrassFieldCompass.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "fold-open brass field compass with glass lid and unmarked needle",
+      "sha256": "bf303f962725d81dca90fb3fc1fd40a78c1df43b90a56ef073ba85d062b0138b",
+      "prompt_file": "PRP_Aleksei_BrassFieldCompass.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Lana_WoolScarf",
+      "file": "PRP_Lana_WoolScarf.png",
+      "path": "res://art/30_props/PRP_Lana_WoolScarf.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "pale-gray worn wool scarf associated with Lana, folded with a frayed thread and frost",
+      "sha256": "a0285bfdb9913909fac1bf31f6c3982eaf25ae16ff835bf63a57843adddbc4f7",
+      "prompt_file": "PRP_Lana_WoolScarf.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Aleksei_FieldBackpack",
+      "file": "PRP_Aleksei_FieldBackpack.png",
+      "path": "res://art/30_props/PRP_Aleksei_FieldBackpack.png",
+      "size": [
+        419,
+        319
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        209.5,
+        319
+      ],
+      "label": "compact dark canvas field backpack with leather straps and attached rolled blanket",
+      "sha256": "dbcd48aee96d14db0aa04baaa35f2185b62290e2d33deef421abd4e29a6cd120",
+      "prompt_file": "PRP_Aleksei_FieldBackpack.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Ivan_NavyRailwayCap",
+      "file": "PRP_Ivan_NavyRailwayCap.png",
+      "path": "res://art/30_props/PRP_Ivan_NavyRailwayCap.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "dark navy conductor peaked cap with a red band and plain brass button",
+      "sha256": "3a30bb2b80111d0aa4265fab56fe6cd32de81ab2667fae3063df3e683b13f689",
+      "prompt_file": "PRP_Ivan_NavyRailwayCap.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Pavel_InsulatedPipeWrench",
+      "file": "PRP_Pavel_InsulatedPipeWrench.png",
+      "path": "res://art/30_props/PRP_Pavel_InsulatedPipeWrench.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "heavy insulated pipe wrench matching Pavel broadcast-tower repair tool",
+      "sha256": "266f865a12d8130669cab286dd05dc9aa6bbb91cbc3daf169f2ab1bfed412de6",
+      "prompt_file": "PRP_Pavel_InsulatedPipeWrench.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Yard_SearchlightHead_Pivot",
+      "file": "PRP_Yard_SearchlightHead_Pivot.png",
+      "path": "res://art/30_props/PRP_Yard_SearchlightHead_Pivot.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "separate searchlight head and yoke with short mounting stem; bottom-center pivot for future rotation",
+      "sha256": "d71c9eb5e94e4ac056ab818e53f7466ffa387b1b4463c719206d8ca910151bc3",
+      "prompt_file": "PRP_Yard_SearchlightHead_Pivot.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Ash_SnowPawprintTrail",
+      "file": "PRP_Ash_SnowPawprintTrail.png",
+      "path": "res://art/30_props/PRP_Ash_SnowPawprintTrail.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "transparent gray-dog pawprint trail overlay for snowy maps",
+      "sha256": "16d43ed86b5953ca075671e1006519c8efc719498341ff15d68368d96e86b6c4",
+      "prompt_file": "PRP_Ash_SnowPawprintTrail.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Ivan_RedSignalFlag",
+      "file": "PRP_Ivan_RedSignalFlag.png",
+      "path": "res://art/30_props/PRP_Ivan_RedSignalFlag.png",
+      "size": [
+        247,
+        469
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        123.5,
+        469
+      ],
+      "label": "faded red railway hand-signal flag attached to a short wooden staff",
+      "sha256": "e9f0696c253f72b421d89138bde8e6d3d192490a7193e9b49f0afe51d2eed6df",
+      "prompt_file": "PRP_Ivan_RedSignalFlag.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Pasha_DummyLookout",
+      "file": "PRP_Pasha_DummyLookout.png",
+      "path": "res://art/30_props/PRP_Pasha_DummyLookout.png",
+      "size": [
+        247,
+        469
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        123.5,
+        469
+      ],
+      "label": "stuffed empty winter coat on a post with scarf and tilted fur cap, no person inside",
+      "sha256": "f9a7aec555a07e888f8a2b8601f85f9052b635f8a71c050d1f86ba9cc6928723",
+      "prompt_file": "PRP_Pasha_DummyLookout.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Yelena_BroadcastLogbook",
+      "file": "PRP_Yelena_BroadcastLogbook.png",
+      "path": "res://art/30_props/PRP_Yelena_BroadcastLogbook.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "partly open cloth-bound broadcast logbook with blank abstract lines and an attached pencil",
+      "sha256": "132824147f96f7786c809feae587a45b2f5d4e3be8510c50c59df3a86a500581",
+      "prompt_file": "PRP_Yelena_BroadcastLogbook.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Chernov_RemovedWhiteArmband",
+      "file": "PRP_Chernov_RemovedWhiteArmband.png",
+      "path": "res://art/30_props/PRP_Chernov_RemovedWhiteArmband.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "plain folded white sleeve band removed from an overcoat, without insignia or writing",
+      "sha256": "2280b617b8af75c6a105ae677e877e1d791879dab1b8cc12af0920736d1424ca",
+      "prompt_file": "PRP_Chernov_RemovedWhiteArmband.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Lana_ThinCottonShoes",
+      "file": "PRP_Lana_ThinCottonShoes.png",
+      "path": "res://art/30_props/PRP_Lana_ThinCottonShoes.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "pair of worn thin cotton winter shoes with flattened soles and frost seams",
+      "sha256": "0edc519e3db1ef9976980f2866c840f6cb19877b0ed0a9cd1c7bde98c809ee9e",
+      "prompt_file": "PRP_Lana_ThinCottonShoes.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Lana_CleanClothBundle",
+      "file": "PRP_Lana_CleanClothBundle.png",
+      "path": "res://art/30_props/PRP_Lana_CleanClothBundle.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "bundle of folded clean cotton cloth and gauze strips tied with plain twine",
+      "sha256": "b9a69074a86bfbfbae1fb07bdbee025b60b605bf9c6b30f95f627819d3570029",
+      "prompt_file": "PRP_Lana_CleanClothBundle.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Lana_IodineBottle",
+      "file": "PRP_Lana_IodineBottle.png",
+      "path": "res://art/30_props/PRP_Lana_IodineBottle.png",
+      "size": [
+        247,
+        469
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        123.5,
+        469
+      ],
+      "label": "small closed brown glass iodine bottle with plain cap, no label or dosage",
+      "sha256": "659722c81543e6678a9adacce3639248307dfd035dc35ff7876b989454dacc45",
+      "prompt_file": "PRP_Lana_IodineBottle.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Anna_FieldMedicalSatchel_Open",
+      "file": "PRP_Anna_FieldMedicalSatchel_Open.png",
+      "path": "res://art/30_props/PRP_Anna_FieldMedicalSatchel_Open.png",
+      "size": [
+        419,
+        319
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        209.5,
+        319
+      ],
+      "label": "open field medical satchel with a rolled bandage and folded cloth inside",
+      "sha256": "fa47e68f19fb8f6a491d5dfa286f3edad7ec7875e345058fdaed4c05c0a6743e",
+      "prompt_file": "PRP_Anna_FieldMedicalSatchel_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Ivan_RouteTimetable",
+      "file": "PRP_Ivan_RouteTimetable.png",
+      "path": "res://art/30_props/PRP_Ivan_RouteTimetable.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "folded conductor route timetable with abstract track lines and brass clip",
+      "sha256": "c16dbd19027bb678a82e68027bb44d8007184e3be27a27d7392305117987f087",
+      "prompt_file": "PRP_Ivan_RouteTimetable.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_SearchlightCone_Cold_Narrow",
+      "file": "PRP_SearchlightCone_Cold_Narrow.png",
+      "path": "res://art/30_props/PRP_SearchlightCone_Cold_Narrow.png",
+      "size": [
+        1086,
+        1448
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        253
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        543.0,
+        0
+      ],
+      "label": "narrow cold-white searchlight beam overlay; top-center pivot",
+      "sha256": "33e1a6af6ebdb454e83b29685d40d9bcb12510fdffb2dd28dc9f9410e2738856",
+      "prompt_file": "PRP_SearchlightCone_Cold_Narrow.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual only; no dynamic light or sight-cone behavior"
+    },
+    {
+      "id": "PRP_SearchlightCone_Warm_Narrow",
+      "file": "PRP_SearchlightCone_Warm_Narrow.png",
+      "path": "res://art/30_props/PRP_SearchlightCone_Warm_Narrow.png",
+      "size": [
+        1086,
+        1448
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        253
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        543.0,
+        0
+      ],
+      "label": "narrow warm-amber beam overlay; top-center anchor",
+      "sha256": "9bf0f50fefd8b1a9924ea7148afa1b46858ff51f4371c9e9851e6c0dfd84c24e",
+      "prompt_file": "PRP_SearchlightCone_Warm_Narrow.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual only; no dynamic light or sight-cone behavior"
+    },
+    {
+      "id": "PRP_SearchlightCone_Cold_Broad",
+      "file": "PRP_SearchlightCone_Cold_Broad.png",
+      "path": "res://art/30_props/PRP_SearchlightCone_Cold_Broad.png",
+      "size": [
+        1086,
+        1448
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        253
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        543.0,
+        0
+      ],
+      "label": "broad cold-white beam overlay; top-center anchor",
+      "sha256": "fed0d60f2117e01c0012e914edde11d6bcd4656b90cf0fa4f6dc60228754597c",
+      "prompt_file": "PRP_SearchlightCone_Cold_Broad.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual only; no dynamic light or sight-cone behavior"
+    },
+    {
+      "id": "PRP_Broadcast_DryCellBatteryBundle",
+      "file": "PRP_Broadcast_DryCellBatteryBundle.png",
+      "path": "res://art/30_props/PRP_Broadcast_DryCellBatteryBundle.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "three sealed vintage radio battery packs in a shallow plain cardboard holder",
+      "sha256": "1e3d9e45b10443077d2bafc06b491b1e926381ce56a690ef66bb00b5c02fd27e",
+      "prompt_file": "PRP_Broadcast_DryCellBatteryBundle.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Aleksei_ForgedLanaNote",
+      "file": "PRP_Aleksei_ForgedLanaNote.png",
+      "path": "res://art/30_props/PRP_Aleksei_ForgedLanaNote.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "small folded pale note with unreadable imitation handwriting strokes",
+      "sha256": "353126f66592c992cfdf3d96234cde4f44ee727a992d8e02e5103205be3d69e6",
+      "prompt_file": "PRP_Aleksei_ForgedLanaNote.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Manor_VaultDoor_Open",
+      "file": "PRP_Manor_VaultDoor_Open.png",
+      "path": "res://art/30_props/PRP_Manor_VaultDoor_Open.png",
+      "size": [
+        470,
+        424
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        235.0,
+        424
+      ],
+      "label": "open manor vault door with attached locking wheel and narrow dark interior gap",
+      "sha256": "ac70a970f50fa1f1d975b8a416e961cb399a1ef90e2aa4d2f0e1a05650a4f798",
+      "prompt_file": "PRP_Manor_VaultDoor_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Coldstore_Chest_Open",
+      "file": "PRP_Coldstore_Chest_Open.png",
+      "path": "res://art/30_props/PRP_Coldstore_Chest_Open.png",
+      "size": [
+        210,
+        150
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        105.0,
+        150
+      ],
+      "label": "open frosted cold-storage chest with its lid attached and nearly empty interior",
+      "sha256": "95ecdfeb2d3c8b83e42fda74cb11d8f6016efccc094172e17b021d8b452b405b",
+      "prompt_file": "PRP_Coldstore_Chest_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Ash_ColdstoreBlanket",
+      "file": "PRP_Ash_ColdstoreBlanket.png",
+      "path": "res://art/30_props/PRP_Ash_ColdstoreBlanket.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "small worn gray wool blanket folded into a shallow nest for the rescued dog",
+      "sha256": "8d1f8ee87fe7c5fe25bdb2c08e577b7c0c2be14581843dc89e5171e50134ad7c",
+      "prompt_file": "PRP_Ash_ColdstoreBlanket.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_MineNo3_TimberSupport_Collapsed",
+      "file": "PRP_MineNo3_TimberSupport_Collapsed.png",
+      "path": "res://art/30_props/PRP_MineNo3_TimberSupport_Collapsed.png",
+      "size": [
+        459,
+        277
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        229.5,
+        277
+      ],
+      "label": "compact collapsed mine timber support with crossed beams and debris",
+      "sha256": "f529d6d2400a5adec471576bd1be2157a1a97e3da7e1c2e6a6c2aa218cdf9e02",
+      "prompt_file": "PRP_MineNo3_TimberSupport_Collapsed.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_MineNo3_EvidenceCase_Sealed",
+      "file": "PRP_MineNo3_EvidenceCase_Sealed.png",
+      "path": "res://art/30_props/PRP_MineNo3_EvidenceCase_Sealed.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "closed steel evidence case with brass hasps and a frosted lid seam",
+      "sha256": "8d9a2c20407ce0a9dea1a72976ee407d5cfbaee9de5e15a2dfca163cf7feb656",
+      "prompt_file": "PRP_MineNo3_EvidenceCase_Sealed.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_MineNo3_EvidenceCase_Open",
+      "file": "PRP_MineNo3_EvidenceCase_Open.png",
+      "path": "res://art/30_props/PRP_MineNo3_EvidenceCase_Open.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "open steel evidence case with its lid attached and only a blank liner inside",
+      "sha256": "a205435dfa6609d7f3f4cc4355f85091e43abd4ba79ee26d82a23edf60392498",
+      "prompt_file": "PRP_MineNo3_EvidenceCase_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Yard_RailwaySnowBarricade_Splintered",
+      "file": "PRP_Yard_RailwaySnowBarricade_Splintered.png",
+      "path": "res://art/30_props/PRP_Yard_RailwaySnowBarricade_Splintered.png",
+      "size": [
+        391,
+        306
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        195.5,
+        306
+      ],
+      "label": "weathered railway snow barricade variant with a splintered corner and bent corrugated sheet",
+      "sha256": "c49b85b32bd96e4ca5df5a4ab25be6d9704148c7b85da366f61a32bff6acf706",
+      "prompt_file": "PRP_Yard_RailwaySnowBarricade_Splintered.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Sanitarium_LoosenedRestraintStraps",
+      "file": "PRP_Sanitarium_LoosenedRestraintStraps.png",
+      "path": "res://art/30_props/PRP_Sanitarium_LoosenedRestraintStraps.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "loosened canvas restraint straps with the buckles attached",
+      "sha256": "7c269f6881d53981b5344ed4939f80ec50dce6a90d1c942c120c39ff00970b50",
+      "prompt_file": "PRP_Sanitarium_LoosenedRestraintStraps.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Archive_FileCabinet_Open",
+      "file": "PRP_Archive_FileCabinet_Open.png",
+      "path": "res://art/30_props/PRP_Archive_FileCabinet_Open.png",
+      "size": [
+        216,
+        400
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        108.0,
+        400
+      ],
+      "label": "open archive cabinet with one attached drawer and blank paper folders",
+      "sha256": "c051a4a2b57cd365f3eae852f0b56e362b8cec10912f78a44b5108b3e0eec6e0",
+      "prompt_file": "PRP_Archive_FileCabinet_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Birch_HunterShack_DoorOpen",
+      "file": "PRP_Birch_HunterShack_DoorOpen.png",
+      "path": "res://art/30_props/PRP_Birch_HunterShack_DoorOpen.png",
+      "size": [
+        519,
+        530
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        259.5,
+        530
+      ],
+      "label": "birch hunter shack front section with the door open and attached to hinges",
+      "sha256": "58319f3cfd1e6dd2ec4ed228df951f530575be5d91cc3be862e740bdc000d760",
+      "prompt_file": "PRP_Birch_HunterShack_DoorOpen.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Workshop_Forklift_Parked",
+      "file": "PRP_Workshop_Forklift_Parked.png",
+      "path": "res://art/30_props/PRP_Workshop_Forklift_Parked.png",
+      "size": [
+        644,
+        480
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        322.0,
+        480
+      ],
+      "label": "parked out-of-service 1930s workshop forklift with forks lowered and light frost",
+      "sha256": "6b2f6b1c6ec4b339581c56ca5041fdf3f3f2e2096b98dd37c179923d22ebfc91",
+      "prompt_file": "PRP_Workshop_Forklift_Parked.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Manor_Incinerator_Afterfire",
+      "file": "PRP_Manor_Incinerator_Afterfire.png",
+      "path": "res://art/30_props/PRP_Manor_Incinerator_Afterfire.png",
+      "size": [
+        484,
+        461
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        242.0,
+        461
+      ],
+      "label": "soot-blackened closed manor incinerator after the fire, no active flames",
+      "sha256": "8a85a8234139e2e47dcc17aa957991ba6a0e657ef5aca8542049c426ddcf6381",
+      "prompt_file": "PRP_Manor_Incinerator_Afterfire.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Greenhouse_RyeCrate_Open",
+      "file": "PRP_Greenhouse_RyeCrate_Open.png",
+      "path": "res://art/30_props/PRP_Greenhouse_RyeCrate_Open.png",
+      "size": [
+        349,
+        335
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        174.5,
+        335
+      ],
+      "label": "open slatted greenhouse rye crate with a few stalks and a folded empty sack inside",
+      "sha256": "b060e60e32e4d3221d2dd94b1c916a88683d23ff781fe3a7127fb8c2b8f8f6c5",
+      "prompt_file": "PRP_Greenhouse_RyeCrate_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Boiler_HandValveWheel",
+      "file": "PRP_Boiler_HandValveWheel.png",
+      "path": "res://art/30_props/PRP_Boiler_HandValveWheel.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "isolated six-spoke cast-iron boiler handwheel with worn frosted rim",
+      "sha256": "8406613411555725d296c49ed0cdd044289b0f66025e4d35a5155fa8c02e2110",
+      "prompt_file": "PRP_Boiler_HandValveWheel.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Boiler_PressureGauge",
+      "file": "PRP_Boiler_PressureGauge.png",
+      "path": "res://art/30_props/PRP_Boiler_PressureGauge.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "old round boiler pressure gauge with abstract unreadable tick marks",
+      "sha256": "36ff0674d9b1d580eb0b0a66dc1c0c61827548db99840a9005a577dffe3fa60f",
+      "prompt_file": "PRP_Boiler_PressureGauge.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Marshalling_SignalLever",
+      "file": "PRP_Marshalling_SignalLever.png",
+      "path": "res://art/30_props/PRP_Marshalling_SignalLever.png",
+      "size": [
+        247,
+        469
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        123.5,
+        469
+      ],
+      "label": "short railway signal post with attached red and green lenses and fixed lever",
+      "sha256": "73afe10cc6353fc4aacdb86fa72db1f5d26d7b6127afc0916ffbb1acda106824",
+      "prompt_file": "PRP_Marshalling_SignalLever.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Workshop_SpannerSet",
+      "file": "PRP_Workshop_SpannerSet.png",
+      "path": "res://art/30_props/PRP_Workshop_SpannerSet.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "three worn open-end spanners arranged in a plain metal tray",
+      "sha256": "6c084b8b4a24def51722ca3ca643f6fa06ffdad828ee064c9512db7ea366b49b",
+      "prompt_file": "PRP_Workshop_SpannerSet.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Underpass_SupplyCrate_Open",
+      "file": "PRP_Underpass_SupplyCrate_Open.png",
+      "path": "res://art/30_props/PRP_Underpass_SupplyCrate_Open.png",
+      "size": [
+        328,
+        246
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        164.0,
+        246
+      ],
+      "label": "open wooden shelter crate with attached lid, folded blanket and two plain ration tins",
+      "sha256": "1792b98a2cf7b1d9e475e7faf9b096f3d5986a00d11637b09d03de738ef7b6be",
+      "prompt_file": "PRP_Underpass_SupplyCrate_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Apartment_EnamelWashbasin",
+      "file": "PRP_Apartment_EnamelWashbasin.png",
+      "path": "res://art/30_props/PRP_Apartment_EnamelWashbasin.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "chipped enamel washbasin with cold water and a folded damp towel",
+      "sha256": "d5ef53028eba3f4c60848280ab7d01b657fa32c2b5224246c6e9639e34470efe",
+      "prompt_file": "PRP_Apartment_EnamelWashbasin.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Greenhouse_WaterChest_Open",
+      "file": "PRP_Greenhouse_WaterChest_Open.png",
+      "path": "res://art/30_props/PRP_Greenhouse_WaterChest_Open.png",
+      "size": [
+        419,
+        386
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        209.5,
+        386
+      ],
+      "label": "open insulated greenhouse water chest with a little frozen water and a plain dipper",
+      "sha256": "8a340d6997a772021739749424888c7477c7b35ae09b19659bde27d043e3aacd",
+      "prompt_file": "PRP_Greenhouse_WaterChest_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Archive_KeroseneDeskLamp",
+      "file": "PRP_Archive_KeroseneDeskLamp.png",
+      "path": "res://art/30_props/PRP_Archive_KeroseneDeskLamp.png",
+      "size": [
+        542,
+        419
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        271.0,
+        419
+      ],
+      "label": "isolated 1930s kerosene desk lamp with a small amber flame behind glass",
+      "sha256": "fb689a3037c08c372dd03186f59df1a998b37df17028764a004985587b931a7a",
+      "prompt_file": "PRP_Archive_KeroseneDeskLamp.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Canteen_RyeVat_Open",
+      "file": "PRP_Canteen_RyeVat_Open.png",
+      "path": "res://art/30_props/PRP_Canteen_RyeVat_Open.png",
+      "size": [
+        341,
+        353
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        170.5,
+        353
+      ],
+      "label": "open wooden canteen rye vat with attached tilted lid and faint steam",
+      "sha256": "7093f172a8ef121fc36c49e936b3de05453e5b817b37dd4f5b83ee33d73359b3",
+      "prompt_file": "PRP_Canteen_RyeVat_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Chernov_BrassWhistle",
+      "file": "PRP_Chernov_BrassWhistle.png",
+      "path": "res://art/30_props/PRP_Chernov_BrassWhistle.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "small tarnished brass sergeant whistle with connected braided cord loop",
+      "sha256": "3117e41751f7eb3a83a9facf3f1c25afefc1b5a173d82d78aab42d6fd04d5018",
+      "prompt_file": "PRP_Chernov_BrassWhistle.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_OSK_PatrolCap",
+      "file": "PRP_OSK_PatrolCap.png",
+      "path": "res://art/30_props/PRP_OSK_PatrolCap.png",
+      "size": [
+        502,
+        293
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "plain charcoal OSK patrol cap with no badge, visibly distinct from the navy red-band railway cap",
+      "sha256": "fd4e07b7669380ecf119820a5f92c3842daf528d413b69bb252bb04d4acee524",
+      "prompt_file": "PRP_OSK_PatrolCap.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Market_CanvasAwning_Snow",
+      "file": "PRP_Market_CanvasAwning_Snow.png",
+      "path": "res://art/30_props/PRP_Market_CanvasAwning_Snow.png",
+      "size": [
+        391,
+        306
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        195.5,
+        306
+      ],
+      "label": "low wooden market awning with gray canvas roof and a little snow, no stall goods",
+      "sha256": "22ac43c2ede541b301babbbd74382826f287c7d36ea7e88e7065c9a174b832a8",
+      "prompt_file": "PRP_Market_CanvasAwning_Snow.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only asset; not placed in active level geometry"
+    },
+    {
+      "id": "PRP_Manor_FilmCanister_Open",
+      "file": "PRP_Manor_FilmCanister_Open.png",
+      "path": "res://art/30_props/PRP_Manor_FilmCanister_Open.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "alpha": "RGBA true alpha",
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        768.0,
+        1024
+      ],
+      "label": "open frosted metal film canister with an attached photographic negative strip",
+      "sha256": "4ffc45c9b744cd4884eaad6019fc4a5fee17fb19282840dfc064b8138d512167",
+      "prompt_file": "PRP_Manor_FilmCanister_Open.prompt.txt",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; visual-only evidence prop; not placed in active level geometry"
+    }
+  ]
+}

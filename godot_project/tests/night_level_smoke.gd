@@ -42,9 +42,17 @@ func _scene(path: String) -> Node:
 	root.add_child(s)
 	return s
 
+func _drop(s: Node) -> void:
+	if not is_instance_valid(s):
+		return
+	if s.get_parent() != null:
+		s.get_parent().remove_child(s)
+	s.free()
+
 func _run() -> void:
 	print("== night_level_smoke ==")
 	_registry()
+	_map_plates()
 	_yard()
 	_marshalling()
 	_manor()
@@ -59,6 +67,43 @@ func _run() -> void:
 	# quit() 不终止函数执行 —— 分开写 "if 有失败: quit(1)" 再 quit(0)，
 	# 后者会覆盖前者，退出码永远是 0，CI 的 rc 判断就成了摆设。用单表达式。
 	quit(0 if failures.is_empty() else 1)
+
+# ---------------------------------------------------------------------------
+func _map_plates() -> void:
+	var scenes := [
+		["yard", "res://scenes/night_explore.tscn", "Yard"],
+		["marshalling", "res://scenes/night_marshalling.tscn", "Marshalling"],
+		["manor", "res://scenes/night_manor.tscn", "Manor"],
+		["mine", "res://scenes/night_mine.tscn", "MineNo3"],
+		["market", "res://scenes/night_market.tscn", "Market"],
+		["coldstore", "res://scenes/night_coldstore.tscn", "Coldstore"],
+		["canteen", "res://scenes/night_canteen.tscn", "Canteen"],
+		["sanitarium", "res://scenes/night_sanitarium.tscn", "Sanitarium"],
+		["boiler", "res://scenes/night_boiler.tscn", "Boiler"],
+		["underpass", "res://scenes/night_underpass.tscn", "Underpass"],
+		["greenhouse", "res://scenes/night_greenhouse.tscn", "Greenhouse"],
+		["archive", "res://scenes/night_archive.tscn", "Archive"],
+		["workshop", "res://scenes/night_workshop.tscn", "Workshop"],
+		["birch", "res://scenes/night_birch.tscn", "Birch"],
+	]
+	for entry in scenes:
+		var scene: Node = _scene(String(entry[1]))
+		var folder := String(entry[2])
+		var expected_path := "res://art/80_maps/%s/map.png" % folder
+		var ground := scene.get_node("Ground") as Sprite2D
+		_assert(scene.level_id == String(entry[0]), "%s retains level id" % entry[0], scene.level_id)
+		_assert(ground.texture != null and ground.texture.resource_path == expected_path,
+			"%s uses its generated art in the live map" % entry[0], ground.texture.resource_path if ground.texture else "missing")
+		_assert(scene.map_art_night != null, "%s loads its night map variant" % entry[0])
+		_assert(scene.get("_minimap") != null, "%s builds a live minimap" % entry[0])
+		var facade_sprite := scene.get_node_or_null("World/Facade/Sprite") as Sprite2D
+		_assert(facade_sprite == null or (facade_sprite.region_enabled
+			and is_equal_approx(facade_sprite.region_rect.size.y, 480.0)),
+			"%s confines old facade art to camera padding" % entry[0])
+		var scaled_bounds: Vector2 = Vector2(ground.texture.get_size()) * ground.scale.abs()
+		_assert(scaled_bounds.distance_to(scene.map_bounds_px) < 0.1,
+			"%s keeps its original playable bounds" % entry[0], str(scaled_bounds))
+		_drop(scene)
 
 # ---------------------------------------------------------------------------
 func _registry() -> void:
@@ -84,7 +129,7 @@ func _yard() -> void:
 	_assert(y.prize == "dial", "yard prize = dial", y.prize)
 	_assert(y.rail_y == [26.0, 33.0], "yard rail_y 元数据", str(y.rail_y))
 	_assert(y.objective_zh.contains("三号车厢"), "yard objective 元数据", y.objective_zh)
-	_assert(String(y.get_node("Ground").texture.resource_path).ends_with("TIL_Ground_NightYard_Baked.png"),
+	_assert(String(y.get_node("Ground").texture.resource_path).ends_with("Yard/map.png"),
 			"yard 地面大图", y.get_node("Ground").texture.resource_path)
 	_assert(String(y.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Khrushchyovka_A.png"), "yard 立面", y.get_node("World/Facade/Sprite").texture.resource_path)
@@ -120,7 +165,7 @@ func _marshalling() -> void:
 	_assert(m.warm_lights.size() == 2, "marshalling 两个回温点（240s 长夜）", str(m.warm_lights.size()))
 	# 资产指向本关的大图
 	_assert(String(m.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightMarshalling_Baked.png"), "marshalling 地面大图",
+			"Marshalling/map.png"), "marshalling 地面大图",
 			m.get_node("Ground").texture.resource_path)
 	_assert(String(m.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Depot_A.png"), "marshalling 机车库立面",
@@ -202,7 +247,7 @@ func _manor() -> void:
 	_assert(g.get_node_or_null("Searchlight") != null, "manor 有探照灯（东南岗塔）")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightManor_Baked.png"), "manor 地面大图",
+			"Manor/map.png"), "manor 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Manor_A.png"), "manor 恒温库+焚化车间立面",
@@ -278,7 +323,7 @@ func _mine() -> void:
 	_assert(g.get_node_or_null("Searchlight") == null, "mine 没有探照灯（假人哨塔是空壳）")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightMine_Baked.png"), "mine 地面大图",
+			"MineNo3/map.png"), "mine 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Mine_A.png"), "mine 矿山岩壁立面",
@@ -351,7 +396,7 @@ func _market() -> void:
 	_assert(mk != null and String(mk.get_meta("zh", "")) != "", "market 摊区元数据在")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightMarket_Baked.png"), "market 地面大图",
+			"Market/map.png"), "market 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Town_A.png"), "market 工人镇立面",
@@ -433,7 +478,7 @@ func _sanitarium() -> void:
 			"sanitarium 安娜（0419）+ 梁诺夫 + 古丽娅在场")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightSanitarium_Baked.png"), "sanitarium 地面大图",
+			"Sanitarium/map.png"), "sanitarium 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Sanitarium_A.png"), "sanitarium 地下室北墙立面（换气铁窗）",
@@ -496,7 +541,7 @@ func _canteen() -> void:
 			"canteen 独眼老炊事员费奥多尔 + 老铁路工在场（十九只碗 = 十九个人）")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightCanteen_Baked.png"), "canteen 地面大图",
+			"Canteen/map.png"), "canteen 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Canteen_A.png"), "canteen 瓷砖后厨立面",
@@ -575,7 +620,7 @@ func _coldstore() -> void:
 			"coldstore 3 号柱后的母子在场（账面在册 0 人，实际 2 人）")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightColdstore_Baked.png"), "coldstore 地面大图",
+			"Coldstore/map.png"), "coldstore 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_ColdStore_A.png"), "coldstore 冷库立面",

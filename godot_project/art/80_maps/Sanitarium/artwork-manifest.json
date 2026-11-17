@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "sanitarium",
+  "name": "旧传染病疗养院地下室",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Sanitarium/map.png",
+    "sha256": "ac0bae9721fc7636d1618182a5bbf40edc00d59a806d5c0694f54ba5d6facaeb",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1752,
+      897
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Sanitarium_CagePanel",
+      "path": "res://art/30_props/PRP_Sanitarium_CagePanel.png",
+      "size": [
+        428,
+        387
+      ],
+      "pivot": [
+        214.0,
+        387
+      ],
+      "label": "freestanding mesh isolation panel",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Sanitarium_Cot",
+      "path": "res://art/30_props/PRP_Sanitarium_Cot.png",
+      "size": [
+        647,
+        379
+      ],
+      "pivot": [
+        323.5,
+        379
+      ],
+      "label": "empty iron cot",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Sanitarium_MedCabinet",
+      "path": "res://art/30_props/PRP_Sanitarium_MedCabinet.png",
+      "size": [
+        293,
+        467
+      ],
+      "pivot": [
+        146.5,
+        467
+      ],
+      "label": "medical cupboard",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Sanitarium_XrayLightbox",
+      "path": "res://art/30_props/PRP_Sanitarium_XrayLightbox.png",
+      "size": [
+        385,
+        269
+      ],
+      "pivot": [
+        192.5,
+        269
+      ],
+      "label": "x-ray lightbox",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Sanitarium_SampleFridge",
+      "path": "res://art/30_props/PRP_Sanitarium_SampleFridge.png",
+      "size": [
+        272,
+        404
+      ],
+      "pivot": [
+        136.0,
+        404
+      ],
+      "label": "specimen refrigerator",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Sanitarium_WarmingStove",
+      "path": "res://art/30_props/PRP_Sanitarium_WarmingStove.png",
+      "size": [
+        269,
+        456
+      ],
+      "pivot": [
+        134.5,
+        456
+      ],
+      "label": "warming stove",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Sanitarium_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Sanitarium/map_night.png",
+      "sha256": "2a7132bd1b3934ece1ceb3dcb47885b0c589eff3a03f063d324fec89a3f432da",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

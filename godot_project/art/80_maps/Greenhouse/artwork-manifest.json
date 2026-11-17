@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "greenhouse",
+  "name": "温室大棚",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Greenhouse/map.png",
+    "sha256": "e032cdb47194458727f38f54d5e8eb556408e42e052d2f0d1de2ef1c7cd3a371",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1903,
+      826
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Greenhouse_RyeBed",
+      "path": "res://art/30_props/PRP_Greenhouse_RyeBed.png",
+      "size": [
+        1050,
+        352
+      ],
+      "pivot": [
+        525.0,
+        352
+      ],
+      "label": "raised soil bed with rye sprouts",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Greenhouse_RyeCrate",
+      "path": "res://art/30_props/PRP_Greenhouse_RyeCrate.png",
+      "size": [
+        349,
+        335
+      ],
+      "pivot": [
+        174.5,
+        335
+      ],
+      "label": "rye-seed crate",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Greenhouse_SeedLocker",
+      "path": "res://art/30_props/PRP_Greenhouse_SeedLocker.png",
+      "size": [
+        321,
+        790
+      ],
+      "pivot": [
+        160.5,
+        790
+      ],
+      "label": "electric seed locker",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Greenhouse_FertilizerSacks",
+      "path": "res://art/30_props/PRP_Greenhouse_FertilizerSacks.png",
+      "size": [
+        518,
+        358
+      ],
+      "pivot": [
+        259.0,
+        358
+      ],
+      "label": "fertilizer sacks",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Greenhouse_WaterChest",
+      "path": "res://art/30_props/PRP_Greenhouse_WaterChest.png",
+      "size": [
+        419,
+        386
+      ],
+      "pivot": [
+        209.5,
+        386
+      ],
+      "label": "cold-water chest",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Greenhouse_Brazier",
+      "path": "res://art/30_props/PRP_Greenhouse_Brazier.png",
+      "size": [
+        263,
+        379
+      ],
+      "pivot": [
+        131.5,
+        379
+      ],
+      "label": "oil-drum brazier",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Greenhouse_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Greenhouse/map_night.png",
+      "sha256": "698a89a990517b3391ac0569377ed381a0ba0fe5670bdf03c1a5481a295f580f",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

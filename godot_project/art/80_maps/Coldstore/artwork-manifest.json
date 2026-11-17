@@ -1,0 +1,129 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "coldstore",
+  "name": "城北四号铁路冷库",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Coldstore/map.png",
+    "sha256": "cc3e5048c7f2b03e566a25e9d5b1962a0c0454ab3eb07f49e94e9477fa3710f5",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": "RGBA true alpha"
+  },
+  "props": [
+    {
+      "id": "PRP_Coldstore_FanUnit",
+      "path": "res://art/30_props/PRP_Coldstore_FanUnit.png",
+      "size": [
+        473,
+        245
+      ],
+      "pivot": [
+        236.5,
+        245
+      ],
+      "label": "refrigeration fan unit",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Coldstore_CardTerminal",
+      "path": "res://art/30_props/PRP_Coldstore_CardTerminal.png",
+      "size": [
+        167,
+        339
+      ],
+      "pivot": [
+        83.5,
+        339
+      ],
+      "label": "red-lit card terminal",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Coldstore_RationPallet",
+      "path": "res://art/30_props/PRP_Coldstore_RationPallet.png",
+      "size": [
+        359,
+        318
+      ],
+      "pivot": [
+        179.5,
+        318
+      ],
+      "label": "ration crate pallet",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Coldstore_VaultColumn",
+      "path": "res://art/30_props/PRP_Coldstore_VaultColumn.png",
+      "size": [
+        161,
+        415
+      ],
+      "pivot": [
+        80.5,
+        415
+      ],
+      "label": "vault column",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Coldstore_VaultDoor",
+      "path": "res://art/30_props/PRP_Coldstore_VaultDoor.png",
+      "size": [
+        490,
+        415
+      ],
+      "pivot": [
+        245.0,
+        415
+      ],
+      "label": "cold-vault door",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Coldstore_Reefer",
+      "path": "res://art/30_props/PRP_Coldstore_Reefer.png",
+      "size": [
+        492,
+        203
+      ],
+      "pivot": [
+        246.0,
+        203
+      ],
+      "label": "reefer boxcar",
+      "alpha": "RGBA true alpha"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Coldstore_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Coldstore/map_night.png",
+      "sha256": "d43e4fa6b806903cf94b50050fc13a36201b1cdbbb889a1880f8bf9642f2413f",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

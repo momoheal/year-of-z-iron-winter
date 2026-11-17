@@ -1,0 +1,273 @@
+{
+  "schema": "year_of_z_concept_art_runtime.v1",
+  "created_on": "2026-11-17",
+  "note": "Generated concept art copied into the Godot project for in-game archive viewing; user reference images excluded.",
+  "assets": [
+    {
+      "id": "01_steel_train_buran",
+      "file": "01_steel_train_buran.webp",
+      "path": "res://art/90_concept/01_steel_train_buran.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 635534,
+      "sha256": "000d84fee418d0130d528ecf0dfa7fd14d129ebbdd4ad9e206f9ce9a3d0aff3c",
+      "source": "assets/concept_art/01_steel_train_buran.webp"
+    },
+    {
+      "id": "02_grey_patient_half_human",
+      "file": "02_grey_patient_half_human.webp",
+      "path": "res://art/90_concept/02_grey_patient_half_human.webp",
+      "family": "concept",
+      "size": [
+        1280,
+        1920
+      ],
+      "mode": "RGB",
+      "bytes": 506918,
+      "sha256": "3006911bfe5a9c20b1ce6332239025cb65bdd9b9ef1ddafc0563744fcfd5690e",
+      "source": "assets/concept_art/02_grey_patient_half_human.webp"
+    },
+    {
+      "id": "03_aleksei_stages_fixed",
+      "file": "03_aleksei_stages_fixed.webp",
+      "path": "res://art/90_concept/03_aleksei_stages_fixed.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 494386,
+      "sha256": "3a73015c8d6bf6a60e1c595b867339b3694ee505b8bda55c8d6df07f07048f68",
+      "source": "assets/concept_art/03_aleksei_stages_fixed.webp"
+    },
+    {
+      "id": "04_companions",
+      "file": "04_companions.webp",
+      "path": "res://art/90_concept/04_companions.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 523734,
+      "sha256": "5bf4720f6f534faf95227abf3a0ce68df889e2fe5a19bb90be69c65715fb6594",
+      "source": "assets/concept_art/04_companions.webp"
+    },
+    {
+      "id": "05_supporting_characters",
+      "file": "05_supporting_characters.webp",
+      "path": "res://art/90_concept/05_supporting_characters.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 507522,
+      "sha256": "f038549183e72c55560b0c76f4a4acf795138796a58a94bb69f7f6cb03f8682b",
+      "source": "assets/concept_art/05_supporting_characters.webp"
+    },
+    {
+      "id": "06_aleksei_actions",
+      "file": "06_aleksei_actions.webp",
+      "path": "res://art/90_concept/06_aleksei_actions.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 562184,
+      "sha256": "86d4d36b73037112a31454d5d1005d6f333012d79c73365bda3489bf3940705d",
+      "source": "assets/concept_art/06_aleksei_actions.webp"
+    },
+    {
+      "id": "07_aleksei_endings",
+      "file": "07_aleksei_endings.webp",
+      "path": "res://art/90_concept/07_aleksei_endings.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 618252,
+      "sha256": "3c101e5be49f932e0a885000dbec6510419aae5bc6247065a6026194dec407a4",
+      "source": "assets/concept_art/07_aleksei_endings.webp"
+    },
+    {
+      "id": "08_supporting_women",
+      "file": "08_supporting_women.webp",
+      "path": "res://art/90_concept/08_supporting_women.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 531522,
+      "sha256": "e272a5d62c996c9e9e392193fa4af532e19405db9363a45b42cb51276c297ddc",
+      "source": "assets/concept_art/08_supporting_women.webp"
+    },
+    {
+      "id": "09_supporting_men",
+      "file": "09_supporting_men.webp",
+      "path": "res://art/90_concept/09_supporting_men.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 527982,
+      "sha256": "092cccbca17b245e2ca2178fe9ad741ba90640180fd3ba49ce9d77da7feea8e7",
+      "source": "assets/concept_art/09_supporting_men.webp"
+    },
+    {
+      "id": "10_lana_others",
+      "file": "10_lana_others.webp",
+      "path": "res://art/90_concept/10_lana_others.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 535722,
+      "sha256": "2ab175e6bacb578ffcc5d449de9c814e92a9f69d42d480740aff8c1f45d4f429",
+      "source": "assets/concept_art/10_lana_others.webp"
+    },
+    {
+      "id": "11_osk_team",
+      "file": "11_osk_team.webp",
+      "path": "res://art/90_concept/11_osk_team.webp",
+      "family": "concept",
+      "size": [
+        1920,
+        1280
+      ],
+      "mode": "RGB",
+      "bytes": 572798,
+      "sha256": "35335c078272a51297d9a0e8ae0982f8b4b0d2719ee8ce9aac4ce6f338819193",
+      "source": "assets/concept_art/11_osk_team.webp"
+    },
+    {
+      "id": "CON_01_Novorsk17_Lighting_Script",
+      "file": "CON_01_Novorsk17_Lighting_Script.jpg",
+      "path": "res://art/90_concept/CON_01_Novorsk17_Lighting_Script.jpg",
+      "family": "concept",
+      "size": [
+        1376,
+        768
+      ],
+      "mode": "RGB",
+      "bytes": 915434,
+      "sha256": "d4e40a5525637226965a0cfb44acaf9535b0e7f8fc18022b7fcd28c886db263f",
+      "source": "assets/concept_art/CON_01_Novorsk17_Lighting_Script.jpg"
+    },
+    {
+      "id": "CON_02_Character_TriState_Sheet",
+      "file": "CON_02_Character_TriState_Sheet.jpg",
+      "path": "res://art/90_concept/CON_02_Character_TriState_Sheet.jpg",
+      "family": "concept",
+      "size": [
+        1376,
+        768
+      ],
+      "mode": "RGB",
+      "bytes": 798017,
+      "sha256": "e4eb06ff9e89ff747b7f4140aac2d9131dcb22771507295ec973b645b4fac750",
+      "source": "assets/concept_art/CON_02_Character_TriState_Sheet.jpg"
+    },
+    {
+      "id": "CON_03_Diegetic_Work_Logbook",
+      "file": "CON_03_Diegetic_Work_Logbook.jpg",
+      "path": "res://art/90_concept/CON_03_Diegetic_Work_Logbook.jpg",
+      "family": "concept",
+      "size": [
+        1376,
+        768
+      ],
+      "mode": "RGB",
+      "bytes": 1030253,
+      "sha256": "700d3eab6438f5ae16ab7c0968b3aa1d76542d7fc112bd254e49b5b5c08e3e44",
+      "source": "assets/concept_art/CON_03_Diegetic_Work_Logbook.jpg"
+    },
+    {
+      "id": "CON_04_Pasha_DummyTower",
+      "file": "CON_04_Pasha_DummyTower.png",
+      "path": "res://art/90_concept/CON_04_Pasha_DummyTower.png",
+      "family": "concept",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 3095715,
+      "sha256": "191a1308df873ef358a5186f402dbc6dfbc02dfcebd5c54fcdb16d8dfaf95f0d",
+      "source": "assets/concept_art/CON_04_Pasha_DummyTower.png"
+    },
+    {
+      "id": "CON_05_Lyudmila_ChildRescue",
+      "file": "CON_05_Lyudmila_ChildRescue.png",
+      "path": "res://art/90_concept/CON_05_Lyudmila_ChildRescue.png",
+      "family": "concept",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 2836698,
+      "sha256": "6ed1bb1e9704025abd42043e5f44d87d432f9fb4b713ced4344d8f89abe2d80a",
+      "source": "assets/concept_art/CON_05_Lyudmila_ChildRescue.png"
+    },
+    {
+      "id": "CON_06_004_BrassPlaque",
+      "file": "CON_06_004_BrassPlaque.png",
+      "path": "res://art/90_concept/CON_06_004_BrassPlaque.png",
+      "family": "concept",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 3134301,
+      "sha256": "a4e31b572cfb954a45ed08d056878b258377751639e60e21a5744f1d75144a87",
+      "source": "assets/concept_art/CON_06_004_BrassPlaque.png"
+    },
+    {
+      "id": "CON_07_666MHz_BrandingForge",
+      "file": "CON_07_666MHz_BrandingForge.png",
+      "path": "res://art/90_concept/CON_07_666MHz_BrandingForge.png",
+      "family": "concept",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 3108800,
+      "sha256": "f019f67ed79f6df28d3c32712ecf6195e3682c8b8ee170551c97e58eabd57709",
+      "source": "assets/concept_art/CON_07_666MHz_BrandingForge.png"
+    },
+    {
+      "id": "CON_08_MineNo3_SporeBlast",
+      "file": "CON_08_MineNo3_SporeBlast.png",
+      "path": "res://art/90_concept/CON_08_MineNo3_SporeBlast.png",
+      "family": "concept",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 3302788,
+      "sha256": "ffd7512facf0c0a90e5be34a044ca10f18ced5932302f7df2f7f31d7955c4fe0",
+      "source": "assets/concept_art/CON_08_MineNo3_SporeBlast.png"
+    }
+  ]
+}

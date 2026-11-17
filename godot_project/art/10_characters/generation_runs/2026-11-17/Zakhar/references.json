@@ -1,0 +1,7 @@
+{
+  "identity_reference": "godot_project/art/10_characters/portraits/PRT_Zakhar_Calm.png",
+  "style_reference": "godot_project/art/10_characters/portraits/PRT_Aleksei_Calm.png",
+  "initial_generation": "exec-3247be5a-dc4a-4454-8429-109c373c101c.png",
+  "text_cleanup_edit": "exec-a1a5d33e-596b-4ca5-8237-7985ddaa854f.png",
+  "route": "Codex image_gen / host_image"
+}

@@ -54,8 +54,13 @@ def process(src: Path, target: Path, prefix: str, out_dir: Path,
         cells.append(cell)
         boxes.append(bbox(cell))
 
-    max_w = max(b[2] - b[0] for b in boxes)
-    max_h = max(b[3] - b[1] for b in boxes)
+    # Include the crop's 2 px safety margin when choosing the scale. Using
+    # only the raw subject bounds can make the padded result overflow by up
+    # to four pixels and clip tall poses on the target canvas.
+    max_w = max(min(cell.width, b[2] + 2) - max(0, b[0] - 2)
+                for cell, b in zip(cells, boxes))
+    max_h = max(min(cell.height, b[3] + 2) - max(0, b[1] - 2)
+                for cell, b in zip(cells, boxes))
     scale = min((tw - 2 * PADDING) / max_w, (th - 2 * PADDING) / max_h)
     out_dir.mkdir(parents=True, exist_ok=True)
     files = {}

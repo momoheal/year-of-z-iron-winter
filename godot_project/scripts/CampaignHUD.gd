@@ -23,6 +23,7 @@ const StorySlides := preload("res://scripts/ui/StorySlides.gd")
 const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
 const Tutorial := preload("res://scripts/ui/Tutorial.gd")
 const SaveLoadMenu := preload("res://scripts/ui/SaveLoadMenu.gd")
+const ArtArchive := preload("res://scripts/ui/ArtArchive.gd")
 
 const SCREEN := Vector2(1920, 1080)
 const TOP_H := 70.0
@@ -168,6 +169,18 @@ const STORY_SPEAKERS := {
 	"督察专员": "osk",
 	"清杀队": "osk",
 }
+const STORY_PORTRAIT_NAMES := {
+	"aleksei": "Aleksei", "chernov": "Chernov", "fyodor": "Fyodor", "ivan": "Ivan",
+	"anna": "Anna", "pasha": "Pasha", "gulya": "Gulya", "lana": "Lana",
+	"pavel": "Pavel", "ash": "Ash", "leonov": "Leonov", "yelena": "Yelena",
+	"zakhar": "Zakhar", "osk": "OSK",
+}
+const MAP_ART_FOLDERS := {
+	"boiler": "Boiler", "coldstore": "Coldstore", "yard": "Yard", "underpass": "Underpass",
+	"canteen": "Canteen", "sanitarium": "Sanitarium", "market": "Market", "manor": "Manor",
+	"marshalling": "Marshalling", "mine": "MineNo3", "birch": "Birch", "workshop": "Workshop",
+	"greenhouse": "Greenhouse", "archive": "Archive",
+}
 
 var sim
 var game
@@ -184,6 +197,7 @@ var _live: Dictionary = {}
 var _story_line := 0
 var _story_beat := ""
 var _departure_error := false
+var _room_zone_view := ""          # 602 zones: mother / storage / weapons / refuge
 var _new_confirm := false          # 标题页：已有存档时「新的一局」要点两下
 var _save_warn := ""               # 自动存档失败的原因（顶栏副标题变红显示）
 var _save_warn_until := 0          # 显示到什么时候（Time.get_ticks_msec）
@@ -191,6 +205,7 @@ var _save_note_until := 0          # 「已自动存档」提示显示到什么�
 var cutscene: Node = null          # 正在播的图片幻灯（序章 / 抉择余波）；播完自己 queue_free
 var tutorial: Node = null          # 正在显示的新手引导
 var save_menu: Node = null         # 打开着的存档 / 读档面板
+var art_archive: CanvasLayer = null
 var _sub_warn_shown := false       # 副标题当前是不是警告色（只在切换时改字色，别每帧发主题变更）
 
 # 顶栏标签
@@ -429,6 +444,7 @@ func _build_top_bar() -> void:
 	h.add_child(_btn_lang)
 	var b_log := _btn("日志 (Tab)", func(): sim.logbook_open = true)
 	h.add_child(b_log)
+	h.add_child(_btn("美术档案", open_art_archive))
 	var b_help := _btn("帮助 (?)", func(): sim.help_open = true)
 	h.add_child(b_help)
 	_btn_sound = _btn("音效：开 (M)", _toggle_sound)
@@ -456,6 +472,20 @@ func _sync_sound_button() -> void:
 	if _btn_sound != null:
 		_btn_sound.text = "音效：开 (M)" if sound_on else "音效：关 (M)"
 
+
+func open_art_archive() -> void:
+	if is_instance_valid(art_archive):
+		return
+	var archive = ArtArchive.new()
+	archive.configure(String(sim.lang) if sim != null else "zh")
+	art_archive = archive
+	art_archive.tree_exited.connect(_on_art_archive_closed)
+	add_child(art_archive)
+
+
+func _on_art_archive_closed() -> void:
+	art_archive = null
+
 # ============================================================================
 # 刷新
 # ============================================================================
@@ -475,7 +505,10 @@ func _refresh(force: bool) -> void:
 	elif Time.get_ticks_msec() < _save_note_until:
 		_lbl_sub.text = "✓ 已自动存档 · 第 %d 天" % sim.day if sim.lang == "zh" else "✓ AUTOSAVED · DAY %d" % sim.day
 	else:
-		_lbl_sub.text = ("探索循环 · 夜潜 DEMO" if sim.lang == "zh" else "EXPLORATION LOOP · NIGHT RAID DEMO")
+		if bool(sim.flags.get("market_refuge_found", false)):
+			_lbl_sub.text = ("黑市栖身处已找到 · 602 室仍可返回" if sim.lang == "zh" else "MARKET REFUGE FOUND · ROOM 602 REMAINS OPEN")
+		else:
+			_lbl_sub.text = ("探索循环 · 夜潜 DEMO" if sim.lang == "zh" else "EXPLORATION LOOP · NIGHT RAID DEMO")
 	if warn != _sub_warn_shown:
 		_sub_warn_shown = warn
 		_lbl_sub.add_theme_color_override("font_color", SovietUI.BLOOD_LIT if warn else SovietUI.BONE_DIM)
@@ -497,6 +530,8 @@ func _make_sig() -> String:
 			str(sim.logbook_open), str(sim.abort_confirm)]
 	var s := "%s|%s|%d|%s|%s" % [str(sim.phase), sim.lang, sim.day, sim.mate, sim.selected_loc]
 	s += "|" + str(sim.stash) + str(sim.load) + str(sim.flags)
+	s += "|" + str(sim.base_display) + str(sim.dial_machine_bags) + str(sim.night_complete)
+	s += "|room:" + _room_zone_view
 	s += "|" + str(sim.names) + "|" + str(sim.log.size())
 	s += "|" + str(sim.mother_alive) + str(sim.dial) + str(int(sim.conscience)) + str(sim.tally)
 	s += "|" + str(sim.help_open) + str(sim.logbook_open) + str(sim.story_open) + sim.story_id
@@ -759,9 +794,17 @@ func save_menu_open() -> bool:
 	return save_menu != null and is_instance_valid(save_menu) and not save_menu.is_queued_for_deletion()
 
 
+func art_archive_open() -> bool:
+	return art_archive != null and is_instance_valid(art_archive) and not art_archive.is_queued_for_deletion()
+
+
 ## 任何一层全屏覆盖物开着（幻灯 / 引导 / 存读档面板）。
 func overlay_active() -> bool:
-	return cutscene_active() or tutorial_active() or save_menu_open()
+	return cutscene_active() or tutorial_active() or save_menu_open() or art_archive_open() or room_zones_open()
+
+
+func room_zones_open() -> bool:
+	return sim != null and sim.phase == "base" and _room_zone_view != ""
 
 
 # ---------------------------------------------------------------------------
@@ -907,6 +950,17 @@ func _build_base() -> void:
 		"One bag each day; after two without it, Mother drowns in acute pulmonary oedema. Each day you save her may leave another soul outside."),
 		FONT_SIZES["small"], Color("#6d6f66"))
 	lv.add_child(md)
+	var mother_actions := _hbox(6)
+	var b_talk := _btn(_tr("和妈妈说话", "Talk to Mother"), _talk_to_mother)
+	b_talk.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mother_actions.add_child(b_talk)
+	var b_fluid := _btn(_tr("交透析液 ×1", "Give dialysis fluid ×1"), _hand_dial_to_mother)
+	b_fluid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b_fluid.disabled = not sim.mother_alive or int(sim.stash.get("dial", 0)) < 1 or sim.dial_machine_bags >= 3
+	mother_actions.add_child(b_fluid)
+	lv.add_child(mother_actions)
+	lv.add_child(_label(_tr("机器旁已放置：%d 袋", "%d bag(s) by the machine") % sim.dial_machine_bags,
+		FONT_SIZES["small"], Color("#a7e8bf") if sim.dial_machine_bags > 0 else Color("#6d6f66")))
 
 	lv.add_child(_sep())
 	lv.add_child(_label(_tr("良知", "CONSCIENCE"), FONT_SIZES["body"], Color("#928c7c")))
@@ -948,6 +1002,9 @@ func _build_base() -> void:
 		nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		line.add_child(nm)
 		line.add_child(_label("×%d" % int(r["n"]), FONT_SIZES["body"], Color("#928c7c")))
+		line.add_child(_btn(_tr("收起" if sim.base_display.has("item:" + String(r["id"])) else "陈列",
+			"Put away" if sim.base_display.has("item:" + String(r["id"])) else "Display"),
+			func(): _toggle_base_display("item:" + String(r["id"]))))
 		sv.add_child(line)
 	stash_scroll.add_child(sv)
 	lv.add_child(stash_scroll)
@@ -991,6 +1048,31 @@ func _build_base() -> void:
 	obj_panel.add_theme_stylebox_override("panel", _sb(Color("#141a12"), Color("#c8a257"), 7))
 	obj_panel.add_child(_label(sim.objective_text(), FONT_SIZES["body"], Color("#e3ddcd")))
 	rv.add_child(obj_panel)
+	rv.add_child(_btn(_tr("进入 602 室 · 房间分区", "Enter Room 602 · room zones"),
+		func(): _open_room_zones("mother"), true))
+	var display_panel := _panel()
+	var display_box := _vbox(4)
+	display_box.add_child(_label(_tr("602 室陈列架 · 最多 4 件", "Room 602 display · up to 4 items"),
+		FONT_SIZES["small"], Color("#c8a257")))
+	if sim.base_display.is_empty():
+		display_box.add_child(_label(_tr("空着。可从库存或武器库选择陈列。", "Empty. Display items from the stash or weapon rack."),
+			FONT_SIZES["small"], Color("#6d6f66")))
+	else:
+		for ref in sim.base_display:
+			var display_row := _hbox(6)
+			var display_name := _label(sim.base_display_name(ref), FONT_SIZES["small"], Color("#d8d1bf"))
+			display_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			display_row.add_child(display_name)
+			display_row.add_child(_btn(_tr("收起", "Put away"), func(): _toggle_base_display(ref)))
+			display_box.add_child(display_row)
+	display_panel.add_child(display_box)
+	rv.add_child(display_panel)
+	if bool(sim.flags.get("vikina_clue_pending", false)):
+		rv.add_child(_btn(_tr("听维京娜说话 · 楼道里", "Talk to Vikina · in the hall"), _hear_vikina, true))
+	elif bool(sim.flags.get("archive_lead", false)):
+		rv.add_child(_label(_tr("维京娜提到档案馆留有 0420 号电报底单；阿列克谢已决定去查。",
+			"Vikina mentioned the telegram copy for file 0420. Aleksei has decided to search the archive."),
+			FONT_SIZES["small"], Color("#a7e8bf")))
 	rv.add_child(_label(_tr("地点", "Locations"), FONT_SIZES["small"], Color("#6d6f66")))
 	var loc_scroll := ScrollContainer.new()
 	loc_scroll.custom_minimum_size = Vector2(0, 300)
@@ -1040,6 +1122,9 @@ func _build_base() -> void:
 	var brow := _hbox(8)
 	var b_map := _btn(_tr("去城市地图", "City map"), open_map, true)
 	b_map.custom_minimum_size = Vector2(300, 46)
+	b_map.disabled = sim.night_complete
+	if sim.night_complete:
+		b_map.tooltip_text = _tr("今晚已结算；睡到明天后才能再次出发。", "Tonight is settled. Sleep before departing again.")
 	brow.add_child(b_map)
 	brow.add_child(_btn(_tr("睡到明天（Enter）", "Sleep (Enter)"), _sleep))
 	brow.add_child(_btn(_tr("结局预览", "Ending preview"), func(): sim.phase = "ending"))
@@ -1091,6 +1176,10 @@ func _weapon_row(w: Dictionary) -> Control:
 		Color("#e3ddcd") if own else Color("#6d6f66"))
 	nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(nm)
+	if own:
+		var ref := "weapon:" + String(w.get("id", ""))
+		top.add_child(_btn(_tr("收起" if sim.base_display.has(ref) else "陈列",
+			"Put away" if sim.base_display.has(ref) else "Display"), func(): _toggle_base_display(ref)))
 	var pips := ""
 	for part in w.get("parts", []):
 		pips += "●" if int(sim.stash.get(String(part), 0)) > 0 else "○"
@@ -1110,6 +1199,41 @@ func _weapon_row(w: Dictionary) -> Control:
 
 func _sleep() -> void:
 	sim.advance_day()
+	_sig = ""
+
+
+func _talk_to_mother() -> void:
+	var id := "mother"
+	if not sim.mother_alive:
+		id = "mother_memory"
+	elif sim.dial <= 1.0 and sim.dial_machine_bags == 0:
+		id = "mother_waiting"
+	play_slides(CutsceneData.room_dialogue(id), "602 室 · 母亲", "ROOM 602 · MOTHER")
+
+
+func _hand_dial_to_mother() -> void:
+	if sim.hand_dial_to_mother():
+		play_slides(CutsceneData.room_dialogue("fluid_given"), "602 室 · 透析机旁", "ROOM 602 · BY THE DIALYSIS MACHINE")
+		_sig = ""
+
+
+func _toggle_base_display(ref: String) -> void:
+	if not sim.toggle_base_display(ref) and not sim.base_display.has(ref):
+		if sim.base_display.size() >= 4:
+			sim.add_log("陈列架最多放四件物品或武器。", "The display rack holds up to four items or weapons.")
+			_sig = ""
+		return
+	_sig = ""
+
+
+func _hear_vikina() -> void:
+	if sim.receive_vikina_lead():
+		play_slides(CutsceneData.room_dialogue("vikina_lead"), "602 室 · 一句闲话", "ROOM 602 · AN OFFHAND REMARK")
+		_sig = ""
+
+
+func _report_to_base() -> void:
+	sim.to_base()
 	_sig = ""
 
 # ============================================================================
@@ -1151,6 +1275,21 @@ func _build_map() -> void:
 	if String(L.get("story", "")) != "":
 		title.add_child(_chip(_tr("▲ 主线", "▲ STORY"), Color("#c8a257"), Color("#e0bf7e")))
 	rv.add_child(title)
+
+	# 俯视成图用于出发前辨认地点；正式潜行场景仍使用各自的碰撞与巡逻布局。
+	var map_art_path := _map_art_path(String(L["id"]))
+	if map_art_path != "":
+		var overview := TextureRect.new()
+		overview.name = "SelectedLocationArtPreview"
+		overview.texture = load(map_art_path) as Texture2D
+		overview.custom_minimum_size = Vector2(0, 145)
+		overview.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		overview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		overview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		overview.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		overview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		rv.add_child(overview)
+
 
 	var chips := _hbox(8)
 	chips.add_child(_label(_tr("危险", "DANGER"), FONT_SIZES["small"], Color("#6d6f66")))
@@ -1249,6 +1388,17 @@ func _build_map() -> void:
 	right.add_child(rv)
 	h.add_child(right)
 
+
+func _map_art_path(location_id: String) -> String:
+	if not MAP_ART_FOLDERS.has(location_id):
+		return ""
+	var base := "res://art/80_maps/%s/" % String(MAP_ART_FOLDERS[location_id])
+	for filename in ["map_night.png", "map.png"]:
+		var candidate: String = base + String(filename)
+		if ResourceLoader.exists(candidate):
+			return candidate
+	return ""
+
 func _mate_chip(id: String, txt: String, is_none: bool) -> Control:
 	var sel: bool = sim.mate == id
 	var b := _btn(txt, func(): sim.select_mate(id))
@@ -1284,6 +1434,8 @@ func _adjust_load(id: String, d: int) -> void:
 	_sig = ""
 
 func open_map() -> void:
+	if sim.night_complete:
+		return
 	if sim.first_act_pending():
 		sim.selected_loc = sim.FIRST_ACT_LOC
 	elif sim.selected_loc == "":
@@ -1493,6 +1645,23 @@ func _build_report() -> void:
 	head.add_child(ttl)
 	head.add_child(_chip(_tr("第 %d 天", "DAY %d") % int(R["day"]), Color("#343c3f")))
 	wrap.add_child(head)
+	if bool(R.get("market_refuge_found", false)):
+		var refuge_note := PanelContainer.new()
+		refuge_note.add_theme_stylebox_override("panel", _sb(Color("#141a12"), Color("#c8a257"), 7))
+		var refuge_row := _hbox(12)
+		var refuge_art := TextureRect.new()
+		refuge_art.texture = load("res://art/40_interiors/BG_Market_Hideout.png") as Texture2D
+		refuge_art.custom_minimum_size = Vector2(210, 118)
+		refuge_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		refuge_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		refuge_row.add_child(refuge_art)
+		var refuge_copy := _vbox(3)
+		refuge_copy.add_child(_label(_tr("找到黑市栖身处", "MARKET REFUGE SECURED"), FONT_SIZES["h3"], Color("#e3ddcd")))
+		refuge_copy.add_child(_label(_tr("废信号室能暂时躲开清杀队。回到 602 后，可从“房间分区”再次查看栖身处。",
+			"The abandoned signal room can hide you from OSK for now. After returning to 602, open Room Zones to revisit it."), FONT_SIZES["body"], Color("#b9b5a8")))
+		refuge_row.add_child(refuge_copy)
+		refuge_note.add_child(refuge_row)
+		wrap.add_child(refuge_note)
 
 	var cols := _hbox(12)
 	# 左列
@@ -1571,9 +1740,10 @@ func _build_report() -> void:
 	wrap.add_child(cols)
 
 	var brow := _hbox(10)
-	var b_home := _btn(_tr("回到 602 室 · 睡到明天（Enter）", "Return to Room 602 · sleep (Enter)"), _report_sleep, true)
-	b_home.custom_minimum_size = Vector2(520, 50)
+	var b_home := _btn(_tr("回到 602 室（不推进日期）", "Return to Room 602 (keep this day)"), _report_to_base, true)
+	b_home.custom_minimum_size = Vector2(420, 50)
 	brow.add_child(b_home)
+	brow.add_child(_btn(_tr("睡到明天", "Sleep until tomorrow"), _report_sleep))
 	brow.add_child(_btn(_tr("查看日志", "Logbook"), func(): sim.logbook_open = true))
 	brow.add_child(_btn(_tr("帮助", "Help"), func(): sim.help_open = true))
 	wrap.add_child(brow)
@@ -1646,6 +1816,228 @@ func _build_modal() -> void:
 		_build_abort_modal()
 	elif sim.phase == "raid" and sim.raid != null and sim.raid.choice_open:
 		_build_choice_modal()
+	elif room_zones_open():
+		_build_room_zones_modal()
+
+
+func _open_room_zones(zone: String = "mother") -> void:
+	if sim == null or sim.phase != "base":
+		return
+	_room_zone_view = zone
+	_sig = ""
+
+
+func close_room_zones() -> void:
+	_room_zone_view = ""
+	_sig = ""
+
+
+func _select_room_zone(zone: String) -> void:
+	if zone == "refuge" and not bool(sim.flags.get("market_refuge_found", false)):
+		return
+	_room_zone_view = zone
+	_sig = ""
+
+
+func _room_zone_title(zone: String) -> String:
+	match zone:
+		"mother": return _tr("母亲区域", "Mother's corner")
+		"storage": return _tr("储物区", "Storage")
+		"weapons": return _tr("武器区", "Weapons")
+		"refuge": return _tr("黑市栖身处", "Market refuge")
+	return _tr("602 室", "Room 602")
+
+
+func _room_zone_background(zone: String) -> String:
+	match zone:
+		"mother": return "res://art/40_interiors/BG_602_Mother.png"
+		"storage": return "res://art/40_interiors/BG_602_Storage.png"
+		"weapons": return "res://art/40_interiors/BG_602_Arsenal.png"
+		"refuge": return "res://art/40_interiors/BG_Market_Hideout.png"
+	return "res://art/40_interiors/BG_602_Mother.png"
+
+
+func _room_prop(parent: Control, path: String, rect: Rect2) -> void:
+	if not ResourceLoader.exists(path):
+		return
+	var prop := TextureRect.new()
+	prop.texture = load(path) as Texture2D
+	prop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	prop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	prop.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	prop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	prop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	prop.anchor_left = rect.position.x
+	prop.anchor_top = rect.position.y
+	prop.anchor_right = rect.position.x + rect.size.x
+	prop.anchor_bottom = rect.position.y + rect.size.y
+	parent.add_child(prop)
+
+
+func _build_room_zones_modal() -> void:
+	_modal_kind = "room_zones"
+	_dim(0.80)
+	var frame := PanelContainer.new()
+	frame.name = "RoomZonesPanel"
+	frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	frame.offset_left = 44.0
+	frame.offset_top = 82.0
+	frame.offset_right = -44.0
+	frame.offset_bottom = -38.0
+	frame.add_theme_stylebox_override("panel", _sb(Color("#101311"), Color("#c8a257"), 8))
+	modal.add_child(frame)
+	var page := _vbox(10)
+	frame.add_child(page)
+
+	var header := _hbox(12)
+	var title := _label(_tr("602 室 · 房间分区", "ROOM 602 · ZONES"), FONT_SIZES["h2"], Color("#e3ddcd"))
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(title)
+	header.add_child(_label(_room_zone_title(_room_zone_view), FONT_SIZES["body"], Color("#c8a257")))
+	header.add_child(_btn(_tr("关闭（Esc）", "Close (Esc)"), close_room_zones))
+	page.add_child(header)
+
+	var tabs := _hbox(8)
+	for zone in ["mother", "storage", "weapons"]:
+		var tab := _btn(_room_zone_title(zone), func(): _select_room_zone(zone), zone == _room_zone_view)
+		tab.custom_minimum_size = Vector2(180, 42)
+		tabs.add_child(tab)
+	if bool(sim.flags.get("market_refuge_found", false)):
+		var refuge_tab := _btn(_room_zone_title("refuge"), func(): _select_room_zone("refuge"), _room_zone_view == "refuge")
+		refuge_tab.custom_minimum_size = Vector2(220, 42)
+		tabs.add_child(refuge_tab)
+	page.add_child(tabs)
+
+	var content := _hbox(12)
+	content.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var art_panel := PanelContainer.new()
+	art_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	art_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	art_panel.custom_minimum_size = Vector2(920, 0)
+	art_panel.add_theme_stylebox_override("panel", _sb(Color("#080a09"), Color("#343c3f"), 6))
+	var scene := Control.new()
+	scene.name = "RoomZoneArt"
+	scene.custom_minimum_size = Vector2(900, 650)
+	scene.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scene.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var bg := TextureRect.new()
+	bg.name = "RoomZoneBackground"
+	bg.texture = load(_room_zone_background(_room_zone_view)) as Texture2D
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	bg.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	scene.add_child(bg)
+	match _room_zone_view:
+		"mother":
+			_room_prop(scene, "res://art/30_props/PRP_602_Bed_Heirloom.png", Rect2(0.10, 0.34, 0.44, 0.58))
+			_room_prop(scene, "res://art/30_props/PRP_602_DialysisMachine.png", Rect2(0.66, 0.30, 0.23, 0.62))
+		"storage":
+			_room_prop(scene, "res://art/30_props/PRP_602_StorageCrates.png", Rect2(0.16, 0.26, 0.60, 0.65))
+		"weapons":
+			_room_prop(scene, "res://art/30_props/PRP_602_WeaponRack.png", Rect2(0.15, 0.16, 0.66, 0.74))
+		"refuge":
+			_room_prop(scene, "res://art/30_props/PRP_Market_ShortwaveRadio.png", Rect2(0.34, 0.44, 0.26, 0.38))
+	var place_label := PanelContainer.new()
+	place_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	place_label.anchor_left = 0.025
+	place_label.anchor_top = 0.025
+	place_label.anchor_right = 0.61
+	place_label.anchor_bottom = 0.11
+	place_label.add_theme_stylebox_override("panel", _sb(Color(0.04, 0.05, 0.05, 0.82), Color("#c8a257"), 5))
+	var place_text := _label(_room_zone_title(_room_zone_view), FONT_SIZES["h3"], Color("#f0e5cd"))
+	place_label.add_child(place_text)
+	scene.add_child(place_label)
+	art_panel.add_child(scene)
+	content.add_child(art_panel)
+
+	var actions_panel := PanelContainer.new()
+	actions_panel.custom_minimum_size = Vector2(470, 0)
+	actions_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	actions_panel.add_theme_stylebox_override("panel", _sb(Color("#171b18"), Color("#45483e"), 6))
+	var actions_scroll := ScrollContainer.new()
+	actions_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	actions_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var actions := _vbox(10)
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if _room_zone_view == "mother":
+		_build_mother_zone(actions)
+	elif _room_zone_view == "storage":
+		_build_storage_zone(actions)
+	elif _room_zone_view == "weapons":
+		_build_weapon_zone(actions)
+	elif _room_zone_view == "refuge":
+		_build_refuge_zone(actions)
+	actions_scroll.add_child(actions)
+	actions_panel.add_child(actions_scroll)
+	content.add_child(actions_panel)
+	page.add_child(content)
+
+
+func _build_mother_zone(actions: VBoxContainer) -> void:
+	actions.add_child(_label(_tr("透析与遗物", "Dialysis and keepsakes"), FONT_SIZES["h3"], Color("#e3ddcd")))
+	if sim.mother_alive:
+		actions.add_child(_label(_tr("母亲仍在等待。把找到的透析液放到机器旁，睡到明天时会自动更换。",
+			"Mother is still waiting. Set dialysis fluid beside the machine; it will be used when you sleep."), FONT_SIZES["body"], Color("#b9b5a8")))
+		var talk := _btn(_tr("和妈妈说话", "Talk to Mother"), _talk_to_mother, true)
+		actions.add_child(talk)
+		var fluid := _btn(_tr("交给妈妈一袋透析液 ×1", "Give Mother one bag of dialysis fluid"), _hand_dial_to_mother)
+		fluid.disabled = int(sim.stash.get("dial", 0)) < 1 or sim.dial_machine_bags >= 3
+		actions.add_child(fluid)
+		actions.add_child(_label(_tr("机器旁已放置：%d 袋", "%d bag(s) beside the machine") % sim.dial_machine_bags,
+			FONT_SIZES["small"], Color("#a7e8bf") if sim.dial_machine_bags > 0 else Color("#928c7c")))
+	else:
+		actions.add_child(_label(_tr("透析机停了。母亲的床和围巾留在这里；602 室仍是她的纪念地。",
+			"The dialysis machine has stopped. Her bed and scarf remain here; Room 602 is still her memorial."), FONT_SIZES["body"], Color("#b9b5a8")))
+		actions.add_child(_btn(_tr("想起妈妈", "Remember Mother"), _talk_to_mother, true))
+
+
+func _build_storage_zone(actions: VBoxContainer) -> void:
+	actions.add_child(_label(_tr("收集品与陈列", "Supplies and display"), FONT_SIZES["h3"], Color("#e3ddcd")))
+	actions.add_child(_label(_tr("选择物品放到陈列架上；陈列不会消耗库存，最多陈列四件。",
+		"Display collected items here. Display does not consume inventory; the rack holds four items."), FONT_SIZES["small"], Color("#928c7c")))
+	actions.add_child(_label(_tr("陈列位：%d / 4", "Display slots: %d / 4") % sim.base_display.size(),
+		FONT_SIZES["small"], Color("#c8a257")))
+	var ids: Array = sim.stash.keys()
+	ids.sort()
+	if ids.is_empty():
+		actions.add_child(_label(_tr("储物箱目前是空的。", "The storage crates are empty."), FONT_SIZES["body"], Color("#928c7c")))
+	for id in ids:
+		var item_id := String(id)
+		var ref := "item:" + item_id
+		var row := _hbox(8)
+		var item_label := _label("%s %s ×%d" % [sim.item_icon(item_id), sim.item_name(item_id), int(sim.stash[item_id])],
+			FONT_SIZES["small"], Color("#d8d1bf"))
+		item_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(item_label)
+		var display := _btn(_tr("收起" if sim.base_display.has(ref) else "陈列",
+			"Put away" if sim.base_display.has(ref) else "Display"), func(): _toggle_base_display(ref))
+		display.disabled = not sim.base_display.has(ref) and sim.base_display.size() >= 4
+		row.add_child(display)
+		actions.add_child(row)
+	if not sim.base_display.is_empty():
+		actions.add_child(_sep())
+		actions.add_child(_label(_tr("陈列架上", "On display"), FONT_SIZES["small"], Color("#c8a257")))
+		for ref in sim.base_display:
+			actions.add_child(_label("• " + sim.base_display_name(ref), FONT_SIZES["small"], Color("#d8d1bf")))
+
+
+func _build_weapon_zone(actions: VBoxContainer) -> void:
+	actions.add_child(_label(_tr("武器与改造", "Weapons and modifications"), FONT_SIZES["h3"], Color("#e3ddcd")))
+	actions.add_child(_label(_tr("整理拾获的武器，也可将已拥有的武器陈列到房间里。",
+		"Review recovered weapons and display owned ones in the room."), FONT_SIZES["small"], Color("#928c7c")))
+	for weapon in Data.WEAPONS:
+		actions.add_child(_weapon_row(weapon))
+
+
+func _build_refuge_zone(actions: VBoxContainer) -> void:
+	actions.add_child(_label(_tr("临时据点 · 旧铁路信号室", "TEMPORARY BASE · ABANDONED SIGNAL ROOM"), FONT_SIZES["h3"], Color("#e3ddcd")))
+	actions.add_child(_label(_tr("这里能暂时避开清杀队，但不是家。602 室仍保存着母亲留下的东西；维京娜的闲话也指向拉娜的线索。",
+		"This room can hide you from OSK for now, but it is not home. Mother's things remain in Room 602, and Vikina's offhand remark still points toward Lana."), FONT_SIZES["body"], Color("#b9b5a8")))
+	actions.add_child(_btn(_tr("听一听短波与伊万的留言", "Listen to the shortwave and Ivan's note"),
+		func(): play_slides(CutsceneData.room_dialogue("market_refuge"), "黑市栖身处", "MARKET REFUGE"), true))
+	actions.add_child(_label(_tr("临时栖身处已记录到存档。", "Temporary refuge recorded in the save."), FONT_SIZES["small"], Color("#a7e8bf")))
 
 func _dim(alpha: float = 0.82) -> ColorRect:
 	var d := ColorRect.new()
@@ -1804,6 +2196,13 @@ func _story_texture(line: Dictionary) -> Texture2D:
 	if role == "" or not STORY_PORTRAITS.has(role):
 		return null
 	var mood := String(line.get("mood", "calm"))
+	# 新增的 Fear / Determined / Hurt 肖像在剧情明确使用这些情绪时自动读取；
+	# 既有 calm / sad / intense / wry 映射保持原样。
+	if STORY_PORTRAIT_NAMES.has(role) and mood in ["fear", "determined", "hurt"]:
+		var variant_path := "res://art/10_characters/portraits/PRT_%s_%s.png" % [
+			String(STORY_PORTRAIT_NAMES[role]), mood.capitalize()]
+		if ResourceLoader.exists(variant_path):
+			return load(variant_path) as Texture2D
 	return STORY_PORTRAITS[role].get(mood, STORY_PORTRAITS[role]["calm"])
 
 

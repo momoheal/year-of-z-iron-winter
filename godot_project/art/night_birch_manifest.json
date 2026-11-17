@@ -592,5 +592,82 @@
    0,
    0
   ]
+ },
+ "MAP_Birch_Overview": {
+  "path": "res://art/80_maps/Birch/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Birch_WhiteBarkedTree": {
+  "path": "res://art/30_props/PRP_Birch_WhiteBarkedTree.png",
+  "size": [
+   305,
+   474
+  ],
+  "pivot": [
+   152.5,
+   474
+  ]
+ },
+ "PRP_Birch_HunterShack": {
+  "path": "res://art/30_props/PRP_Birch_HunterShack.png",
+  "size": [
+   519,
+   530
+  ],
+  "pivot": [
+   259.5,
+   530
+  ]
+ },
+ "PRP_Birch_AidCache": {
+  "path": "res://art/30_props/PRP_Birch_AidCache.png",
+  "size": [
+   291,
+   258
+  ],
+  "pivot": [
+   145.5,
+   258
+  ]
+ },
+ "PRP_Birch_WoodCrateStack": {
+  "path": "res://art/30_props/PRP_Birch_WoodCrateStack.png",
+  "size": [
+   338,
+   335
+  ],
+  "pivot": [
+   169.0,
+   335
+  ]
+ },
+ "PRP_Birch_ElectricLocker": {
+  "path": "res://art/30_props/PRP_Birch_ElectricLocker.png",
+  "size": [
+   351,
+   442
+  ],
+  "pivot": [
+   175.5,
+   442
+  ]
+ },
+ "PRP_Birch_Brazier": {
+  "path": "res://art/30_props/PRP_Birch_Brazier.png",
+  "size": [
+   194,
+   366
+  ],
+  "pivot": [
+   97.0,
+   366
+  ]
  }
 }

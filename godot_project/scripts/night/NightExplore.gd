@@ -36,6 +36,15 @@ const SovietChrome := preload("res://scripts/ui/SovietChrome.gd")
 const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
 const PauseMenuScript := preload("res://scripts/ui/PauseMenu.gd")
 const NavGridScript := preload("res://scripts/night/NavGrid.gd")
+const NightMiniMapScript := preload("res://scripts/night/NightMiniMap.gd")
+
+const MAP_ART_DIRS := {
+	"yard": "Yard", "marshalling": "Marshalling", "manor": "Manor",
+	"mine": "MineNo3", "market": "Market", "coldstore": "Coldstore",
+	"canteen": "Canteen", "sanitarium": "Sanitarium", "boiler": "Boiler",
+	"underpass": "Underpass", "greenhouse": "Greenhouse", "archive": "Archive",
+	"workshop": "Workshop", "birch": "Birch",
+}
 
 const PPM := 64.0
 const SQ := 0.62
@@ -47,6 +56,7 @@ const WARMTH_FIRE := 7.0
 const CAN_RANGE := 9.0
 const CAN_NOISE := 9.0
 const CORPSE_CATS := ["med", "val", "intel"]
+const OSK_SUPPLY_CATS := ["med", "part"]
 const YELENA_STOP_RANGE := 12.0
 const YELENA_STOP_SECONDS := 8.0
 const YELENA_STOP_COOLDOWN := 25.0
@@ -107,6 +117,9 @@ var level_en := "Broad-Gauge Freight Yard"
 var objective_zh := "目标：三号车厢的透析液（门口有狂暴者）· 用 G 罐头把它引进清杀队的光锥"
 var extract_zh := "回锅炉房通风口撤离"     # 提示里会补「（长按 E）」，别自己再写一遍
 var prize := "dial"            # 本关的关键物资（yard = 妈妈的透析液）
+var map_bounds_px := Vector2.ZERO
+var map_art_day: Texture2D
+var map_art_night: Texture2D
 var rail_y: Array = []         # 铁轨中心线（米）→ 脚步材质
 
 # 天亮（P1.5）
@@ -119,7 +132,7 @@ var shake := 0.0               # 创伤量 0..1（实际位移按 shake²）
 var punch := 0.0               # 受伤时的推镜量
 var _shake_t := 0.0
 
-var state := "play"            # play | choice | caught | frozen | downed | extracted | dawn | abort
+var state := "play"            # play | choice | modding | frozen | downed | extracted | dawn | abort
 var pack: Array[String] = []
 var warmth := 100.0
 var hp := 100.0
@@ -130,6 +143,9 @@ var _zakhar_betrayed := false
 var _yelena_stop_cooldown := 0.0
 var hurt := 0.0                # 受伤闪红计时
 var borrowed := 0              # 借刀杀人：清杀队替你清掉的狂暴者
+var companion_kills := 0        # 伙伴协助击杀（狂暴者 / 清杀兵）
+var kill_squad_engaged := false
+var downed_by_osk := false
 var rabids: Array = []
 var halfs: Array = []
 var searchlights: Array = []
@@ -161,6 +177,7 @@ var w_idx := 0
 var weapon := "crowbar"
 var mag: Dictionary = {}                  # 武器 id → 弹匣内
 var reserve: Dictionary = {}              # 武器 id → 备弹
+var weapon_mods: Dictionary = {}          # 武器 id → 已安装的改造件 id 列表
 var cool := 0.0                           # 攻击冷却
 var reload_left := 0.0                    # 装填剩余时间（>0 = 正在装填）
 var swing_t := 0.0                        # 挥击动画剩余时间
@@ -174,6 +191,7 @@ var rabid_kills := 0
 var _w_sprite: Sprite2D = null
 var _flash_sprite: Sprite2D = null
 var _flash_light: PointLight2D = null
+var osk_rifle_recovered := false
 var search_target: Node2D = null
 var search_prog := 0.0
 var extract_prog := 0.0
@@ -187,7 +205,6 @@ var _lock_hint_t := 0.0
 var slush: Array = []          # [center_m: Vector2, radii_m: Vector2]
 var warm_lights: Array = []    # [pos_px, radius_m]
 var fade_props: Array = []
-var caught_by := ""
 var muted := false
 var t := 0.0
 
@@ -213,6 +230,7 @@ var _lbl_zone: Label
 var _lbl_bag: Label
 var _lbl_hint: Label
 var _lbl_center: Label
+var _btn_end_return: Button
 var _lbl_clock: Label
 var _lbl_target: Label
 var _lbl_bearing: Label
@@ -220,6 +238,7 @@ var _lbl_exit: Label
 var _lbl_threat: Label
 var _lbl_landmarks: Label
 var _lbl_weapon: Label
+var _minimap: Control
 var _m_warm
 var _m_hp
 var _lbl_warm_val: Label
@@ -230,6 +249,8 @@ var _brief_lbl: Label
 var _choice_panel: PanelContainer
 var _choice_head: Label
 var _choice_lbl: Label
+var _weapon_mod_panel: PanelContainer
+var _weapon_mod_label: Label
 var _osk_bark_panel: PanelContainer = null
 var _osk_bark_portrait: TextureRect = null
 var _osk_bark_speaker: Label = null
@@ -284,6 +305,7 @@ func _ready() -> void:
 	sfx.name = "NightSfx"
 	add_child(sfx)
 	_read_level_meta()
+	_install_generated_map_art()
 	# 室内关（食堂后厨 / 疗养院地下室）：关全屏飘雪、抬底光、风声退到窗外 + 房间低鸣
 	if level_id in INTERIOR_LEVELS:
 		for p in [snow_back, snow_front]:
@@ -297,6 +319,8 @@ func _ready() -> void:
 	# P1: 战役出发 → 读 cfg 初始化背包 / 携带物 / 天亮倒计时；F2 独立跑用灰盒默认。
 	in_campaign = RaidBridge.active
 	var cfg: Dictionary = RaidBridge.cfg if in_campaign else {}
+	var mods_v: Variant = cfg.get("weapon_mods", {})
+	weapon_mods = (mods_v as Dictionary).duplicate(true) if mods_v is Dictionary else {}
 	if in_campaign:
 		bag_max = int(cfg.get("pack_max", 8))
 		var ld: Dictionary = cfg.get("load", {})
@@ -389,7 +413,9 @@ func _spawn_follower() -> void:
 			return                                  # 战役这一夜没带伙伴 → 无跟随者
 	else:
 		mate_id = "ash"
-		for a in OS.get_cmdline_args():
+		var mate_args: PackedStringArray = OS.get_cmdline_args()
+		mate_args.append_array(OS.get_cmdline_user_args())
+		for a in mate_args:
 			if a.begins_with("--mate="):
 				mate_id = a.substr(7)
 	var script = load("res://scripts/night/NightFollower.gd")
@@ -414,7 +440,45 @@ func _build_nav() -> void:
 	if ground == null or ground.texture == null:
 		return
 	nav = NavGridScript.new()
-	nav.build(self, ground.texture.get_size(), 13.0)
+	var bounds := map_bounds_px if map_bounds_px.x > 0.0 else Vector2(ground.texture.get_size()) * ground.scale.abs()
+	nav.build(self, bounds, 13.0)
+
+
+## 把已生成的完整地图画作放入实际夜潜关卡。原地面尺寸作为玩法边界保留，
+## 只替换底图像素；场景中的碰撞、互动道具、动态角色和灯光仍按原坐标工作。
+func _install_generated_map_art() -> void:
+	var ground := get_node_or_null("Ground") as Sprite2D
+	if ground == null or ground.texture == null:
+		return
+	map_bounds_px = Vector2(ground.texture.get_size()) * ground.scale.abs()
+	var folder := String(MAP_ART_DIRS.get(level_id, ""))
+	if folder == "":
+		return
+	var base := "res://art/80_maps/%s/" % folder
+	var day_path := base + "map.png"
+	var night_path := base + "map_night.png"
+	if not ResourceLoader.exists(day_path):
+		return
+	map_art_day = load(day_path) as Texture2D
+	if ResourceLoader.exists(night_path):
+		map_art_night = load(night_path) as Texture2D
+	if map_art_day == null:
+		return
+	ground.texture = map_art_day
+	ground.centered = false
+	ground.scale = Vector2(map_bounds_px.x / float(map_art_day.get_width()),
+		map_bounds_px.y / float(map_art_day.get_height()))
+	ground.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	# Outdoor map art is darker than the old baked floor; compensate for the shared night grade.
+	# Indoor levels keep their lighter interior grade unchanged.
+	ground.modulate = Color(1.65, 1.65, 1.65, 1.0) if level_id not in INTERIOR_LEVELS else Color.WHITE
+	# Keep the old facade only in the camera's non-playable north padding. Its full original
+	# texture would otherwise cover the north edge of the generated map plate.
+	var old_facade := get_node_or_null("World/Facade/Sprite") as Sprite2D
+	if old_facade != null and old_facade.texture != null:
+		old_facade.region_enabled = true
+		old_facade.region_rect = Rect2(0.0, 0.0, float(old_facade.texture.get_width()),
+			minf(480.0, float(old_facade.texture.get_height())))
 
 
 func _init_post_defaults() -> void:
@@ -532,6 +596,8 @@ func _process(delta: float) -> void:
 				_osk_bark_panel.visible = false
 	cam.global_position = player.global_position + Vector2(0, -40)
 	_apply_shake(delta)
+	if _minimap != null and is_instance_valid(_minimap):
+		_minimap.queue_redraw()
 	if state == "play":
 		_update_zone(delta)
 		_update_interact(delta)
@@ -929,14 +995,43 @@ func _finish_search(c: Node2D) -> void:
 
 
 func _finish_corpse_search(body: Node2D) -> void:
+	if bool(body.get_meta("corpse_searched", false)):
+		return
 	body.set_meta("corpse_searched", true)
-	var count := 2 if mate_id == "zakhar" else 1
-	var got := _roll_items(CORPSE_CATS, count)
-	_award_loot_items(got, body.global_position, "尸体搜刮")
+	if body.is_in_group("night_osk"):
+		_collect_osk_corpse(body)
+	else:
+		var count := 2 if mate_id == "zakhar" else 1
+		var got := _roll_items(CORPSE_CATS, count)
+		_award_loot_items(got, body.global_position, "尸体搜刮")
 	emit_noise(body.global_position, 1.5, "search")
 	sfx.play("beep")
 	search_target = null
 	search_prog = 0.0
+
+
+func _collect_osk_corpse(body: Node2D) -> void:
+	var id := String(body.get("loot_weapon_id"))
+	if not Arsenal.is_gun(id):
+		id = "rifle"
+	if id == "rifle":
+		osk_rifle_recovered = true
+	var acquired := not weapons.has(id)
+	if acquired:
+		_add_weapon(id)
+	else:
+		var spec: Dictionary = Arsenal.spec(id)
+		var cap := int(spec.get("mag", 0))
+		var reserve_cap := int(spec.get("reserve_max", 0))
+		mag[id] = mini(cap, int(mag.get(id, 0)) + maxi(1, int(cap / 2.0)))
+		reserve[id] = mini(reserve_cap, int(reserve.get(id, 0)) + maxi(2, int(int(spec.get("reserve", 0)) / 3.0)))
+	var weapon_note := "缴获武器：%s" % Arsenal.name_zh(id)
+	if not acquired:
+		weapon_note += " · 弹匣与备弹已补充"
+	spawn_float(body.global_position + Vector2(0, -142), weapon_note, Color("#7dd3fc"))
+	var count := 2 if mate_id == "zakhar" else 1
+	var got := _roll_items(OSK_SUPPLY_CATS, count)
+	_award_loot_items(got, body.global_position, "清杀队补给")
 
 
 func _roll_items(cats: Array, count: int) -> Array[String]:
@@ -1134,15 +1229,41 @@ func damage_player(amount: float, _by: Node) -> void:
 	if state != "play":
 		return
 	hp = maxf(0.0, hp - amount)
+	downed_by_osk = is_instance_valid(_by) and _by.is_in_group("night_osk")
 	hurt = 0.35
 	# 被咬：颅内的闷响 + 定位在伤口上的撕咬声 + 一脚踹在镜头上
 	sfx.play("bonejam", -8.0)
 	add_shake(0.55)
 	punch = 1.0
-	emit_noise(player.global_position, 6.0, "hit")
-	spawn_float(player.global_position + Vector2(0, -120), "-%d 被咬了！" % int(amount), Color("#f87171"))
+	emit_noise(player.global_position, 6.0, "hit", downed_by_osk)
+	var injury := "枪击" if downed_by_osk else "被咬了"
+	spawn_float(player.global_position + Vector2(0, -120), "-%d %s！" % [int(amount), injury], Color("#f87171"))
 	if hp <= 0.0:
 		_check_downed()
+
+
+## 清杀队看见玩家后进入交火；发现本身不结束夜潜。
+func on_soldier_opened_fire(_by: Node) -> void:
+	if state != "play" or kill_squad_engaged:
+		return
+	kill_squad_engaged = true
+	show_osk_bark("execute")
+	spawn_float(player.global_position + Vector2(0, -148), "清杀队锁定了你！找掩体或还击。", Color("#fca5a5"))
+	add_shake(0.32)
+
+
+## 清杀兵射击：有枪声、枪线与玩家伤害；掩体会阻止其获得视线并开火。
+func soldier_fire_player(s: Node2D, at: Vector2) -> void:
+	if state != "play" or not is_instance_valid(s) or not s.has_method("is_alive") \
+		or not bool(s.call("is_alive")):
+		return
+	var muzzle_light := s.get_node_or_null("Muzzle") as PointLight2D
+	if muzzle_light != null:
+		muzzle_light.energy = 3.2
+	var origin: Vector2 = s.global_position + Vector2(0, -42)
+	tracers.append({"from": origin, "to": at + Vector2(0, -40), "life": 0.07})
+	emit_noise(s.global_position, 10.0, "gun")
+	damage_player(10.0, s)
 
 func on_soldier_fired(s: Node2D, at: Vector2) -> void:
 	# 枪声的震动按距离衰减：贴脸 0.5，26 米外只剩 0.06 的闷响
@@ -1287,6 +1408,9 @@ func on_rabid_killed(r: Node2D, by: String) -> void:
 	if by == "player":
 		rabid_kills += 1
 		spawn_float(r.global_position + Vector2(0, -130), "亲手放倒 1 只狂暴者", Color("#fca5a5"))
+	elif by == "companion":
+		companion_kills += 1
+		spawn_float(r.global_position + Vector2(0, -130), "伙伴协助放倒 1 只狂暴者", Color("#7dd3fc"))
 	elif by != "":
 		borrowed += 1
 		spawn_float(r.global_position + Vector2(0, -130), "借刀杀人：清杀队替你清掉 1 只狂暴者", Color("#7dd3fc"))
@@ -1348,16 +1472,6 @@ func _betray_zakhar(source: Node) -> void:
 	spawn_float(player.global_position + Vector2(0, -158),
 		"扎哈尔用扩音器报出你的位置，转投了清杀队。", SovietUI.SIGNAL)
 
-func caught(by: Node) -> void:
-	if state != "play":
-		return
-	show_osk_bark("execute")
-	caught_by = String(by.name)
-	if by is Node2D:
-		sfx.play_at("gunshot", (by as Node2D).global_position, 0.0, 0.02)
-	add_shake(0.95)
-	_end("caught")
-
 func _check_downed() -> void:
 	## 古丽娅「每夜救一次重伤」：本夜带古丽娅且急救还没用过，hp 归零不死、拉回 40。
 	if mate_id == "gulya" and not _gulya_used:
@@ -1397,9 +1511,6 @@ func _end(reason: String) -> void:
 		"downed":
 			sfx.play("bonejam", -2.0)
 			add_shake(0.7)
-		"caught":
-			sfx.play("klaxon", -5.0)
-			add_shake(0.9)
 
 # P1: 把夜潜结果填进 RaidSim 数据容器，走 CampaignSim.finish_raid 统一结算，
 #     再切回 campaign.tscn（_ready 会 take_sim 取回原 sim）。
@@ -1417,7 +1528,7 @@ func _return_to_campaign(reason: String) -> void:
 	R.player.warmth = warmth
 	R.load = {}            # 携带消耗品已并入 pack，finish_raid 不再重复归还
 	R.half_saved = half_saved
-	R.killed = borrowed + rabid_kills    # 借刀杀人 + 亲手放倒的狂暴者
+	R.killed = borrowed + rabid_kills + companion_kills    # 借刀、亲手击杀、伙伴协助击杀
 	# 枪里的余弹带回去（战役结算里武器行显示「弹匣 / 备弹」）
 	match String(R.weapon.get("id", "")):
 		"mosin":
@@ -1435,6 +1546,8 @@ func _return_to_campaign(reason: String) -> void:
 		R.add_event("knife", "借刀杀人 ×%d" % borrowed, "Borrowed knife ×%d" % borrowed)
 	if rabid_kills > 0:
 		R.add_event("good", "亲手放倒狂暴者 ×%d" % rabid_kills, "Rabids put down ×%d" % rabid_kills)
+	if companion_kills > 0:
+		R.add_event("good", "伙伴协助击杀 ×%d" % companion_kills, "Companion assists ×%d" % companion_kills)
 	if soldier_kills > 0:
 		R.add_event("witness", "打死清杀兵 ×%d" % soldier_kills, "OSK soldiers killed ×%d" % soldier_kills)
 	if half_lost > 0:
@@ -1447,7 +1560,10 @@ func _return_to_campaign(reason: String) -> void:
 	if tally > 0:
 		sim.raid_add_tally(tally, "夜潜%s：亲手灭口" % level_zh, "%s: mercy kill" % level_en)
 	sim.sound_on = not muted        # 战役里的音效开关跟着人走
+	sim.weapon_mods = weapon_mods.duplicate(true)
 	sim.finish_raid(reason)
+	if osk_rifle_recovered and reason not in ["downed", "abort"]:
+		sim.register_salvaged_weapon("mosin")
 	get_tree().change_scene_to_file("res://scenes/campaign.tscn")
 
 func _count_searched() -> int:
@@ -1510,6 +1626,16 @@ func _on_pause_quit() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		var k := (event as InputEventKey).keycode
+		if state == "modding":
+			match k:
+				KEY_1, KEY_KP_1:
+					_toggle_weapon_mod("suppressor")
+				KEY_2, KEY_KP_2:
+					_toggle_weapon_mod("scope")
+				KEY_ESCAPE, KEY_T:
+					_close_weapon_mod_panel()
+			get_viewport().set_input_as_handled()
+			return
 		if state == "choice":
 			match k:
 				KEY_1, KEY_KP_1:
@@ -1534,6 +1660,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				muted = not muted
 				sfx.set_muted(muted)
 				AudioServer.set_bus_mute(0, muted)
+			KEY_T:
+				if state == "play":
+					_open_weapon_mod_panel()
 			KEY_C:
 				if state == "play" and mate_id == "yelena":
 					_command_yelena_stop()
@@ -1716,7 +1845,93 @@ func _add_weapon(id: String) -> void:
 
 
 func cur_w() -> Dictionary:
-	return Arsenal.spec(weapon)
+	var w: Dictionary = Arsenal.spec(weapon).duplicate(true)
+	var installed: Array = weapon_mods.get(weapon, [])
+	if installed.has("suppressor"):
+		w["noise"] = float(w.get("noise", 0.0)) * 0.28
+		w["sound_db"] = -11.0
+	if installed.has("scope"):
+		w["reach"] = float(w.get("reach", 0.0)) * 1.45
+		w["dmg"] = float(w.get("dmg", 0.0)) * 1.2
+		w["spread"] = float(w.get("spread", 0.0)) * 0.72
+	return w
+
+
+func _mod_compatible(mod_id: String, weapon_id: String) -> bool:
+	if not Arsenal.is_gun(weapon_id):
+		return false
+	if mod_id == "suppressor":
+		return weapon_id in ["pistol", "rifle"]
+	if mod_id == "scope":
+		return weapon_id == "rifle"
+	return false
+
+
+func _mod_installed(weapon_id: String, mod_id: String) -> bool:
+	var installed: Array = weapon_mods.get(weapon_id, [])
+	return installed.has(mod_id)
+
+
+func _toggle_weapon_mod(mod_id: String) -> void:
+	if not _mod_compatible(mod_id, weapon):
+		spawn_float(player.global_position + Vector2(0, -125),
+			"這件改造不適用於" + Arsenal.name_zh(weapon), Color("#fbbf24"))
+		return
+	var installed: Array = weapon_mods.get(weapon, []).duplicate()
+	if installed.has(mod_id):
+		if pack.size() >= bag_max:
+			spawn_float(player.global_position + Vector2(0, -125), "背包已滿，無法拆下改造件", Color("#fbbf24"))
+			return
+		installed.erase(mod_id)
+		pack.append(mod_id)
+		spawn_float(player.global_position + Vector2(0, -125), "已拆下" + item_name(mod_id), Color("#7dd3fc"))
+	else:
+		var slot := pack.find(mod_id)
+		if slot < 0:
+			spawn_float(player.global_position + Vector2(0, -125), "背包里没有" + item_name(mod_id), Color("#fbbf24"))
+			return
+		pack.remove_at(slot)
+		installed.append(mod_id)
+		spawn_float(player.global_position + Vector2(0, -125), "已装上" + item_name(mod_id), Color("#7dd3fc"))
+	if installed.is_empty():
+		weapon_mods.erase(weapon)
+	else:
+		weapon_mods[weapon] = installed
+	_pose_weapon(true)
+	_refresh_weapon_mod_panel()
+
+
+func _open_weapon_mod_panel() -> void:
+	if state != "play" or _weapon_mod_panel == null:
+		return
+	state = "modding"
+	player.frozen = true
+	_refresh_weapon_mod_panel()
+	_weapon_mod_panel.visible = true
+	sfx.play("click", -10.0)
+
+
+func _close_weapon_mod_panel() -> void:
+	if _weapon_mod_panel != null:
+		_weapon_mod_panel.visible = false
+	if state == "modding":
+		state = "play"
+		player.frozen = false
+	sfx.play("click", -10.0)
+
+
+func _refresh_weapon_mod_panel() -> void:
+	if _weapon_mod_label == null:
+		return
+	var suppressor_ok := _mod_compatible("suppressor", weapon)
+	var scope_ok := _mod_compatible("scope", weapon)
+	var suppressor_line := "已安装" if _mod_installed(weapon, "suppressor") else "背包 %d" % pack.count("suppressor")
+	var scope_line := "已安装" if _mod_installed(weapon, "scope") else "背包 %d" % pack.count("scope")
+	_weapon_mod_label.text = "当前武器：%s\n\n[1] 消音器：%s%s\n    枪声传播距离降低 72%%\n\n[2] 狙击镜：%s%s\n    仅步枪可用 · 射程 +45%% · 伤害 +20%%\n\nEsc / T 关闭" % [
+		Arsenal.name_zh(weapon),
+		"可装/可拆" if suppressor_ok else "不适用", " · " + suppressor_line if suppressor_ok else "",
+		"可装/可拆" if scope_ok else "不适用", " · " + scope_line if scope_ok else "",
+	]
 
 
 func cur_is_gun() -> bool:
@@ -1865,7 +2080,7 @@ func shoot() -> void:
 	var noise := float(w.get("noise", 26.0))
 	var origin: Vector2 = player.global_position + Vector2(0, -40)
 	# 声纹 + AI：枪声自己不听「gunshot」，用这支枪的音色（步枪 / 双管各有各的响）
-	sfx.play_at(String(w.get("sfx", "gunshot")), origin, 0.0, 0.02)
+	sfx.play_at(String(w.get("sfx", "gunshot")), origin, float(w.get("sound_db", 0.0)), 0.02)
 	emit_noise(player.global_position, noise, "gun", true)
 	for s in soldiers:
 		if s.is_alive() and dist_m(s.global_position, player.global_position) <= noise * 0.8:
@@ -1986,6 +2201,34 @@ func _damage_enemy(e: Node, dmg: float, by: String, melee := false) -> void:
 	e.hit(dmg, by)
 
 
+## 跟随伙伴在玩家附近自动加入交战；目标仍通过相同的生命值 / 死亡回调结算。
+func companion_attack(attacker: Node2D, target: Node2D, dmg: float) -> void:
+	if state != "play" or not is_instance_valid(attacker) or not is_instance_valid(target):
+		return
+	var ash_attack := String(attacker.get("mate_id")) == "ash"
+	var max_range := 1.75 if ash_attack else 8.2
+	if not target.has_method("is_alive") or not bool(target.call("is_alive")) \
+		or dist_m(attacker.global_position, target.global_position) > max_range:
+		return
+	if not los_clear(attacker.global_position, target.global_position, 1):
+		return
+	if attacker.has_method("play_attack"):
+		attacker.call("play_attack", target)
+	var noise := 5.0
+	if ash_attack:
+		sfx.play_at("snarl", attacker.global_position, -5.0)
+	else:
+		var aid := String(attacker.get("_weapon_id"))
+		var w: Dictionary = Arsenal.spec(aid)
+		sfx.play_at(String(w.get("sfx", "gunshot")), attacker.global_position, -7.0, 0.02)
+		noise = float(w.get("noise", 26.0)) * 0.55
+	_damage_enemy(target, dmg, "companion", ash_attack)
+	hit_marks.append({"pos": target.global_position + Vector2(0, -46), "life": 0.4,
+		"kill": not bool(target.call("is_alive"))})
+	_spawn_vfx(TEX_BLOOD, target.global_position + Vector2(0, -44), 0.9, 0.3)
+	emit_noise(attacker.global_position, noise, "hit" if ash_attack else "gun", true)
+
+
 ## 撬棍：扇形近战。安静，但要贴到 1.9m 内，而且一次只能挑一个。
 func melee_swing() -> void:
 	var w := cur_w()
@@ -2053,9 +2296,11 @@ func on_soldier_hurt(s: Node, _by: String) -> void:
 	add_shake(0.12)
 
 
-func on_soldier_killed(s: Node, _by: String) -> void:
+func on_soldier_killed(s: Node, by: String) -> void:
 	show_osk_bark("death")
 	soldier_kills += 1
+	if by == "companion":
+		companion_kills += 1
 	conscience -= 0.5
 	_splat(s.global_position, "m")
 	sfx.play_at("bonejam", s.global_position, -4.0)
@@ -2152,7 +2397,7 @@ func _update_post() -> void:
 		for r in rabids:
 			if r.state in ["windup", "lunge"]:
 				alarm = maxf(alarm, 0.6)
-		if state == "caught" or state == "downed":
+		if state == "downed":
 			alarm = 1.0
 		alarm = maxf(alarm, hurt / 0.35)
 		alarm = maxf(alarm, beat_flare)          # 炉口爆燃：整屏泛红，但不是警报 —— 是炉膛
@@ -2191,7 +2436,7 @@ func tension_level() -> float:
 			k = 1.0
 		elif r.state == "chase":
 			k = maxf(k, clampf(1.0 - dist_m(player.global_position, r.global_position) / 14.0, 0.35, 1.0))
-	if state in ["caught", "downed"]:
+	if state == "downed":
 		k = 1.0
 	return clampf(k, 0.0, 1.0)
 
@@ -2773,6 +3018,19 @@ func _build_hud() -> void:
 	_lbl_center.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.92))
 	_lbl_center.add_theme_constant_override("outline_size", 9)
 	hud_root.add_child(_lbl_center)
+	_btn_end_return = Button.new()
+	_btn_end_return.text = "回到 602 室"
+	_btn_end_return.custom_minimum_size = Vector2(300, 50)
+	_btn_end_return.set_anchors_preset(Control.PRESET_CENTER)
+	_btn_end_return.offset_left = -150
+	_btn_end_return.offset_right = 150
+	_btn_end_return.offset_top = 182
+	_btn_end_return.offset_bottom = 232
+	_btn_end_return.visible = false
+	_btn_end_return.z_index = 20
+	SovietUI.dress_button(_btn_end_return, true, 17)
+	_btn_end_return.pressed.connect(_on_end_return_pressed)
+	hud_root.add_child(_btn_end_return)
 
 	# ---- 道德抉择：一张没人愿意填的问询单 ----
 	_choice_panel = PanelContainer.new()
@@ -2797,7 +3055,63 @@ func _build_hud() -> void:
 	_choice_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	cv.add_child(_choice_lbl)
 
+	# ---- 武器改造：持有部件后可在夜潜中暂停安装 / 拆卸 ----
+	_weapon_mod_panel = PanelContainer.new()
+	_weapon_mod_panel.name = "WeaponModPanel"
+	_weapon_mod_panel.add_theme_stylebox_override("panel",
+		SovietUI.plate(Color(0.045, 0.04, 0.035, 0.97), SovietUI.SIGNAL, 2, 22))
+	_weapon_mod_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_weapon_mod_panel.offset_left = -340
+	_weapon_mod_panel.offset_right = 340
+	_weapon_mod_panel.offset_top = -205
+	_weapon_mod_panel.offset_bottom = 205
+	_weapon_mod_panel.visible = false
+	hud_root.add_child(_weapon_mod_panel)
+	var mv := VBoxContainer.new()
+	mv.add_theme_constant_override("separation", 14)
+	_weapon_mod_panel.add_child(mv)
+	var mh := _mono_label("АРСЕНАЛ · 武器改造", 12, SovietUI.SIGNAL)
+	mv.add_child(mh)
+	_weapon_mod_label = _label("", 18, SovietUI.BONE)
+	_weapon_mod_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	mv.add_child(_weapon_mod_label)
+
 	_update_brief_text()
+	_build_minimap()
+
+
+func _build_minimap() -> void:
+	if map_art_day == null or map_bounds_px.x <= 0.0:
+		return
+	var panel := PanelContainer.new()
+	panel.name = "NightMiniMapPanel"
+	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	panel.offset_left = 26.0
+	panel.offset_right = 296.0
+	panel.offset_bottom = -98.0
+	var map_width := 250.0
+	var map_height := map_width * map_bounds_px.y / map_bounds_px.x
+	panel.offset_top = panel.offset_bottom - map_height - 52.0
+	panel.add_theme_stylebox_override("panel",
+		SovietUI.plate(Color(0.025, 0.035, 0.045, 0.96), SovietUI.STEEL, 1, 10))
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_root.add_child(panel)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 4)
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(column)
+	var heading := _mono_label("小地图  ·  你 / 目标 / 撤离", 10, SovietUI.CRT)
+	heading.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(heading)
+	_minimap = NightMiniMapScript.new()
+	_minimap.name = "NightMiniMap"
+	_minimap.controller = self
+	_minimap.source_map = map_art_night if map_art_night != null else map_art_day
+	_minimap.world_bounds_px = map_bounds_px
+	_minimap.custom_minimum_size = Vector2(map_width, map_height)
+	_minimap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(_minimap)
+
 func _show_choice() -> void:
 	var h = choice_half
 	if h == null or _choice_lbl == null:
@@ -2955,6 +3269,11 @@ func _refresh_hud() -> void:
 			var tag := "%d·%s" % [int(sl["slot"]), String(sl["label"])]
 			slots.append("[%s]" % tag if String(sl["id"]) == weapon else tag)
 	var wline := Arsenal.label(weapon, int(mag.get(weapon, 0)), int(reserve.get(weapon, 0)))
+	var installed_names: Array[String] = []
+	for mod_id in weapon_mods.get(weapon, []):
+		installed_names.append(item_name(String(mod_id)))
+	if not installed_names.is_empty():
+		wline += "  · " + " / ".join(installed_names)
 	if reload_left > 0.0:
 		wline += "  装填中…"
 	elif cur_is_gun() and int(mag.get(weapon, 0)) == 0:
@@ -3038,6 +3357,8 @@ func _refresh_hud() -> void:
 		_lbl_hint.text = "长按 E · " + extract_zh
 	else:
 		_lbl_hint.text = objective_zh + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电　Esc 暂停"
+	if state == "play":
+		_lbl_hint.text += "　·　T 武器改造"
 	if state == "play" and mate_id == "yelena":
 		_lbl_hint.text += "　·　C 命令 OSK 停步 8 秒（冷却 %.0f 秒）" % ceilf(_yelena_stop_cooldown)
 	elif state == "play" and mate_id == "zakhar":
@@ -3057,7 +3378,7 @@ func _refresh_hud() -> void:
 	# --- 屏幕边框：警报时边缘渗红 ---
 	if _chrome != null:
 		var d := clampf(maxf(tension_level(), beat_flare), 0.0, 1.0)
-		if state in ["caught", "downed"]:
+		if state == "downed":
 			d = 1.0
 		_chrome.set_danger(d)
 
@@ -3066,11 +3387,10 @@ func _refresh_hud() -> void:
 	match state:
 		"play", "choice":
 			_lbl_center.text = ""
-		"caught":
-			_lbl_center.text = "被清杀队发现\nОСК открыл огонь\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", Color("#fca5a5"))
 		"downed":
-			_lbl_center.text = "被狂暴者扑倒了\n高烧的身体烫得像炉子。\n\n%s" % again_hint
+			var downed_text := "被狂暴者扑倒了\n高烧的身体烫得像炉子。" \
+				if not downed_by_osk else "被清杀队枪击倒下\n枪声在雪地里远远传开。"
+			_lbl_center.text = "%s\n\n%s" % [downed_text, again_hint]
 			_lbl_center.add_theme_color_override("font_color", Color("#fca5a5"))
 		"frozen":
 			_lbl_center.text = "体温耗尽，倒在了雪里\n\n%s" % again_hint
@@ -3098,3 +3418,11 @@ func _refresh_hud() -> void:
 				pack.size(), "、".join(names2), line, moral, lmk_line,
 				"R / Enter 再来一夜　Esc 返回战役" if not in_campaign else "Enter 回 602 室 · 结算"]
 			_lbl_center.add_theme_color_override("font_color", Color("#bbf7d0"))
+	if _btn_end_return != null:
+		_btn_end_return.visible = in_campaign and state not in ["play", "choice", "modding"]
+		_btn_end_return.text = "回到 602 室" if in_campaign else ""
+
+
+func _on_end_return_pressed() -> void:
+	if in_campaign and state not in ["play", "choice", "modding"]:
+		_return_to_campaign(state)

@@ -20,6 +20,10 @@ var dial: float = 2.0            # 剩余腹透液（天）
 var conscience: float = 50.0
 var tally: int = 0
 var stash: Dictionary = {}
+var weapon_mods: Dictionary = {}   # 已装配改造：军械库武器 id -> [suppressor, scope]
+var base_display: Array[String] = [] # 602 室陈列的物品 / 武器引用，不消耗库存
+var dial_machine_bags: int = 0       # 已交给母亲、放在透析机旁的袋数
+var night_complete := false          # 本日夜潜已结算；回到据点后先睡觉再出发
 var mates: Dictionary = {}
 var flags: Dictionary = {}
 var names: Array[String] = []
@@ -86,6 +90,10 @@ func new_game() -> void:
 	day_message = ""
 	events_log = []
 	stash = {"rye": 3, "can": 2, "water": 1, "band": 1, "scrap": 2}
+	weapon_mods = {}
+	base_display = []
+	dial_machine_bags = 0
+	night_complete = false
 	mates.clear()
 	for m in Data.MATES:
 		mates[String(m["id"])] = false
@@ -142,7 +150,51 @@ func take_item(id: String, n: int) -> bool:
 	stash[id] = int(stash.get(id, 0)) - n
 	if int(stash[id]) <= 0:
 		stash.erase(id)
+		base_display.erase("item:" + id)
 	return true
+
+
+func hand_dial_to_mother() -> bool:
+	if not mother_alive or dial_machine_bags >= 3 or not take_item("dial", 1):
+		return false
+	dial_machine_bags += 1
+	add_log("你把一袋透析液放到机器旁，母亲轻轻点了点头。",
+		"You place a bag of dialysis fluid beside the machine. Mother gives a small nod.")
+	return true
+
+
+func toggle_base_display(ref: String) -> bool:
+	if base_display.has(ref):
+		base_display.erase(ref)
+		return true
+	if base_display.size() >= 4:
+		return false
+	var parts := ref.split(":", false, 1)
+	if parts.size() != 2:
+		return false
+	match parts[0]:
+		"item":
+			if not Data.ITEMS.has(parts[1]) or int(stash.get(parts[1], 0)) <= 0:
+				return false
+		"weapon":
+			if not weapon_owned(Data.weapon(parts[1])):
+				return false
+		_:
+			return false
+	base_display.append(ref)
+	return true
+
+
+func base_display_name(ref: String) -> String:
+	var parts := ref.split(":", false, 1)
+	if parts.size() != 2:
+		return ref
+	if parts[0] == "item":
+		return "%s %s" % [item_icon(parts[1]), item_name(parts[1])]
+	if parts[0] == "weapon":
+		var w := Data.weapon(parts[1])
+		return "%s %s" % [String(w.get("ic", "⚙")), String(w.get("zh" if lang == "zh" else "en", parts[1]))]
+	return ref
 
 func has_item(id: String, n: int = 1) -> bool:
 	return int(stash.get(id, 0)) >= n
@@ -185,6 +237,9 @@ func first_act_pending() -> bool:
 func loc_unlocked(L: Dictionary) -> bool:
 	if first_act_pending() and String(L.get("id", "")) != FIRST_ACT_LOC:
 		return false
+	if String(L.get("id", "")) == "sanitarium" and bool(story_done.get(FIRST_ACT_LOC, false)) \
+			and not bool(flags.get("archive_lead", false)) and not bool(flags.get("lana_car3", false)):
+		return false
 	var rf: String = String(L.get("req_flag", ""))
 	if rf != "" and not bool(flags.get(rf, false)):
 		return false
@@ -198,6 +253,9 @@ func loc_unlocked(L: Dictionary) -> bool:
 func lock_reason(L: Dictionary) -> String:
 	if first_act_pending() and String(L.get("id", "")) != FIRST_ACT_LOC:
 		return "先完成第一幕：四号铁路冷库" if lang == "zh" else "Finish Act I at Rail Cold Storage No.4 first"
+	if String(L.get("id", "")) == "sanitarium" and bool(story_done.get(FIRST_ACT_LOC, false)) \
+			and not bool(flags.get("archive_lead", false)) and not bool(flags.get("lana_car3", false)):
+		return "需要：先听维京娜提到的档案馆线索" if lang == "zh" else "Requires: follow Vikina's archive lead first"
 	var rf: String = String(L.get("req_flag", ""))
 	if rf == "manor_tip":
 		return "需要：黑市或安娜给出的松林庄园线索" if lang == "zh" \
@@ -244,7 +302,23 @@ func weapon_parts(w: Dictionary) -> int:
 func weapon_owned(w: Dictionary) -> bool:
 	if int(w.get("need", 0)) == 0:
 		return true
+	if bool(flags.get("salvaged_" + String(w.get("id", "")), false)):
+		return true
 	return weapon_parts(w) >= (w.get("parts", []) as Array).size()
+
+
+func register_salvaged_weapon(id: String) -> void:
+	if id != "mosin":
+		return
+	var w: Dictionary = Data.weapon(id)
+	var already_owned := weapon_owned(w)
+	flags["salvaged_" + id] = true
+	if already_owned or phase != "report":
+		return
+	var new_weapons: Array = last_report.get("new_weapons", [])
+	if not new_weapons.has(id):
+		new_weapons.append(id)
+		last_report["new_weapons"] = new_weapons
 
 func owned_weapons() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
@@ -276,10 +350,30 @@ func objective() -> Dictionary:
 			"zh": "去城北四号铁路冷库领今天的征召工物资——顺便查查拉娜被带上了哪趟车。",
 			"en": "Report to Cold Storage No.4 for conscript labour — and find out which train took Lana.",
 		}
-	if not bool(flags.get("lana_car3", false)):
+	if not mother_alive and not bool(flags.get("market_refuge_found", false)):
 		return {
-			"zh": "凑够情报（调度单 ×2）和一份医疗物资，去旧传染病疗养院地下室找安娜（0419）。",
-			"en": "Gather 2 Intel and 1 medical item, then find Anna (0419) in the sanatorium basement.",
+			"zh": "母亲走后，602 室已无法继续住下去。去铁路黑市找一处能躲过清杀队的栖身处。",
+			"en": "With Mother gone, Room 602 is no longer a place to stay. Find a refuge at the rail black market, away from OSK patrols.",
+		}
+	if bool(flags.get("vikina_clue_pending", false)) and not bool(flags.get("archive_lead", false)):
+		return {
+			"zh": "回到 602 室听维京娜说完那句闲话；她提到的电报底单，也许能找到拉娜的去向。",
+			"en": "Return to Room 602 and hear Vikina out. Her offhand remark about a telegram copy may point to Lana.",
+		}
+	if not bool(flags.get("lana_car3", false)):
+		if bool(story_done.get(FIRST_ACT_LOC, false)) and not bool(flags.get("archive_lead", false)):
+			return {
+				"zh": "先在 602 室找维京娜确认档案馆线索。",
+				"en": "Ask Vikina in Room 602 to confirm the archive lead first.",
+			}
+		if intel_count() < 2 or med_count() < 1:
+			return {
+				"zh": "按维京娜提到的线索去档案馆电报局找调度底单；凑够情报 ×2 和医疗物资 ×1，再去疗养院找安娜（0419）。",
+				"en": "Follow Vikina's lead to the Archive & Telegraph Office for dispatch records. Gather 2 Intel and 1 medical item, then find Anna (0419) at the sanatorium.",
+			}
+		return {
+			"zh": "情报和医疗物资已经够了；去旧传染病疗养院地下室找安娜（0419）。",
+			"en": "You have enough Intel and medical supplies. Find Anna (0419) in the sanatorium basement.",
 		}
 	if not bool(flags.get("endgame_known", false)):
 		return {
@@ -318,7 +412,7 @@ func load_total() -> int:
 	return n
 
 func can_depart(L: Dictionary) -> bool:
-	if L.is_empty():
+	if L.is_empty() or night_complete:
 		return false
 	if not loc_unlocked(L):
 		return false
@@ -346,6 +440,7 @@ func depart(L: Dictionary) -> bool:
 		"mate": mate if mate != "none" and bool(mates.get(mate, false)) else "",
 		"pack_max": Data.BAG + (4 if mate == "anna" else 0),
 		"weapon": best_weapon(),
+		"weapon_mods": weapon_mods.duplicate(true),
 		"load": load.duplicate(),
 		"cold": float(L["cold"]),
 		"danger": clampi(int(L["dg"]) + (1 if bool(flags.get("osk_alert", false)) else 0), 1, 5),
@@ -402,6 +497,15 @@ func story_lines(id: String) -> Array:
 			var source_lines := Data.script_scene(source_id)
 			if not source_lines.is_empty():
 				lines = source_lines
+	if id == "market" and not mother_alive and not bool(flags.get("market_refuge_found", false)):
+		lines.append_array([
+			{"w": "阿列克谢", "mood": "sad",
+				"zh": "母亲走后，602 室只剩那台停下来的机器。今晚我得找到一张床，哪怕只够躲过清杀队的搜查。",
+				"en": "After Mother died, all that remained in Room 602 was the silent machine. Tonight I need a bed, even one that only hides me from OSK."},
+			{"w": "老轨伊万", "mood": "calm",
+				"zh": "市场最里面有间废信号室，门后能睡人。先活着找到它，别问是谁把钥匙留在那儿。",
+				"en": "There's an abandoned signal room at the back of the market. A person can sleep behind that door. Find it alive; don't ask who left the key."},
+		])
 	if id == "marshalling":
 		lines.append_array(_route_reaction_lines())
 	return lines
@@ -511,6 +615,8 @@ func resolve_story(choice_index: int) -> Dictionary:
 		flags["zakhar_betrayal_pending"] = true
 	story_done[story_id] = true
 	flags["story_" + story_id] = true
+	if story_id == FIRST_ACT_LOC and not bool(flags.get("archive_lead", false)):
+		flags["vikina_clue_pending"] = true
 	story_open = false
 	add_log(
 		String(ch.get("toast_zh", "")),
@@ -524,6 +630,10 @@ func resolve_story(choice_index: int) -> Dictionary:
 		"toast": String(ch.get("toast_zh" if lang == "zh" else "toast_en", "")),
 	}
 	_sync_logbook()
+	if story_id != "market_refuge" and bool(flags.get("market_refuge_story_pending", false)):
+		flags.erase("market_refuge_story_pending")
+		story_id = "market_refuge"
+		story_open = true
 	return story_result
 
 func close_story() -> void:
@@ -595,6 +705,7 @@ func finish_raid(reason: String) -> Dictionary:
 			new_w.append(w)
 	# 节点状态：每次踏足余量 -50%，余量下限 5%
 	var loc: Dictionary = r.loc
+	night_complete = true
 	var st: Dictionary = node_state(String(loc["id"]))
 	st["visits"] = int(st["visits"]) + 1
 	st["left"] = clampf(float(st["left"]) - 0.5, 0.05, 1.0)
@@ -625,6 +736,20 @@ func finish_raid(reason: String) -> Dictionary:
 		"pack": kept.size(),
 		"story": story_result.duplicate(),
 	}
+	var reached_market_refuge := String(loc.get("id", "")) == "market" \
+		and not mother_alive and not bool(flags.get("market_refuge_found", false)) \
+		and reason in ["extracted", "dawn"]
+	if reached_market_refuge:
+		flags["market_refuge_found"] = true
+		last_report["market_refuge_found"] = true
+		add_log("你在黑市废信号室找到一处临时栖身处。清杀队仍在搜查，天亮前不能久留。",
+			"You find a temporary refuge in the market's abandoned signal room. OSK is still searching; you cannot stay long after dawn.")
+		if not bool(story_done.get("market_refuge", false)):
+			if story_open:
+				flags["market_refuge_story_pending"] = true
+			else:
+				story_id = "market_refuge"
+				story_open = true
 	# 天亮了/倒地后次日结算由「回到 602 室」触发
 	raid = null
 	phase = "report"
@@ -653,12 +778,22 @@ func to_base() -> void:
 
 var finished_demo := false
 
+
+func receive_vikina_lead() -> bool:
+	if not bool(flags.get("vikina_clue_pending", false)) or bool(flags.get("archive_lead", false)):
+		return false
+	flags.erase("vikina_clue_pending")
+	flags["archive_lead"] = true
+	add_log("维京娜无意间提到，档案馆电报局留有 0420 号调度底单。阿列克谢决定今晚去找原件。",
+		"Vikina casually mentions that the Archive & Telegraph Office keeps the dispatch copy for file 0420. Aleksei decides to look for the original tonight.")
+	return true
+
 func advance_day() -> void:
 	day += 1
 	day_message = ""
 	if mother_alive:
-		if int(stash.get("dial", 0)) > 0:
-			take_item("dial", 1)
+		if dial_machine_bags > 0:
+			dial_machine_bags -= 1
 			dial = minf(3.0, dial + 1.0)
 			day_message = "你给母亲换上了新的一袋。她的呼吸平缓了一点。" if lang == "zh" \
 				else "You hang a fresh bag. Her breathing eases."
@@ -670,11 +805,12 @@ func advance_day() -> void:
 				mother_alive = false
 				flags["mother_lost"] = true
 				conscience = clampf(conscience - 10.0, 0.0, 100.0)
-				day_message = "母亲在急性肺水肿中走了。失母·荒原线开启。" if lang == "zh" \
-					else "She died of acute pulmonary oedema. The motherless route opens."
+				day_message = "母亲在急性肺水肿中走了。602 室已空；去铁路黑市找栖身处。" if lang == "zh" \
+					else "She died of acute pulmonary oedema. Room 602 is empty; find shelter at the rail black market."
 	else:
 		day_message = "602 室安静得只剩风声。" if lang == "zh" \
 			else "Room 602 is quiet except for the wind."
+	night_complete = false
 	add_log(String(day_message), String(day_message))
 	phase = "base"
 	_sync_logbook()

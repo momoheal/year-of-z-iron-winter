@@ -120,18 +120,18 @@ const AFTERMATH := {
 			"en": "Your pack is stuffed with what you took.\nOn the back page of the logbook there is one more stroke that will not wash out."},
 	],
 	"broadcast:0": [
-		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.5, 0.48),
+		{"img": CG + "cg_broadcast_scene_alt_yelena.jpg", "focus": Vector2(0.5, 0.48),
 			"zh": "短波信号的尽头，金发的叶莲娜关掉发射机。厚实、剪裁合身的冬衣让她看起来比棚外的人体面；她摘下耳机，主动把频率表递给你。",
 			"en": "At the end of the shortwave signal, blonde Yelena switches off the transmitter. Her well-cut winter coat is better kept than anything outside; she removes her headphones and hands you the frequency sheet."},
-		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.62, 0.55), "zoom": Vector2(1.06, 1.12),
+		{"img": CG + "cg_broadcast_scene_alt_yelena.jpg", "focus": Vector2(0.62, 0.55), "zoom": Vector2(1.06, 1.12),
 			"zh": "你选择带她同行。叶莲娜背起监听设备，交出进入松林庄园的排污路线；她也能用无线电命令一名 OSK 暂停行动。",
 			"en": "You invite her along. Yelena shoulders her listening gear and shares the drainage route into Pine Manor; her radio can halt one OSK patrol briefly."},
 	],
 	"broadcast:1": [
-		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.5, 0.48),
+		{"img": CG + "cg_broadcast_scene_alt_yelena.jpg", "focus": Vector2(0.5, 0.48),
 			"zh": "叶莲娜把发射机的频率留给你，却没有交出自己的监听设备。你记下排污路线，庄园入口已经找到。",
 			"en": "Yelena leaves the transmitter frequency with you but keeps her listening gear. You copy the drainage route; the manor entrance is found."},
-		{"img": CG + "cg_broadcast_scene.jpg", "focus": Vector2(0.26, 0.6), "zoom": Vector2(1.08, 1.1),
+		{"img": CG + "cg_broadcast_scene_alt_yelena.jpg", "focus": Vector2(0.26, 0.6), "zoom": Vector2(1.08, 1.1),
 			"zh": "她留在秘密广播点继续监听。你独自离开，松林庄园已经解锁，但叶莲娜不会加入队伍。",
 			"en": "She stays at the hidden broadcast room to keep listening. You leave alone: Pine Manor is unlocked, but Yelena does not join the crew."},
 	],
@@ -169,17 +169,75 @@ const AFTERMATH := {
 			"zh": "所有的数字终于严丝合缝地扣上了。\n一百七十六条退了烧的性命——其中一个，叫拉娜。",
 			"en": "Every number finally locks into place.\nOne hundred seventy-six people whose fever has broken. One of them is called Lana."},
 	],
+	"market_refuge:0": [
+		{"img": "res://art/40_interiors/BG_Market_Hideout.png", "focus": Vector2(0.5, 0.55),
+			"zh": "电台里传来一串断续的调度呼号。阿列克谢把频率抄进工作日志，随后关掉发射机——这间废信号室只供暂住一夜。",
+			"en": "A broken dispatch call sign crackles over the radio. Aleksei copies the frequency into his logbook, then switches the set off. The abandoned signal room is only a one-night refuge."},
+		{"img": "res://art/40_interiors/BG_Market_Hideout.png", "focus": Vector2(0.58, 0.46), "zoom": Vector2(1.08, 1.16),
+			"zh": "天亮后，他会回 602 看望母亲留下的东西，再沿着维京娜无心说出的线索寻找拉娜。黑市的门只暂时关上，追查还要继续。",
+			"en": "At dawn he will return to Room 602 for what Mother left behind, then follow Vikina's offhand clue to Lana. The market door is only closed for now; the search must continue."},
+	],
+}
+
+
+## Room 602 interactions. These are used both in the hub UI and the review deck.
+const ROOM_DIALOGUE := {
+	"mother": [
+		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.58, 0.56),
+			"zh": "卡佳：阿廖沙，手怎么这么凉？把手套放到炉边吧。\n阿列克谢：我没事，妈。今晚我会把背包里的东西理好。",
+			"en": "Katya: Alyosha, your hands are freezing. Leave your gloves by the stove.\nAleksei: I'm all right, Mama. I'll sort what I brought back tonight."},
+		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.62, 0.52),
+			"zh": "卡佳：别总想着替所有人扛事。先坐下喝口热水，让我看看你有没有伤着。\n她说得很轻，像怕惊动透析机。",
+			"en": "Katya: You can't carry everyone. Sit down and drink something warm; let me see if you're hurt.\nShe speaks softly, as if not to wake the dialysis machine."},
+	],
+	"mother_waiting": [
+		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.6, 0.55),
+			"zh": "卡佳：机器还能撑一阵。别为了我一个人，把自己也搭进去。\n阿列克谢看了看透析机旁空着的位置，没有回答。",
+			"en": "Katya: The machine can hold for a little while. Don't lose yourself trying to save me.\nAleksei looks at the empty space beside the dialysis machine and says nothing."},
+	],
+	"mother_memory": [
+		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.56, 0.5),
+			"zh": "屋里只剩透析机停下后的静默。你把母亲留下的围巾叠好，放在床边。",
+			"en": "Only silence remains after the dialysis machine stops. You fold your mother's scarf and set it beside the bed."},
+	],
+	"fluid_given": [
+		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.52, 0.58),
+			"zh": "阿列克谢把一袋透析液放到机器旁。\n卡佳：这一袋先留着，明早再换。你总算肯让我也替你省着点力气了。",
+			"en": "Aleksei sets a bag of dialysis fluid beside the machine.\nKatya: Keep this one for the morning. At last you're letting me help you save a little strength."},
+	],
+	"vikina_lead": [
+		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.42, 0.5),
+			"zh": "楼道里，邻居维京娜隔着半掩的门和人说话。她正抱怨电报局把一份旧底单退回了档案馆。",
+			"en": "In the hall, neighbor Vikina talks through a half-open door. She complains that the telegraph office returned an old dispatch copy to the archive."},
+		{"img": CG + "cg_intro_vent.jpg", "focus": Vector2(0.62, 0.55),
+			"zh": "维京娜：封面写着 0420，底下还铅笔记了“第三节”。谁会把这种旧名单当回事？我只想找回配给单。\n她没意识到自己说出了什么。",
+			"en": "Vikina: The cover said 0420, with “third car” pencilled underneath. Who cares about an old list? I only want my ration slip back.\nShe doesn't realize what she has just said."},
+		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.5, 0.42),
+			"zh": "阿列克谢：0420……拉娜的档案号。\n名单被退回档案馆，底单就在电报局。今晚我去找它。",
+			"en": "Aleksei: 0420... Lana's file number.\nThe list went back to the archive; the dispatch copy is at the telegraph office. I'll find it tonight."},
+	],
+	"market_refuge": [
+		{"img": "res://art/40_interiors/BG_Market_Hideout.png", "focus": Vector2(0.5, 0.5),
+			"zh": "废信号室的短波机还活着。阿列克谢把门栓扣上，在炉边留下一盏遮光灯。这里不安全，却能让他在黑市搜捕间隙喘口气。",
+			"en": "The shortwave set in the abandoned signal room still works. Aleksei bolts the door and shades a lamp by the stove. It is not safe, but it gives him a place to breathe between market searches."},
+		{"img": "res://art/40_interiors/BG_Market_Hideout.png", "focus": Vector2(0.55, 0.52),
+			"zh": "这不是家。他还会回 602 看一眼母亲留下的东西，再沿着维京娜无心说出的线索去找拉娜。",
+			"en": "This is not home. He will return to 602 for what Mother left behind, then follow Vikina's offhand clue to Lana."},
+	],
 }
 
 
 ## 剧情对白框背后的场景插图路径（文件可能还不存在，调用方用 StorySlides.tex_of 判空）。
 static func scene_image(story_id: String) -> String:
+	if story_id == "market_refuge":
+		return "res://art/40_interiors/BG_Market_Hideout.png"
 	var story_cg := {
-		"pasha_watchtower": "cg_pasha_watchtower_scene.jpg",
+		"broadcast": "cg_broadcast_scene_alt_yelena.jpg",
+		"pasha_watchtower": "cg_pasha_watchtower_scene_v2.jpg",
 		"apartment_exchange": "cg_apartment_exchange_scene.jpg",
-		"mine_sporeface": "cg_mine_sporeface_scene.jpg",
+		"mine_sporeface": "cg_mine_sporeface_scene_alt.jpg",
 		"mine_detonator": "cg_mine_detonator_scene.jpg",
-		"fire_rescue": "cg_fire_rescue_scene.jpg",
+		"fire_rescue": "cg_fire_rescue_scene_alt.jpg",
 		"eaglecliff_derailment": "cg_eaglecliff_derailment_scene.jpg",
 		"station_buran": "cg_station_buran_scene.jpg",
 		"broadcast_siege": "cg_broadcast_siege_scene.jpg",
@@ -197,3 +255,10 @@ static func aftermath(story_id: String, choice_index: int) -> Array:
 		return []
 	var out: Array = (AFTERMATH[key] as Array).duplicate(true)
 	return out
+
+
+## A deep copy keeps UI playback from mutating the source dialogue table.
+static func room_dialogue(dialogue_id: String) -> Array:
+	if not ROOM_DIALOGUE.has(dialogue_id):
+		return []
+	return (ROOM_DIALOGUE[dialogue_id] as Array).duplicate(true)

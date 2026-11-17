@@ -6,7 +6,7 @@ extends Node
 ## 真名 / 剧情 / 地点余量 / 日志 / 随机数状态）。不存夜潜进行中的状态 —— 存档点只有两个：
 ##   · 回到 602 室（phase = base）：新开局、睡觉、结算后进入次日；
 ##   · 结算页（phase = report）：夜潜的收获已经入账但还没过夜。
-##     读这种档时会补走一次 to_base + advance_day，等价于玩家在结算页按了「回 602 室」。
+##     读这种档时回到 602 室，但不自动推进日期；玩家仍可先整理物品、照顾母亲。
 ## 自动存档由 Campaign._process 在 (phase, day) 变化时触发，CampaignSim 本身不碰磁盘。
 ##
 ## 格式：JSON（不用 str_to_var / ConfigFile 存战役 —— 那两种能反序列化出 Object）。
@@ -240,6 +240,10 @@ static func to_dict(sim) -> Dictionary:
 		"conscience": float(sim.conscience),
 		"tally": int(sim.tally),
 		"stash": sim.stash.duplicate(true),
+		"weapon_mods": sim.weapon_mods.duplicate(true),
+		"base_display": Array(sim.base_display),
+		"dial_machine_bags": int(sim.dial_machine_bags),
+		"night_complete": bool(sim.night_complete),
 		"mates": sim.mates.duplicate(true),
 		"flags": sim.flags.duplicate(true),
 		"names": Array(sim.names),
@@ -269,10 +273,20 @@ static func apply(sim, d: Dictionary) -> void:
 	sim.conscience = float(d.get("conscience", 50.0))
 	sim.tally = int(d.get("tally", 0))
 	sim.stash = _int_values(d.get("stash", {}))
+	sim.weapon_mods = _dict(d.get("weapon_mods", {}))
+	sim.base_display.clear()
+	for ref in d.get("base_display", []):
+		if ref is String and sim.base_display.size() < 4:
+			sim.base_display.append(String(ref))
+	sim.dial_machine_bags = clampi(int(d.get("dial_machine_bags", 0)), 0, 3)
+	sim.night_complete = bool(d.get("night_complete", String(d.get("phase", "base")) == "report"))
 	sim.load = _int_values(d.get("load", {}))
 	sim.mates = _bool_values(d.get("mates", sim.mates))
 	sim.flags = _dict(d.get("flags", {}))
 	sim.story_done = _dict(d.get("story_done", {}))
+	if bool(sim.story_done.get("coldstore", false)) and not bool(sim.flags.get("archive_lead", false)) \
+			and not bool(sim.flags.get("lana_car3", false)):
+		sim.flags["vikina_clue_pending"] = true
 	var nodes: Dictionary = sim.nodes
 	var saved_nodes := _dict(d.get("nodes", {}))
 	for id in saved_nodes:
@@ -307,9 +321,8 @@ static func apply(sim, d: Dictionary) -> void:
 	if rs.is_valid_int():
 		sim.rng.state = rs.to_int()
 	if String(d.get("phase", "base")) == "report":
-		# 结算页存的档：收获已入账，补走「回 602 室 → 过夜」
+		# 结算页的收获已入账；进入 602 后由玩家单独选择是否睡到明天。
 		sim.to_base()
-		sim.advance_day()
 	else:
 		sim.phase = "base"
 	sim._sync_logbook()

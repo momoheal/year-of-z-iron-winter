@@ -64,7 +64,7 @@ const TT_WEDGED := 6
 const TT_BDOOR := 7
 
 # ============================================================================
-# ITEMS — 24 种物资
+# ITEMS — 26 种物资
 # ============================================================================
 const ITEMS := {
 	"rye": {"ic": "🌾", "cat": "food", "zh": "黑麦碎粒", "en": "Buckwheat Grits"},
@@ -86,6 +86,8 @@ const ITEMS := {
 	"pin": {"ic": "📌", "cat": "part", "zh": "击针", "en": "Firing Pin"},
 	"bolt": {"ic": "⚙️", "cat": "part", "zh": "莫辛枪机", "en": "Mosin Bolt"},
 	"ammo": {"ic": "🎯", "cat": "part", "zh": "步枪弹", "en": "Rifle Ammo"},
+	"suppressor": {"ic": "🔇", "cat": "part", "zh": "消音器", "en": "Suppressor"},
+	"scope": {"ic": "🔭", "cat": "part", "zh": "狙击镜", "en": "Rifle Scope"},
 	"blade": {"ic": "🔪", "cat": "part", "zh": "宽背砍骨刀", "en": "Butcher Cleaver"},
 	"vodka": {"ic": "🍾", "cat": "val", "zh": "伏特加", "en": "Vodka"},
 	"watch": {"ic": "⌚", "cat": "val", "zh": "旧手表", "en": "Old Watch"},
@@ -100,7 +102,7 @@ const LOOT_CATS := {
 	"scrap": ["scrap", "scrap", "wire", "elec", "wood"],
 	"warm": ["wood", "wood", "kero", "water"],
 	"intel": ["intel", "intel", "photo"],
-	"part": ["barrel", "stock", "pin", "bolt", "ammo", "blade"],
+	"part": ["barrel", "stock", "pin", "bolt", "ammo", "suppressor", "scope", "blade"],
 	"weapon": ["blade", "barrel", "stock", "pin", "scrap", "scrap"],
 	"val": ["vodka", "watch", "tape", "glass"],
 }
@@ -474,6 +476,27 @@ const STORY := {
 				"after_mate": "",
 				"toast_zh": "沉重的铁门被你从外头死死落了锁。门后先是一声难以置信的闷哼，紧接着是微声步枪短促得像踩碎冰碴似的点射声。你的背包被抢来的物资撑得满满当当，可你的灵魂却在日志背面多了一道洗不掉的血痕。",
 				"toast_en": "The door shuts behind you. The shots are very short."},
+		],
+	},
+	"market_refuge": {
+		"title_zh": "一夜的栖身处", "title_en": "A Place for One Night",
+		"lines": [
+			{"w": "阿列克谢", "mood": "sad",
+				"zh": "废信号室的门在身后合上。炉子没烧起来，桌上只有一台还能收到微弱短波的旧电台。至少这里没有巡逻靴声。",
+				"en": "The abandoned signal room door shuts behind him. The stove is cold; an old shortwave set on the table still catches a faint signal. At least there are no patrol boots here."},
+			{"w": "老轨伊万", "mood": "calm",
+				"zh": "别把这儿当家，阿廖沙。就当一段临时站台。等你缓过来，再回 602 把该带的东西拿上。",
+				"en": "Don't call this home, Alyosha. Think of it as a temporary platform. When you can stand again, go back to 602 for what you need."},
+			{"w": "阿列克谢", "mood": "intense",
+				"zh": "我会回来。妈妈的围巾还在床边，维京娜说过的那份底单也还没找到。先活过今晚，再继续找拉娜。",
+				"en": "I'll come back. Mother's scarf is still by the bed, and I haven't found the dispatch copy Vikina mentioned. First survive tonight; then keep looking for Lana."},
+		],
+		"choices": [
+			{"zh": "锁好门，在短波声里歇一会儿", "en": "Lock the door and rest to the shortwave",
+				"d_zh": "临时栖身处已找到", "d_en": "Temporary refuge secured", "cls": "good",
+				"ops": [["flag", "market_refuge_seen"]], "after_mate": "",
+				"toast_zh": "黑市栖身处能暂时躲开清杀队。602 室仍保留为母亲的纪念地和物资据点。",
+				"toast_en": "The black-market refuge can hide you from OSK for now. Room 602 remains your memorial and supply base."},
 		],
 	},
 	"broadcast": {

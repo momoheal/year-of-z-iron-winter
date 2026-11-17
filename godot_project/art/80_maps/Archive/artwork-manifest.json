@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "archive",
+  "name": "档案馆电报局",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Archive/map.png",
+    "sha256": "24e2757f6aa47d7bcb2fd67d2a90b26c2a08336cf5c0f15d252204b70d45cbbf",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1774,
+      887
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Archive_FileCabinet",
+      "path": "res://art/30_props/PRP_Archive_FileCabinet.png",
+      "size": [
+        216,
+        400
+      ],
+      "pivot": [
+        108.0,
+        400
+      ],
+      "label": "plain locked file cabinet",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Archive_TelegraphDesk",
+      "path": "res://art/30_props/PRP_Archive_TelegraphDesk.png",
+      "size": [
+        542,
+        419
+      ],
+      "pivot": [
+        271.0,
+        419
+      ],
+      "label": "telegraph desk",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Archive_RecordShelf",
+      "path": "res://art/30_props/PRP_Archive_RecordShelf.png",
+      "size": [
+        778,
+        263
+      ],
+      "pivot": [
+        389.0,
+        263
+      ],
+      "label": "archive shelf section",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Archive_DocumentSafe",
+      "path": "res://art/30_props/PRP_Archive_DocumentSafe.png",
+      "size": [
+        294,
+        396
+      ],
+      "pivot": [
+        147.0,
+        396
+      ],
+      "label": "heavy document safe",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Archive_RecordCrates",
+      "path": "res://art/30_props/PRP_Archive_RecordCrates.png",
+      "size": [
+        421,
+        346
+      ],
+      "pivot": [
+        210.5,
+        346
+      ],
+      "label": "paper records crates",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Archive_HeaterDrum",
+      "path": "res://art/30_props/PRP_Archive_HeaterDrum.png",
+      "size": [
+        274,
+        411
+      ],
+      "pivot": [
+        137.0,
+        411
+      ],
+      "label": "oil-drum heater",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Archive_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Archive/map_night.png",
+      "sha256": "86b7709069aa9e34adce5ee4e10ed75a97e014a0ccaf3ae6c4bd2f74b7f214f2",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

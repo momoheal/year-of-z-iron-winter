@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "boiler",
+  "name": "锅炉房后巷",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Boiler/map.png",
+    "sha256": "799942c39f0d214452a819b05eae425970d4881f92b6c873dba64eb305f4afc6",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1774,
+      887
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Boiler_FuelLocker",
+      "path": "res://art/30_props/PRP_Boiler_FuelLocker.png",
+      "size": [
+        421,
+        341
+      ],
+      "pivot": [
+        210.5,
+        341
+      ],
+      "label": "secured fuel locker",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Boiler_ValveShelf",
+      "path": "res://art/30_props/PRP_Boiler_ValveShelf.png",
+      "size": [
+        381,
+        324
+      ],
+      "pivot": [
+        190.5,
+        324
+      ],
+      "label": "industrial valve shelf",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Boiler_ScrapBin",
+      "path": "res://art/30_props/PRP_Boiler_ScrapBin.png",
+      "size": [
+        424,
+        345
+      ],
+      "pivot": [
+        212.0,
+        345
+      ],
+      "label": "steel scrap dumpster",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Boiler_SteamPipe",
+      "path": "res://art/30_props/PRP_Boiler_SteamPipe.png",
+      "size": [
+        1757,
+        225
+      ],
+      "pivot": [
+        878.5,
+        225
+      ],
+      "label": "long insulated steam pipe",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Boiler_ConcretePier",
+      "path": "res://art/30_props/PRP_Boiler_ConcretePier.png",
+      "size": [
+        321,
+        312
+      ],
+      "pivot": [
+        160.5,
+        312
+      ],
+      "label": "striped pipe support pier",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Boiler_HeaterDrum",
+      "path": "res://art/30_props/PRP_Boiler_HeaterDrum.png",
+      "size": [
+        351,
+        382
+      ],
+      "pivot": [
+        175.5,
+        382
+      ],
+      "label": "oil-drum heater",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Boiler_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Boiler/map_night.png",
+      "sha256": "aa0f55fde32e838fe84d48352b08554ffd6c362a367b04ea38440ecf809bd111",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

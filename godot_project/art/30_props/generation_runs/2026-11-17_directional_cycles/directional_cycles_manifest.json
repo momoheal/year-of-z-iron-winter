@@ -1,0 +1,2513 @@
+{
+  "schema": "winter-iron.directional-walkcycles.v1",
+  "generated_on": "2026-11-17",
+  "tool": "Codex image_gen",
+  "characters": {
+    "Ash": {
+      "N": {
+        "frames": [
+          "PRP_Ash_WalkN0.png",
+          "PRP_Ash_WalkN1.png",
+          "PRP_Ash_WalkN2.png",
+          "PRP_Ash_WalkN3.png",
+          "PRP_Ash_WalkN4.png",
+          "PRP_Ash_WalkN5.png",
+          "PRP_Ash_WalkN6.png",
+          "PRP_Ash_WalkN7.png"
+        ],
+        "source": "Ash_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Ash_WalkN_atlas.png",
+          "source_sha256": "7b6442c8e15e41dd895e2ae66e1fd208544bfecea97af6777af6a1f6207aa988",
+          "source_size": [
+            1261,
+            623
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            96,
+            80
+          ],
+          "foot_y": 76,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.249135,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 30252,
+            "detached_px": 59,
+            "detached_components": 33,
+            "max_removed_alpha": 6
+          },
+          "subject_sizes": [
+            [
+              28,
+              72
+            ],
+            [
+              28,
+              72
+            ],
+            [
+              28,
+              72
+            ],
+            [
+              29,
+              71
+            ],
+            [
+              28,
+              71
+            ],
+            [
+              28,
+              71
+            ],
+            [
+              28,
+              71
+            ],
+            [
+              28,
+              72
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Ash_WalkN_Walk0.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "6c87e717143cdb7a0d9dee269b0e49bfa2e822c30b28c1b460465c976c0f5319",
+              "subject_size": [
+                28,
+                72
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Ash_WalkN_Walk1.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "d4e58d107c8a9db4b8b27744de7fd7645026b810a21c2539588f039d82f34999",
+              "subject_size": [
+                28,
+                72
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Ash_WalkN_Walk2.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "41972fb5dadb2fa8459a75f74b1537b37760c88f6b460a3fd095bf306b1f2bbd",
+              "subject_size": [
+                28,
+                72
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Ash_WalkN_Walk3.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "ee9e8e98677650388f93e5f11e49373b505d0cddddf863e443c7a9bd64cd2f76",
+              "subject_size": [
+                29,
+                71
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Ash_WalkN_Walk4.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "a0246810e4844dcfe3fdec7cf67d93ada93697d97087ab5f22cc3f6205fe9fa3",
+              "subject_size": [
+                28,
+                71
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Ash_WalkN_Walk5.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "3e506f454049c330f88bee3713220a404e601200e1a0c56ea9bec34c237b3f77",
+              "subject_size": [
+                28,
+                71
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Ash_WalkN_Walk6.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "2cea153fc5320a66762f9cb523076faa6ab68cf19b86366c34ede128c73d47ab",
+              "subject_size": [
+                28,
+                71
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Ash_WalkN_Walk7.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "3e611368f88b0c433dd4771c84c287aadf861bac73ee99e5551bec2dda6f6e2d",
+              "subject_size": [
+                28,
+                72
+              ]
+            }
+          },
+          "warnings": []
+        }
+      },
+      "S": {
+        "frames": [
+          "PRP_Ash_WalkS0.png",
+          "PRP_Ash_WalkS1.png",
+          "PRP_Ash_WalkS2.png",
+          "PRP_Ash_WalkS3.png",
+          "PRP_Ash_WalkS4.png",
+          "PRP_Ash_WalkS5.png",
+          "PRP_Ash_WalkS6.png",
+          "PRP_Ash_WalkS7.png"
+        ],
+        "source": "Ash_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Ash_WalkS_atlas.png",
+          "source_sha256": "44f3c2cf437c2e37bc6ba8dfbf9f3033078042b225bd5824fec4cdb6f7933ddd",
+          "source_size": [
+            1261,
+            623
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            96,
+            80
+          ],
+          "foot_y": 76,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.25,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 28119,
+            "detached_px": 20,
+            "detached_components": 12,
+            "max_removed_alpha": 6
+          },
+          "subject_sizes": [
+            [
+              30,
+              71
+            ],
+            [
+              30,
+              72
+            ],
+            [
+              31,
+              70
+            ],
+            [
+              32,
+              71
+            ],
+            [
+              32,
+              72
+            ],
+            [
+              30,
+              71
+            ],
+            [
+              32,
+              71
+            ],
+            [
+              30,
+              72
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Ash_WalkS_Walk0.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "bf34c40a7e79c8254f2e54ccab210b71cb4f2aab6a796a58dd01ba0388cfc68a",
+              "subject_size": [
+                30,
+                71
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Ash_WalkS_Walk1.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "8159a61d6cebe72f2d05ef458a29b8e794e07b1ea86ddb2736e254068a4e7958",
+              "subject_size": [
+                30,
+                72
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Ash_WalkS_Walk2.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "a2cef807d0e45918ab63764f56c9b23530e6a578160e204a43d8fb8f17e0448a",
+              "subject_size": [
+                31,
+                70
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Ash_WalkS_Walk3.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "5e44035e6a42df8b72f71c36493e9c24c62fe9b75712e701c62f9fe4274b042b",
+              "subject_size": [
+                32,
+                71
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Ash_WalkS_Walk4.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "a4361bac23ad26e2f54450d84f866547f39bf88c6d923bb18a17967c51dbc40b",
+              "subject_size": [
+                32,
+                72
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Ash_WalkS_Walk5.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "109742ea561bc6ce2ee4359a716e916eabfe331e1196fbf77235fcbc8772c93e",
+              "subject_size": [
+                30,
+                71
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Ash_WalkS_Walk6.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "878d73f42bff43d2e754687d37bd625a741a1c4f7605caaec1275a57ce4806c7",
+              "subject_size": [
+                32,
+                71
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Ash_WalkS_Walk7.png",
+              "size": [
+                96,
+                80
+              ],
+              "sha256": "36692a3db728c1525fabe1abe8841328b460d958f97f3c2b354c49ff42fbe814",
+              "subject_size": [
+                30,
+                72
+              ]
+            }
+          },
+          "warnings": []
+        }
+      }
+    },
+    "Anna": {
+      "N": {
+        "frames": [
+          "PRP_Anna_WalkN0.png",
+          "PRP_Anna_WalkN1.png",
+          "PRP_Anna_WalkN2.png",
+          "PRP_Anna_WalkN3.png",
+          "PRP_Anna_WalkN4.png",
+          "PRP_Anna_WalkN5.png",
+          "PRP_Anna_WalkN6.png",
+          "PRP_Anna_WalkN7.png"
+        ],
+        "source": "Anna_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Anna_WalkN_atlas.png",
+          "source_sha256": "4d04d0b6ed6d71a095580772c2aeaf5d8720598c5173d8c9fc1dddd5d7d1ae03",
+          "source_size": [
+            1254,
+            627
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.357388,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 0,
+            "detached_px": 0,
+            "detached_components": 0,
+            "max_removed_alpha": 0
+          },
+          "subject_sizes": [
+            [
+              38,
+              104
+            ],
+            [
+              42,
+              104
+            ],
+            [
+              41,
+              104
+            ],
+            [
+              41,
+              103
+            ],
+            [
+              44,
+              100
+            ],
+            [
+              41,
+              103
+            ],
+            [
+              37,
+              103
+            ],
+            [
+              38,
+              103
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Anna_WalkN_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "8e7de161fdd4c0a2e6b1d1f8cad729129cbe4219b626e0a4dd8ca1b76d85639a",
+              "subject_size": [
+                38,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Anna_WalkN_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "02d76581f9419b18c38a6ef770420ea0626eef51c52c33999165d5e6af467cc8",
+              "subject_size": [
+                42,
+                104
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Anna_WalkN_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "0eac39a22020a287c16f43d7d1125514223b3e4882b272d333ec44982ec0038a",
+              "subject_size": [
+                41,
+                104
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Anna_WalkN_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "bb2456a3bd80bfff092a5cfdb1775edb3757d173cf5930d30fe5ab86ff5549ab",
+              "subject_size": [
+                41,
+                103
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Anna_WalkN_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "b5cc27efc2f4fca580d39ae6666428eca5313ca96ae11cef1d77222cd158ae47",
+              "subject_size": [
+                44,
+                100
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Anna_WalkN_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "869a4b25add55cef990a9a2f4c1f24d1104afbcf9018422f48a5ea243ff6190d",
+              "subject_size": [
+                41,
+                103
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Anna_WalkN_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "a7d0c5acf53cbce9fced8982ed31816529042739db3faa3a131d1e3fb85edf12",
+              "subject_size": [
+                37,
+                103
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Anna_WalkN_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "25602f0325a61e104984b7409f8ed900b1d89b43bda9eb3b275251b588d85eda",
+              "subject_size": [
+                38,
+                103
+              ]
+            }
+          },
+          "warnings": []
+        }
+      },
+      "E": {
+        "frames": [
+          "PRP_Anna_WalkE0.png",
+          "PRP_Anna_WalkE1.png",
+          "PRP_Anna_WalkE2.png",
+          "PRP_Anna_WalkE3.png",
+          "PRP_Anna_WalkE4.png",
+          "PRP_Anna_WalkE5.png",
+          "PRP_Anna_WalkE6.png",
+          "PRP_Anna_WalkE7.png"
+        ],
+        "source": "Anna_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Anna_WalkE_atlas.png",
+          "source_sha256": "3d31a7fa5bcec5aaf0ebec5053243f2a6a489f66351ed88a3feec8be30ef7a4b",
+          "source_size": [
+            1254,
+            627
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.358621,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 0,
+            "detached_px": 0,
+            "detached_components": 0,
+            "max_removed_alpha": 0
+          },
+          "subject_sizes": [
+            [
+              35,
+              104
+            ],
+            [
+              39,
+              104
+            ],
+            [
+              49,
+              104
+            ],
+            [
+              56,
+              103
+            ],
+            [
+              48,
+              103
+            ],
+            [
+              36,
+              103
+            ],
+            [
+              34,
+              104
+            ],
+            [
+              34,
+              104
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Anna_WalkE_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "0c1ab354467f502bc3e377857e06f40d32bc3c74d2a01bcf7b48cf7f6176c8cb",
+              "subject_size": [
+                35,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Anna_WalkE_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "fe3b23b918381ca18dd92b907fca49b0e9178f1abca4c5edfe05f05927f9ee52",
+              "subject_size": [
+                39,
+                104
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Anna_WalkE_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "12421eb915d16f23a710ec18c1d472d5b5181e32a92710e8392c036cfa1abace",
+              "subject_size": [
+                49,
+                104
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Anna_WalkE_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "41aa7ecb710674b68458144e774fe97b87fe5fc510d221cee84320908edd8272",
+              "subject_size": [
+                56,
+                103
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Anna_WalkE_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "5495f65dd9fff6cab701fb3da37d4e0a91ea1fe0b9c049e10c914a4fb2c38ed1",
+              "subject_size": [
+                48,
+                103
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Anna_WalkE_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "3f27c942265b2fb9446f17aca6de31ce6bacea3ebb14cb1476aaf1285e367d9a",
+              "subject_size": [
+                36,
+                103
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Anna_WalkE_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "f6d79fa2635ecbcf05b1da1ee95c41dbacb14ce0fe3e3e77ba7e40c6c546d7f5",
+              "subject_size": [
+                34,
+                104
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Anna_WalkE_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "3e83b20902b783394742ff59bdd5faee65c0677e2407469862b5d852a41c0582",
+              "subject_size": [
+                34,
+                104
+              ]
+            }
+          },
+          "warnings": []
+        }
+      }
+    },
+    "Gulya": {
+      "N": {
+        "frames": [
+          "PRP_Gulya_WalkN0.png",
+          "PRP_Gulya_WalkN1.png",
+          "PRP_Gulya_WalkN2.png",
+          "PRP_Gulya_WalkN3.png",
+          "PRP_Gulya_WalkN4.png",
+          "PRP_Gulya_WalkN5.png",
+          "PRP_Gulya_WalkN6.png",
+          "PRP_Gulya_WalkN7.png"
+        ],
+        "source": "Gulya_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Gulya_WalkN_atlas.png",
+          "source_sha256": "6ce0ebce55c396fa72337d9c9a07ebb49e7a6a4980e653182df1edda517645f5",
+          "source_size": [
+            1261,
+            623
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.359862,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 35247,
+            "detached_px": 12,
+            "detached_components": 9,
+            "max_removed_alpha": 6
+          },
+          "subject_sizes": [
+            [
+              40,
+              104
+            ],
+            [
+              43,
+              104
+            ],
+            [
+              43,
+              103
+            ],
+            [
+              49,
+              102
+            ],
+            [
+              50,
+              103
+            ],
+            [
+              45,
+              103
+            ],
+            [
+              42,
+              103
+            ],
+            [
+              42,
+              104
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Gulya_WalkN_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "da312d72eefa2d49a28cbb951d7fed5db4ec08a67a7aab31f1d180c0be55ec61",
+              "subject_size": [
+                40,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Gulya_WalkN_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "34fb6f885bfd8069274fec4ca0f3b9ab51ee047506fbed438fbb11e529a55a04",
+              "subject_size": [
+                43,
+                104
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Gulya_WalkN_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "3be3f104c12985eeb44a6196b7677b7527655affa66aa9cfdb7bf63f7c74df14",
+              "subject_size": [
+                43,
+                103
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Gulya_WalkN_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "0673f478750246568aa37f0e97de48265a796801148879e8cd26eb17232dcd8f",
+              "subject_size": [
+                49,
+                102
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Gulya_WalkN_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "04071867f150f646983b692b3ac0be0a66e2263bfe4c83291a944a8cebfd0e82",
+              "subject_size": [
+                50,
+                103
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Gulya_WalkN_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "c0172de66060e3910df4a66ac1e9adca2837600ededda0fb1225f354628620cd",
+              "subject_size": [
+                45,
+                103
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Gulya_WalkN_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "ae4f260b41afff8d27e7e280a6d938704112540aab11e738c23f240bb7e88f5d",
+              "subject_size": [
+                42,
+                103
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Gulya_WalkN_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "b0ea235e2720a2107185b695ea22b3231b13d5c1638a974c4afe0b3fbdc31577",
+              "subject_size": [
+                42,
+                104
+              ]
+            }
+          },
+          "warnings": []
+        }
+      },
+      "E": {
+        "frames": [
+          "PRP_Gulya_WalkE0.png",
+          "PRP_Gulya_WalkE1.png",
+          "PRP_Gulya_WalkE2.png",
+          "PRP_Gulya_WalkE3.png",
+          "PRP_Gulya_WalkE4.png",
+          "PRP_Gulya_WalkE5.png",
+          "PRP_Gulya_WalkE6.png",
+          "PRP_Gulya_WalkE7.png"
+        ],
+        "source": "Gulya_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Gulya_WalkE_atlas.png",
+          "source_sha256": "892cd58da8ce17b3d708cabdd1c26c9752794a53ef58e9603cb0bcb63c1aa626",
+          "source_size": [
+            1261,
+            623
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.359862,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 32889,
+            "detached_px": 7,
+            "detached_components": 7,
+            "max_removed_alpha": 5
+          },
+          "subject_sizes": [
+            [
+              32,
+              104
+            ],
+            [
+              48,
+              103
+            ],
+            [
+              54,
+              103
+            ],
+            [
+              56,
+              103
+            ],
+            [
+              60,
+              103
+            ],
+            [
+              44,
+              102
+            ],
+            [
+              33,
+              102
+            ],
+            [
+              31,
+              102
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Gulya_WalkE_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "cbb3142353c7d43d7806ae4fcdfed95415c06e558faa63dc9471dadd8e3d7140",
+              "subject_size": [
+                32,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Gulya_WalkE_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "2979fdd235d2020c8970f090cc82bdc665a77527da767d8e50984753c5d79f3b",
+              "subject_size": [
+                48,
+                103
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Gulya_WalkE_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "3da75ddb2be52b720b7a760904bf5ebd9d97f678729f5b1812c101251230a82b",
+              "subject_size": [
+                54,
+                103
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Gulya_WalkE_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "d12bbc1dfa8a2409324989242487f03950bf6528868521dc9249094155b059b0",
+              "subject_size": [
+                56,
+                103
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Gulya_WalkE_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "dfd0a9fa870a89547ecb7e696d18d8e90700f2427b448507baa75c4facdce3f2",
+              "subject_size": [
+                60,
+                103
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Gulya_WalkE_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "cc477b1f1d92d82793965f4c04338ce8a3796a18cac37da0f3818e78bdb735fa",
+              "subject_size": [
+                44,
+                102
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Gulya_WalkE_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "c4ed6342a4e04b3cacb1573112f91b04b35005d76ebcf630c1459dbd74060bbb",
+              "subject_size": [
+                33,
+                102
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Gulya_WalkE_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "051819e58c37d15e1addc88c8c5efc440b32fa626533b344b985227ee6af1c72",
+              "subject_size": [
+                31,
+                102
+              ]
+            }
+          },
+          "warnings": []
+        }
+      }
+    },
+    "Pavel": {
+      "N": {
+        "frames": [
+          "PRP_Pavel_WalkN0.png",
+          "PRP_Pavel_WalkN1.png",
+          "PRP_Pavel_WalkN2.png",
+          "PRP_Pavel_WalkN3.png",
+          "PRP_Pavel_WalkN4.png",
+          "PRP_Pavel_WalkN5.png",
+          "PRP_Pavel_WalkN6.png",
+          "PRP_Pavel_WalkN7.png"
+        ],
+        "source": "Pavel_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Pavel_WalkN_atlas.png",
+          "source_sha256": "13f3eeadfabbd99121f1da697f73bef5d8e3e2e28f5c28e169fff2ef8f8eb53f",
+          "source_size": [
+            1276,
+            616
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.358621,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 23169,
+            "detached_px": 0,
+            "detached_components": 0,
+            "max_removed_alpha": 4
+          },
+          "subject_sizes": [
+            [
+              45,
+              104
+            ],
+            [
+              45,
+              104
+            ],
+            [
+              46,
+              104
+            ],
+            [
+              46,
+              102
+            ],
+            [
+              44,
+              103
+            ],
+            [
+              45,
+              103
+            ],
+            [
+              47,
+              103
+            ],
+            [
+              44,
+              103
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Pavel_WalkN_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "630fa462b0a7c70ed9c406dc611c3134bd26d12810050887380fcd5d8e1d10dc",
+              "subject_size": [
+                45,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Pavel_WalkN_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "a014d455b060522d9f777c40e7d63cf61d81e7b6902d16a2932907f9a33d04d9",
+              "subject_size": [
+                45,
+                104
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Pavel_WalkN_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "f5f8bacf8b5d1a81c3d7571997ec1803133592874eea3d2de65f57b133219aca",
+              "subject_size": [
+                46,
+                104
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Pavel_WalkN_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "4fcb6ad0d4ea9b74069694077ef4d2bc37dabe289a5d39db4c2026e476b03dc6",
+              "subject_size": [
+                46,
+                102
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Pavel_WalkN_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "cd9053344a8152be59ddeb8d912da510a633adbfbe167fc0f8a7e5d7660074f5",
+              "subject_size": [
+                44,
+                103
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Pavel_WalkN_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "804a962bcc38e5a1fd4fcca13449806080a5610c7d7d7dca492a3067735f9801",
+              "subject_size": [
+                45,
+                103
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Pavel_WalkN_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "33387c99b6ba2d74135c1f6a130a41a9020be66b5329cd8fe7d31d08c7d55347",
+              "subject_size": [
+                47,
+                103
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Pavel_WalkN_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "c1987421e8aae5e848c9266cba48ccd7c34e7624fb3842fd22099700e4ebc44f",
+              "subject_size": [
+                44,
+                103
+              ]
+            }
+          },
+          "warnings": []
+        }
+      },
+      "E": {
+        "frames": [
+          "PRP_Pavel_WalkE0.png",
+          "PRP_Pavel_WalkE1.png",
+          "PRP_Pavel_WalkE2.png",
+          "PRP_Pavel_WalkE3.png",
+          "PRP_Pavel_WalkE4.png",
+          "PRP_Pavel_WalkE5.png",
+          "PRP_Pavel_WalkE6.png",
+          "PRP_Pavel_WalkE7.png"
+        ],
+        "source": "Pavel_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Pavel_WalkE_atlas.png",
+          "source_sha256": "ac9699127d3832150a6d9f20aee04611dd705ac368a4ca19353ad50e73ee8dbd",
+          "source_size": [
+            1276,
+            616
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.361111,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 23660,
+            "detached_px": 1,
+            "detached_components": 1,
+            "max_removed_alpha": 5
+          },
+          "subject_sizes": [
+            [
+              56,
+              103
+            ],
+            [
+              34,
+              104
+            ],
+            [
+              57,
+              103
+            ],
+            [
+              45,
+              103
+            ],
+            [
+              55,
+              102
+            ],
+            [
+              39,
+              103
+            ],
+            [
+              56,
+              102
+            ],
+            [
+              45,
+              102
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Pavel_WalkE_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "29569a621d3b26f1170de726f3e718f9040ed58e80af16ed90bab72485456f80",
+              "subject_size": [
+                56,
+                103
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Pavel_WalkE_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "f3c4b09cb00d2fbee962f2ddf3459e969803c8057649148c605639bb963df735",
+              "subject_size": [
+                34,
+                104
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Pavel_WalkE_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "6c03ea50abb514562375dae4b33619dfb99ef6cf8e3e5634465b8816b4d79f6e",
+              "subject_size": [
+                57,
+                103
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Pavel_WalkE_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "d15f535b5b54ea0df08f70619984b3c3f813899c0314bc620f2579b3b870b40b",
+              "subject_size": [
+                45,
+                103
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Pavel_WalkE_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "5eeec7f4e6f5fc6547eabcfae4c5c4f64d78fe88c9f9f67779b2797ab2132a6a",
+              "subject_size": [
+                55,
+                102
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Pavel_WalkE_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "f9046c03ad420823d395fdf47d6cdb92d76f48accf5e86a46750673b697d7954",
+              "subject_size": [
+                39,
+                103
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Pavel_WalkE_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "8f3460d4521b04f190f9fde721aaf8ba78c7bd4568952285812b27b4cff6d3c8",
+              "subject_size": [
+                56,
+                102
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Pavel_WalkE_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "2da255a89789d8655b269bb17def4b830f086480c59d3bdd379e49e8f58a3c94",
+              "subject_size": [
+                45,
+                102
+              ]
+            }
+          },
+          "warnings": []
+        }
+      }
+    },
+    "Ivan": {
+      "N": {
+        "frames": [
+          "PRP_Ivan_WalkN0.png",
+          "PRP_Ivan_WalkN1.png",
+          "PRP_Ivan_WalkN2.png",
+          "PRP_Ivan_WalkN3.png",
+          "PRP_Ivan_WalkN4.png",
+          "PRP_Ivan_WalkN5.png",
+          "PRP_Ivan_WalkN6.png",
+          "PRP_Ivan_WalkN7.png"
+        ],
+        "source": "Ivan_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Ivan_WalkN_atlas.png",
+          "source_sha256": "2cd47ff7b3c9a2f0a629c30b66a5191c27a6c6a80931d80185b17e51be650ce9",
+          "source_size": [
+            1247,
+            630
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.354949,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 27532,
+            "detached_px": 9,
+            "detached_components": 6,
+            "max_removed_alpha": 5
+          },
+          "subject_sizes": [
+            [
+              45,
+              104
+            ],
+            [
+              47,
+              103
+            ],
+            [
+              46,
+              104
+            ],
+            [
+              48,
+              103
+            ],
+            [
+              48,
+              103
+            ],
+            [
+              47,
+              101
+            ],
+            [
+              46,
+              104
+            ],
+            [
+              45,
+              104
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Ivan_WalkN_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "d0ff03968faefb0c9d7b2696b39515e180ed0f4dcc1dcace76b3857dcf5de011",
+              "subject_size": [
+                45,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Ivan_WalkN_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "2fcf399c53a5ec44b5e424f06e5fd6df7ef58f83468ff77ecbb806c854b1d54b",
+              "subject_size": [
+                47,
+                103
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Ivan_WalkN_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "09b6802eb337b26d17ca6b3010f464665e586e1ab6261d1c2f48a6cf491fec5f",
+              "subject_size": [
+                46,
+                104
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Ivan_WalkN_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "d1e7ed60e0a986957cf79021a482f30f8cf3c78c7ec9d315d00ff7af7104d41b",
+              "subject_size": [
+                48,
+                103
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Ivan_WalkN_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "f000b6ef077d013d9e70873af142c9e3d39cadcfb0d145c462b0caae5fe8ffb8",
+              "subject_size": [
+                48,
+                103
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Ivan_WalkN_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "f29532a0779d1833108c782e2d320b58d60942b31b8eb120e84b0b354d1807c7",
+              "subject_size": [
+                47,
+                101
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Ivan_WalkN_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "e63b6de2d5904baefcfa48607a0488b2cfd6b5aee3b7b2330e466c819e35a541",
+              "subject_size": [
+                46,
+                104
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Ivan_WalkN_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "7bcbcf23d7515394796fdfad898f0791e139035d084253945771b0cb448a9827",
+              "subject_size": [
+                45,
+                104
+              ]
+            }
+          },
+          "warnings": []
+        }
+      },
+      "E": {
+        "frames": [
+          "PRP_Ivan_WalkE0.png",
+          "PRP_Ivan_WalkE1.png",
+          "PRP_Ivan_WalkE2.png",
+          "PRP_Ivan_WalkE3.png",
+          "PRP_Ivan_WalkE4.png",
+          "PRP_Ivan_WalkE5.png",
+          "PRP_Ivan_WalkE6.png",
+          "PRP_Ivan_WalkE7.png"
+        ],
+        "source": "Ivan_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Ivan_WalkE_atlas.png",
+          "source_sha256": "b0f86c3a8c6093e40ed5aa0267a564dbf4dd3251254f957e43d4e77d0baf9407",
+          "source_size": [
+            1247,
+            630
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.356164,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 31209,
+            "detached_px": 17,
+            "detached_components": 10,
+            "max_removed_alpha": 5
+          },
+          "subject_sizes": [
+            [
+              31,
+              104
+            ],
+            [
+              57,
+              103
+            ],
+            [
+              40,
+              103
+            ],
+            [
+              60,
+              103
+            ],
+            [
+              63,
+              103
+            ],
+            [
+              43,
+              103
+            ],
+            [
+              36,
+              104
+            ],
+            [
+              31,
+              104
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Ivan_WalkE_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "1a69826a5854683e5fb181caf9b725971f9cbe968e98e9fa3964b850a28a1922",
+              "subject_size": [
+                31,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Ivan_WalkE_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "9714825ba1c7d813df18df039c6b190cdf754ea7e1c31c3d6a7a36196ce7f21f",
+              "subject_size": [
+                57,
+                103
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Ivan_WalkE_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "2518132d363196bfe024e66ca301aee34ac3148a4a696e0c77abd4a66cb41b14",
+              "subject_size": [
+                40,
+                103
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Ivan_WalkE_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "369a01500d0b18fd625ddc4bd5a5d868df5ff00f0975496c98cd7f0b116a1cc7",
+              "subject_size": [
+                60,
+                103
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Ivan_WalkE_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "4e87c1240bfffdea2beb4d5cbaa93022d9872a02d0056884630fafa9e5aed235",
+              "subject_size": [
+                63,
+                103
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Ivan_WalkE_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "25636db53bf4ce4ce0daa9e6d45ecdb8810167fe1fa81651b89633aa10cfae1c",
+              "subject_size": [
+                43,
+                103
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Ivan_WalkE_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "89ade1b7babcc4028bd6a0774010feb4d18942cf81043813fa95772397fddfe5",
+              "subject_size": [
+                36,
+                104
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Ivan_WalkE_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "657dfc049d83d52963f72b50427c1ec819c838488a4834357f3abe73e2696f24",
+              "subject_size": [
+                31,
+                104
+              ]
+            }
+          },
+          "warnings": []
+        }
+      }
+    },
+    "Yelena": {
+      "N": {
+        "frames": [
+          "PRP_Yelena_WalkN0.png",
+          "PRP_Yelena_WalkN1.png",
+          "PRP_Yelena_WalkN2.png",
+          "PRP_Yelena_WalkN3.png",
+          "PRP_Yelena_WalkN4.png",
+          "PRP_Yelena_WalkN5.png",
+          "PRP_Yelena_WalkN6.png",
+          "PRP_Yelena_WalkN7.png"
+        ],
+        "source": "Yelena_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Yelena_WalkN_atlas.png",
+          "source_sha256": "ce2f633981176156686ec30adc193fd09bbd2449dd3316a32ac13c8d8ef28714",
+          "source_size": [
+            1263,
+            623
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.359862,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 30530,
+            "detached_px": 16,
+            "detached_components": 7,
+            "max_removed_alpha": 6
+          },
+          "subject_sizes": [
+            [
+              39,
+              101
+            ],
+            [
+              41,
+              101
+            ],
+            [
+              41,
+              102
+            ],
+            [
+              44,
+              100
+            ],
+            [
+              44,
+              104
+            ],
+            [
+              40,
+              104
+            ],
+            [
+              41,
+              103
+            ],
+            [
+              40,
+              103
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Yelena_WalkN_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "c3cc52a3510ec9ec2bc1159e38390898ec546728ffbfaa16d781931bb37f2ebc",
+              "subject_size": [
+                39,
+                101
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Yelena_WalkN_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "d09e00857bdc8e4ad71d4f099f9a0d53b96294c9ddb3e4e530b5d072f5e54026",
+              "subject_size": [
+                41,
+                101
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Yelena_WalkN_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "6751ad48f083ebb546eadeaf80da2a5cbec123365db6ee2f9ac7ee63a76739a8",
+              "subject_size": [
+                41,
+                102
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Yelena_WalkN_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "63d17b698a70e6cf90a05caa1579247c71bf62acf0abea78b46bb52d5b70c71e",
+              "subject_size": [
+                44,
+                100
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Yelena_WalkN_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "ad35c8f4c2dc02826dd9dd8984c8fdc5d22c46f2d712c87883194062c075202b",
+              "subject_size": [
+                44,
+                104
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Yelena_WalkN_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "8207068693a41b55da8283aebe909113f34781ef170e7aba7b00d1cd804cbef5",
+              "subject_size": [
+                40,
+                104
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Yelena_WalkN_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "7bb5790129cc00f485ed00605927abcec4ced2c49d6c236ab1cd0b9ee03f5c5b",
+              "subject_size": [
+                41,
+                103
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Yelena_WalkN_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "1edc0fd98e22a2fa34cf18fe3a66602e2afa62d71621a46603f3d2a47bf54b78",
+              "subject_size": [
+                40,
+                103
+              ]
+            }
+          },
+          "warnings": []
+        }
+      },
+      "E": {
+        "frames": [
+          "PRP_Yelena_WalkE0.png",
+          "PRP_Yelena_WalkE1.png",
+          "PRP_Yelena_WalkE2.png",
+          "PRP_Yelena_WalkE3.png",
+          "PRP_Yelena_WalkE4.png",
+          "PRP_Yelena_WalkE5.png",
+          "PRP_Yelena_WalkE6.png",
+          "PRP_Yelena_WalkE7.png"
+        ],
+        "source": "Yelena_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Yelena_WalkE_atlas.png",
+          "source_sha256": "33a0967532fd79e2c15a7c5d871ef0b03f0198ab422a6cf5fa81f7628463b852",
+          "source_size": [
+            1263,
+            623
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.356164,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 34000,
+            "detached_px": 16,
+            "detached_components": 10,
+            "max_removed_alpha": 5
+          },
+          "subject_sizes": [
+            [
+              31,
+              104
+            ],
+            [
+              51,
+              104
+            ],
+            [
+              61,
+              104
+            ],
+            [
+              50,
+              104
+            ],
+            [
+              45,
+              104
+            ],
+            [
+              42,
+              103
+            ],
+            [
+              40,
+              103
+            ],
+            [
+              31,
+              104
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Yelena_WalkE_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "c4e3416aab1c140e39bc4e59d85f481965631263fad9de6fb6256ccd54cc654a",
+              "subject_size": [
+                31,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Yelena_WalkE_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "26e69336670063cd49bf6bb507e22c6cf668856fa85578d72b293cab7b51724c",
+              "subject_size": [
+                51,
+                104
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Yelena_WalkE_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "1fd5b2f2eb1ad21f4b3a6f9b66beccc4482bd4452d94e7a1c59689152cef1fd6",
+              "subject_size": [
+                61,
+                104
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Yelena_WalkE_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "63a28f246e0680cd96359596f4ce3b0f60e042d6da310baa5d2dabc33cb65d93",
+              "subject_size": [
+                50,
+                104
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Yelena_WalkE_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "5570ebfcda449361dc18109eb21e4a7abf5b57c3467e9dac9f9b5a52f16db375",
+              "subject_size": [
+                45,
+                104
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Yelena_WalkE_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "327af492bcc25fb954fe11931674e5f7b43660e9ef4d7eb354ed507b7e63e20c",
+              "subject_size": [
+                42,
+                103
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Yelena_WalkE_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "47460cd0b5125ae30aa335d9ded87ce93fe3c05a466d8d026f53191b2223a0f2",
+              "subject_size": [
+                40,
+                103
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Yelena_WalkE_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "5a63754c13980a8f85980787b3e3f7dc98ddd0370bcd48358abaa49e1cb25473",
+              "subject_size": [
+                31,
+                104
+              ]
+            }
+          },
+          "warnings": []
+        }
+      }
+    },
+    "Zakhar": {
+      "N": {
+        "frames": [
+          "PRP_Zakhar_WalkN0.png",
+          "PRP_Zakhar_WalkN1.png",
+          "PRP_Zakhar_WalkN2.png",
+          "PRP_Zakhar_WalkN3.png",
+          "PRP_Zakhar_WalkN4.png",
+          "PRP_Zakhar_WalkN5.png",
+          "PRP_Zakhar_WalkN6.png",
+          "PRP_Zakhar_WalkN7.png"
+        ],
+        "source": "Zakhar_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Zakhar_WalkN_atlas.png",
+          "source_sha256": "c7c1cad4d04dc548d6e74facb5e89d11a34a2379b716f8b2a3703392c9725070",
+          "source_size": [
+            1247,
+            630
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.348993,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 43594,
+            "detached_px": 14,
+            "detached_components": 8,
+            "max_removed_alpha": 7
+          },
+          "subject_sizes": [
+            [
+              48,
+              104
+            ],
+            [
+              51,
+              104
+            ],
+            [
+              51,
+              103
+            ],
+            [
+              53,
+              103
+            ],
+            [
+              53,
+              103
+            ],
+            [
+              50,
+              103
+            ],
+            [
+              49,
+              103
+            ],
+            [
+              47,
+              104
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Zakhar_WalkN_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "9462f8c2dba0379c0605275d32bff04ebf7e2d3d6ae1ada6cafe89151832d911",
+              "subject_size": [
+                48,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Zakhar_WalkN_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "908b4391d9a61bf21e8c8d0c06bc95a0bde26f36c519562f530822bb75dcd644",
+              "subject_size": [
+                51,
+                104
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Zakhar_WalkN_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "73a8d290b2556807397a1b0a6ec3c9c94d749cca0a099a4db141a4362f9b6be1",
+              "subject_size": [
+                51,
+                103
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Zakhar_WalkN_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "eaaf8cba79bee11610ea55e2eb79d33402d4469822de04b8d8ea306bed322a54",
+              "subject_size": [
+                53,
+                103
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Zakhar_WalkN_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "043981c344cbb2bdd829754e0105f708a63c91e08aa45a418e715380277ba3a4",
+              "subject_size": [
+                53,
+                103
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Zakhar_WalkN_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "0348900e03eb0d0544c4c51ceee8ca18f1ee14ffd96df8a9a2a77508491f7614",
+              "subject_size": [
+                50,
+                103
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Zakhar_WalkN_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "72b8ee7aa9f2501fd52de0c272260d55dda4384f418a8c6b26e2ef9c24a684e0",
+              "subject_size": [
+                49,
+                103
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Zakhar_WalkN_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "a287047020f0316ba0bf0d55813becdfbda11f1979650dea00c7558227958e99",
+              "subject_size": [
+                47,
+                104
+              ]
+            }
+          },
+          "warnings": []
+        }
+      },
+      "E": {
+        "frames": [
+          "PRP_Zakhar_WalkE0.png",
+          "PRP_Zakhar_WalkE1.png",
+          "PRP_Zakhar_WalkE2.png",
+          "PRP_Zakhar_WalkE3.png",
+          "PRP_Zakhar_WalkE4.png",
+          "PRP_Zakhar_WalkE5.png",
+          "PRP_Zakhar_WalkE6.png",
+          "PRP_Zakhar_WalkE7.png"
+        ],
+        "source": "Zakhar_directional_atlas.png",
+        "pipeline": {
+          "schema": "winter-iron.partner-walkcycle.v1",
+          "source": "Zakhar_WalkE_atlas.png",
+          "source_sha256": "19880badc1b97fff908259624f99dfbe696380b76d92e303cde3f328626e5d58",
+          "source_size": [
+            1247,
+            630
+          ],
+          "grid": [
+            4,
+            2
+          ],
+          "frame_count": 8,
+          "target_size": [
+            72,
+            112
+          ],
+          "foot_y": 110,
+          "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+          "scale": 0.352542,
+          "alpha_hygiene": {
+            "mode": "both",
+            "floor": 4,
+            "solid_min": 32,
+            "attach_radius": 2,
+            "connectivity": 8,
+            "floor_px": 51400,
+            "detached_px": 43,
+            "detached_components": 17,
+            "max_removed_alpha": 6
+          },
+          "subject_sizes": [
+            [
+              40,
+              104
+            ],
+            [
+              53,
+              103
+            ],
+            [
+              51,
+              103
+            ],
+            [
+              44,
+              103
+            ],
+            [
+              63,
+              103
+            ],
+            [
+              36,
+              103
+            ],
+            [
+              35,
+              103
+            ],
+            [
+              36,
+              103
+            ]
+          ],
+          "files": {
+            "Walk0": {
+              "path": "PRP_Zakhar_WalkE_Walk0.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "cda99f1dd354f239c2c0c3b993697cb44140d4a3a2e52908f80e46c7b32a644f",
+              "subject_size": [
+                40,
+                104
+              ]
+            },
+            "Walk1": {
+              "path": "PRP_Zakhar_WalkE_Walk1.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "10011bb8393e0e8e4a5945209cb617dfd224af78a6b7185f5ffa79e621731a23",
+              "subject_size": [
+                53,
+                103
+              ]
+            },
+            "Walk2": {
+              "path": "PRP_Zakhar_WalkE_Walk2.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "b4e8cc8e8a709693c276353ed0af23647df483dc5aa06a29106e95b58e097497",
+              "subject_size": [
+                51,
+                103
+              ]
+            },
+            "Walk3": {
+              "path": "PRP_Zakhar_WalkE_Walk3.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "e5da421b20100f037bcad02d7677646f28635c69cedf96d731ca8f8b9344d656",
+              "subject_size": [
+                44,
+                103
+              ]
+            },
+            "Walk4": {
+              "path": "PRP_Zakhar_WalkE_Walk4.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "3aab2cf66c31731141aba7f5d67686e9e521309071b48ddf3762198affbde63d",
+              "subject_size": [
+                63,
+                103
+              ]
+            },
+            "Walk5": {
+              "path": "PRP_Zakhar_WalkE_Walk5.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "7a3a49fa8d2cce4ed3e05fe409148866825bfa8a4ed09387e72cf2578ac62550",
+              "subject_size": [
+                36,
+                103
+              ]
+            },
+            "Walk6": {
+              "path": "PRP_Zakhar_WalkE_Walk6.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "423691ba72047ceab52fbe77c1541fd4c984da110564858d2457cc3bbc819f92",
+              "subject_size": [
+                35,
+                103
+              ]
+            },
+            "Walk7": {
+              "path": "PRP_Zakhar_WalkE_Walk7.png",
+              "size": [
+                72,
+                112
+              ],
+              "sha256": "4a3e794ca83ad98ff2d8878786ef2c1cf6c551bda9836fc6c18d20ac39a0761d",
+              "subject_size": [
+                36,
+                103
+              ]
+            }
+          },
+          "warnings": []
+        }
+      }
+    }
+  }
+}

@@ -779,5 +779,82 @@
    32,
    20
   ]
+ },
+ "MAP_MineNo3_Overview": {
+  "path": "res://art/80_maps/MineNo3/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_MineNo3_Headframe": {
+  "path": "res://art/30_props/PRP_MineNo3_Headframe.png",
+  "size": [
+   457,
+   492
+  ],
+  "pivot": [
+   228.5,
+   492
+  ]
+ },
+ "PRP_MineNo3_DummyTower": {
+  "path": "res://art/30_props/PRP_MineNo3_DummyTower.png",
+  "size": [
+   247,
+   469
+  ],
+  "pivot": [
+   123.5,
+   469
+  ]
+ },
+ "PRP_MineNo3_OreCart": {
+  "path": "res://art/30_props/PRP_MineNo3_OreCart.png",
+  "size": [
+   338,
+   261
+  ],
+  "pivot": [
+   169.0,
+   261
+  ]
+ },
+ "PRP_MineNo3_TimberSupport": {
+  "path": "res://art/30_props/PRP_MineNo3_TimberSupport.png",
+  "size": [
+   459,
+   277
+  ],
+  "pivot": [
+   229.5,
+   277
+  ]
+ },
+ "PRP_MineNo3_DetonatorRig": {
+  "path": "res://art/30_props/PRP_MineNo3_DetonatorRig.png",
+  "size": [
+   506,
+   368
+  ],
+  "pivot": [
+   253.0,
+   368
+  ]
+ },
+ "PRP_MineNo3_SporeFace": {
+  "path": "res://art/30_props/PRP_MineNo3_SporeFace.png",
+  "size": [
+   502,
+   293
+  ],
+  "pivot": [
+   251.0,
+   293
+  ]
  }
 }

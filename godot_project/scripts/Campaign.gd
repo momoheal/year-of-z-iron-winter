@@ -214,6 +214,11 @@ func _input(event: InputEvent) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo \
+			and event.keycode == KEY_ESCAPE and hud.room_zones_open():
+		hud.close_room_zones()
+		get_viewport().set_input_as_handled()
+		return
 	if hud.overlay_active() or sim.pending_scene != "":
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -268,9 +273,9 @@ func _unhandled_input(event: InputEvent) -> void:
 					hud.start_new_game()
 			elif sim.phase == "report":
 				sim.to_base()
-				sim.advance_day()
 			elif sim.phase == "base":
-				hud.open_map()
+				if not sim.night_complete:
+					hud.open_map()
 			elif sim.phase == "map" and not (sim.help_open or sim.logbook_open):
 				hud.depart_to(sim.location(sim.selected_loc))
 	if event is InputEventMouseButton:

@@ -779,5 +779,82 @@
    32,
    20
   ]
+ },
+ "MAP_Coldstore_Overview": {
+  "path": "res://art/80_maps/Coldstore/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Coldstore_FanUnit": {
+  "path": "res://art/30_props/PRP_Coldstore_FanUnit.png",
+  "size": [
+   473,
+   245
+  ],
+  "pivot": [
+   236.5,
+   245
+  ]
+ },
+ "PRP_Coldstore_CardTerminal": {
+  "path": "res://art/30_props/PRP_Coldstore_CardTerminal.png",
+  "size": [
+   167,
+   339
+  ],
+  "pivot": [
+   83.5,
+   339
+  ]
+ },
+ "PRP_Coldstore_RationPallet": {
+  "path": "res://art/30_props/PRP_Coldstore_RationPallet.png",
+  "size": [
+   359,
+   318
+  ],
+  "pivot": [
+   179.5,
+   318
+  ]
+ },
+ "PRP_Coldstore_VaultColumn": {
+  "path": "res://art/30_props/PRP_Coldstore_VaultColumn.png",
+  "size": [
+   161,
+   415
+  ],
+  "pivot": [
+   80.5,
+   415
+  ]
+ },
+ "PRP_Coldstore_VaultDoor": {
+  "path": "res://art/30_props/PRP_Coldstore_VaultDoor.png",
+  "size": [
+   490,
+   415
+  ],
+  "pivot": [
+   245.0,
+   415
+  ]
+ },
+ "PRP_Coldstore_Reefer": {
+  "path": "res://art/30_props/PRP_Coldstore_Reefer.png",
+  "size": [
+   492,
+   203
+  ],
+  "pivot": [
+   246.0,
+   203
+  ]
  }
 }

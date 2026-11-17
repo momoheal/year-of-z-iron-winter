@@ -1,0 +1,11 @@
+Use case: illustration-story
+Asset type: 2D game environment background plate for the motherless-route hideout page
+Primary request: Paint a small temporary refuge behind a railway black-market stall: an abandoned signal-room nook built into a freight-side workers' shed. A heavy canvas curtain separates it from the market, a narrow sleeping cot sits beside a low iron stove, and a shuttered rail window shows snow outside. This is a bare, usable hideout that Aleksei can reach after losing his mother.
+Scene/backdrop: cramped rail-side shelter, patched corrugated metal and old brick, improvised but sheltered; no people.
+Style/medium: realistic hand-painted thick impasto oil painting, visible brushwork, weathered material detail, restrained winter colors matching the game's existing painted facade and prop art.
+Composition/framing: wide 16:9 landscape, eye-level 2D story environment plate with moderate depth; keep the bed/stove readable and reserve a calm strip at the bottom for in-game UI overlay.
+Lighting/mood: blue-black snow light outside; subdued amber from a hooded oil lamp and banked stove inside; fragile safety without comfort.
+Color palette: charcoal, cold steel blue, dirty cream canvas, small warm amber and rust.
+Constraints: no characters, no people, no weapons, no readable text, no signs, no logos, no watermark, no UI. Keep all important elements within a centered safe area for crop.
+
+Input image 1 is the approved 602 apartment plate. Use it only for painterly brushwork and muted winter colors; this image must show a distinct rail-side hideout with a different structure.

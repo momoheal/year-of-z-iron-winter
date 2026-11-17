@@ -47,6 +47,7 @@ func _run() -> void:
 	_yard()
 	_melee()
 	_guns()
+	_weapon_mods()
 	_weapon_pose()
 	_soldier()
 	_ammo()
@@ -221,6 +222,52 @@ func _guns() -> void:
 	_assert(float(Arsenal.spec("rifle")["dmg"]) >= 96.0, "莫辛一枪 96 点")
 
 
+func _weapon_mods() -> void:
+	print("[weapon mods]")
+	var s = _s
+	s.weapon = "rifle"
+	s.weapon_mods = {}
+	var base: Dictionary = s.cur_w()
+	s.weapon_mods = {"rifle": ["scope", "suppressor"]}
+	var upgraded: Dictionary = s.cur_w()
+	_assert(float(upgraded["reach"]) > float(base["reach"]), "狙击镜提高步枪射程")
+	_assert(float(upgraded["dmg"]) > float(base["dmg"]), "狙击镜提高步枪伤害")
+	_assert(float(upgraded["noise"]) < float(base["noise"]), "消音器降低枪声传播")
+	_assert(float(upgraded["sound_db"]) < 0.0, "消音器也降低枪声音量")
+
+	s.weapon_mods = {}
+	s.pack.clear()
+	s.pack.append("scope")
+	s._toggle_weapon_mod("scope")
+	_assert(s._mod_installed("rifle", "scope") and not s.pack.has("scope"),
+		"安装狙击镜会消耗背包部件")
+	s._toggle_weapon_mod("scope")
+	_assert(not s._mod_installed("rifle", "scope") and s.pack.has("scope"),
+		"拆下改造件会退回背包")
+
+	s.weapon = "pistol"
+	s.pack.append("suppressor")
+	var pistol_noise := float(s.cur_w()["noise"])
+	s._toggle_weapon_mod("suppressor")
+	_assert(s._mod_installed("pistol", "suppressor") and float(s.cur_w()["noise"]) < pistol_noise,
+		"手枪可装消音器并降低枪声")
+	s.pack.append("scope")
+	var scope_before: int = s.pack.size()
+	s._toggle_weapon_mod("scope")
+	_assert(not s._mod_installed("pistol", "scope") and s.pack.size() == scope_before,
+		"狙击镜不能装到手枪上")
+	s._toggle_weapon_mod("suppressor")
+	_assert(not s._mod_installed("pistol", "suppressor") and s.pack.has("suppressor")
+		and s.pack.size() == scope_before + 1,
+		"拆卸消音器退还物资")
+	s._open_weapon_mod_panel()
+	_assert(s.state == "modding" and s._weapon_mod_panel.visible and s.player.frozen,
+		"T 改造界面暂停夜潜行动")
+	s._close_weapon_mod_panel()
+	_assert(s.state == "play" and not s.player.frozen and not s._weapon_mod_panel.visible,
+		"关闭改造界面恢复夜潜")
+
+
 # ---------------------------------------------------------------------------
 # 5) 清杀兵：中弹 → 死亡 → 不再抓人
 # ---------------------------------------------------------------------------
@@ -249,6 +296,16 @@ func _soldier() -> void:
 	s.state = "play"
 	sol._physics_process(0.016)
 	_assert(s.state == "play", "尸体不会再触发被发现")
+	# 清杀兵尸体能缴获武器，并从同一尸体搜到补给；每具尸体只能搜一次。
+	sol.loot_weapon_id = "shotgun"
+	s.set_meta("corpse_searched", false)
+	s.pack.clear()
+	s._finish_corpse_search(sol)
+	var supply_count: int = s.pack.size()
+	_assert(s.weapons.has("shotgun"), "搜 OSK 尸体直接缴获其枪械", str(s.weapons))
+	_assert(supply_count > 0, "OSK 尸体还会掉落弹药 / 医疗或改造补给", str(s.pack))
+	s._finish_corpse_search(sol)
+	_assert(s.pack.size() == supply_count, "同一 OSK 尸体不会重复领取补给")
 
 
 # ---------------------------------------------------------------------------

@@ -812,5 +812,82 @@
    32,
    20
   ]
+ },
+ "MAP_Sanitarium_Overview": {
+  "path": "res://art/80_maps/Sanitarium/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Sanitarium_CagePanel": {
+  "path": "res://art/30_props/PRP_Sanitarium_CagePanel.png",
+  "size": [
+   428,
+   387
+  ],
+  "pivot": [
+   214.0,
+   387
+  ]
+ },
+ "PRP_Sanitarium_Cot": {
+  "path": "res://art/30_props/PRP_Sanitarium_Cot.png",
+  "size": [
+   647,
+   379
+  ],
+  "pivot": [
+   323.5,
+   379
+  ]
+ },
+ "PRP_Sanitarium_MedCabinet": {
+  "path": "res://art/30_props/PRP_Sanitarium_MedCabinet.png",
+  "size": [
+   293,
+   467
+  ],
+  "pivot": [
+   146.5,
+   467
+  ]
+ },
+ "PRP_Sanitarium_XrayLightbox": {
+  "path": "res://art/30_props/PRP_Sanitarium_XrayLightbox.png",
+  "size": [
+   385,
+   269
+  ],
+  "pivot": [
+   192.5,
+   269
+  ]
+ },
+ "PRP_Sanitarium_SampleFridge": {
+  "path": "res://art/30_props/PRP_Sanitarium_SampleFridge.png",
+  "size": [
+   272,
+   404
+  ],
+  "pivot": [
+   136.0,
+   404
+  ]
+ },
+ "PRP_Sanitarium_WarmingStove": {
+  "path": "res://art/30_props/PRP_Sanitarium_WarmingStove.png",
+  "size": [
+   269,
+   456
+  ],
+  "pivot": [
+   134.5,
+   456
+  ]
  }
 }

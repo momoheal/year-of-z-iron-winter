@@ -1,0 +1,165 @@
+{
+  "schema": "winter-iron.partner-walkcycle.v1",
+  "source": "Zakhar_WalkE_atlas.png",
+  "source_sha256": "19880badc1b97fff908259624f99dfbe696380b76d92e303cde3f328626e5d58",
+  "source_size": [
+    1247,
+    630
+  ],
+  "grid": [
+    4,
+    2
+  ],
+  "frame_count": 8,
+  "target_size": [
+    72,
+    112
+  ],
+  "foot_y": 110,
+  "layout": "row-major Walk0..Walk7; alternate left/right contact phases",
+  "scale": 0.352542,
+  "alpha_hygiene": {
+    "mode": "both",
+    "floor": 4,
+    "solid_min": 32,
+    "attach_radius": 2,
+    "connectivity": 8,
+    "floor_px": 51400,
+    "detached_px": 43,
+    "detached_components": 17,
+    "max_removed_alpha": 6
+  },
+  "subject_sizes": [
+    [
+      40,
+      104
+    ],
+    [
+      53,
+      103
+    ],
+    [
+      51,
+      103
+    ],
+    [
+      44,
+      103
+    ],
+    [
+      63,
+      103
+    ],
+    [
+      36,
+      103
+    ],
+    [
+      35,
+      103
+    ],
+    [
+      36,
+      103
+    ]
+  ],
+  "files": {
+    "Walk0": {
+      "path": "PRP_Zakhar_WalkE_Walk0.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "cda99f1dd354f239c2c0c3b993697cb44140d4a3a2e52908f80e46c7b32a644f",
+      "subject_size": [
+        40,
+        104
+      ]
+    },
+    "Walk1": {
+      "path": "PRP_Zakhar_WalkE_Walk1.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "10011bb8393e0e8e4a5945209cb617dfd224af78a6b7185f5ffa79e621731a23",
+      "subject_size": [
+        53,
+        103
+      ]
+    },
+    "Walk2": {
+      "path": "PRP_Zakhar_WalkE_Walk2.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "b4e8cc8e8a709693c276353ed0af23647df483dc5aa06a29106e95b58e097497",
+      "subject_size": [
+        51,
+        103
+      ]
+    },
+    "Walk3": {
+      "path": "PRP_Zakhar_WalkE_Walk3.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "e5da421b20100f037bcad02d7677646f28635c69cedf96d731ca8f8b9344d656",
+      "subject_size": [
+        44,
+        103
+      ]
+    },
+    "Walk4": {
+      "path": "PRP_Zakhar_WalkE_Walk4.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "3aab2cf66c31731141aba7f5d67686e9e521309071b48ddf3762198affbde63d",
+      "subject_size": [
+        63,
+        103
+      ]
+    },
+    "Walk5": {
+      "path": "PRP_Zakhar_WalkE_Walk5.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "7a3a49fa8d2cce4ed3e05fe409148866825bfa8a4ed09387e72cf2578ac62550",
+      "subject_size": [
+        36,
+        103
+      ]
+    },
+    "Walk6": {
+      "path": "PRP_Zakhar_WalkE_Walk6.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "423691ba72047ceab52fbe77c1541fd4c984da110564858d2457cc3bbc819f92",
+      "subject_size": [
+        35,
+        103
+      ]
+    },
+    "Walk7": {
+      "path": "PRP_Zakhar_WalkE_Walk7.png",
+      "size": [
+        72,
+        112
+      ],
+      "sha256": "4a3e794ca83ad98ff2d8878786ef2c1cf6c551bda9836fc6c18d20ac39a0761d",
+      "subject_size": [
+        36,
+        103
+      ]
+    }
+  },
+  "warnings": []
+}

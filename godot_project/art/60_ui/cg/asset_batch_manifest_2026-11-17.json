@@ -1,0 +1,988 @@
+{
+  "generated_on": "2026-11-17",
+  "standard_cg_size": [
+    1376,
+    768
+  ],
+  "cg_assets": [
+    {
+      "file": "cg_marshalling_c0.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "e0c20e9261f47052ad60230c9497e92722bc331597c0ea6d6279d2ccf47ffe66",
+      "prompt_file": "CG_Marshalling_C0.prompt.txt",
+      "description": "调车场 23:00 死令余波：废弃守车旁的工具箱、精密机件、雪夜货场与账本划痕。",
+      "source_image": "exec-e9f0f912-74b0-4346-8a11-1727453171d2.png",
+      "art_source": "host_image",
+      "route": "image_gen"
+    },
+    {
+      "file": "cg_manor_c0b.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "6c0f249c9905615063506d3e3201da29b0f1f3a3a240b49d2aefd53768cbac89",
+      "prompt_file": "CG_Manor_C0b.prompt.txt",
+      "description": "庄园证据余波：焚毁台账、封存腹透液、胶卷与窗外焦黑雪。",
+      "source_image": "exec-c067c570-ad78-4bb7-b789-f67e51c8ccfd.png",
+      "art_source": "host_image",
+      "route": "image_gen"
+    },
+    {
+      "file": "cg_marshalling_c0c.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "37829ae49d7e5d6679c2fb8f4694283789d6cd2dc19ae02af8d93cff3133a1ab",
+      "prompt_file": "cg_marshalling_c0c.prompt.txt",
+      "description": "调车场余波备选：雪夜守车旁的维修工具箱与抽象账目",
+      "source_image": "exec-8e621c3c-f1f0-4628-b385-130abecd56e5.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_manor_c0c.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "bf6aa0b114a3e40e61cafc9c769fc7406653ce4ac64d2704a02ce4bc6bfe053f",
+      "prompt_file": "cg_manor_c0c.prompt.txt",
+      "description": "庄园证据余波备选：胶卷、腹透液、焦黑雪窗与焚毁账本",
+      "source_image": "exec-dfde9287-fd70-44a7-9117-4f900cec1541.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_canteen_c0c.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "1ef9e872b9e21639b8c1b5aba316c7496c509a41c5abf5eb8d600c602fb4f5d1",
+      "prompt_file": "cg_canteen_c0c.prompt.txt",
+      "description": "食堂余波备选：老厨师把亡子的旧袄披到阿列克谢肩上",
+      "source_image": "exec-6e600ff6-3931-4264-806a-dad1864021d6.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_market_c1d.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "4b315fc93bd03cdab693299df0249c9c0f0572e4c32bb9114808aa60b5ea59ed",
+      "prompt_file": "cg_market_c1d.prompt.txt",
+      "description": "黑市余波备选：伊万留下的帆布手套、路线纸与雪中脚印",
+      "source_image": "exec-3ccd1e27-6eeb-47c7-8921-cc9168457684.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_sanitarium_c0c.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "aba1dea7b54ca76e35ab0f41e8c005b66716b2a712ef3575130ec5b8d76feaea",
+      "prompt_file": "cg_sanitarium_c0c.prompt.txt",
+      "description": "疗养院余波备选：开启的笼门、被松开的束带与雪夜出口",
+      "source_image": "exec-e649e731-8527-40dc-a228-5de6f85861da.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_coldstore_c0b.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "34665c8988a40b580561bc4c7c6de5f6342784876d4c59e45651db42f16fe383",
+      "prompt_file": "cg_coldstore_c0b.prompt.txt",
+      "description": "冷库救灰犬余波备选：解下断铁丝项圈后喂灰犬黑麦面包",
+      "source_image": "exec-a769ef04-5557-46a3-be1d-83fc7e8885d2.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_coldstore_c1b.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "27ff2841ef090a483d8913359f4477a2d20c3e5fec81530c3bbee45f2dd360a9",
+      "prompt_file": "cg_coldstore_c1b.prompt.txt",
+      "description": "冷库弃犬余波备选：未被递出的黑麦面包与留在收发亭旁的灰犬",
+      "source_image": "exec-3065eee5-4245-41e0-aedd-758541497433.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_yard_c0b.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "333d1edf6d68c3b85bb23c8e9d3e59d2bfe86499bf959ec1e2392ef8953342fa",
+      "prompt_file": "cg_yard_c0b.prompt.txt",
+      "description": "第一关货场余波备选：阿列克谢护住编组单，探照灯扫过第三节装甲车厢",
+      "source_image": "exec-bf46b042-5de5-4e79-b8e0-16b437dbc038.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_scene_alt_yelena.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "35593da3417aedf92d84eea272c863663374c4ea686335bf960a332e0e078a45",
+      "prompt_file": "cg_broadcast_scene_alt_yelena.prompt.txt",
+      "description": "叶莲娜广播点备选：金发辫、合身冬衣、双手与电台动作清楚",
+      "source_image": "exec-e1e5e844-18e5-48ba-b16b-0ed56a9078b9.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "used by broadcast story background and aftermath pages; also visible in Art Archive"
+    },
+    {
+      "file": "cg_eaglecliff_derailment_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "55777919641c005136174fb4a81237d18e7d847950df1879645d829c2bf454da",
+      "prompt_file": "cg_eaglecliff_derailment_alt.prompt.txt",
+      "description": "鹰嘴崖脱轨救援备选：阿列克谢从装甲车厢扶下拉娜",
+      "source_image": "exec-55dba043-1a4b-43c3-a137-53abf336d553.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_fire_rescue_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "3a703c3945c6fe4932e386c76ece641f09bbfa94663f0aac9eaf7375fd8936f9",
+      "prompt_file": "cg_fire_rescue_scene_alt.prompt.txt",
+      "description": "火场托孤备选：阿列克谢接住女孩，柳德米拉递出熏黑配给券",
+      "source_image": "exec-64967e6e-2ff6-4ad1-9548-d33a18bd426b.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_testimony_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "2f575267d451ac41b36090627124d8a8bf823cd82c4bb936d956d9b0c043da06",
+      "prompt_file": "cg_broadcast_testimony_scene_alt.prompt.txt",
+      "description": "终局播报备选：金发辫播报者、阿列克谢与听众同场",
+      "source_image": "exec-c4ef0d92-eea8-4125-919c-9f75a8514de5.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_apartment_exchange_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "b529164e944c901c3df11564df110d35f64fb4691a53b90d610c4832e86dba70",
+      "prompt_file": "cg_apartment_exchange_scene_alt.prompt.txt",
+      "description": "公寓交接备选：阿列克谢安慰母亲，姐姐正在外勤医疗支援",
+      "source_image": "exec-16508715-2aba-4e57-9bd4-1202b9b6ebcc.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_mine_sporeface_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "84fb45bf6a779a765cbb71fa11c4609de774955aae998698e01547f723be8b22",
+      "prompt_file": "cg_mine_sporeface_scene_alt.prompt.txt",
+      "description": "3号矿坑孢子层发现备选：记录样本、显出灰黑矿物层",
+      "source_image": "exec-f3dc56bc-0578-4c3a-9221-cd1eaca935a3.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_station_buran_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "8016b6e2796dc3870f9c7a0de5d61a2fccd6bd842a8828e14d7c142edb28c380",
+      "prompt_file": "cg_station_buran_scene_alt.prompt.txt",
+      "description": "布拉风号进站备选：更宽的站台视角、装甲列车与冬夜信号灯",
+      "source_image": "exec-aa8d69ee-2e10-41b3-a3a3-db7e38371df6.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_siege_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "7aa4c871c52c791ee2d5c62693a4a876bd3b24b99d8c082771abc90ce8450605",
+      "prompt_file": "cg_broadcast_siege_scene_alt.prompt.txt",
+      "description": "广播塔围攻备选：雪夜信号塔、金发辫电报员和山脊搜索灯",
+      "source_image": "exec-c0c7cb48-1000-4043-9e92-45cd13397722.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_pasha_watchtower_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "d6a8b8370d6ee118dea15faf4f4a87186f7ea32f77ccc776dc6cc2c8abe94328",
+      "prompt_file": "cg_pasha_watchtower_scene_alt.prompt.txt",
+      "description": "帕沙哨塔备选：雪地检查站、帕沙与临时搭成的假哨兵",
+      "source_image": "exec-7636614e-8cb5-4b45-98b8-45cfe143a48f.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_mine_detonator_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "0c39993b1d29b785d0fabc7fac6fd46bfc4fbc6996bc1d2d5d8a91f9a8289870",
+      "prompt_file": "cg_mine_detonator_scene_alt.prompt.txt",
+      "description": "矿坑起爆室备选：关闭的工业控制箱、矿工与作出决断的阿列克谢",
+      "source_image": "exec-a276f2e6-a34a-4752-86f9-e7bb32c71407.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_market_zakhar_ledger_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "1b03f7a5cc05380c04a1165f1865c4b055638c69cd0d2c190d2cf1fe7783c342",
+      "prompt_file": "cg_market_zakhar_ledger_alt.prompt.txt",
+      "description": "扎哈尔黑市账簿备选：蓝袖章核算员查看账本与搜刮袋，巡逻灯逼近",
+      "source_image": "exec-bcd34847-bdfd-4ea0-bbf8-4782ad7481aa.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_eaglecliff_004_plaque_recovery_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "392eed06cc0396b53d1fdd9dd4af65cd4fef422d818c7e7bc724baa6088ef269",
+      "prompt_file": "cg_eaglecliff_004_plaque_recovery_alt.prompt.txt",
+      "description": "鹰嘴崖 004 号铭牌发现备选：阿列克谢与列车长伊万检查雪中脱轨车厢",
+      "source_image": "exec-cc3f47c4-1253-4235-a6f5-43d2832cafa9.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_zakhar_quota_betrayal_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "00bb3be264913bb152a64cf1739deaeac0291ddfd5fd1dc5db8cf041dde57099",
+      "prompt_file": "cg_zakhar_quota_betrayal_alt.prompt.txt",
+      "description": "扎哈尔配额背叛备选：账簿、蓝袖章、配额窗口与等待中的 OSK 官员",
+      "source_image": "exec-6e72e578-e7ac-4584-b7e0-a97b363cfbbd.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_yelena_goldbraid_alt2.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "422af1c89050f65ea5b4dc8d470f3ff948b0401f99e2994b5dd0e96f851c3756",
+      "prompt_file": "cg_broadcast_yelena_goldbraid_alt2.prompt.txt",
+      "description": "广播点叶莲娜构图备选：金发辫、较体面的冬衣、手与电报机关系清楚",
+      "source_image": "exec-5676efbc-77f6-4f20-a6f3-573796b78c1e.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_sanitarium_anna_calm_patients_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "379fc53d80b7c842a3d91f03a2195380946e9bb5c836a623d71d33533694bfdc",
+      "prompt_file": "cg_sanitarium_anna_calm_patients_alt.prompt.txt",
+      "description": "疗养院安娜能力候选：她平静安抚门后的发热者，阿列克谢与灰烬在后景",
+      "source_image": "exec-e5ec88bd-5eda-4006-bf6c-500bca0e66b9.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_marshalling_yelena_patrol_pause_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "0c290a48d6c378d22167926647a14cd6330a2c822f94f930666f881046993031",
+      "prompt_file": "cg_marshalling_yelena_patrol_pause_alt.prompt.txt",
+      "description": "调车场叶莲娜能力候选：她通过隐蔽电台让 OSK 巡逻短暂停在信号柱旁",
+      "source_image": "exec-1bd8d5fd-e2e0-4ce3-bdfe-32c8a08be077.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_coldstore_ash_recruitment_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "ab08a7058420a49a0beb6ddeb521289eac8270e3155007f70ab60f4f20d250c3",
+      "prompt_file": "cg_coldstore_ash_recruitment_alt.prompt.txt",
+      "description": "冷库灰犬加入备选：喂食、断开的铁丝项圈与犬只靠近",
+      "source_image": "exec-7c45de1b-7ce9-4b84-83e5-a18c5fcddd6d.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_yelena_manor_route_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "610e7ea2aeecf2e3a8785e1b05d19371ca8710a270f5d390c6978f1a72bc3a20",
+      "prompt_file": "cg_broadcast_yelena_manor_route_alt.prompt.txt",
+      "description": "叶莲娜广播点发现备选：她指向窗外松林庄园与通路",
+      "source_image": "exec-1d8ff711-e23b-47a7-8f55-9482010cb69a.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_manor_yelena_arrival_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "da7cbada7170ca3fe98912fa303a03b0128b3ed9d215077dc298f13794f35720",
+      "prompt_file": "cg_manor_yelena_arrival_alt.prompt.txt",
+      "description": "松林庄园入口备选：叶莲娜在广播点后与阿列克谢、安娜汇合",
+      "source_image": "exec-fd6af0aa-613d-42f1-ad61-fcc511449a44.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_apartment_mother_reassurance_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "385a74ccae154df0f6e63b30859106dce65283f2199cb488082bba911295a059",
+      "prompt_file": "cg_apartment_mother_reassurance_alt.prompt.txt",
+      "description": "公寓母子过场备选：阿列克谢向母亲隐瞒妹妹被捕，解释她在外支援医疗",
+      "source_image": "exec-72a3ca9b-5e3d-4eac-b724-132d672d978b.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_greenhouse_seed_cache_discovery_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "05e483e681bbf9013bb881123e4ed811c327ae00c6544ca4a943e0c9b48b51c2",
+      "prompt_file": "cg_greenhouse_seed_cache_discovery_alt.prompt.txt",
+      "description": "温室种子储藏发现备选：黑麦种子罐、仅存的嫩芽与抉择现场",
+      "source_image": "exec-ee83f9ef-75e0-4108-a3d0-56abd6fb3b8e.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_marshalling_ivan_dispatch_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "00e6da1fdfc6bf0c1b2f112fbf58d8dd5b81e170364f8bf1d223812c15c16d73",
+      "prompt_file": "cg_marshalling_ivan_dispatch_alt.prompt.txt",
+      "description": "调车场伊万调度备选：列车长制服、路线时刻表、信号牌与站场",
+      "source_image": "exec-a69bcf47-d886-4284-a2d3-3ec286d07468.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_yard_searchlight_cover_route_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "7262fab146a1c78f9fc037413d6fa59d150c5dcfad00dbedeb7c14aa5d9ab177",
+      "prompt_file": "cg_yard_searchlight_cover_route_alt.prompt.txt",
+      "description": "第一关货场潜行候选：阿列克谢躲在低矮雪掩体后，探照灯扫过开放轨道",
+      "source_image": "exec-7a61a6a5-8356-4099-967a-56a17482c797.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_birch_ash_tracking_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "32c0203b741a753bcc92128d15aa772d3c3d44253462e2ec5c925082aa89bfc7",
+      "prompt_file": "cg_birch_ash_tracking_scene_alt.prompt.txt",
+      "description": "Birch 松林追踪备选：阿列克谢和无项圈灰犬沿足迹接近猎人小屋与补给箱",
+      "source_image": "exec-b8c9c9fa-c140-424f-b226-b0e671b9f152.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_boiler_steamline_discovery_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "265ccf78ea7882ee3a1f10fc0a516d67e6be27ef7bc9a904d6cc3f97b471c501",
+      "prompt_file": "cg_boiler_steamline_discovery_alt.prompt.txt",
+      "description": "锅炉房蒸汽管线发现备选：维修人员、管线冷凝气与热源修复抉择",
+      "source_image": "exec-50976d03-783d-4ce7-a878-2e0b2484a8dc.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_archive_record_discovery_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "07a88fff60f954c4aa6cbaad2456ab8d4e27f7264fc8622916046958227fddcb",
+      "prompt_file": "cg_archive_record_discovery_alt.prompt.txt",
+      "description": "档案室线索发现备选：阿列克谢与帕维尔在铁柜中找到霜封档案",
+      "source_image": "exec-2db6502b-741e-4a1f-8101-95b21c1ea3aa.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_underpass_shelter_meeting_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "6e38f6ca56f9421732418aabc4da3400f6cfe78be4235e70a07867e778a29315",
+      "prompt_file": "cg_underpass_shelter_meeting_alt.prompt.txt",
+      "description": "地下通道临时避难点备选：居民围着暖炉桶短暂休息，隧道仍在远处延伸",
+      "source_image": "exec-c080b251-9619-4661-a46f-319c30719600.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_workshop_mechanic_repair_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "37cb631f8575d903a89f0a15f51bd341fcd1c775fb2491c38ba6b4cab5a31819",
+      "prompt_file": "cg_workshop_mechanic_repair_alt.prompt.txt",
+      "description": "机修车间备选：老维修工与阿列克谢合力疏通工具车",
+      "source_image": "exec-5739f06e-9684-423d-a467-ba2301ec3642.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_canteen_last_ration_scene_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "146db1f8ee83be9f4bca7c2b759a32c371be50aa630c7a462c7d98ce0b88fff9",
+      "prompt_file": "cg_canteen_last_ration_scene_alt.prompt.txt",
+      "description": "食堂最后一份口粮备选：排队居民、老厨师与留给孩子的一碗热汤",
+      "source_image": "exec-11cf792e-a3b0-43fe-a69f-d380a989cd34.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_market_distant_trade_point_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "d0c3c0153b63a461f240634e6e40033accc1ead4e4f23d4e4ea4b68c262e8ae0",
+      "prompt_file": "cg_market_distant_trade_point_alt.prompt.txt",
+      "description": "黑市远离巡逻点备选：雪堤后交易棚与远处巡逻探照灯",
+      "source_image": "exec-3cd8746e-e5c1-4fea-9ec8-b60e200ba867.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_yard_chernov_father_son_intro_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "74dea975f600299e68364d883b1fa67be47d3eaae1b42efcd4ef3e7176223c44",
+      "prompt_file": "cg_yard_chernov_father_son_intro_alt.prompt.txt",
+      "description": "货场父子事件开场备选：阿列克谢、明确登场的切尔诺夫中士与父子",
+      "source_image": "exec-168dd961-cfc3-4f13-90dc-c6f8551972c8.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_final_dawn_gathering_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "0afae60babf96b044b64a8d6c421dc1e8ab210500b558e85e670e3d9bbb5ad58",
+      "prompt_file": "cg_broadcast_final_dawn_gathering_alt.prompt.txt",
+      "description": "302 广播塔终局破晓备选：广播者、拉娜、安娜和铁路居民听完证词",
+      "source_image": "exec-5f12f399-2a83-4a88-a05e-ede2827e2775.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_market_halfwolf_trader_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "e6bd798b7dccb35ef283c8e9695e67b1f244d7fa8e99b40fb5b7bd109ef58543",
+      "prompt_file": "cg_market_halfwolf_trader_alt.prompt.txt",
+      "description": "黑市半狼交易者备选：远离巡逻灯的偏僻摊位与谨慎交涉",
+      "source_image": "exec-dd2e8396-bc1d-4954-a9eb-44dce774ecb5.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_sanitarium_escape_corridor_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "67c165df9b89bf616b9ad482580d82da4b9de2de14eb7266586f0f2f0d748eaf",
+      "prompt_file": "cg_sanitarium_escape_corridor_alt.prompt.txt",
+      "description": "疗养院逃离备选：安娜、阿列克谢与灰烬穿过敞开的牢门向侧廊撤离",
+      "source_image": "exec-20ca0b57-f13a-46c8-a3e4-338c8ce31e61.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_mine_no3_evacuation_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "a5d7338e5893349ce2f0b62a889f3c137907fefc1ee38737c31752dc23d8952b",
+      "prompt_file": "cg_mine_no3_evacuation_alt.prompt.txt",
+      "description": "3 号矿坑撤离备选：矿工从木撑巷道带出封存证据箱",
+      "source_image": "exec-bd6ae81c-e2c6-4663-8a19-4692f44e235b.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_station_buran_arrival_alt2.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "76a892dbda11409135c44b2acd4d2e80a3052e469f40313f717a66c7d96e60d9",
+      "prompt_file": "cg_station_buran_arrival_alt2.prompt.txt",
+      "description": "布拉风号进站备选：墨绿铆接装甲列车、雪犁车头与伊万手提信号灯",
+      "source_image": "exec-d0843615-1dc0-446b-bcae-1648cc092232.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_eaglecliff_lana_004_rescue_alt2.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "823cb91338164eea9d4a5c36248744fcf4c455420725acb4423a0e07db484ea3",
+      "prompt_file": "cg_eaglecliff_lana_004_rescue_alt2.prompt.txt",
+      "description": "鹰嘴崖 004 车厢救援备选：阿列克谢打开车门，拉娜平安坐在车厢内",
+      "source_image": "exec-5cd405e9-2667-4abf-b0a1-eadc9b624f9b.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_intro_city_winter_dusk_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "a47308dcae97c481c658e2c7728be1dd3f74b94dfe23161bfabdffc1844a61c6",
+      "prompt_file": "cg_intro_city_winter_dusk_alt.prompt.txt",
+      "description": "开场城市雪夜备选：窗前阿列克谢眺望铁路、烟囱和无线电塔",
+      "source_image": "exec-bc52d653-be30-4206-8bfc-2c8193b58782.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_ending_sealed_004_car_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "10afd103c8e84c376c089646fa9ed359384ea765a27012d0729792ac11ef3f31",
+      "prompt_file": "cg_ending_sealed_004_car_alt.prompt.txt",
+      "description": "封闭 004 车厢结局备选：阿列克谢在雪地离开封存车厢",
+      "source_image": "exec-ce3a6b42-8677-4c33-b7b6-6a0f7e3c521f.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_ending_crawl_back_cellar_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "895faba61675a5f107de40a691da247534a6a75b3c57b0a89ad9dc3123c894b8",
+      "prompt_file": "cg_ending_crawl_back_cellar_alt.prompt.txt",
+      "description": "结局 C 备选：阿列克谢独自从排污涵洞爬回空地窖",
+      "source_image": "exec-4a14a611-29ce-4b6b-9879-259218b49596.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_ending_closed_car_firelight_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "f6c9655d375870b1cc5148dcaa3f09619dc3463b61b1ba7ee29b15f7b6533641",
+      "prompt_file": "cg_ending_closed_car_firelight_alt.prompt.txt",
+      "description": "结局 A 备选远景：雪谷中封闭的 004 车厢被火光照亮，不展示伤害",
+      "source_image": "exec-9c262aa0-0fff-43db-9337-5fe9d906fa0f.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_zakhar_salvage_spotted_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "ae089886ee961035f363cb7b13065a7bd1f0d41f1630a666ff3a4c83fa152bbb",
+      "prompt_file": "cg_zakhar_salvage_spotted_alt.prompt.txt",
+      "description": "扎哈尔搜刮被发现备选：蓝袖章搜刮员装袋时被远处巡逻灯照到",
+      "source_image": "exec-0d8d0661-6a93-4993-9b26-2646b453ae6c.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_ending_broadcast_breach_302_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "6d7c338d43f6cb338f03a3b89e1b52b68797cdc74e73d2ad52ff758da4ec0ba6",
+      "prompt_file": "cg_ending_broadcast_breach_302_alt.prompt.txt",
+      "description": "结局突围备选：阿列克谢背着拉娜与切尔诺夫中士带领铁路工人冲向 302 高地",
+      "source_image": "exec-2f46011e-30f2-4a83-b548-623a443fec0d.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_pavel_switch_repair_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "47423a05e4787d804ef32743b0b80b97beb160d21a3b7c4247d26b45a6aac359",
+      "prompt_file": "cg_broadcast_pavel_switch_repair_alt.prompt.txt",
+      "description": "302 广播塔帕维尔抢修备选：绝缘管钳暂时接回发射机，拉娜与安娜守在麦克风旁",
+      "source_image": "exec-cc29d08d-06bd-4984-89c5-f723f01a2558.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_marshalling_last_train_departure_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "32d5ce4c566c7139b548f5aaa06a2f6f55159a7e2ef82e7395e38222b5643dde",
+      "prompt_file": "cg_marshalling_last_train_departure_alt.prompt.txt",
+      "description": "雪夜末班列车离站备选：调车场信号灯与逐渐远去的车尾",
+      "source_image": "exec-df53efa6-6bb4-4c37-aa16-c2494e670c1b.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_lana_external_medical_support_memory_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "003682a40002dea3f01872e47591e1d512952de289991855863639d1f6302a36",
+      "prompt_file": "cg_lana_external_medical_support_memory_alt.prompt.txt",
+      "description": "拉娜外部医疗支援回忆候选：她在城外救助点送去干净布料",
+      "source_image": "exec-733142e6-bae2-4f4f-bc56-406d15cd4568.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_companion_estrangement_harsh_route_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "837292493a212f43407b71a735848e654b23a02bd73bcff1c303bcb37884b442",
+      "prompt_file": "cg_companion_estrangement_harsh_route_alt.prompt.txt",
+      "description": "灭绝路线伙伴观感备选：安娜、金发辫广播员、伊万与灰烬和阿列克谢保持距离",
+      "source_image": "exec-66d4c101-debe-4e43-b5ca-42ee123ade58.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_apartment_mother_waiting_window_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "900bb6c5e6bb6de688aefd1ac5e0a969ccf4d3cb50daaca1c50a19f563c97a5f",
+      "prompt_file": "cg_apartment_mother_waiting_window_alt.prompt.txt",
+      "description": "公寓等待母亲备选：她望着窗外，阿列克谢带着空白便条停在门边",
+      "source_image": "exec-c0ce60ab-ee59-4765-b912-1155a46e4216.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_lana_anna_testimony_close_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "c462503189c05209494dfeb31431f368da00314386b34b84ff2cde925c40c3cf",
+      "prompt_file": "cg_broadcast_lana_anna_testimony_close_alt.prompt.txt",
+      "description": "广播塔证词近景备选：拉娜发言，安娜守在碳精麦克风旁",
+      "source_image": "exec-4d130236-1f57-441e-b69d-d973dac07438.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_city_listeners_dawn_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "9ab09e7a5203ba9f743fd9767ca16810fbe769b8c0f6ab026c49b7edc961c480",
+      "prompt_file": "cg_broadcast_city_listeners_dawn_alt.prompt.txt",
+      "description": "终局播报备选：破晓前，居民与工人停下手中事聆听电台证词",
+      "source_image": "exec-49abf5c9-0e92-4de5-a10c-400383d73104.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_broadcast_siege_exterior_alt2.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "bf67e369d537f09c950bc0b844315a8b0c6cecda2c4caf5ed6c7385af820f97c",
+      "prompt_file": "cg_broadcast_siege_exterior_alt2.prompt.txt",
+      "description": "302 广播塔围攻远景备选：塔身、低矮木质防线与远处探照灯",
+      "source_image": "exec-322d06ef-a9f3-4592-a4bc-91ff3e1c0fce.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_mine_boiko_rescue_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "57eeb39b20f87118a3039df014e1486b20075774e8a26053bb55d95958042510",
+      "prompt_file": "cg_mine_boiko_rescue_alt.prompt.txt",
+      "description": "3 号矿坑博伊科救助备选：阿列克谢扶起矿工，安娜准备医疗包",
+      "source_image": "exec-bab1a107-6e26-437f-bc9a-d081b816837a.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_fire_rescue_lyudmila_handoff_close_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "f8475db54169a7f5a05643e3a2a4fdccab71931b354156abca4880b920cf7f48",
+      "prompt_file": "cg_fire_rescue_lyudmila_handoff_close_alt.prompt.txt",
+      "description": "火场托孤近景备选：柳德米拉把平安裹好的外孙女交给阿列克谢",
+      "source_image": "exec-25be24cd-8ae3-4a5f-b45d-8c6f5cfae187.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_underpass_dawn_evacuation_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "3a6f84f5b79da0e34a8aec9c31f7c24821e1f9b10b22c7c483fa54a1d03d3566",
+      "prompt_file": "cg_underpass_dawn_evacuation_alt.prompt.txt",
+      "description": "地下通道破晓撤离备选：居民走出隧道，安娜与灰烬随行",
+      "source_image": "exec-47c08e75-d498-4c11-9232-143f3521e9ed.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_boiler_heat_returns_residents_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "7645a288c8f0f4ed75593de7f232f9ee6e4c70b4c0b9f103caa5d6f1f0402fab",
+      "prompt_file": "cg_boiler_heat_returns_residents_alt.prompt.txt",
+      "description": "锅炉恢复供热备选：维修工检查阀门，居民在安全的暖管旁缓过来",
+      "source_image": "exec-17dab64b-99cc-43b7-a03b-d21b5d739f10.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_workshop_lights_return_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "d8a6c9dea75aac464021be2578913c6f8ea6edefb7bc8de628a58d9ef73fa82b",
+      "prompt_file": "cg_workshop_lights_return_alt.prompt.txt",
+      "description": "车间恢复灯火备选：维修工检查车床传动，工人围在暖炉旁",
+      "source_image": "exec-bf28b158-691b-4b0f-8652-136c78db22b3.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_market_zakhar_osk_visual_contrast_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "4dad6c732e47051e39d9a17de0cec09c1e595eaca31d6b84e08e1f161ba6d7c9",
+      "prompt_file": "cg_market_zakhar_osk_visual_contrast_alt.prompt.txt",
+      "description": "黑市扎哈尔与 OSK 对照备选：蓝袖章核算员、深色无徽巡逻帽与账簿",
+      "source_image": "exec-04af598f-93d0-4de7-bd68-c49f212b520d.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_station_workers_listen_broadcast_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "a64e842616845235046be133c90e203bf04817a359b4e2157c9fcf7853d1e9fb",
+      "prompt_file": "cg_station_workers_listen_broadcast_alt.prompt.txt",
+      "description": "车站收听证词备选：列车长伊万和站台工人听到凌晨播报",
+      "source_image": "exec-81daf3b2-5115-42a7-a966-3c2beee1a3d7.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_companions_trust_compassionate_route_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "b64206f69f3b29cdfef8b7bea0865207248a2e3ef4608bf75b008f6ec582de66",
+      "prompt_file": "cg_companions_trust_compassionate_route_alt.prompt.txt",
+      "description": "仁慈路线伙伴信任备选：安娜、叶莲娜、铁路工人、维修工与灰烬仍靠近阿列克谢",
+      "source_image": "exec-d36027f4-fee7-4896-8458-aac149bc0411.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    },
+    {
+      "file": "cg_manor_vault_evidence_yelena_alt.jpg",
+      "size": [
+        1376,
+        768
+      ],
+      "sha256": "ac63b0baf5fee0b753160697864cdc6d90b1d9293dafeb1c977524e872f770fb",
+      "prompt_file": "cg_manor_vault_evidence_yelena_alt.prompt.txt",
+      "description": "松林庄园保险库备选：阿列克谢与金发辫叶莲娜发现底片和焦黑账本",
+      "source_image": "exec-1ec3d070-294f-4960-9927-a7bc1e326038.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "runtime": "in-game Art Archive; candidate remains outside the narrative sequence"
+    }
+  ],
+  "notes": "Two missing branch-aftermath slides. Runtime loading convention is directory-based; no code or story data changed."
+}

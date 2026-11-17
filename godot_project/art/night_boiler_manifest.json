@@ -592,5 +592,82 @@
    0,
    0
   ]
+ },
+ "MAP_Boiler_Overview": {
+  "path": "res://art/80_maps/Boiler/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Boiler_FuelLocker": {
+  "path": "res://art/30_props/PRP_Boiler_FuelLocker.png",
+  "size": [
+   421,
+   341
+  ],
+  "pivot": [
+   210.5,
+   341
+  ]
+ },
+ "PRP_Boiler_ValveShelf": {
+  "path": "res://art/30_props/PRP_Boiler_ValveShelf.png",
+  "size": [
+   381,
+   324
+  ],
+  "pivot": [
+   190.5,
+   324
+  ]
+ },
+ "PRP_Boiler_ScrapBin": {
+  "path": "res://art/30_props/PRP_Boiler_ScrapBin.png",
+  "size": [
+   424,
+   345
+  ],
+  "pivot": [
+   212.0,
+   345
+  ]
+ },
+ "PRP_Boiler_SteamPipe": {
+  "path": "res://art/30_props/PRP_Boiler_SteamPipe.png",
+  "size": [
+   1757,
+   225
+  ],
+  "pivot": [
+   878.5,
+   225
+  ]
+ },
+ "PRP_Boiler_ConcretePier": {
+  "path": "res://art/30_props/PRP_Boiler_ConcretePier.png",
+  "size": [
+   321,
+   312
+  ],
+  "pivot": [
+   160.5,
+   312
+  ]
+ },
+ "PRP_Boiler_HeaterDrum": {
+  "path": "res://art/30_props/PRP_Boiler_HeaterDrum.png",
+  "size": [
+   351,
+   382
+  ],
+  "pivot": [
+   175.5,
+   382
+  ]
  }
 }

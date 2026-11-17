@@ -779,5 +779,82 @@
    32,
    20
   ]
+ },
+ "MAP_Market_Overview": {
+  "path": "res://art/80_maps/Market/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Market_TraderStall": {
+  "path": "res://art/30_props/PRP_Market_TraderStall.png",
+  "size": [
+   458,
+   362
+  ],
+  "pivot": [
+   229.0,
+   362
+  ]
+ },
+ "PRP_Market_MedShed": {
+  "path": "res://art/30_props/PRP_Market_MedShed.png",
+  "size": [
+   489,
+   428
+  ],
+  "pivot": [
+   244.5,
+   428
+  ]
+ },
+ "PRP_Market_MedicineTable": {
+  "path": "res://art/30_props/PRP_Market_MedicineTable.png",
+  "size": [
+   400,
+   299
+  ],
+  "pivot": [
+   200.0,
+   299
+  ]
+ },
+ "PRP_Market_RadioHut": {
+  "path": "res://art/30_props/PRP_Market_RadioHut.png",
+  "size": [
+   451,
+   476
+  ],
+  "pivot": [
+   225.5,
+   476
+  ]
+ },
+ "PRP_Market_Radio666": {
+  "path": "res://art/30_props/PRP_Market_Radio666.png",
+  "size": [
+   363,
+   309
+  ],
+  "pivot": [
+   181.5,
+   309
+  ]
+ },
+ "PRP_Market_QuackForge": {
+  "path": "res://art/30_props/PRP_Market_QuackForge.png",
+  "size": [
+   322,
+   441
+  ],
+  "pivot": [
+   161.0,
+   441
+  ]
  }
 }

@@ -82,7 +82,9 @@ func _run() -> void:
 	_assert(lights.size() >= 15, "2D light rig present", str(lights.size()))
 	var occ := s.find_children("*", "LightOccluder2D", true, false)
 	_assert(occ.size() >= 8, "light occluders on props", str(occ.size()))
-	_assert(s.get_node("Ground").texture.get_width() == 3072, "baked ground 3072px wide")
+	var ground := s.get_node("Ground") as Sprite2D
+	_assert(is_equal_approx(float(ground.texture.get_width()) * ground.scale.x, 3072.0),
+		"generated yard map spans 3072 world px")
 	_assert(FileAccess.file_exists("res://art/night_yard_manifest.json"), "art manifest exists")
 
 	# --- 2. 接线 ---
@@ -185,6 +187,8 @@ func _run() -> void:
 	# --- 10. 被发现 ---
 	s = _scene()
 	await _physics(3)
+	if is_instance_valid(s.follower):
+		s.follower.process_mode = Node.PROCESS_MODE_DISABLED
 	_freeze_rabids(s)
 	# 冻结的敌人节点仍在场景里，清杀兵的 _engage_rabids 会瞄准它们并提前 return，
 	# 导致看不到玩家。这里把它们移到场景外，确保只测「手电发现玩家」这一条。
@@ -202,7 +206,22 @@ func _run() -> void:
 	rail.set("_timer", 30.0)
 	s.player.global_position = rail.global_position + Vector2(4.0 * PPM, 0)
 	await _physics(300)
-	_assert(s.state == "caught", "OSK flashlight catches a standing player", s.state)
+	_assert(s.state == "play" and not s.player.frozen, "searchlight spotting does not end or freeze the night", s.state)
+	# Isolate the soldier's firing path after confirming the searchlight is nonlethal.
+	for lamp in s.searchlights:
+		lamp.process_mode = Node.PROCESS_MODE_DISABLED
+	rail.state = "alert"
+	rail.suspicion = 1.0
+	rail.seen_time = 0.89
+	rail.set("_player_fire_t", 0.0)
+	rail.set("_player_engaged", false)
+	rail._perceive(0.02)
+	_assert(s.state == "play" and s.kill_squad_engaged and rail.state == "alert",
+		"OSK spotting starts a firefight without ending the night", "%s / hp %.1f" % [s.state, s.hp])
+	_assert(s.hp < 100.0, "OSK fire damages the player", str(s.hp))
+	s.hp = 10.0
+	s.soldier_fire_player(rail, s.player.global_position)
+	_assert(s.state == "downed", "the night ends only when OSK fire downs the player", "hp %.1f / %s" % [s.hp, s.state])
 
 	# --- 11. 三方潜行：狂暴者 ---
 	s = _scene()
@@ -258,6 +277,11 @@ func _run() -> void:
 	bait.global_position = rs.global_position + Vector2(6.0 * PPM, 0)
 	bait.home = bait.global_position
 	var tower = _find(s.rabids, "Rabid_Tower")
+	# 把监听目标固定在 OSK 枪声半径内、瞄准锥外，避免随机游走导致测试时序波动。
+	tower.global_position = rs.global_position + _m(0.0, 8.0)
+	tower.home = tower.global_position
+	tower.process_mode = Node.PROCESS_MODE_DISABLED
+	tower.state = "wander"
 	for i in 200:
 		await physics_frame
 		await process_frame
