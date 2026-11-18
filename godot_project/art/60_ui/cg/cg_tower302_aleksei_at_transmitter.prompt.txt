@@ -1,0 +1,9 @@
+Use case: illustration-story
+Asset type: 16:9 Godot narrative cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input images: Image 1 is the existing Tower 302 room and transmitter equipment reference; Image 2 is Aleksei's face and identity reference.
+Scene/backdrop: The original old broadcast desk at Hill 302, matching the rugged transmitter, cracked windows and blizzard outside in Image 1.
+Subject: Aleksei alone at the microphone, about 31, wearing his faded railway padded coat and round nearsighted glasses with black tape only at one glasses hinge. One hand rests beside the marked transmitter lever; the other holds down evidence papers on the desk.
+Style/medium: Realistic thick impasto oil painting, natural adult proportions, restrained winter gray-blue, dirty snow white, rust and worn military green, consistent with existing game CGs.
+Composition/framing: Wide landscape 16:9, Aleksei and microphone in the upper two-thirds, control panel and evidence papers clearly visible; keep the bottom strip calm for subtitles.
+Lighting/mood: A small desk lamp illuminates the controls and part of his face; cold wind and snow show through the window.
+Constraints: Exactly one person, Aleksei. No Pavel, no Yelena, no other companions, no extra hands, no readable broadcast text, no on-screen words, no interface, no title, no watermark. Match Aleksei's identity to Image 2 and the room to Image 1.

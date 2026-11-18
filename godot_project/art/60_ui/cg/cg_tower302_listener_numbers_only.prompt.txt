@@ -1,0 +1,9 @@
+Use case: illustration-story
+Asset type: 16:9 Godot narrative cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input image: The reference shows the game's winter city, old apartments, tabletop radio and impasto brush style. Use only those visual cues; do not copy its crowd.
+Scene/backdrop: One modest apartment in the sealed city, at dawn, with a frosted window and an old wooden table.
+Subject: A single ordinary adult resident quietly leans toward a small old radio. On the table lies a blank sheet of paper and a pencil; the resident's hand pauses above the page, with no name written.
+Style/medium: Realistic thick impasto oil painting consistent with the existing game's winter CGs, natural adult proportions, restrained blue-gray morning light, dirty snow white and worn brown wood.
+Composition/framing: Wide landscape 16:9, one resident and radio in the upper two-thirds, empty paper clearly visible, lower edge uncluttered for subtitles.
+Lighting/mood: Cold dawn light through frost, intimate and subdued; the listener has heard what happened but does not yet know whom to name.
+Constraints: Only one resident. No crowd, gathering, protest, celebration, list, legible writing, letters, multiple panels, montage, captions, UI, title or watermark. Preserve the period setting and radio style from the reference while changing the composition to one quiet private listener.
