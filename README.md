@@ -13,6 +13,7 @@
 > - **内容规格 `v4.2`**：指 `docs/` 下策划案、总剧本、美术风格参考等**文档与原型的内容规格版本**（历史称 Definitive Master）。它不是构建版本号，也不代表已发布的可执行版本；本轮保留该标签，取舍见 `CHANGELOG.md`，最终定位**待用户拍板**。
 > - **历史规格标签 `v4.0`**：`index.html` 与原型沙盘标题里的「v4.0 诺沃斯克-17 设定」，以及 `project.godot` 的 `config/name` 中的 `(v4.0 Novorsk-17)`，均为早期内容规格 / 命名遗留，**不是构建版本**。
 > - 测试结论不再写死；现行口径见下方「最近一次本地实跑基线」与 `godot_project/tests/logs/`。CI 已接入（`.github/workflows/ci.yml`，自动下载并校验 Godot 4.7.2 headless）；仍无 git tag、无 LICENSE。
+> - Windows 试玩包：本机导出到 `build/win64/YearOfZ.exe` + `YearOfZ.pck`（约 857 MB，`build/` 不入库）。当前 `all_resources` 导出模式尚未裁掉出图过程稿，体积优化留待下一轮。
 
 > **"In Novorsk-17, when the teletype terminal lights up green, everyone is fed; when a file number is crossed out, the person is zeroed."**
 >
@@ -503,7 +504,7 @@ Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/room_a_smoke.
 > **灰盒场历史移植记录**：`docs/zh/Z年纪事_Godot灰盒5合1移植对照表.md` · `docs/en/Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md`
 > **后续节点化架构规范**：`docs/zh/Z年纪事_Godot4引擎迁移技术规范与架构指南.md` · `docs/en/Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md`
 >
-> ✅ **最近一次本地实跑基线（非 CI，非永久结论）**：基线提交 `63709eb`（分支 `feat/nav-and-save-recovery`）· 执行日期 **2026-11-12** · 命令 `python godot_project/tools/run_tests.py` · 结果 **14 套 / 1683 通过 / 0 失败 / 0 脚本错误**。该数字只是**该基线在该日期的一次本地记录**，不保证对后续任何提交成立；每次发布前须重跑，并以 `godot_project/tests/logs/` 或 CI 产物为准（**当前仓库尚无 CI**）。依据：`docs/zh/项目架构评估与下一阶段实施计划_2026-11-11.md` §8.3「自动测试结果记录基线提交与执行日期，避免永久写死『全部通过』的结论」。
+> ✅ **最近一次本地实跑基线**：提交 `fbc646c`（分支 `feat/nav-and-save-recovery`）· 执行日期 **2026-11-18** · 命令 `python godot_project/tools/run_tests.py` · 结果 **21 套 / 3850 通过 / 0 失败 / 0 脚本错误**。该数字只是**该基线在该日期的一次本地记录**，不保证对后续任何提交成立；每次发布前须重跑，并以 `godot_project/tests/logs/` 或 CI 产物为准。依据：`docs/zh/项目架构评估与下一阶段实施计划_2026-11-11.md` §8.3「自动测试结果记录基线提交与执行日期，避免永久写死『全部通过』的结论」。
 >
 > 🚀 **一键跑通（推荐）**：新克隆直接双击仓库根的 **`run_tests.bat`**（或 `python godot_project/tools/run_tests.py`）。它会**先自动 `--import` 导入资产**（新克隆没有 `.godot/` 缓存，headless 直接 `-s` 会在 preload 阶段大面积失败），再枚举全部 `tests/*_smoke.gd` 逐个执行并扫 stderr。Godot 路径用环境变量 `GODOT` 或 `--godot` 指定；只跑部分套件用 `run_tests.bat campaign night_level`。
 >
