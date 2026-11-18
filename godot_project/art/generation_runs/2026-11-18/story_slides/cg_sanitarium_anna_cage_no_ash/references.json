@@ -1,0 +1,9 @@
+{
+  "references": [
+    "art/60_ui/cg/cg_sanitarium_scene.jpg",
+    "art/10_characters/portraits/PRT_Anna_Calm.png",
+    "art/10_characters/portraits/PRT_Aleksei_Calm.png"
+  ],
+  "generated_output": "generated_output.png",
+  "final_file": "art/60_ui/cg/cg_sanitarium_anna_cage_no_ash.jpg"
+}
