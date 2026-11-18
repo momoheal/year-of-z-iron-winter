@@ -116,6 +116,8 @@ func _physics_process(delta: float) -> void:
 	_moving = velocity.length() > 4.0
 	flash_pivot.rotation = facing
 	_animate(delta, maxf(spd, 0.1) / SPEED_PATROL)
+	if ctl != null and ctl.has_method("ai_step"):
+		ctl.ai_step(self, delta)
 
 func _perceive(delta: float) -> void:
 	var vis: float = ctl.can_see_player(global_position, VIEW_RANGE, VIEW_HALF, facing, false)

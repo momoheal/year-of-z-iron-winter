@@ -4,9 +4,9 @@
 
 | 地图 ID | 主题 | 导出场景 | 校验 |
 | --- | --- | --- | --- |
-| `broadcast_tower_302` | 302 Broadcast Tower · siege grounds | `godot_project/art/80_maps/BroadcastTower302/godot_export/BroadcastTower302.tscn` | bundle pass；导航 pass，4 个目标全可达；Godot 文本场景导出 QA pass |
-| `eagle_beak_cliff` | Eagle Beak Cliff · Car 004 derailment | `godot_project/art/80_maps/EagleBeakCliff/godot_export/EagleBeakCliff.tscn` | bundle pass；导航 pass，3 个目标全可达；Godot 文本场景导出 QA pass |
-| `station_buran_yard` | West Station · Buran rail yard | `godot_project/art/80_maps/StationBuranYard/godot_export/StationBuranYard.tscn` | bundle pass；导航 pass，4 个目标全可达；Godot 文本场景导出 QA pass |
+| `broadcast_tower_302` | 302 Broadcast Tower · siege grounds | `godot_project/scenes/night_broadcast_tower_302.tscn` | 已接入 CampaignData；bundle 导出保留供审阅 |
+| `eagle_beak_cliff` | Eagle Beak Cliff · Car 004 derailment | `godot_project/scenes/night_eagle_beak_cliff.tscn` | 已接入 CampaignData；bundle 导出保留供审阅 |
+| `station_buran_yard` | West Station · Buran rail yard | `godot_project/scenes/night_station_buran_yard.tscn` | 已接入 CampaignData；bundle 导出保留供审阅 |
 | `workshop` | 机修车间 | —（美术底图） | art-only；底图与 6 个透明道具已登记，无碰撞/导航包 |
 | `underpass` | 铁道下穿积冰道 | —（美术底图） | art-only；底图与 6 个透明道具已登记，无碰撞/导航包 |
 | `sanitarium` | 旧传染病疗养院地下室 | —（美术底图） | art-only；底图与 6 个透明道具已登记，无碰撞/导航包 |
@@ -22,17 +22,30 @@
 | `coldstore` | 城北四号铁路冷库 | —（美术底图） | art-only；底图与 6 个透明道具已登记，无碰撞/导航包 |
 | `mine_no3` | 3 号矿坑 · 温压爆破作业面 | —（美术底图） | art-only；底图与 6 个透明道具已登记，无碰撞/导航包 |
 
-这些是独立可审阅的地图包，尚未接入 `CampaignData` 的关卡解锁或故事触发。碰撞轮廓依据绘制地图人工设定，导航数据已通过寻路校验；进入正式战役前仍需在 Godot 编辑器里检查实际尺度、遮挡和玩家手感。三个地图包的浏览器截图验证均因未安装 Playwright 而跳过；bundle、可达性和 Godot 文本资源解析均通过，详情见每张地图的 `qa/` 与 `godot_export/godot-export.json`。
+三个 bundle 地图包现已分别接入 `CampaignData.LOCS`，并生成使用共享 `NightExplore.gd` 的战役场景；bundle 自带的 Godot 导出仍保留作布局审阅，不是实际战役入口。碰撞、巡逻点、可搜刮目标与撤离点按新场景布局配置，烟测检查地图资源、出生至撤离可达性和关键补给可达性。
 
-现有战役地图里的旋转探照灯仍由 `NightSearchlight.gd` 驱动。其贴图光锥会按关卡角度缩放；照明、OSK 视线和低掩体遮挡共用 `NightExplore.gd` 的视线射线判定。上述三张新地图包目前是独立场景资源，没有接入战役敌人、伙伴和移动探照灯逻辑。
+三张地图均在场景中装配清杀队、狂暴者、回退半人和动态探照灯；伙伴由战役出发配置生成。探照灯由 `NightSearchlight.gd` 驱动，光锥、OSK 视线与掩体遮挡使用 `NightExplore.gd` 的共享射线判定。
+
+## 战役接入与顺序（2026-11-18）
+
+新增主线段落为“西站调车场 → 布拉风货场 → 鹰嘴崖 → 302 广播塔”。`CampaignSim` 按前置剧情旗标依次解锁地点；三处首访对白登记在 `CampaignData.STORY`。广播塔要求已从庄园带回证据，并从鹰嘴崖取得路线；完成广播场景撤离后战役才标记为终局完成。
 
 ## 战役地图美术底图（不含玩法数据）
 
-本批新增 14 张 1672×941 俯视底图，均附原始切图图集、6 个 RGBA 透明 PNG 道具和 `artwork-manifest.json`：`Archive/`、`Birch/`、`Boiler/`、`Canteen/`、`Coldstore/`、`Greenhouse/`、`Manor/`、`Market/`、`Marshalling/`、`MineNo3/`、`Sanitarium/`、`Underpass/`、`Workshop/`、`Yard/`。对应道具按 `PRP_<地图ID>_<物件名>.png` 命名并登记到各地图 manifest、地图专属 manifest 与全局 `asset_manifest.json`。
+既有 14 张 1672×941 俯视底图，均附原始切图图集、6 个 RGBA 透明 PNG 道具和 `artwork-manifest.json`：`Archive/`、`Birch/`、`Boiler/`、`Canteen/`、`Coldstore/`、`Greenhouse/`、`Manor/`、`Market/`、`Marshalling/`、`MineNo3/`、`Sanitarium/`、`Underpass/`、`Workshop/`、`Yard/`。对应道具按 `PRP_<地图ID>_<物件名>.png` 命名并登记到各地图 manifest、地图专属 manifest 与全局 `asset_manifest.json`。
 
-这些是可被 Godot 按资源路径导入的美术文件；本批未生成新的碰撞、导航或可玩场景数据。探照灯塔另有共享透明冷白/暖黄光锥贴图 `../30_props/PRP_SearchlightCone_Cold.png`、`../30_props/PRP_SearchlightCone_Warm.png`，注册点均在顶端中心，可供后续旋转叠加；本批不增加动态照明、遮挡或 OSK 视线行为。
+上述 14 套历史底图此前仅作为地图美术资源；本次新接入的三套地图已由 `tools/art_gen/levels/` 规格生成可玩的 `.tscn`，包含布局、碰撞、敌人与动态探照灯。探照灯塔另有共享透明冷白/暖黄光锥贴图 `../30_props/PRP_SearchlightCone_Cold.png`、`../30_props/PRP_SearchlightCone_Warm.png`，注册点均在顶端中心，可供后续旋转叠加；本批不增加动态照明、遮挡或 OSK 视线行为。
 
 
+## 新增地图包美术补齐（2026-11-18）
+
+| 地图 ID | 夜色底图 | 抠图源 | 道具资源 |
+| --- | --- | --- | --- |
+| `broadcast_tower_302` | `BroadcastTower302/map_night.png` | `BroadcastTower302/cutout-source.png` | 6 件 `PRP_BroadcastTower302_*`，已登记 pivot |
+| `eagle_beak_cliff` | `EagleBeakCliff/map_night.png` | `EagleBeakCliff/cutout-source.png` | 6 件 `PRP_EagleBeakCliff_*`，已登记 pivot |
+| `station_buran_yard` | `StationBuranYard/map_night.png` | `StationBuranYard/cutout-source.png` | 6 件 `PRP_StationBuranYard_*`，已登记 pivot |
+
+每套含地图级 `artwork-manifest.json`，并由对应的 `night_*_manifest.json` 注册到底层资源核验器。切图验收使用 RGBA 真透明和底部支撑 pivot；提取结果与原始生成源保存在 `art/generation_runs/2026-11-18/asset_completion/`。
 ## 夜色底图变体（2026-11-17）
 
 | 地图 | 资源 | 色调 | 尺寸 |

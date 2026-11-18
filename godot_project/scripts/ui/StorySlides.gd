@@ -11,7 +11,7 @@ extends CanvasLayer
 ##   focus      Vector2(0..1) —— 镜头推向画面的哪个位置（默认正中）
 ##   zoom       Vector2(from, to) —— 镜头缩放（默认 1.03 → 1.12）
 ##   card       {"title": String, "lines": Array[String]} —— 中央结果卡
-##   actors     bool —— 序章「封楼」那一页的实时小人演出
+##   actors     bool —— 可选的角色精灵叠层
 ##
 ## 操作：空格 / 回车 / 鼠标左键 —— 文字没打完先补全，打完了翻页；Esc 整段跳过。
 ## 结束（看完或跳过）时发 finished 并 queue_free。本层不碰任何战役数据。
@@ -360,7 +360,7 @@ func _process(delta: float) -> void:
 		_animate_actors()
 
 
-## 序章「封楼」页：游戏内角色精灵逐帧行走，再停在封楼巡逻线前。
+## 启用角色叠层时播放行走动画。
 func _animate_actors() -> void:
 	var frame := 0
 	if elapsed < 2.0:

@@ -1,0 +1,12 @@
+{
+  "character": "Katya",
+  "date": "2026-11-18",
+  "identity_references": [
+    "godot_project/art/90_concept/08_supporting_women.webp (central woman labelled Katya, 59)",
+    "godot_project/art/60_ui/cg/cg_intro_mother.jpg (Room 602 mother scene)"
+  ],
+  "style_reference": "godot_project/art/10_characters/portraits/PRT_Aleksei_Calm.png",
+  "route": "Codex image_gen (host_image)",
+  "story_reference": "godot_project/scripts/data/CutsceneData.gd: intro and Room 602 mother dialogue",
+  "purpose": "Identity master precedes the four requested dialogue expressions."
+}

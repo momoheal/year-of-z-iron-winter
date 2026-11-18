@@ -79,6 +79,7 @@ func new_game() -> void:
 	sound_on = true
 	phase = "title"
 	selected_loc = FIRST_ACT_LOC
+	finished_demo = false
 	raid = null
 	pending_scene = ""
 	story_open = false
@@ -177,7 +178,8 @@ func toggle_base_display(ref: String) -> bool:
 			if not Data.ITEMS.has(parts[1]) or int(stash.get(parts[1], 0)) <= 0:
 				return false
 		"weapon":
-			if not weapon_owned(Data.weapon(parts[1])):
+			var w := Data.weapon(parts[1])
+			if not weapon_owned(w) or not weapon_displayable(w):
 				return false
 		_:
 			return false
@@ -193,7 +195,7 @@ func base_display_name(ref: String) -> String:
 		return "%s %s" % [item_icon(parts[1]), item_name(parts[1])]
 	if parts[0] == "weapon":
 		var w := Data.weapon(parts[1])
-		return "%s %s" % [String(w.get("ic", "⚙")), String(w.get("zh" if lang == "zh" else "en", parts[1]))]
+		return "%s %s" % [String(w.get("ic", "ARM")), String(w.get("zh" if lang == "zh" else "en", parts[1]))]
 	return ref
 
 func has_item(id: String, n: int = 1) -> bool:
@@ -243,6 +245,9 @@ func loc_unlocked(L: Dictionary) -> bool:
 	var rf: String = String(L.get("req_flag", ""))
 	if rf != "" and not bool(flags.get(rf, false)):
 		return false
+	for extra_flag in L.get("req_flags", []):
+		if not bool(flags.get(String(extra_flag), false)):
+			return false
 	var req: Dictionary = L.get("req", {})
 	if req.has("intel") and intel_count() < int(req["intel"]):
 		return false
@@ -263,6 +268,21 @@ func lock_reason(L: Dictionary) -> String:
 	if rf == "lana_car3":
 		return "需要：先确认妹妹在第三节车厢（救援安娜）" if lang == "zh" \
 			else "Requires: confirm Lana is in Boxcar 3 (rescue Anna)"
+	if rf == "endgame_known":
+		return "需要：先在西站调车场找到 23:00 发车令" if lang == "zh" \
+			else "Requires: find the 23:00 dispatch order at West Station"
+	if rf == "station_route":
+		return "需要：先在布拉风货场确认鹰嘴崖检修路线" if lang == "zh" \
+			else "Requires: confirm the Crag maintenance route at Buran Yard"
+	if rf == "eagle_escape":
+		return "需要：先从鹰嘴崖带幸存者撤离" if lang == "zh" \
+			else "Requires: extract survivors from Eagle's Crag first"
+	for extra_flag in L.get("req_flags", []):
+		var flag_id := String(extra_flag)
+		if not bool(flags.get(flag_id, false)):
+			if flag_id == "truth":
+				return "需要：先从松林庄园带回罪证" if lang == "zh" else "Requires: bring evidence back from Pine Manor"
+			return ("需要：%s" if lang == "zh" else "Requires: %s") % flag_id
 	var req: Dictionary = L.get("req", {})
 	var parts: Array[String] = []
 	if req.has("intel"):
@@ -341,14 +361,19 @@ func best_weapon() -> Dictionary:
 			return w
 	return Data.weapon("crowbar")
 
+
+func weapon_displayable(w: Dictionary) -> bool:
+	## 赤手是战斗选项，不是可以放上 602 室架子的实物。
+	return bool(w.get("displayable", true))
+
 # ============================================================================
 # 目标
 # ============================================================================
 func objective() -> Dictionary:
 	if not bool(story_done.get(FIRST_ACT_LOC, false)) and names.is_empty():
 		return {
-			"zh": "去城北四号铁路冷库领今天的征召工物资——顺便查查拉娜被带上了哪趟车。",
-			"en": "Report to Cold Storage No.4 for conscript labour — and find out which train took Lana.",
+			"zh": "去四号铁路冷库。南库的封存箱里有母亲用的腹透液。拉娜也经过那儿吗？如果来得及，去北雨棚看看。",
+			"en": "Go to Cold Storage No.4. The sealed crate in the south hall holds Mother's dialysis fluid. If there is time, check the north awning for a trace of Lana.",
 		}
 	if not mother_alive and not bool(flags.get("market_refuge_found", false)):
 		return {
@@ -380,9 +405,21 @@ func objective() -> Dictionary:
 			"zh": "去西站调车场，抄下今晚 23:00 铁壳号的发车令。",
 			"en": "Reach West Station yard and copy tonight's 23:00 Buran dispatch order.",
 		}
+	if not bool(flags.get("station_route", false)):
+		return {"zh": "去布拉风货场找没有销账的交接底单，确认鹰嘴崖检修路线。",
+			"en": "Find the unclosed handover copy at Buran Yard and confirm the Eagle's Crag route."}
+	if not bool(flags.get("eagle_escape", false)):
+		return {"zh": "沿检修路去鹰嘴崖，找到第三节车厢并带幸存者撤离。",
+			"en": "Follow the maintenance route to Eagle's Crag, find Boxcar Three, and extract the survivors."}
+	if not bool(flags.get("truth", false)):
+		return {"zh": "去松林庄园拍下焚化台账，带回 409 批腹透液和罪证。",
+			"en": "Photograph the furnace ledger at Pine Manor and bring back Batch-409 fluid and evidence."}
+	if not bool(flags.get("broadcast_complete", false)):
+		return {"zh": "去 302 高地守住发射机，把证词和幸存者名单传遍全城。",
+			"en": "Hold the transmitter at Hill 302 and broadcast the testimony and survivor list."}
 	return {
-		"zh": "去松林庄园二号库，拍下焚化炉，把 409 批腹透液带回来。",
-		"en": "Infiltrate Pine Manor Depot No.2: photograph the furnace, bring back Batch-409 fluid.",
+		"zh": "证词已经播出。回到 602 室查看结局与母亲留下的东西。",
+		"en": "The testimony is on air. Return to Room 602 to review the ending and Mother's things.",
 	}
 
 func objective_text() -> String:
@@ -491,11 +528,19 @@ func story_lines(id: String) -> Array:
 	if beat.is_empty():
 		return []
 	var lines: Array = beat.get("lines", []).duplicate(true)
-	if lang == "zh":
-		var source_id := String(Data.STORY_SOURCE_SCENES.get(id, ""))
-		if source_id != "":
-			var source_lines := Data.script_scene(source_id)
-			if not source_lines.is_empty():
+	var source_id := String(Data.STORY_SOURCE_SCENES.get(id, ""))
+	if source_id != "":
+		var source_lines := Data.script_scene(source_id)
+		if not source_lines.is_empty():
+			var use_source := true
+			if lang != "zh":
+				# 英文模式：全量剧本必须每行都有非空 en，否则回退旧 STORY，
+				# 避免 sync 重生成但忘记重新合并译文时把空字幕端给用户。
+				for line in source_lines:
+					if not line is Dictionary or String(line.get("en", "")).strip_edges() == "":
+						use_source = false
+						break
+			if use_source:
 				lines = source_lines
 	if id == "market" and not mother_alive and not bool(flags.get("market_refuge_found", false)):
 		lines.append_array([
@@ -706,6 +751,10 @@ func finish_raid(reason: String) -> Dictionary:
 	# 节点状态：每次踏足余量 -50%，余量下限 5%
 	var loc: Dictionary = r.loc
 	night_complete = true
+	if String(loc.get("id", "")) == "broadcast_tower_302" and reason in ["extracted", "dawn"]:
+		flags["broadcast_complete"] = true
+		add_log("302 台把证词和幸存者名单送进了全城的收音机。",
+			"Tower 302 carries the testimony and survivor list into radios across the city.")
 	var st: Dictionary = node_state(String(loc["id"]))
 	st["visits"] = int(st["visits"]) + 1
 	st["left"] = clampf(float(st["left"]) - 0.5, 0.05, 1.0)
@@ -773,7 +822,7 @@ func report_meta(reason: String) -> Dictionary:
 # ============================================================================
 func to_base() -> void:
 	phase = "base"
-	if bool(flags.get("endgame_known", false)) and bool(flags.get("truth", false)):
+	if bool(flags.get("broadcast_complete", false)):
 		finished_demo = true
 
 var finished_demo := false
@@ -850,7 +899,7 @@ func ending_key() -> String:
 	if mother_alive and tally == 0 and bool(flags.get("truth", false)) and not bool(flags.get("betrayed", false)):
 		return "TRUE_ALPHA_HELLO_LANA"
 	if not bool(flags.get("truth", false)):
-		return "ENDING_C_NUMBNESS"
+		return "ENDING_A_RETURN_HOME" if mother_alive else "ENDING_C_NUMBNESS"
 	if tally > 0:
 		return "ENDING_B_FLAWED_LIBERATION"
 	return "TRUE_BETA_OUTLAND_FIRE"
@@ -858,6 +907,9 @@ func ending_key() -> String:
 func ending_preview() -> Dictionary:
 	var key := ending_key()
 	var texts := {
+		"ENDING_A_RETURN_HOME": {
+			"zh": "【结局 A · 留在 602】你保住了母亲，卻没能带回真相。鹰嘴崖上的车厢仍封着，广播没有响起。",
+			"en": "[ENDING A · Room 602] You kept Mother alive, but brought back no truth. The car at Eagle's Crag remains sealed, and the broadcast never begins."},
 		"TRUE_ALPHA_HELLO_LANA": {
 			"zh": "【真结局 α · 你好，拉娜】零划痕、母亲存活、真相在手——鹰嘴崖的第三节车厢门被撬开。",
 			"en": "[TRUE ENDING α · Hello, Lana] Zero strokes, mother alive, the truth in hand — Boxcar 3 opens at Eagle's Crag."},
@@ -873,7 +925,7 @@ func ending_preview() -> Dictionary:
 		"_": {"zh": "", "en": ""},
 	}
 	var t: Dictionary = texts.get(key, texts["_"])
-	if key != "ENDING_C_NUMBNESS":
+	if bool(flags.get("truth", false)):
 		t["zh"] = String(t["zh"]) + "\n\n" + Data.PASHA_EPILOGUE_ZH
 		t["en"] = String(t["en"]) + "\n\n" + Data.PASHA_EPILOGUE_EN
 	return {"key": key, "zh": String(t["zh"]), "en": String(t["en"])}

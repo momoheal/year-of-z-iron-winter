@@ -1,0 +1,6 @@
+{
+  "route": "Codex image_gen (host_image)",
+  "identity_style_reference": "assets/concept_art/Aleksei_user_reference.png",
+  "in_game_scale_reference": "godot_project/art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png",
+  "prompt_rule": "The first reference constrains Aleksei identity and painterly finish; the second constrains in-game sprite scale and clothing only."
+}

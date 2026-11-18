@@ -6,7 +6,7 @@ extends CharacterBody2D
 ## F2 独立跑默认灰烬，可用 --mate=ash/anna/gulya/pavel/ivan/yelena/zakhar 指定。
 ##
 ## 实时特性（_update_perks，按 mate_id 分）：
-##   ash  嗅觉：6m 内标出容器(📦)与生物；三态分辨——狂暴者"!"吠、半人"?"呜咽、幸存者"♥"摇尾。
+##   ash  嗅觉：6m 内标出容器（箱）与生物；三态分辨——狂暴者"!"吠、半人"?"呜咽、幸存者摇尾。
 ##   anna 辨认半人：8m 内把半人标成"半人"黄字；狂暴者视听范围缩短由 NightExplore 处理。
 ##   ivan 撤离点常亮：在撤离点放常驻光圈 + "撤离"标记。
 ##   yelena 的 C 停步命令和 zakhar 的搜尸/抢掠/背叛均由 NightExplore 处理。
@@ -190,6 +190,8 @@ func _physics_process(delta: float) -> void:
 	_update_combat_support(support_target, delta)
 	_update_walk_anim(delta)
 	_update_perks(delta)
+	if ctl != null and ctl.has_method("ai_step"):
+		ctl.ai_step(self, delta)
 
 
 func _find_support_target() -> Node2D:
@@ -410,7 +412,7 @@ func _sense_ash() -> void:
 	var keep := {}
 	for c in ctl.containers:
 		if _in_range(c, SENSE_RANGE):
-			_mark(c, "📦", Color("#9fb4c8"), -56.0)
+			_mark(c, "箱", Color("#9fb4c8"), -56.0)
 			keep[c] = true
 	for r in ctl.rabids:
 		if _in_range(r, SENSE_RANGE):
@@ -424,7 +426,7 @@ func _sense_ash() -> void:
 			_bark(h, "灰烬低声呜咽", "growl")
 	for s in ctl.survivors:
 		if _in_range(s, SENSE_RANGE):
-			_mark(s, "♥", Color("#63d18a"), -92.0)
+			_mark(s, "人", Color("#63d18a"), -92.0)
 			keep[s] = true
 			_bark(s, "灰烬摇尾", "")
 	_sweep(keep)
@@ -470,6 +472,6 @@ func _sense_pavel() -> void:
 	var keep := {}
 	for c in ctl.containers:
 		if bool(c.get_meta("locked", false)) and _in_range(c, SENSE_RANGE):
-			_mark(c, "🔒", Color("#e0a34a"), -56.0)
+			_mark(c, "锁", Color("#e0a34a"), -56.0)
 			keep[c] = true
 	_sweep(keep)

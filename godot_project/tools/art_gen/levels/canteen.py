@@ -187,3 +187,7 @@ SURVIVORS = [
 
 # 立面关键点（x 米，供 gen_env._facade_canteen 取用；不设 terminal / vent / tower 灯位）
 FACADE_FEATURES = dict(hood_x=12.0, hatch_x=22.0, window_x=33.0)
+
+
+from .plate_registration import register as _register_plate
+_register_plate(globals())

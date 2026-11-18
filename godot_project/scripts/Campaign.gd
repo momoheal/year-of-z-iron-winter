@@ -32,7 +32,7 @@ const TEX_CONTS := {
 	"fridge": preload("res://art/30_props/PRP_ColdStore_Chest.png"),
 	"corpse": preload("res://art/30_props/PRP_Corpse_Tarp.png"),
 }
-# 支线夜潜实体贴图化：主关同款角色 spritesheet（8列×3行 S/E/N，72×112/帧，W=E翻转）
+# 支线夜潜实体贴图化：主关同款角色 spritesheet（12列×3行 S/E/N，72×112/帧，W=E翻转）
 const TEX_CHR := {
 	"player": preload("res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png"),
 	"rabid": preload("res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png"),

@@ -46,7 +46,7 @@
 size = Vector2(2816, 300)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
-size = Vector2(166.4, 55.55)
+size = Vector2(433.23, 166.41)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_3"]
 blend_mode = 1
@@ -71,28 +71,28 @@ size = Vector2(768, 21.82)
 polygon = PackedVector2Array(-384, -21.8, 384, -21.8, 384, 0, -384, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7"]
-size = Vector2(140.8, 43.65)
+size = Vector2(347.49, 126.61)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_8"]
-polygon = PackedVector2Array(-70.4, -43.6, 70.4, -43.6, 70.4, 0, -70.4, 0)
+polygon = PackedVector2Array(-173.7, -126.6, 173.7, -126.6, 173.7, 0, -173.7, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_9"]
-size = Vector2(102.4, 47.62)
+size = Vector2(216.61, 126.61)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_10"]
-polygon = PackedVector2Array(-51.2, -47.6, 51.2, -47.6, 51.2, 0, -51.2, 0)
+polygon = PackedVector2Array(-108.3, -126.6, 108.3, -126.6, 108.3, 0, -108.3, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_11"]
-size = Vector2(128, 31.74)
+size = Vector2(81.23, 148.32)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_12"]
-polygon = PackedVector2Array(-64, -31.7, 64, -31.7, 64, 0, -64, 0)
+polygon = PackedVector2Array(-40.6, -148.3, 40.6, -148.3, 40.6, 0, -40.6, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_13"]
-size = Vector2(57.6, 15.87)
+size = Vector2(207.59, 159.17)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_14"]
-polygon = PackedVector2Array(-28.8, -15.9, 28.8, -15.9, 28.8, 0, -28.8, 0)
+polygon = PackedVector2Array(-103.8, -159.2, 103.8, -159.2, 103.8, 0, -103.8, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_15"]
 size = Vector2(121.6, 35.71)
@@ -101,37 +101,37 @@ size = Vector2(121.6, 35.71)
 polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_17"]
-size = Vector2(108.8, 33.73)
+size = Vector2(329.43, 159.17)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_18"]
-polygon = PackedVector2Array(-54.4, -33.7, 54.4, -33.7, 54.4, 0, -54.4, 0)
+polygon = PackedVector2Array(-164.7, -159.2, 164.7, -159.2, 164.7, 0, -164.7, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_19"]
-size = Vector2(57.6, 15.87)
+size = Vector2(478.36, 162.79)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_20"]
-polygon = PackedVector2Array(-28.8, -15.9, 28.8, -15.9, 28.8, 0, -28.8, 0)
+polygon = PackedVector2Array(-239.2, -162.8, 239.2, -162.8, 239.2, 0, -239.2, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_21"]
-size = Vector2(332.8, 51.58)
+size = Vector2(509.95, 159.17)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_22"]
-polygon = PackedVector2Array(-166.4, -51.6, 166.4, -51.6, 166.4, 0, -166.4, 0)
+polygon = PackedVector2Array(-255, -159.2, 255, -159.2, 255, 0, -255, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_23"]
-size = Vector2(332.8, 51.58)
+size = Vector2(609.23, 159.17)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_24"]
-polygon = PackedVector2Array(-166.4, -51.6, 166.4, -51.6, 166.4, 0, -166.4, 0)
+polygon = PackedVector2Array(-304.6, -159.2, 304.6, -159.2, 304.6, 0, -304.6, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_25"]
-size = Vector2(332.8, 51.58)
+size = Vector2(500.92, 159.17)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_26"]
-polygon = PackedVector2Array(-166.4, -51.6, 166.4, -51.6, 166.4, 0, -166.4, 0)
+polygon = PackedVector2Array(-250.5, -159.2, 250.5, -159.2, 250.5, 0, -250.5, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_27"]
-size = Vector2(38.4, 17.86)
+size = Vector2(94.77, 119.38)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_28"]
 blend_mode = 1
@@ -156,19 +156,19 @@ size = Vector2(108.8, 33.73)
 polygon = PackedVector2Array(-54.4, -33.7, 54.4, -33.7, 54.4, 0, -54.4, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_32"]
-size = Vector2(80, 2069.76)
+size = Vector2(94.76, 940.56)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_33"]
-size = Vector2(80, 2069.76)
+size = Vector2(112.82, 951.42)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_34"]
+size = Vector2(80, 2069.76)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_35"]
+size = Vector2(80, 2069.76)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_36"]
 size = Vector2(3016, 80)
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_35"]
-radius = 11.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_36"]
-radius = 11.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_37"]
 radius = 11.0
@@ -179,7 +179,13 @@ radius = 11.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_39"]
 radius = 11.0
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_40"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_40"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_41"]
+radius = 11.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_42"]
 particle_flag_disable_z = true
 direction = Vector3(0.35, -1, 0)
 spread = 18.0
@@ -190,7 +196,7 @@ scale_min = 0.5
 scale_max = 1.6
 color = Color(0.92, 0.95, 1, 0.32)
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_41"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_43"]
 particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(1200, 760, 1)
@@ -208,7 +214,7 @@ turbulence_noise_scale = 5.0
 turbulence_influence_min = 0.04
 turbulence_influence_max = 0.12
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_42"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_44"]
 particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(1150, 640, 1)
@@ -221,7 +227,7 @@ scale_min = 1.2
 scale_max = 2.6
 color = Color(0.85, 0.9, 1, 0.3)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_43"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_45"]
 shader = ExtResource("35_shad")
 shader_parameter/fog_tex = ExtResource("36_text")
 
@@ -258,7 +264,7 @@ script = ExtResource("3_scri")
 metadata/zones = "white:0,22,44,32|red:0,12,44,22|black:0,0,44,12"
 
 [node name="Facade" type="StaticBody2D" parent="World"]
-position = Vector2(0, 119.04)
+position = Vector2(0, 94.06)
 collision_layer = 1
 collision_mask = 0
 
@@ -266,6 +272,7 @@ collision_mask = 0
 texture = ExtResource("4_text")
 centered = false
 offset = Vector2(0, -600)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Facade"]
 position = Vector2(1408, -150)
@@ -275,7 +282,7 @@ shape = SubResource("RectangleShape2D_1")
 y_sort_enabled = true
 
 [node name="Stove" type="StaticBody2D" parent="World/Props"]
-position = Vector2(768, 198.4)
+position = Vector2(667.9, 336.43)
 collision_layer = 2
 collision_mask = 0
 
@@ -283,9 +290,10 @@ collision_mask = 0
 texture = ExtResource("5_text")
 centered = false
 offset = Vector2(-110, -178)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/Stove"]
-position = Vector2(0, -27.78)
+position = Vector2(0, -83.2)
 shape = SubResource("RectangleShape2D_2")
 
 [node name="Flame" type="Sprite2D" parent="World/Props/Stove"]
@@ -323,46 +331,53 @@ shape = SubResource("RectangleShape2D_5")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/SteamPipe"]
 occluder = SubResource("OccluderPolygon2D_6")
+occluder_light_mask = 2
 
 [node name="PrepBoard" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(1536, 325.38)
+position = Vector2(1315.49, 311.11)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "hidden"
 metadata/guaranteed = "blade"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/PrepBoard"]
 texture = ExtResource("10_text")
 centered = false
 offset = Vector2(-85, -116)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/PrepBoard"]
-position = Vector2(0, -21.82)
+position = Vector2(0, -63.31)
 shape = SubResource("RectangleShape2D_7")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/PrepBoard"]
 occluder = SubResource("OccluderPolygon2D_8")
+occluder_light_mask = 1
 
 [node name="RyeVat" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(1152, 388.86)
+position = Vector2(1760, 314.73)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "supply"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/RyeVat"]
 texture = ExtResource("11_text")
 centered = false
 offset = Vector2(-70, -140)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RyeVat"]
-position = Vector2(0, -23.81)
+position = Vector2(0, -63.31)
 shape = SubResource("RectangleShape2D_9")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RyeVat"]
 occluder = SubResource("OccluderPolygon2D_10")
+occluder_light_mask = 1
 
 [node name="NarrowDoor" type="StaticBody2D" parent="World/Props" groups=["night_fade"]]
-position = Vector2(2048, 182.53)
+position = Vector2(2093.95, 325.58)
 collision_layer = 1
 collision_mask = 0
 
@@ -370,31 +385,36 @@ collision_mask = 0
 texture = ExtResource("12_text")
 centered = false
 offset = Vector2(-90, -188)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/NarrowDoor"]
-position = Vector2(0, -15.87)
+position = Vector2(0, -74.16)
 shape = SubResource("RectangleShape2D_11")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/NarrowDoor"]
 occluder = SubResource("OccluderPolygon2D_12")
+occluder_light_mask = 1
 
 [node name="BackLocker" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(2560, 297.6)
+position = Vector2(2251.9, 278.55)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "locker"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/BackLocker"]
 texture = ExtResource("13_text")
 centered = false
 offset = Vector2(-42, -138)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/BackLocker"]
-position = Vector2(0, -7.94)
+position = Vector2(0, -79.59)
 shape = SubResource("RectangleShape2D_13")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/BackLocker"]
 occluder = SubResource("OccluderPolygon2D_14")
+occluder_light_mask = 1
 
 [node name="BackCorpse" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
 position = Vector2(2496, 420.61)
@@ -424,99 +444,115 @@ shape = SubResource("RectangleShape2D_15")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/SupplyCrates"]
 occluder = SubResource("OccluderPolygon2D_16")
+occluder_light_mask = 1
 
 [node name="PrepShelf" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(1920, 654.72)
+position = Vector2(1171.08, 600.51)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "crate"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/PrepShelf"]
 texture = ExtResource("16_text")
 centered = false
 offset = Vector2(-66, -148)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/PrepShelf"]
-position = Vector2(0, -16.86)
+position = Vector2(0, -79.59)
 shape = SubResource("RectangleShape2D_17")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/PrepShelf"]
 occluder = SubResource("OccluderPolygon2D_18")
+occluder_light_mask = 1
 
 [node name="LineLocker" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(2432, 753.92)
+position = Vector2(1723.9, 604.13)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "locker"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/LineLocker"]
 texture = ExtResource("13_text")
 centered = false
 offset = Vector2(-42, -138)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/LineLocker"]
-position = Vector2(0, -7.94)
+position = Vector2(0, -81.4)
 shape = SubResource("RectangleShape2D_19")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/LineLocker"]
 occluder = SubResource("OccluderPolygon2D_20")
+occluder_light_mask = 1
 
 [node name="Table1" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(704, 992)
+position = Vector2(710.77, 897.15)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "crate"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/Table1"]
 texture = ExtResource("17_text")
 centered = false
 offset = Vector2(-170, -124)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/Table1"]
-position = Vector2(0, -25.79)
+position = Vector2(0, -79.59)
 shape = SubResource("RectangleShape2D_21")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/Table1"]
 occluder = SubResource("OccluderPolygon2D_22")
+occluder_light_mask = 1
 
 [node name="Table2" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(1408, 992)
+position = Vector2(1405.74, 897.15)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "crate"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/Table2"]
 texture = ExtResource("18_text")
 centered = false
 offset = Vector2(-170, -124)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/Table2"]
-position = Vector2(0, -25.79)
+position = Vector2(0, -79.59)
 shape = SubResource("RectangleShape2D_23")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/Table2"]
 occluder = SubResource("OccluderPolygon2D_24")
+occluder_light_mask = 1
 
 [node name="Table3" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(2112, 992)
+position = Vector2(2082.67, 897.15)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "crate"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/Table3"]
 texture = ExtResource("17_text")
 centered = false
 offset = Vector2(-170, -124)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/Table3"]
-position = Vector2(0, -25.79)
+position = Vector2(0, -79.59)
 shape = SubResource("RectangleShape2D_25")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/Table3"]
 occluder = SubResource("OccluderPolygon2D_26")
+occluder_light_mask = 1
 
 [node name="HallStove" type="StaticBody2D" parent="World/Props"]
-position = Vector2(2528, 1091.2)
+position = Vector2(1031.18, 1009.3)
 collision_layer = 2
 collision_mask = 0
 
@@ -524,9 +560,10 @@ collision_mask = 0
 texture = ExtResource("19_text")
 centered = false
 offset = Vector2(-34, -86)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/HallStove"]
-position = Vector2(0, -8.93)
+position = Vector2(0, -59.69)
 shape = SubResource("RectangleShape2D_27")
 
 [node name="Flame" type="Sprite2D" parent="World/Props/HallStove"]
@@ -565,29 +602,38 @@ shape = SubResource("RectangleShape2D_30")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/Stash"]
 occluder = SubResource("OccluderPolygon2D_31")
+occluder_light_mask = 1
 
 [node name="Bounds" type="StaticBody2D" parent="."]
 collision_layer = 1
 collision_mask = 0
 
+[node name="WestWall" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(282.05, 586.04)
+shape = SubResource("RectangleShape2D_32")
+
+[node name="EastWall" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(2506.87, 591.47)
+shape = SubResource("RectangleShape2D_33")
+
 [node name="Left" type="CollisionShape2D" parent="Bounds"]
 position = Vector2(-40, 634.88)
-shape = SubResource("RectangleShape2D_32")
+shape = SubResource("RectangleShape2D_34")
 
 [node name="Right" type="CollisionShape2D" parent="Bounds"]
 position = Vector2(2856, 634.88)
-shape = SubResource("RectangleShape2D_33")
+shape = SubResource("RectangleShape2D_35")
 
 [node name="Bottom" type="CollisionShape2D" parent="Bounds"]
 position = Vector2(1408, 1309.76)
-shape = SubResource("RectangleShape2D_34")
+shape = SubResource("RectangleShape2D_36")
 
 [node name="Player" type="CharacterBody2D" parent="World"]
 collision_layer = 8
 collision_mask = 7
 motion_mode = 1
 script = ExtResource("20_scri")
-position = Vector2(1408, 1170.56)
+position = Vector2(1408, 1125.06)
 
 [node name="Shadow" type="Polygon2D" parent="World/Player"]
 color = Color(0, 0, 0, 0.42)
@@ -601,7 +647,7 @@ offset = Vector2(0, -52)
 
 [node name="Shape" type="CollisionShape2D" parent="World/Player"]
 position = Vector2(0, -2)
-shape = SubResource("CircleShape2D_35")
+shape = SubResource("CircleShape2D_37")
 
 [node name="Flashlight" type="Node2D" parent="World/Player"]
 scale = Vector2(1, 0.62)
@@ -640,8 +686,8 @@ collision_layer = 64
 collision_mask = 7
 motion_mode = 1
 script = ExtResource("24_scri")
-position = Vector2(384, 1031.68)
-route = PackedVector2Array(384, 1031.68, 2432, 1031.68, 2432, 714.24, 384, 714.24)
+position = Vector2(383.99, 1031.47)
+route = PackedVector2Array(383.994, 1031.47, 2415.67, 1040.77, 2415.67, 723.58, 383.994, 714.11)
 mode = "loop"
 pause_time = 2.2
 
@@ -657,7 +703,7 @@ offset = Vector2(0, -52)
 
 [node name="Shape" type="CollisionShape2D" parent="World/OSK_Hall"]
 position = Vector2(0, -2)
-shape = SubResource("CircleShape2D_36")
+shape = SubResource("CircleShape2D_38")
 
 [node name="Flashlight" type="Node2D" parent="World/OSK_Hall"]
 scale = Vector2(1, 0.62)
@@ -714,7 +760,7 @@ offset = Vector2(0, -52)
 
 [node name="Shape" type="CollisionShape2D" parent="World/OSK_Line"]
 position = Vector2(0, -2)
-shape = SubResource("CircleShape2D_37")
+shape = SubResource("CircleShape2D_39")
 
 [node name="Flashlight" type="Node2D" parent="World/OSK_Line"]
 scale = Vector2(1, 0.62)
@@ -754,7 +800,7 @@ collision_layer = 32
 collision_mask = 7
 motion_mode = 1
 script = ExtResource("28_scri")
-position = Vector2(2080, 257.92)
+position = Vector2(2031.72, 267.63)
 brute = true
 home_radius = 2
 
@@ -770,7 +816,7 @@ offset = Vector2(0, -52)
 
 [node name="Shape" type="CollisionShape2D" parent="World/Rabid_Vasily"]
 position = Vector2(0, -2)
-shape = SubResource("CircleShape2D_38")
+shape = SubResource("CircleShape2D_40")
 
 [node name="Rabid_Back" type="CharacterBody2D" parent="World" groups=["night_rabid"]]
 collision_layer = 32
@@ -793,10 +839,10 @@ offset = Vector2(0, -52)
 
 [node name="Shape" type="CollisionShape2D" parent="World/Rabid_Back"]
 position = Vector2(0, -2)
-shape = SubResource("CircleShape2D_39")
+shape = SubResource("CircleShape2D_41")
 
 [node name="Survivor_0" type="Node2D" parent="World" groups=["night_survivor"]]
-position = Vector2(864, 349.18)
+position = Vector2(879.87, 366.75)
 metadata/role = "survivor"
 
 [node name="Sprite" type="Sprite2D" parent="World/Survivor_0"]
@@ -805,7 +851,7 @@ centered = false
 offset = Vector2(-36, -108)
 
 [node name="Survivor_1" type="Node2D" parent="World" groups=["night_survivor"]]
-position = Vector2(960, 1023.74)
+position = Vector2(943.9, 1020.95)
 metadata/role = "survivor"
 
 [node name="Sprite" type="Sprite2D" parent="World/Survivor_1"]
@@ -817,7 +863,7 @@ offset = Vector2(-36, -108)
 
 [node name="FacadeGlow" type="PointLight2D" parent="Lights"]
 texture = ExtResource("31_text")
-position = Vector2(1408, -95.96)
+position = Vector2(1408, -120.94)
 energy = 1.15
 range_item_cull_mask = 3
 
@@ -886,7 +932,7 @@ energy = 2.2
 range_item_cull_mask = 1
 
 [node name="BrazierStove" type="Node2D" parent="Lights" groups=["night_warm"]]
-position = Vector2(768, 192.4)
+position = Vector2(667.9, 330.43)
 script = ExtResource("32_scri")
 mode = "fire"
 metadata/radius = 2.6
@@ -910,7 +956,7 @@ energy = 1.25
 range_item_cull_mask = 1
 
 [node name="BrazierHall" type="Node2D" parent="Lights" groups=["night_warm"]]
-position = Vector2(2528, 1085.2)
+position = Vector2(1031.18, 1003.3)
 script = ExtResource("32_scri")
 mode = "fire"
 metadata/radius = 2.6
@@ -940,15 +986,15 @@ lifetime = 2.6
 preprocess = 3.0
 texture = ExtResource("33_text")
 visibility_rect = Rect2(-300, -400, 600, 500)
-process_material = SubResource("ParticleProcessMaterial_40")
+process_material = SubResource("ParticleProcessMaterial_42")
 
 [node name="Markers" type="Node2D" parent="."]
 
 [node name="Spawn" type="Marker2D" parent="Markers"]
-position = Vector2(1408, 1170.56)
+position = Vector2(1408, 1125.06)
 
 [node name="Exit" type="Marker2D" parent="Markers"]
-position = Vector2(1408, 1245.95)
+position = Vector2(1408, 1204.65)
 
 [node name="Slush0" type="Marker2D" parent="Markers" groups=["night_slush"]]
 position = Vector2(1408, 1134.85)
@@ -961,9 +1007,9 @@ metadata/rx = 1.8
 metadata/ry = 1
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(1408, 1170.56)
+position = Vector2(1408, 1125.06)
 limit_left = 0
-limit_top = -480
+limit_top = 0
 limit_right = 2816
 limit_bottom = 1269
 position_smoothing_enabled = true
@@ -976,7 +1022,7 @@ preprocess = 8.0
 texture = ExtResource("34_text")
 local_coords = false
 visibility_rect = Rect2(-1300, -900, 2600, 1800)
-process_material = SubResource("ParticleProcessMaterial_41")
+process_material = SubResource("ParticleProcessMaterial_43")
 
 [node name="FrontSnow" type="CanvasLayer" parent="."]
 layer = 3
@@ -988,7 +1034,7 @@ lifetime = 3.0
 preprocess = 3.0
 texture = ExtResource("34_text")
 visibility_rect = Rect2(-1200, -800, 2400, 1600)
-process_material = SubResource("ParticleProcessMaterial_42")
+process_material = SubResource("ParticleProcessMaterial_44")
 
 [node name="Post" type="CanvasLayer" parent="."]
 layer = 5
@@ -1000,7 +1046,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-material = SubResource("ShaderMaterial_43")
+material = SubResource("ShaderMaterial_45")
 
 [node name="OverlayLayer" type="CanvasLayer" parent="."]
 layer = 6
@@ -1026,7 +1072,7 @@ stream = ExtResource("38_audi")
 volume_db = -9.0
 
 [node name="FireAudio" type="AudioStreamPlayer2D" parent="."]
-position = Vector2(768, 198.4)
+position = Vector2(667.9, 336.43)
 stream = ExtResource("39_audi")
 max_distance = 900.0
 volume_db = -2.0

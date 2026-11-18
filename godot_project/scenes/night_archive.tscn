@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/night/NightExplore.gd" id="1_scri"]
 [ext_resource type="Texture2D" path="res://art/20_tileset/TIL_Ground_NightArchive_Baked.png" id="2_text"]
 [ext_resource type="Script" path="res://scripts/night/NightZoneField.gd" id="3_scri"]
-[ext_resource type="Texture2D" path="res://art/20_tileset/TIL_Facade_Town_A.png" id="4_text"]
+[ext_resource type="Texture2D" path="res://art/20_tileset/TIL_Facade_Sanitarium_A.png" id="4_text"]
 [ext_resource type="Texture2D" path="res://art/30_props/PRP_Locker_ElectricCabinet.png" id="5_text"]
 [ext_resource type="Texture2D" path="res://art/30_props/PRP_DispatchBoard_Tin.png" id="6_text"]
 [ext_resource type="Texture2D" path="res://art/30_props/PRP_SupplyCrates_Military.png" id="7_text"]
@@ -33,91 +33,91 @@
 size = Vector2(2112, 300)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
-size = Vector2(57.6, 15.87)
+size = Vector2(172.61, 202.81)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_3"]
-polygon = PackedVector2Array(-28.8, -15.9, 28.8, -15.9, 28.8, 0, -28.8, 0)
+polygon = PackedVector2Array(-86.3, -202.8, 86.3, -202.8, 86.3, 0, -86.3, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4"]
-size = Vector2(108.8, 25.79)
+size = Vector2(294.46, 114.63)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_5"]
-polygon = PackedVector2Array(-54.4, -25.8, 54.4, -25.8, 54.4, 0, -54.4, 0)
+polygon = PackedVector2Array(-147.2, -114.6, 147.2, -114.6, 147.2, 0, -147.2, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6"]
-size = Vector2(121.6, 35.71)
+size = Vector2(155.69, 179.29)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_7"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-77.8, -179.3, 77.8, -179.3, 77.8, 0, -77.8, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8"]
-size = Vector2(108.8, 33.73)
+size = Vector2(118.46, 91.12)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_9"]
-polygon = PackedVector2Array(-54.4, -33.7, 54.4, -33.7, 54.4, 0, -54.4, 0)
+polygon = PackedVector2Array(-59.2, -91.1, 59.2, -91.1, 59.2, 0, -59.2, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_10"]
-size = Vector2(121.6, 35.71)
+size = Vector2(270.77, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_11"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-135.4, -99.9, 135.4, -99.9, 135.4, 0, -135.4, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_12"]
-size = Vector2(121.6, 35.71)
+size = Vector2(304.61, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_13"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-152.3, -99.9, 152.3, -99.9, 152.3, 0, -152.3, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_14"]
-size = Vector2(121.6, 35.71)
+size = Vector2(257.23, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_15"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-128.6, -99.9, 128.6, -99.9, 128.6, 0, -128.6, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_16"]
-size = Vector2(121.6, 35.71)
+size = Vector2(253.84, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_17"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-126.9, -99.9, 126.9, -99.9, 126.9, 0, -126.9, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_18"]
-size = Vector2(121.6, 35.71)
+size = Vector2(294.46, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_19"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-147.2, -99.9, 147.2, -99.9, 147.2, 0, -147.2, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_20"]
-size = Vector2(121.6, 35.71)
+size = Vector2(287.69, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_21"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-143.8, -99.9, 143.8, -99.9, 143.8, 0, -143.8, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_22"]
-size = Vector2(121.6, 35.71)
+size = Vector2(260.61, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_23"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-130.3, -99.9, 130.3, -99.9, 130.3, 0, -130.3, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_24"]
-size = Vector2(121.6, 35.71)
+size = Vector2(257.23, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_25"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-128.6, -99.9, 128.6, -99.9, 128.6, 0, -128.6, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_26"]
-size = Vector2(121.6, 35.71)
+size = Vector2(585.54, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_27"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-292.8, -99.9, 292.8, -99.9, 292.8, 0, -292.8, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_28"]
-size = Vector2(121.6, 35.71)
+size = Vector2(521.23, 99.93)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_29"]
-polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+polygon = PackedVector2Array(-260.6, -99.9, 260.6, -99.9, 260.6, 0, -260.6, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_30"]
-size = Vector2(38.4, 17.86)
+size = Vector2(71.08, 114.63)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_31"]
 blend_mode = 1
@@ -221,7 +221,7 @@ script = ExtResource("3_scri")
 metadata/zones = "black:0,3,9,9|red:12,8,29,17|white:0,0,33,26"
 
 [node name="Facade" type="StaticBody2D" parent="World"]
-position = Vector2(0, 119.04)
+position = Vector2(0, 132.27)
 collision_layer = 1
 collision_mask = 0
 
@@ -229,6 +229,7 @@ collision_mask = 0
 texture = ExtResource("4_text")
 centered = false
 offset = Vector2(0, -600)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Facade"]
 position = Vector2(1056, -150)
@@ -238,80 +239,92 @@ shape = SubResource("RectangleShape2D_1")
 y_sort_enabled = true
 
 [node name="File0420" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(320, 238.08)
+position = Vector2(201.38, 352.71)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "locker"
 metadata/guaranteed = "intel"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/File0420"]
 texture = ExtResource("5_text")
 centered = false
 offset = Vector2(-42, -138)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/File0420"]
-position = Vector2(0, -7.94)
+position = Vector2(0, -101.4)
 shape = SubResource("RectangleShape2D_2")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/File0420"]
 occluder = SubResource("OccluderPolygon2D_3")
+occluder_light_mask = 1
 
 [node name="TelegraphDesk" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(1088, 238.08)
+position = Vector2(1044.15, 329.2)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "briefcase"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/TelegraphDesk"]
 texture = ExtResource("6_text")
 centered = false
 offset = Vector2(-95, -202)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/TelegraphDesk"]
-position = Vector2(0, -12.9)
+position = Vector2(0, -57.32)
 shape = SubResource("RectangleShape2D_4")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/TelegraphDesk"]
 occluder = SubResource("OccluderPolygon2D_5")
+occluder_light_mask = 1
 
 [node name="CopySafe" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(512, 793.6)
+position = Vector2(179.39, 917.05)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "safe"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/CopySafe"]
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/CopySafe"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -89.65)
 shape = SubResource("RectangleShape2D_6")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/CopySafe"]
 occluder = SubResource("OccluderPolygon2D_7")
+occluder_light_mask = 1
 
 [node name="RecordsCrate" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
-position = Vector2(1408, 872.96)
+position = Vector2(1846.31, 855.33)
 collision_layer = 1
 collision_mask = 0
 metadata/container = "crate"
+metadata/interact_offset = Vector2(0, 25.79)
 
 [node name="Sprite" type="Sprite2D" parent="World/Props/RecordsCrate"]
 texture = ExtResource("8_text")
 centered = false
 offset = Vector2(-66, -148)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsCrate"]
-position = Vector2(0, -16.86)
+position = Vector2(0, -45.56)
 shape = SubResource("RectangleShape2D_8")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsCrate"]
 occluder = SubResource("OccluderPolygon2D_9")
+occluder_light_mask = 1
 
 [node name="RecordsShelf1" type="StaticBody2D" parent="World/Props"]
-position = Vector2(512, 396.8)
+position = Vector2(531.39, 455.59)
 collision_layer = 1
 collision_mask = 0
 
@@ -319,16 +332,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf1"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_10")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf1"]
 occluder = SubResource("OccluderPolygon2D_11")
+occluder_light_mask = 1
 
 [node name="RecordsShelf2" type="StaticBody2D" parent="World/Props"]
-position = Vector2(768, 396.8)
+position = Vector2(819.08, 455.59)
 collision_layer = 1
 collision_mask = 0
 
@@ -336,16 +351,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf2"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_12")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf2"]
 occluder = SubResource("OccluderPolygon2D_13")
+occluder_light_mask = 1
 
 [node name="RecordsShelf3" type="StaticBody2D" parent="World/Props"]
-position = Vector2(1024, 396.8)
+position = Vector2(1252.31, 455.59)
 collision_layer = 1
 collision_mask = 0
 
@@ -353,16 +370,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf3"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_14")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf3"]
 occluder = SubResource("OccluderPolygon2D_15")
+occluder_light_mask = 1
 
 [node name="RecordsShelf4" type="StaticBody2D" parent="World/Props"]
-position = Vector2(1280, 396.8)
+position = Vector2(1507.85, 455.59)
 collision_layer = 1
 collision_mask = 0
 
@@ -370,16 +389,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf4"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_16")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf4"]
 occluder = SubResource("OccluderPolygon2D_17")
+occluder_light_mask = 1
 
 [node name="RecordsShelf5" type="StaticBody2D" parent="World/Props"]
-position = Vector2(832, 595.2)
+position = Vector2(543.23, 623.12)
 collision_layer = 1
 collision_mask = 0
 
@@ -387,16 +408,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf5"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_18")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf5"]
 occluder = SubResource("OccluderPolygon2D_19")
+occluder_light_mask = 1
 
 [node name="RecordsShelf6" type="StaticBody2D" parent="World/Props"]
-position = Vector2(1088, 595.2)
+position = Vector2(834.31, 623.12)
 collision_layer = 1
 collision_mask = 0
 
@@ -404,16 +427,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf6"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_20")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf6"]
 occluder = SubResource("OccluderPolygon2D_21")
+occluder_light_mask = 1
 
 [node name="RecordsShelf7" type="StaticBody2D" parent="World/Props"]
-position = Vector2(1344, 595.2)
+position = Vector2(1250.62, 623.12)
 collision_layer = 1
 collision_mask = 0
 
@@ -421,16 +446,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf7"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_22")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf7"]
 occluder = SubResource("OccluderPolygon2D_23")
+occluder_light_mask = 1
 
 [node name="RecordsShelf8" type="StaticBody2D" parent="World/Props"]
-position = Vector2(1600, 595.2)
+position = Vector2(1509.54, 623.12)
 collision_layer = 1
 collision_mask = 0
 
@@ -438,16 +465,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf8"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_24")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf8"]
 occluder = SubResource("OccluderPolygon2D_25")
+occluder_light_mask = 1
 
 [node name="RecordsShelf9" type="StaticBody2D" parent="World/Props"]
-position = Vector2(512, 714.24)
+position = Vector2(688.77, 790.66)
 collision_layer = 1
 collision_mask = 0
 
@@ -455,16 +484,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf9"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_26")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf9"]
 occluder = SubResource("OccluderPolygon2D_27")
+occluder_light_mask = 1
 
 [node name="RecordsShelf10" type="StaticBody2D" parent="World/Props"]
-position = Vector2(768, 714.24)
+position = Vector2(1377.54, 790.66)
 collision_layer = 1
 collision_mask = 0
 
@@ -472,16 +503,18 @@ collision_mask = 0
 texture = ExtResource("7_text")
 centered = false
 offset = Vector2(-75, -108)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/RecordsShelf10"]
-position = Vector2(0, -17.86)
+position = Vector2(0, -49.97)
 shape = SubResource("RectangleShape2D_28")
 
 [node name="Occluder" type="LightOccluder2D" parent="World/Props/RecordsShelf10"]
 occluder = SubResource("OccluderPolygon2D_29")
+occluder_light_mask = 1
 
 [node name="HeatDrum" type="StaticBody2D" parent="World/Props"]
-position = Vector2(1728, 912.64)
+position = Vector2(1734.62, 908.23)
 collision_layer = 2
 collision_mask = 0
 
@@ -489,9 +522,10 @@ collision_mask = 0
 texture = ExtResource("9_text")
 centered = false
 offset = Vector2(-34, -86)
+visible = false
 
 [node name="Shape" type="CollisionShape2D" parent="World/Props/HeatDrum"]
-position = Vector2(0, -8.93)
+position = Vector2(0, -57.32)
 shape = SubResource("RectangleShape2D_30")
 
 [node name="Flame" type="Sprite2D" parent="World/Props/HeatDrum"]
@@ -534,7 +568,7 @@ collision_layer = 8
 collision_mask = 7
 motion_mode = 1
 script = ExtResource("13_scri")
-position = Vector2(1856, 872.96)
+position = Vector2(1834.46, 899.41)
 
 [node name="Shadow" type="Polygon2D" parent="World/Player"]
 color = Color(0, 0, 0, 0.42)
@@ -587,8 +621,8 @@ collision_layer = 64
 collision_mask = 7
 motion_mode = 1
 script = ExtResource("17_scri")
-position = Vector2(832, 515.84)
-route = PackedVector2Array(832, 515.84, 1536, 515.84)
+position = Vector2(847.58, 505.9)
+route = PackedVector2Array(847.578, 505.9, 1551.24, 505.9)
 mode = "pingpong"
 pause_time = 1.8
 
@@ -700,12 +734,12 @@ range_item_cull_mask = 3
 
 [node name="FacadeGlow" type="PointLight2D" parent="Lights"]
 texture = ExtResource("21_text")
-position = Vector2(1056, -95.96)
+position = Vector2(1056, -82.73)
 energy = 1.15
 range_item_cull_mask = 3
 
 [node name="BrazierRoute" type="Node2D" parent="Lights" groups=["night_warm"]]
-position = Vector2(1728, 906.64)
+position = Vector2(1734.62, 902.23)
 script = ExtResource("22_scri")
 mode = "fire"
 metadata/radius = 2.6
@@ -731,15 +765,15 @@ range_item_cull_mask = 1
 [node name="Markers" type="Node2D" parent="."]
 
 [node name="Spawn" type="Marker2D" parent="Markers"]
-position = Vector2(1856, 872.96)
+position = Vector2(1834.46, 899.41)
 
 [node name="Exit" type="Marker2D" parent="Markers"]
-position = Vector2(1856, 952.32)
+position = Vector2(1946.16, 919.99)
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(1856, 872.96)
+position = Vector2(1834.46, 899.41)
 limit_left = 0
-limit_top = -480
+limit_top = 0
 limit_right = 2112
 limit_bottom = 1031
 position_smoothing_enabled = true
@@ -802,7 +836,7 @@ stream = ExtResource("27_audi")
 volume_db = -9.0
 
 [node name="FireAudio" type="AudioStreamPlayer2D" parent="."]
-position = Vector2(1728, 912.64)
+position = Vector2(1734.62, 908.23)
 stream = ExtResource("28_audi")
 max_distance = 900.0
 volume_db = -2.0

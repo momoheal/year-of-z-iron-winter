@@ -1,0 +1,166 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "broadcast_tower_302",
+  "name": "302 号广播塔 · 围攻场地",
+  "name_en": "302 Broadcast Tower · siege grounds",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/BroadcastTower302/map.png",
+    "sha256": "474e5ba3bf82c2253fcc939d155e7d5c21e3b4414cfc40dc57d5729a2baffc6d",
+    "art_source": "existing",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "path": "res://art/80_maps/BroadcastTower302/cutout-source.png",
+    "sha256": "a1e43a7598a25c068b638de8bb979a791d0dbd950170881fcf3667168098a55d",
+    "alpha": "RGBA true alpha",
+    "prompt": "cutout-prompt.txt",
+    "art_source": "host_image",
+    "route": "image_gen",
+    "extraction_manifest": "../../generation_runs/2026-11-18/asset_completion/BroadcastTower302/prop-pack-final.json"
+  },
+  "props": [
+    {
+      "id": "PRP_BroadcastTower302_Generator",
+      "path": "res://art/30_props/PRP_BroadcastTower302_Generator.png",
+      "size": [
+        361,
+        394
+      ],
+      "pivot": [
+        180,
+        384
+      ],
+      "label": "Generator",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "d6a9f33b1ccddd60407d1a2c28db0e9963b8c9fb92b896e070f8de4ad8b927da"
+    },
+    {
+      "id": "PRP_BroadcastTower302_RelayAntenna",
+      "path": "res://art/30_props/PRP_BroadcastTower302_RelayAntenna.png",
+      "size": [
+        351,
+        442
+      ],
+      "pivot": [
+        176,
+        432
+      ],
+      "label": "RelayAntenna",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "2eb9a48434def5b059d89b2724b5fb08fdc8d463e6671f173b2083135954ffeb"
+    },
+    {
+      "id": "PRP_BroadcastTower302_RadioDesk",
+      "path": "res://art/30_props/PRP_BroadcastTower302_RadioDesk.png",
+      "size": [
+        372,
+        364
+      ],
+      "pivot": [
+        186,
+        354
+      ],
+      "label": "RadioDesk",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "bd02d0eedb0d0d12ae9b38648df197b01e8309d58c1f04a476a3770383904124"
+    },
+    {
+      "id": "PRP_BroadcastTower302_Searchlight",
+      "path": "res://art/30_props/PRP_BroadcastTower302_Searchlight.png",
+      "size": [
+        239,
+        361
+      ],
+      "pivot": [
+        115,
+        351
+      ],
+      "label": "Searchlight",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "96847c019f3c3597d4327f9715f2b67eb78114c42a60948a235abe03c63f7477"
+    },
+    {
+      "id": "PRP_BroadcastTower302_CableReel",
+      "path": "res://art/30_props/PRP_BroadcastTower302_CableReel.png",
+      "size": [
+        347,
+        336
+      ],
+      "pivot": [
+        174,
+        326
+      ],
+      "label": "CableReel",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "bf48181e50d0f0e4f93ec3c6b542d41ad2f357671e57bd53660c248f99cd9df1"
+    },
+    {
+      "id": "PRP_BroadcastTower302_SandbagBunker",
+      "path": "res://art/30_props/PRP_BroadcastTower302_SandbagBunker.png",
+      "size": [
+        439,
+        252
+      ],
+      "pivot": [
+        220,
+        241
+      ],
+      "label": "SandbagBunker",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "23e5111b0c4c5e28389eaf9275e2059d653dae7348b7d7b5b387b0acc0080331"
+    }
+  ],
+  "variants": [
+    {
+      "id": "MAP_BroadcastTower302_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/BroadcastTower302/map_night.png",
+      "sha256": "112449a57d7748ba04352ca6e599a6a7148ce09a864c816e4892605fb4a7775c",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

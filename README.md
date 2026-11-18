@@ -12,7 +12,7 @@
 > - **构建版本 `4.0.0`**：唯一真源是 `godot_project/project.godot` 的 `config/version="4.0.0"`。对外发布、商店页与补丁说明一律以此为准。
 > - **内容规格 `v4.2`**：指 `docs/` 下策划案、总剧本、美术风格参考等**文档与原型的内容规格版本**（历史称 Definitive Master）。它不是构建版本号，也不代表已发布的可执行版本；本轮保留该标签，取舍见 `CHANGELOG.md`，最终定位**待用户拍板**。
 > - **历史规格标签 `v4.0`**：`index.html` 与原型沙盘标题里的「v4.0 诺沃斯克-17 设定」，以及 `project.godot` 的 `config/name` 中的 `(v4.0 Novorsk-17)`，均为早期内容规格 / 命名遗留，**不是构建版本**。
-> - 测试结论不再写死；现行口径见下方「最近一次本地实跑基线」与 `godot_project/tests/logs/`。当前仓库无 CI、无 git tag、无 LICENSE。
+> - 测试结论不再写死；现行口径见下方「最近一次本地实跑基线」与 `godot_project/tests/logs/`。CI 已接入（`.github/workflows/ci.yml`，自动下载并校验 Godot 4.7.2 headless）；仍无 git tag、无 LICENSE。
 
 > **"In Novorsk-17, when the teletype terminal lights up green, everyone is fed; when a file number is crossed out, the person is zeroed."**
 >
@@ -299,8 +299,7 @@ v4.2 七幕结构第三幕 3-3 前半的舞台（L07）：危险度 2 / 夜长 8
 | **威胁读数** | 右栏实时给「被 N 只狂暴者盯上 / 最近清杀兵 12m 西南 / 脚下冻雪泥（噪声 ×2）/ 环境警报」；屏幕边缘随紧张度渗红 |
 
 测试：`tests/night_beats_smoke.gd`（界面工具 / 三关档案数据 / 关键物资点 / 地标在图内 / 节拍状态机 / 扳道岔 / 叉车一次性）。
-**尚未在装 Godot 的机器上首跑**：本轮改动已通过 gdtoolkit GDScript 解析校验，但需要在本机跑一次
-`night_beats_smoke.gd` 与既有 `night_level_smoke.gd` / `night_explore_smoke.gd` 完成首次验收（含肉眼核对 HUD 排版）。
+已在装 Godot 4.7.2 的机器上跑过 `night_beats_smoke.gd` 与既有 `night_level_smoke.gd` / `night_explore_smoke.gd`；基线数字见下方「最近一次本地实跑基线」，HUD 排版仍建议肉眼核对。
 
 ## 🔧 武器与战斗切片 · 撬棍 / 枪械 + 灰盒美术扩展（`scripts/night/Arsenal.gd`）
 
@@ -350,8 +349,7 @@ v4.2 七幕结构第三幕 3-3 前半的舞台（L07）：危险度 2 / 夜长 8
 三棍放倒狂暴者 / 开枪扣弹+曳光+惊动巡逻 / 冷却与空仓 / 清杀兵掉血与死亡 / 弹药上限）。
 详细说明见 `docs/zh/Z年纪事_武器与战斗切片.md` 与 `docs/en/Year_of_Z_Iron_Winter_Weapons_and_Combat_EN.md`。
 
-> ⚠️ 沙箱里没有 Godot 引擎：本切片**尚未在装引擎的机器上首跑**，首次运行请按文档的「验收」清单
-> 肉眼核对枪口位置 / 沙袋挡视线不挡子弹 / 同僚反应 / 三张图的弹药箱。
+> ✅ 已在装 Godot 4.7.2 的机器上跑过本切片；首次运行仍建议按文档的「验收」清单肉眼核对枪口位置 / 沙袋挡视线不挡子弹 / 同僚反应 / 三张图的弹药箱。基线数字见下方。
 
 **验收图（无需引擎）** / Acceptance sheets, no engine needed：`docs/ui/verify/` 下 25 张 PNG ——
 `yard|marshalling|manor|mine|market|coldstore|canteen|sanitarium` 八关各一张中性光 + 一张夜色整关图（16 张），

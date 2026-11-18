@@ -1,0 +1,6 @@
+{
+  "identity_reference": "generation_runs/2026-11-18/Vikina/identity_master_raw.png",
+  "style_reference": "godot_project/art/10_characters/portraits/PRT_Aleksei_Calm.png",
+  "route": "Codex image_gen (host_image)",
+  "states": { "top_left": "Calm", "top_right": "Sad", "bottom_left": "Intense", "bottom_right": "Wry" }
+}

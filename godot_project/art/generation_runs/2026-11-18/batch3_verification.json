@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-18",
+  "result": "PASS",
+  "asset_count": 842,
+  "asset_audit_note": "The global scan warns about the intended 864x336 runtime sheet versus the separate 864x1008 art-only expanded sheet.",
+  "group_1": {
+    "unique_endings": 5,
+    "images_checked": 5,
+    "code_mapping": "one-to-one"
+  },
+  "group_2": {
+    "sheet_checked": "12x9",
+    "runtime_wiring": "not_done",
+    "qa_frames": 108
+  },
+  "group_3": {
+    "backgrounds_checked": 2,
+    "scene_hookup": "not_done"
+  }
+}

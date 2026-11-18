@@ -1,0 +1,37 @@
+{
+  "schema": "winter-iron.custom-portrait-atlas.v1",
+  "source": "portrait_atlas_raw.png",
+  "source_sha256": "d96bf7d9e10be9911e2c21b07b3a71ac2c59ed3f0a50cdb89dee5ed4badb439d",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "tile_size": [
+    512,
+    512
+  ],
+  "layout": {
+    "top_left": "Fear",
+    "top_right": "Determined",
+    "bottom_left": "Hurt",
+    "bottom_right": "Wry (reference only; existing runtime file preserved)"
+  },
+  "files": {
+    "Fear": {
+      "path": "PRT_Lyudmila_Fear.png",
+      "sha256": "9d24b03aa5b809fba0d1e2296812930124ca5c1ba87aa3caf3302746175f6ed6"
+    },
+    "Determined": {
+      "path": "PRT_Lyudmila_Determined.png",
+      "sha256": "d5ff1916b636c434edce7b684cb109bb01f55f178b06531d9c11b8720543c4d3"
+    },
+    "Hurt": {
+      "path": "PRT_Lyudmila_Hurt.png",
+      "sha256": "6f422fbc7007f0265cd8a5a3519551a7472b4575134d12fedbef0bea26a7870d"
+    }
+  }
+}

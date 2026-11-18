@@ -210,10 +210,12 @@ func _run() -> void:
 	var main_p: String = SG._save_file()
 	var bak_p: String = main_p + ".bak"
 	var tmp_p: String = main_p + ".tmp"
+	var prev_p: String = main_p + ".prev"
 	_assert(FileAccess.file_exists(bak_p) and int(SG._parse_file(bak_p).get("day", 0)) == 3
 		and int(SG._parse_file(main_p).get("day", 0)) == 4,
 		"B2. saving again keeps the previous save as .bak (day 3) and the new one as main (day 4)")
-	_assert(not FileAccess.file_exists(tmp_p), "B3. no .tmp is left behind after a good save")
+	_assert(not FileAccess.file_exists(tmp_p) and not FileAccess.file_exists(prev_p),
+		"B3. no .tmp or .prev is left behind after a good save")
 	var fb := FileAccess.open(main_p, FileAccess.WRITE)
 	fb.store_string("{ half written")
 	fb.close()
@@ -226,8 +228,17 @@ func _run() -> void:
 	_assert(int(SG._parse_file(bak_p).get("day", 0)) == 3,
 		"B7. a corrupt main is NOT copied over the good backup", str(SG._parse_file(bak_p).get("day", -1)))
 	SG.delete_save()
-	_assert(not FileAccess.file_exists(main_p) and not FileAccess.file_exists(bak_p) and not FileAccess.file_exists(tmp_p),
-		"B8. delete_save removes main, backup and temp files")
+	_assert(not FileAccess.file_exists(main_p) and not FileAccess.file_exists(bak_p)
+		and not FileAccess.file_exists(tmp_p) and not FileAccess.file_exists(prev_p),
+		"B8. delete_save removes main, backup, temp and prev files")
+	# 模拟原子替换中途崩溃：主档已挪成 .prev，新档还没落盘 —— 仍可读回上一份
+	bk.day = 8
+	var fp := FileAccess.open(prev_p, FileAccess.WRITE)
+	fp.store_string(JSON.stringify(SG.to_dict(bk)))
+	fp.close()
+	_assert(SG.has_save() and int(SG.summary().get("day", 0)) == 8 and SG.last_load_source == "prev",
+		"B8b. a leftover .prev is recovered when main is missing")
+	SG.delete_save()
 	# 只剩一份写完整的 .tmp（替换中途崩溃）：照样能读回
 	var ft := FileAccess.open(tmp_p, FileAccess.WRITE)
 	bk.day = 6

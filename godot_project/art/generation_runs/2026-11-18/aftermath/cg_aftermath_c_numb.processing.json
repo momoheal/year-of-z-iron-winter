@@ -1,0 +1,17 @@
+{
+  "source": "cg_aftermath_c_numb_raw.png",
+  "source_size": [
+    1672,
+    941
+  ],
+  "output": "cg_aftermath_c_numb.jpg",
+  "output_size": [
+    1376,
+    768
+  ],
+  "format": "JPEG",
+  "quality": 94,
+  "source_sha256": "b32c69ef65aae7789e4366e7efe62705d86f69c2c69cdf80494a329c364ec7e2",
+  "output_sha256": "d442f0803f73bcbbaef3cdd4d4752a8978eff355c999133c1719e82a98dd9cc2",
+  "route": "Codex image_gen (host_image)"
+}

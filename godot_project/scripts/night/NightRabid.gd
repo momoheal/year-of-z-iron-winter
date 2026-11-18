@@ -123,6 +123,8 @@ func _physics_process(delta: float) -> void:
 		_growl = (1.2 if state == "chase" else 2.6) + _rng.randf() * 2.0
 		ctl.emit_noise(global_position, 3.2 if state != "chase" else 4.5, "rabid")
 	_animate(delta, velocity.length() > 4.0)
+	if ctl != null and ctl.has_method("ai_step"):
+		ctl.ai_step(self, delta)
 
 func hear(pos: Vector2, kind: String) -> void:
 	if state in ["dead", "chase", "windup", "lunge"] or kind == "rabid":

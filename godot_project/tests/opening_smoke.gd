@@ -24,18 +24,18 @@ func _run() -> void:
 	check(n == CutsceneData.PROLOGUE.size() and n >= 5, "prologue has its pages")
 	check(opening.page == 0 and not opening.actors.visible, "first slide")
 	# 每一页都要有图有字
-	var actor_page := -1
+	var courtyard_checked := false
 	for i in n:
 		check(opening.backdrop.texture != null, "slide %d image loaded" % i)
 		check(opening.caption.text != "", "slide %d has a caption" % i)
-		if opening.actors.visible:
-			actor_page = i
+		if CutsceneData.PROLOGUE[i].get("img") == "res://art/60_ui/opening_courtyard.png":
+			courtyard_checked = true
 			opening._process(0.5)
-			check(opening.hero.offset_left > -72 and opening.soldier.offset_left < -72, "actors move")
+			check(not opening.actors.is_visible_in_tree(), "courtyard CG has no gameplay sprites")
 		if i < n - 1:
 			opening.advance()
 			check(opening.page == i + 1, "advance to slide %d" % (i + 1))
-	check(actor_page >= 0, "one slide plays the live actors")
+	check(courtyard_checked, "courtyard slide was checked")
 	# 打字机：第一次按键只补全文字，第二次才翻页
 	var typed = Slides.new()
 	typed.slides = [{"zh": "一二三四五六七八九十", "en": "x"}, {"zh": "完", "en": "y"}]

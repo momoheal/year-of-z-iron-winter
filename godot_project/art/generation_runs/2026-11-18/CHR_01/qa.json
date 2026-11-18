@@ -1,0 +1,47 @@
+{
+  "group": 2,
+  "route": "Codex image_gen (host_image)",
+  "runtime_wiring": "not_done",
+  "assets": [
+    {
+      "file": "CHR_01_Aleksei_Sheet_Expanded.png",
+      "size": [
+        864,
+        1008
+      ],
+      "mode": "RGBA",
+      "frame_count": 108,
+      "grid": [
+        12,
+        9
+      ],
+      "cell": [
+        72,
+        112
+      ],
+      "pivot": [
+        36,
+        108
+      ],
+      "all_nonempty": true,
+      "feet_y": 108,
+      "row_order": [
+        "base_S",
+        "base_E",
+        "base_N",
+        "armed_S",
+        "armed_E",
+        "armed_N",
+        "swing_S",
+        "swing_E",
+        "swing_N"
+      ],
+      "base_first_3_rows_pixel_identical": true,
+      "base_feet_edge_exclusive_range": [
+        108,
+        109
+      ],
+      "sha256": "0404ac198efa5a32d5e15a25a5e7c2a3ecce6bd7c3c8663f03f2f0d15864f7f3"
+    }
+  ]
+}

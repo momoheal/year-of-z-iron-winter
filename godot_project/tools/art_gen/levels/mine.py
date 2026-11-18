@@ -200,3 +200,7 @@ SEARCHLIGHT = None
 # 立面关键点（x 米，供 gen_env._facade_mine 取用；本关不设 terminal / vent / tower 灯位）
 FACADE_FEATURES = dict(portal_x=7.5, shack_x=19.0, bin_x=29.5, head_x=37.5, blast_x=42.0,
                        sign_x=13.0)
+
+
+from .plate_registration import register as _register_plate
+_register_plate(globals())

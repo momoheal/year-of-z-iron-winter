@@ -1,0 +1,166 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "eagle_beak_cliff",
+  "name": "鹰嘴崖 · 004 号车皮脱轨点",
+  "name_en": "Eagle Beak Cliff · Car 004 derailment",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/EagleBeakCliff/map.png",
+    "sha256": "1d61ff1115500a6ceffdae184d5538a6951222d8cef4744104bb09c621241d3e",
+    "art_source": "existing",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "path": "res://art/80_maps/EagleBeakCliff/cutout-source.png",
+    "sha256": "36487dcec619f5a9f173a81de2e3f46ae7fd8c73fa86c7a1039f7c20cfaca7ab",
+    "alpha": "RGBA true alpha",
+    "prompt": "cutout-prompt.txt",
+    "art_source": "host_image",
+    "route": "image_gen",
+    "extraction_manifest": "../../generation_runs/2026-11-18/asset_completion/EagleBeakCliff/prop-pack-final.json"
+  },
+  "props": [
+    {
+      "id": "PRP_EagleBeakCliff_SwitchLever",
+      "path": "res://art/30_props/PRP_EagleBeakCliff_SwitchLever.png",
+      "size": [
+        323,
+        404
+      ],
+      "pivot": [
+        159,
+        393
+      ],
+      "label": "SwitchLever",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "e1065e0c7cb5b0a0039a04bac6623d76c2ec1ae82ad75505387b3789e16d4c0e"
+    },
+    {
+      "id": "PRP_EagleBeakCliff_BogieWheels",
+      "path": "res://art/30_props/PRP_EagleBeakCliff_BogieWheels.png",
+      "size": [
+        438,
+        327
+      ],
+      "pivot": [
+        206,
+        316
+      ],
+      "label": "BogieWheels",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "e3d4b8f25b539ec25c05a03080d462fe1c4eca087e0ea755ae3fd50a9e84f995"
+    },
+    {
+      "id": "PRP_EagleBeakCliff_SignalLamp",
+      "path": "res://art/30_props/PRP_EagleBeakCliff_SignalLamp.png",
+      "size": [
+        256,
+        397
+      ],
+      "pivot": [
+        138,
+        386
+      ],
+      "label": "SignalLamp",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "eb1cd2c5d367d109d69cd6ad03e20bcebcf16cbf00ebae3f7335db8aad247690"
+    },
+    {
+      "id": "PRP_EagleBeakCliff_FreightCrates",
+      "path": "res://art/30_props/PRP_EagleBeakCliff_FreightCrates.png",
+      "size": [
+        423,
+        346
+      ],
+      "pivot": [
+        203,
+        336
+      ],
+      "label": "FreightCrates",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "99d502b0210b686f1f576ff9972e288a9f32c5843b4da1d022b74e952ace7400"
+    },
+    {
+      "id": "PRP_EagleBeakCliff_CableSpool",
+      "path": "res://art/30_props/PRP_EagleBeakCliff_CableSpool.png",
+      "size": [
+        428,
+        329
+      ],
+      "pivot": [
+        206,
+        319
+      ],
+      "label": "CableSpool",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "b6df54e23ef5afacbba4aad08b2b560123de88320a34675ad518e5977bfbd843"
+    },
+    {
+      "id": "PRP_EagleBeakCliff_TracksideMarker",
+      "path": "res://art/30_props/PRP_EagleBeakCliff_TracksideMarker.png",
+      "size": [
+        265,
+        380
+      ],
+      "pivot": [
+        133,
+        369
+      ],
+      "label": "TracksideMarker",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "127ad71dab9a779fe866b4d1eb7e639243f4c9374ab93a7efddc27ca7a89d0b7"
+    }
+  ],
+  "variants": [
+    {
+      "id": "MAP_EagleBeakCliff_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/EagleBeakCliff/map_night.png",
+      "sha256": "04a0e4baf017c4c37c57f1045b3a7337e699d31870d10ce06d599d7bae3d528a",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

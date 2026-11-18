@@ -215,29 +215,29 @@ const POSTERS := {
 ## 关卡 id → [[宣传画种类, x 像素（沿北墙）], …]。位置对着各外立面贴图挑的：避开门窗、
 ## 墙上的旧标语，以及靠墙摆着的道具。
 const WALLS := {
-	"yard": [["leader", 768], ["cosmos", 2112], ["harvest", 2496]],
-	"birch": [["worker", 1152], ["silence", 2496]],
-	"coldstore": [["harvest", 496], ["worker", 1280], ["silence", 2396]],
-	"boiler": [["worker", 496], ["leader", 2316]],
-	"canteen": [["harvest", 520], ["worker", 2192], ["leader", 2496]],
-	"workshop": [["worker", 520], ["cosmos", 2192], ["silence", 2496]],
-	"marshalling": [["rail", 696], ["silence", 1812], ["leader", 2114]],
-	"manor": [["leader", 312], ["silence", 1490]],
-	"mine": [["worker", 308], ["cosmos", 1410], ["rail", 1714]],
-	"sanitarium": [["silence", 372], ["harvest", 1324], ["cosmos", 2292]],
-	"underpass": [["rail", 732], ["leader", 2180]],
-	"archive": [["silence", 372], ["leader", 1324], ["worker", 2292]],
-	"market": [["rail", 1529], ["harvest", 2125], ["cosmos", 2589]],
-	"greenhouse": [["harvest", 1665], ["worker", 2485]],
+	"yard": [["leader", 164, 63], ["cosmos", 323, 63], ["harvest", 390, 63]],
+	"birch": [["worker", 387, 202], ["silence", 424, 197]],
+	"boiler": [["worker", 215, 68], ["leader", 359, 72]],
+	"canteen": [["harvest", 221, 55], ["worker", 443, 60], ["leader", 491, 53]],
+	"workshop": [["worker", 126, 54], ["cosmos", 454, 51], ["silence", 297, 51]],
+	"marshalling": [["rail", 221, 61], ["silence", 447, 62], ["leader", 301, 62]],
+	"manor": [["leader", 229, 88], ["silence", 410, 88]],
+	"mine": [["worker", 141, 99], ["cosmos", 157, 99], ["rail", 398, 102]],
+	"sanitarium": [["silence", 94, 53], ["harvest", 409, 52], ["cosmos", 500, 52]],
+	"underpass": [["rail", 91, 98], ["leader", 369, 97]],
+	"archive": [["silence", 203, 59], ["worker", 451, 61], ["leader", 384, 61]],
+	"market": [["rail", 217, 56], ["cosmos", 396, 54], ["harvest", 464, 53]],
+	"greenhouse": [["harvest", 81, 130], ["worker", 549, 129]],
+	"coldstore": [["worker", 205, 76]],
+	"station_buran_yard": [["rail", 213, 56]],
+	"eagle_beak_cliff": [["rail", 160, 134]],
+	"broadcast_tower_302": [["worker", 367, 133]],
 }
-const WALL_Y := 119.04         # 外立面墙根的像素 y（场景里没有 World/Facade 时的兜底）
-const POSTER_LIFT := 34.0      # 宣传画下沿离墙根多高（像素）
 const FLAG_FPS := 9.0
 
 ## 关卡 id（场景根节点的 metadata/level_id）→ [[种类, x 米, y 米], …]
 const PLACES := {
 	"yard": [["lenin", 7.75, 9.25], ["flag", 16.75, 8.75]],
-	"coldstore": [["stele", 8.75, 30.25], ["honor", 25.75, 5.25]],
 	"canteen": [["mosaic", 7.75, 8.75], ["marx", 27.25, 29.25]],
 	"market": [["head", 40.25, 19.25], ["star", 39.75, 8.75]],
 	"sanitarium": [["pioneer", 26.75, 27.25], ["marx", 19.75, 21.25]],
@@ -514,10 +514,6 @@ func _scan_props(parent: Node2D) -> void:
 
 
 func _spawn_posters(host: Node, parent: Node2D) -> void:
-	var wall_y := WALL_Y
-	var facade := host.get_node_or_null("World/Facade") as Node2D
-	if facade != null:
-		wall_y = facade.position.y
 	var idx := 0
 	for row in WALLS.get(String(host.level_id), []):
 		var kind := String(row[0])
@@ -533,8 +529,12 @@ func _spawn_posters(host: Node, parent: Node2D) -> void:
 		spr.texture = tex
 		spr.centered = false
 		var ts := tex.get_size()
-		spr.offset = Vector2(-ts.x * 0.5, -ts.y - POSTER_LIFT)
-		spr.position = Vector2(float(row[1]), wall_y + 0.5)    # 比墙根靠前半个像素：排在墙面之上、其它东西之后
+		var bounds: Vector2 = host.map_bounds_px
+		var print_height := bounds.y * 12.0 / 351.0
+		spr.scale = Vector2.ONE * print_height / ts.y
+		spr.offset = Vector2(-ts.x * 0.5, -ts.y)
+		spr.position = Vector2(float(row[1]) * bounds.x / 624.0, float(row[2]) * bounds.y / 351.0)
+		spr.z_index = -1
 		spr.set_meta("poster", kind)
 		parent.add_child(spr)
 		items.append({"kind": kind, "node": spr, "pos": spr.position, "id": "poster_%s@%d" % [kind, idx],

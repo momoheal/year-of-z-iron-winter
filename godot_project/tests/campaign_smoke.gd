@@ -102,8 +102,8 @@ func _run_tests() -> void:
 	_assert(Data.BAG == 12 and Data.SIGHT == 12.0 and is_equal_approx(Data.SIGHT_CRACKED, 7.2),
 		"7. bag 12, sight 12m / 7.2m cracked")
 	_assert(Data.ITEMS.size() == 26, "8. 26 item types", str(Data.ITEMS.size()))
-	_assert(Data.WEAPONS.size() == 5 and Data.MATES.size() == 7 and Data.LOCS.size() == 14,
-		"9. 5 weapons / 7 mates / 14 locations")
+	_assert(Data.WEAPONS.size() == 5 and Data.MATES.size() == 7 and Data.LOCS.size() == 17,
+		"9. 5 weapons / 7 mates / 17 locations")
 	_assert(Data.STORY.size() >= 5, "10. story beats present", str(Data.STORY.size()))
 	_assert(Data.weapon("cleaver")["dmg"] == 46.0 and Data.weapon("shotgun")["dmg"] == 95.0 \
 		and Data.weapon("mosin")["dmg"] == 150.0, "11. weapon damage 46 / 95 / 150")
@@ -123,7 +123,7 @@ func _run_tests() -> void:
 		"14. new game: conscience 50, no strokes, no names")
 	_assert(int(sim.stash.get("rye", 0)) == 3 and int(sim.stash.get("band", 0)) == 1,
 		"15. starting stash rye 3 / bandage 1")
-	_assert(sim.nodes.size() == 14, "16. 14 node states")
+	_assert(sim.nodes.size() == 17, "16. 17 node states")
 	var scene_paths := {}
 	var scene_files_ok := true
 	for loc in Data.LOCS:
@@ -133,13 +133,11 @@ func _run_tests() -> void:
 		scene_paths[scene_path] = true
 	_assert(scene_files_ok and scene_paths.size() == Data.LOCS.size(),
 		"16a. each campaign location has a distinct playable scene file")
-	var boiler_src := FileAccess.get_file_as_string("res://scenes/night_boiler.tscn")
-	var archive_src := FileAccess.get_file_as_string("res://scenes/night_archive.tscn")
-	var underpass_src := FileAccess.get_file_as_string("res://scenes/night_underpass.tscn")
-	_assert(boiler_src.contains("TIL_Facade_Khrushchyovka_A.png")
-		and archive_src.contains("TIL_Facade_Town_A.png")
-		and underpass_src.contains("TIL_Facade_Depot_A.png"),
-		"16b. boiler, archive and underpass use distinct location-appropriate facades")
+	for plate_id in ["boiler", "archive", "underpass"]:
+		var level = load(Data.loc(plate_id).scene).instantiate()
+		var facade = level.get_node("World/Facade/Sprite")
+		_assert(not facade.visible, "%s uses the painted facade" % plate_id)
+		level.free()
 	_assert(sim.unlocked_count() == 1 and sim.selected_loc == "coldstore"
 		and not sim.can_depart(Data.loc("yard")), "17. first act starts at Cold Storage only",
 		str(sim.unlocked_count()))
@@ -436,7 +434,9 @@ func _run_tests() -> void:
 
 	# --- 15. 结局判定 ---------------------------------------------------------
 	sim.new_game()
-	_assert(sim.ending_key() == "ENDING_C_NUMBNESS", "74. no truth → ending C")
+	_assert(sim.ending_key() == "ENDING_A_RETURN_HOME", "74. no truth while Mother lives → ending A")
+	sim.mother_alive = false
+	_assert(sim.ending_key() == "ENDING_C_NUMBNESS", "74a. no truth and Mother lost → ending C")
 	_assert(not String(sim.ending_preview()["zh"]).contains("帕沙"), "74b. no Eagle's Crag epilogue without truth")
 	sim.flags["truth"] = true
 	sim.mother_alive = false
@@ -570,6 +570,13 @@ func _run_tests() -> void:
 	hud.refresh()
 	await _frames(2)
 	_assert(hud.body.get_child_count() > 0, "90. ending screen builds")
+	var ending_art: TextureRect = hud.body.get_node_or_null("EndingScreen/EndingCG") as TextureRect
+	_assert(ending_art != null and ending_art.texture != null,
+		"90a. ending screen displays the mapped CG", ending_art.texture.resource_path if ending_art and ending_art.texture else "missing")
+	var ending_replay := false
+	for button in hud.body.find_children("*", "Button", true, false):
+		ending_replay = ending_replay or String((button as Button).text) == "回看结局与余波"
+	_assert(ending_replay, "90b. ending screen exposes the CG and aftermath replay")
 	sim.logbook_open = true
 	hud.refresh()
 	await _frames(2)

@@ -1,0 +1,46 @@
+{
+  "schema": "winter-iron.character-portrait-atlas.v1",
+  "source": "portrait_atlas_raw.png",
+  "source_sha256": "ca398ee15bd7ffd744fae1fa469b7daf7b2035bcf10c1425698a885459282659",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "tile_size": [
+    512,
+    512
+  ],
+  "layout": {
+    "top_left": "Calm",
+    "top_right": "Sad",
+    "bottom_left": "Intense",
+    "bottom_right": "Wry"
+  },
+  "files": {
+    "Calm": {
+      "path": "PRT_Katya_Calm.png",
+      "sha256": "d07067a66d9968f6cb8da0ac107bb53edba39247678b8f9d573075c09e86cd1c"
+    },
+    "Sad": {
+      "path": "PRT_Katya_Sad.png",
+      "sha256": "3f8c3fcd8ef7f8b5edf1a38220d02f9136379fc15af7b39680621cc0a4ae4461"
+    },
+    "Intense": {
+      "path": "PRT_Katya_Intense.png",
+      "sha256": "b879a9740dd8612bc3709eee9b5ed66df85231bd4f0c3bb549a9ee16b4bd430a"
+    },
+    "Wry": {
+      "path": "PRT_Katya_Wry.png",
+      "sha256": "7f1a1131de8ac0ecc0ecb21f0a3a200c04719be9ea86b55fc31179c857c44b56"
+    },
+    "Base": {
+      "path": "PRT_Katya.png",
+      "sha256": "d07067a66d9968f6cb8da0ac107bb53edba39247678b8f9d573075c09e86cd1c"
+    }
+  },
+  "warnings": []
+}

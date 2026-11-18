@@ -2,7 +2,7 @@ extends CharacterBody2D
 ## NightPlayer.gd — 阿列克谢：移动 / 姿态 / 朝向 / 手电 / 脚步噪声 / 精灵表动画。
 ##
 ## 世界单位：屏幕像素；地面 1 米 = (64, 39.68) px。速度与噪声半径都按「逻辑米」给出。
-## 精灵表 CHR_01_Aleksei_Sheet：8 列 × 3 行（S / E / N），W = E 水平翻转。
+## 精灵表 CHR_01_Aleksei_Sheet：12 列 × 3 行（S / E / N），W = E 水平翻转。
 
 const PPM := 64.0
 const SQ := 0.62

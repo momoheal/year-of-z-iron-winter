@@ -1,0 +1,9 @@
+{
+  "character": "Vikina",
+  "date": "2026-11-18",
+  "story_reference": "godot_project/scripts/data/CutsceneData.gd: vikina_lead (neighbor in 602 stairwell; ration slip; returned dispatch copy)",
+  "identity_reference": "No prior Vikina portrait or fixed physical description found; identity master is a visual interpretation, not story canon.",
+  "style_reference": "godot_project/art/10_characters/portraits/PRT_Aleksei_Calm.png",
+  "route": "Codex image_gen (host_image)",
+  "dialogue_mapping_change": false
+}

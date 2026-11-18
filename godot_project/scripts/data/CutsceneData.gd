@@ -4,6 +4,7 @@ extends RefCounted
 ##   PROLOGUE   新开局的故事开场（世界观 → 母亲 → 签字 → 拉娜被带走 → 瞒下转运消息 → 封楼 → 通风口）
 ##   AFTERMATH  七段主线剧情每个抉择之后的「余波」：键 = "剧情 id:选项序号"
 ##   scene_image()  剧情对白框背后的场景插图
+##   ENDING_SCENES  五种结局（A/B/C + True Ending α/β）的主图与结局余波
 ##
 ## 插图约定：res://art/60_ui/cg/cg_<剧情 id>_scene.jpg / cg_<剧情 id>_c<选项序号>.jpg。
 ## img 可以写成数组，按顺序取第一张存在的；一张都没有时退回 portrait 胸像。
@@ -11,6 +12,66 @@ extends RefCounted
 
 const CG := "res://art/60_ui/cg/"
 const PRT := "res://art/10_characters/portraits/"
+
+## 恰好五种结局，每个结局都有独立的余波插图。
+## 旧的帕沙鹰嘴崖插图不再由多个结局共用。
+const ENDING_SCENES := {
+	"ENDING_A_RETURN_HOME": {
+		"img": CG + "cg_ending_closed_car_firelight_alt.jpg",
+		"focus": Vector2(0.69, 0.54),
+		"zh": "004 号车厢仍封在雪里。阿列克谢没带回真相，转身回到 602 室陪母亲。",
+		"en": "Car 004 remains sealed in the snow. Aleksei brings no truth home and returns to Room 602 to stay with Mother.",
+		"aftermath": [
+			{"img": CG + "cg_aftermath_a_602.jpg", "focus": Vector2(0.52, 0.56),
+				"zh": "夜深时，阿列克谢仍坐在母亲床边。窗外雪压住封存车厢的方向，屋里的灯没有熄。",
+				"en": "Well past midnight, Aleksei remains at his mother's bedside. Snow closes the view toward the sealed car, but the room's lamp stays lit."},
+		],
+	},
+	"ENDING_B_FLAWED_LIBERATION": {
+		"img": CG + "cg_ending_broadcast_breach_302_alt.jpg",
+		"focus": Vector2(0.46, 0.52),
+		"zh": "第三节车门被打开，幸存者冲向 302 高地。拉娜活了下来，却没能认出留下满页划痕的哥哥。",
+		"en": "Boxcar Three opens and the survivors press toward Hill 302. Lana lives, but cannot recognize the brother marked by his strokes.",
+		"aftermath": [
+			{"img": CG + "cg_aftermath_b_release.jpg", "focus": Vector2(0.62, 0.52),
+				"zh": "302 高地的破晓里，获释者继续向前。拉娜望向人群，没认出站在身旁的阿列克谢；他没有追问。",
+				"en": "At dawn on Hill 302, the freed survivors keep moving. Lana looks through the crowd, unable to recognize Aleksei beside her; he does not press her."},
+		],
+	},
+	"ENDING_C_NUMBNESS": {
+		"img": CG + "cg_ending_crawl_back_cellar_alt.jpg",
+		"focus": Vector2(0.28, 0.55),
+		"zh": "他独自从排污涵洞爬回空地窖。雪盖住名字，也盖住了最后一点反抗。",
+		"en": "He crawls alone from the drain into an empty cellar. Snow covers the names and the last trace of resistance.",
+		"aftermath": [
+			{"img": CG + "cg_aftermath_c_numb.jpg", "focus": Vector2(0.56, 0.52),
+				"zh": "地窖里只剩滴水声和一盏空灯。阿列克谢没有点炉火，也没有再翻那本名单。",
+				"en": "Only dripping water and a bare bulb fill the cellar. Aleksei does not light the stove or open the list again."},
+		],
+	},
+	"TRUE_ALPHA_HELLO_LANA": {
+		"img": CG + "cg_ending_true_alpha_hello_lana.jpg",
+		"focus": Vector2(0.47, 0.5),
+		"zh": "拉娜回到了 602。母亲还在床边等他们，三个人终于重新站在同一盏灯下。",
+		"en": "Lana returns to Room 602. Mother is waiting beside the bed, and all three are together beneath the same lamp again.",
+		"aftermath": [
+			{"img": CG + "cg_aftermath_true_alpha.jpg", "focus": Vector2(0.58, 0.54),
+				"zh": "晨光照进 602 室。拉娜替母亲捧起热水，阿列克谢守在窗边；三个人暂时不必再分开。",
+				"en": "Morning reaches Room 602. Lana lifts a warm cup to their mother while Aleksei keeps watch at the window; for now, the three need not be apart."},
+		],
+	},
+	"TRUE_BETA_OUTLAND_FIRE": {
+		"img": CG + "cg_ending_true_beta_outland_fire.jpg",
+		"focus": Vector2(0.35, 0.5),
+		"zh": "真相和拉娜都带出了城，母亲却没能等到他们。荒原的火烧过漫长一夜。",
+		"en": "The truth and Lana make it out of the city, but Mother does not live to see them. The outland fire burns through the long night.",
+		"aftermath": [
+			{"img": CG + "cg_aftermath_true_beta.jpg", "focus": Vector2(0.36, 0.5),
+				"zh": "城外铁轨消失在雪原。拉娜与阿列克谢带着档案继续向前，远处的火光留在身后，母亲没有走出那座城。",
+				"en": "Beyond the city, the tracks vanish into the snow. Lana and Aleksei carry the records onward while the last firelight fades behind them; their mother never left the city."},
+		],
+	},
+}
 
 const PROLOGUE := [
 	{"img": CG + "cg_intro_city.jpg", "focus": Vector2(0.45, 0.55),
@@ -28,7 +89,7 @@ const PROLOGUE := [
 	{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.6, 0.55),
 		"zh": "卡佳：阿廖沙……拉娜还没回电报吗？\n你把转运单折好，塞进大衣内袋。\n阿列克谢：妈，铁路医院派她去外地支援医疗了。等忙完这阵，她就回来。",
 		"en": "Katya: Alyosha... still no telegram from Lana?\nYou fold the transfer notice and slip it into your inside coat pocket.\nAleksei: Mama, the railway hospital sent her out of town to help a medical team. She'll be home when the work is done."},
-	{"img": "res://art/60_ui/opening_courtyard.png", "focus": Vector2(0.62, 0.6), "actors": true,
+	{"img": "res://art/60_ui/opening_courtyard.png", "focus": Vector2(0.62, 0.6),
 		"zh": "清杀队：封楼！所有人退回室内，天亮之前不许出门！\n焊枪封死了单元门。白天你替台账搬运物资；夜里，整栋楼只剩探照灯还醒着。",
 		"en": "OSK: Seal the building! Everyone inside. Nobody leaves before dawn!\nThe welders close the stairwell door. By day you haul for the ledger; by night only the searchlights are awake."},
 	{"img": CG + "cg_intro_vent.jpg", "focus": Vector2(0.72, 0.6),
@@ -177,6 +238,46 @@ const AFTERMATH := {
 			"zh": "天亮后，他会回 602 看望母亲留下的东西，再沿着维京娜无心说出的线索寻找拉娜。黑市的门只暂时关上，追查还要继续。",
 			"en": "At dawn he will return to Room 602 for what Mother left behind, then follow Vikina's offhand clue to Lana. The market door is only closed for now; the search must continue."},
 	],
+	"station_buran_yard:0": [
+		{"img": CG + "cg_station_buran_scene.jpg", "focus": Vector2(0.42, 0.56),
+			"zh": "交接底单上没有销账章。只要那枚红印没有落下，车里的人就还没有被账本判死。",
+			"en": "The handover copy carries no closure stamp. Until that red mark falls, the people aboard have not been condemned by the ledger."},
+		{"img": CG + "cg_station_buran_arrival_alt2.jpg", "focus": Vector2(0.56, 0.5), "zoom": Vector2(1.06, 1.16),
+			"zh": "你把底单折进内袋，在地图上标出通往鹰嘴崖的检修线。数字之外，终于有了一条能走的路。",
+			"en": "You fold the copy into your inner pocket and mark the maintenance line to Eagle's Crag. Beyond the numbers, there is finally a road to take."},
+	],
+	"eagle_beak_cliff:0": [
+		{"img": CG + "cg_eaglecliff_derailment_scene.jpg", "focus": Vector2(0.44, 0.54),
+			"zh": "撬棍咬住门缝，第三节车厢的锁被顶开。能走的人一个接一个踏上检修路，崖顶的灯追在身后。",
+			"en": "The crowbar bites the door seam and Boxcar Three gives way. Everyone who can walk takes the maintenance path, with the ridge lights hunting behind them."},
+		{"img": CG + "cg_eaglecliff_lana_004_rescue_alt2.jpg", "focus": Vector2(0.58, 0.48), "zoom": Vector2(1.08, 1.18),
+			"zh": "拉娜在人群里认出了你。最后一批人翻过护坡时，302 台的灯在远处亮了起来。",
+			"en": "Lana recognizes you in the crowd. As the last of them clear the embankment, the lamp of Tower 302 kindles in the distance."},
+	],
+	"eagle_beak_cliff:1": [
+		{"img": CG + "cg_eaglecliff_derailment_scene.jpg", "focus": Vector2(0.62, 0.5),
+			"zh": "你只带走了拉娜和底单。车门在身后重新合拢，车厢里的人没有等到你第二次回来。",
+			"en": "You leave with only Lana and the copy. The door closes again behind you; the people in the car never see you return."},
+		{"img": CG + "cg_eaglecliff_004_plaque_recovery_alt.jpg", "focus": Vector2(0.5, 0.55), "zoom": Vector2(1.08, 1.16),
+			"zh": "底单上的 0420 还在，多出来的姓名却被你留在了崖下。《工作日志》的背面又添了一道划痕。",
+			"en": "0420 is still on the copy, but the names you left behind stay under the cliff. One more stroke marks the back of the logbook."},
+	],
+	"broadcast_tower_302:0": [
+		{"img": CG + "cg_broadcast_testimony_scene.jpg", "focus": Vector2(0.48, 0.5),
+			"zh": "名单一个名字一个名字地念下去。全城的收音机里，第一次有了他们的姓名，不再只是编号。",
+			"en": "The list is read out name by name. For the first time the city's radios carry their names, not just file numbers."},
+		{"img": CG + "cg_broadcast_city_listeners_dawn_alt.jpg", "focus": Vector2(0.52, 0.56), "zoom": Vector2(1.06, 1.14),
+			"zh": "南门守住了。天亮时 302 台的发射机还在响；有人在信里写下了听到的第一个名字。",
+			"en": "The south gate holds. At dawn the transmitter is still alive, and someone writes down the first name they heard."},
+	],
+	"broadcast_tower_302:1": [
+		{"img": CG + "cg_broadcast_pavel_switch_repair_alt.jpg", "focus": Vector2(0.46, 0.54),
+			"zh": "照片和编号上了频率，姓名却没有。帕维尔把发射机又撑了一分钟，雪落进了打开的塔门。",
+			"en": "The photographs and file numbers go on air, but not the names. Pavel keeps the transmitter alive one more minute as snow drifts through the open tower door."},
+		{"img": CG + "cg_broadcast_final_dawn_gathering_alt.jpg", "focus": Vector2(0.5, 0.52), "zoom": Vector2(1.06, 1.16),
+			"zh": "城市听见了罪证，却不知道该为谁记下名字。名单留在你口袋里，仍旧只是一张纸。",
+			"en": "The city hears the evidence but not whom to mourn by name. The list stays in your pocket, still only paper."},
+	],
 }
 
 
@@ -206,13 +307,13 @@ const ROOM_DIALOGUE := {
 			"en": "Aleksei sets a bag of dialysis fluid beside the machine.\nKatya: Keep this one for the morning. At last you're letting me help you save a little strength."},
 	],
 	"vikina_lead": [
-		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.42, 0.5),
+		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Vikina_Calm.png", "focus": Vector2(0.42, 0.5),
 			"zh": "楼道里，邻居维京娜隔着半掩的门和人说话。她正抱怨电报局把一份旧底单退回了档案馆。",
 			"en": "In the hall, neighbor Vikina talks through a half-open door. She complains that the telegraph office returned an old dispatch copy to the archive."},
-		{"img": CG + "cg_intro_vent.jpg", "focus": Vector2(0.62, 0.55),
+		{"img": CG + "cg_intro_vent.jpg", "portrait": PRT + "PRT_Vikina_Intense.png", "focus": Vector2(0.62, 0.55),
 			"zh": "维京娜：封面写着 0420，底下还铅笔记了“第三节”。谁会把这种旧名单当回事？我只想找回配给单。\n她没意识到自己说出了什么。",
 			"en": "Vikina: The cover said 0420, with “third car” pencilled underneath. Who cares about an old list? I only want my ration slip back.\nShe doesn't realize what she has just said."},
-		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.5, 0.42),
+		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Vikina_Calm.png", "focus": Vector2(0.5, 0.42),
 			"zh": "阿列克谢：0420……拉娜的档案号。\n名单被退回档案馆，底单就在电报局。今晚我去找它。",
 			"en": "Aleksei: 0420... Lana's file number.\nThe list went back to the archive; the dispatch copy is at the telegraph office. I'll find it tonight."},
 	],
@@ -246,6 +347,31 @@ static func scene_image(story_id: String) -> String:
 	if story_cg.has(story_id):
 		return CG + String(story_cg[story_id])
 	return CG + "cg_%s_scene.jpg" % story_id
+
+
+## 结局主图（与 CampaignSim.ending_key() 的五个键一一对应）。
+static func ending_scene(ending_key: String) -> String:
+	var entry: Dictionary = ENDING_SCENES.get(ending_key, {})
+	return String(entry.get("img", ""))
+
+
+## 结局后的插画页。无余波的结局返回空数组。
+static func ending_aftermath(ending_key: String) -> Array:
+	var entry: Dictionary = ENDING_SCENES.get(ending_key, {})
+	return (entry.get("aftermath", []) as Array).duplicate(true)
+
+
+## 用于“回看结局与余波”按钮的完整幻灯顺序。
+static func ending_slides(ending_key: String) -> Array:
+	var entry: Dictionary = ENDING_SCENES.get(ending_key, {})
+	if entry.is_empty():
+		return []
+	var slides: Array = [{
+		"img": String(entry["img"]), "focus": entry.get("focus", Vector2(0.5, 0.5)),
+		"zh": String(entry.get("zh", "")), "en": String(entry.get("en", "")),
+	}]
+	slides.append_array(ending_aftermath(ending_key))
+	return slides
 
 
 ## 抉择余波的幻灯页（深拷贝）。没配的抉择返回空数组 = 不播。

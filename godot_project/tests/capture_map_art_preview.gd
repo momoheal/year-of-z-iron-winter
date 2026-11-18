@@ -17,6 +17,10 @@ const LEVELS := [
 	["archive", "res://scenes/night_archive.tscn"],
 	["workshop", "res://scenes/night_workshop.tscn"],
 	["birch", "res://scenes/night_birch.tscn"],
+	["station_buran_yard", "res://scenes/night_station_buran_yard.tscn"],
+	["eagle_beak_cliff", "res://scenes/night_eagle_beak_cliff.tscn"],
+	["broadcast_tower_302", "res://scenes/night_broadcast_tower_302.tscn"],
+
 ]
 
 var _failed := false

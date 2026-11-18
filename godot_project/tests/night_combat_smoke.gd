@@ -46,6 +46,7 @@ func _run() -> void:
 	_arsenal()
 	_yard()
 	_melee()
+	_execute()
 	_guns()
 	_weapon_mods()
 	_weapon_pose()
@@ -153,6 +154,90 @@ func _melee() -> void:
 
 
 # ---------------------------------------------------------------------------
+# 3.5) Q 背后处决：蹲伏 + 背后 120° + 未追击 + 1.2s + 一击毙命 + 3m 噪声 + 壮硕拒绝
+# ---------------------------------------------------------------------------
+func _exec_scene() -> Node:
+	var s = _scene("res://scenes/night_explore.tscn")
+	_s = s                                # 后续 _guns/_soldier 仍从这里取场景
+	s.swap_weapon(0)                      # 处决要撬棍在手
+	s.player.crouching = true
+	s.player.global_position = Vector2(2000, 1000)   # 已验证无遮挡的空地
+	s.cool = 0.0
+	return s
+
+
+func _exec_put_behind(s: Node, r: Node) -> void:
+	# 玩家在目标 -x 侧；目标朝 +x（facing=0）→ 玩家正在它背后 180°
+	r.global_position = s.player.global_position + Vector2(60, 0)
+	r.facing = 0.0
+	r.state = "idle"
+	r.hp = 100.0
+
+
+func _execute() -> void:
+	print("[execute]")
+	# 成功：读条 → 一击毙命 → 3m 噪声 → 冷却
+	var s = _exec_scene()
+	var r = s.rabids[0]
+	_exec_put_behind(s, r)
+	var rip0: int = s.ripples.size()
+	_assert(s.try_execute(), "背后处决起手成功")
+	_assert(s.player.frozen, "处决读条时锁住移动")
+	s._update_combat(1.3)
+	_assert(not r.is_alive(), "1.2 秒后一击毙命")
+	_assert(not s.player.frozen, "处决结束后恢复移动")
+	_assert(s.ripples.size() > rip0 and is_equal_approx(float(s.ripples.back()["max"]), 3.0),
+		"处决发出 3m 噪声", str(s.ripples.back() if s.ripples.size() > rip0 else []))
+	_assert(s.rabid_kills >= 1, "处决记在战果上", str(s.rabid_kills))
+	_assert(s._exec_cd > 0.0, "处决带冷却")
+	_assert(not s.try_execute(), "冷却中不再次起手")
+
+	# 正面拒绝：目标也朝 -x，玩家正对着它
+	s = _exec_scene()
+	r = s.rabids[0]
+	_exec_put_behind(s, r)
+	r.facing = PI
+	var hp_front: float = r.hp
+	_assert(not s.try_execute(), "正面不给处决")
+	s._update_combat(1.3)
+	_assert(is_equal_approx(r.hp, hp_front), "正面处决失败不掉血", "%.0f" % r.hp)
+
+	# 追击中拒绝
+	s = _exec_scene()
+	r = s.rabids[0]
+	_exec_put_behind(s, r)
+	r.state = "chase"
+	var hp_chase: float = r.hp
+	_assert(not s.try_execute(), "目标追击中不能处决")
+	s._update_combat(1.3)
+	_assert(is_equal_approx(r.hp, hp_chase), "追击目标不会被处决", "%.0f" % r.hp)
+
+	# 壮硕变体拒绝（字段真实存在才测，不凭空造）
+	s = _exec_scene()
+	var brute: Node = null
+	for b in s.rabids:
+		if bool(b.get("brute")):
+			brute = b
+			break
+	_assert(brute != null, "场景里有真实的壮硕变体字段")
+	if brute != null:
+		_exec_put_behind(s, brute)
+		_assert(not s.try_execute(), "壮硕变体拒绝处决")
+
+	# 没蹲 / 掏着枪都不行
+	s = _exec_scene()
+	s.player.crouching = false
+	_exec_put_behind(s, s.rabids[0])
+	_assert(not s.try_execute(), "站着不给处决")
+	s = _exec_scene()
+	s.swap_weapon(1)
+	_exec_put_behind(s, s.rabids[0])
+	_assert(not s.try_execute(), "掏着枪不给处决")
+	# 收尾换一张干净场景：处决用例摆在弹道上的狂暴者会挡住后面 _guns 的假人。
+	_s = _scene("res://scenes/night_explore.tscn")
+
+
+# ---------------------------------------------------------------------------
 # 4) 枪械：扣弹 / 曳光 / 声纹 / 惊动巡逻
 # ---------------------------------------------------------------------------
 func _weapon_pose() -> void:
@@ -179,13 +264,18 @@ func _guns() -> void:
 	print("[guns]")
 	var s = _s
 	s.swap_weapon(1)
-	# 站回出生点，把一个清杀兵摆在 3m 开外（枪口正对着他）
-	s.player.global_position = s.get_node("Markers/Spawn").global_position
+	# 出生点右侧 200px 正好被 Dumpster（layer-1 掩体）挡住；LOS 会按设计拦下子弹。
+	# 这个用例测的是「无遮挡正前方能打中」，所以把射击位挪到没有遮挡的空地，
+	# 而不是去改命中 / 射线逻辑（那才是真回归）。
+	s.player.global_position = Vector2(2000, 1000)
 	s.player.facing = 0.0
 	var dummy = s.soldiers[0]
 	dummy.global_position = s.player.global_position + Vector2(200, 0)
 	dummy.state = "patrol"
 	dummy.hp = 100.0
+	var shot_origin: Vector2 = s.player.global_position + Vector2(0, -40)
+	_assert(s.los_clear(shot_origin, dummy.global_position, 1),
+		"射击测试站位到假人之间没有掩体", "枪口 %s → 假人 %s" % [shot_origin, dummy.global_position])
 	s.mag["pistol"] = 8
 	s.cool = 0.0
 	var rip0: int = s.ripples.size()

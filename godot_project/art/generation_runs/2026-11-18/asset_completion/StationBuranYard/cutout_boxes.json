@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "id": "SignalSwitch",
+      "box": [
+        74,
+        77,
+        441,
+        479
+      ]
+    },
+    {
+      "id": "FreightCrates",
+      "box": [
+        553,
+        101,
+        984,
+        489
+      ]
+    },
+    {
+      "id": "PlatformSignal",
+      "box": [
+        1141,
+        38,
+        1407,
+        502
+      ]
+    },
+    {
+      "id": "BogieBrake",
+      "box": [
+        66,
+        610,
+        472,
+        950
+      ]
+    },
+    {
+      "id": "MaintenanceTrolley",
+      "box": [
+        538,
+        559,
+        997,
+        972
+      ]
+    },
+    {
+      "id": "BrazierDrums",
+      "box": [
+        1079,
+        557,
+        1475,
+        970
+      ]
+    }
+  ]
+}

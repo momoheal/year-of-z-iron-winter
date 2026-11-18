@@ -1,0 +1,17 @@
+{
+  "source": "cg_aftermath_true_alpha_raw.png",
+  "source_size": [
+    1672,
+    941
+  ],
+  "output": "cg_aftermath_true_alpha.jpg",
+  "output_size": [
+    1376,
+    768
+  ],
+  "format": "JPEG",
+  "quality": 94,
+  "source_sha256": "a564faf5239a4f83019c9ce5d429c9a3de321bdd50eb5e57903c049066f2b339",
+  "output_sha256": "bf9576d8aa6cfe759f56b56ecda5240170fd2388ba92a83bc8159a4954e0f9c4",
+  "route": "Codex image_gen (host_image)"
+}

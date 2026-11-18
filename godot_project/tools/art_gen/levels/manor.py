@@ -227,3 +227,7 @@ FACADE_FEATURES = dict(
     windows_x=[4.0, 11.0, 17.0, 21.0], catwalk_y=320, catwalk_lamps_x=[6.0, 16.0],
     maw_x=34.0, chimney_x=40.0, hall_windows_x=[28.0, 43.0], hall_door_x=30.0,
 )
+
+
+from .plate_registration import register as _register_plate
+_register_plate(globals())

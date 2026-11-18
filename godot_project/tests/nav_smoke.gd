@@ -4,7 +4,7 @@ extends SceneTree
 ## Run:
 ##   Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/nav_smoke.gd
 ##
-## 覆盖：全部 14 张夜潜地图的网格都能建、出生点可走、出生点 → 撤离点连通 /
+## 覆盖：全部 17 张夜潜地图的网格都能建、出生点可走、出生点 → 撤离点连通 /
 ##       货场铁丝网：直线判定被网挡住、路径从豁口穿过 /
 ##       行为对照：同一只狂暴者去网对面调查 —— 关掉网格会卡在网北侧，开着网格会绕豁口走到 /
 ##       追踪中的路径会跟着移动目标重算 / 目标在障碍里时走到最近可达点。
@@ -13,13 +13,22 @@ extends SceneTree
 
 const PPM := 64.0
 const SQ := 0.62
-const NEW_LAYOUTS := ["boiler", "underpass", "birch", "workshop", "greenhouse", "archive"]
+# Independent samples on the painted obstacle surfaces in a 624 × 351 reference view.
+const PAINTED_SOLIDS := {
+	"yard": Vector2(420,249), "marshalling": Vector2(350,156), "underpass": Vector2(128,186),
+	"boiler": Vector2(430,159), "canteen": Vector2(470,228), "sanitarium": Vector2(232,77),
+	"market": Vector2(482,102), "manor": Vector2(153,33), "mine": Vector2(355,49),
+	"birch": Vector2(397,168), "workshop": Vector2(70,279), "greenhouse": Vector2(152,166),
+	"archive": Vector2(183,148), "station_buran_yard": Vector2(400,175),
+	"eagle_beak_cliff": Vector2(347,178), "broadcast_tower_302": Vector2(323,100)
+}
 const LEVELS := ["night_explore", "night_marshalling", "night_manor", "night_mine", "night_market",
 	"night_coldstore", "night_canteen", "night_sanitarium", "night_boiler", "night_underpass",
-	"night_birch", "night_workshop", "night_greenhouse", "night_archive"]
+	"night_birch", "night_workshop", "night_greenhouse", "night_archive",
+	"night_station_buran_yard", "night_eagle_beak_cliff", "night_broadcast_tower_302"]
 ## 货场（levels/yard.py）：铁丝网 y = 21.5m，豁口 x ∈ (20, 23.5)
-const FENCE_Y := 21.5
-const GAP := Vector2(20.0, 23.5)
+const FENCE_Y := 310.0 / 351.0 * 40.0
+const GAP := Vector2(311.0, 349.0) * 48.0 / 624.0
 
 var passes := 0
 var failures: Array[String] = []
@@ -87,19 +96,34 @@ func _run() -> void:
 		var end: Vector2 = path[path.size() - 1] if path.size() > 0 else spawn
 		var reach: bool = nav.line_clear(spawn, exit) or _to_m(end - exit).length() <= 1.2
 		_assert(reach, "%s: exit reachable from spawn" % lv, "path end %.1fm from exit" % _to_m(end - exit).length())
-		if s.level_id in NEW_LAYOUTS:
-			var supply: Node2D = null
-			for container in s.containers:
-				if container.get_meta("guaranteed", "") == s.prize:
-					supply = container
-					break
-			var supply_reachable := false
-			if supply != null and not supply.get_meta("locked", false) and not supply.get_meta("hidden", false):
-				var target: Vector2 = s.interact_point(supply)
-				var supply_path: PackedVector2Array = nav.path_px(spawn, target)
-				var supply_end: Vector2 = supply_path[-1] if not supply_path.is_empty() else spawn
-				supply_reachable = _to_m(supply_end - target).length() <= s.REACH
-			_assert(supply_reachable, "%s: key supply reachable without a companion" % lv)
+		if PAINTED_SOLIDS.has(s.level_id):
+			var image_point: Vector2 = PAINTED_SOLIDS[s.level_id]
+			_assert(not nav.walkable_px(image_point / Vector2(624,351) * s.map_bounds_px), lv + ": painted obstacle blocks movement")
+		if s.level_id == "coldstore":
+			for blocked in [_m(6, 3), _m(8, 19), _m(31, 19), _m(23, 27)]:
+				_assert(not nav.walkable_px(blocked), "coldstore: painted roof, walls and railcar block travel", str(blocked))
+			for floor_point in [spawn, _m(22.5, 18.5), _m(17, 28.8), _m(22.6, 32), _m(33.9, 11.4)]:
+				_assert(nav.walkable_px(floor_point), "coldstore: spawn, passage, rail bypass, exit and clue approach are open", str(floor_point))
+		var supply: Node2D = null
+		for container in s.containers:
+			if container.get_meta("guaranteed", "") == s.prize:
+				supply = container
+				break
+		var supply_reachable := false
+		if supply != null and not supply.get_meta("locked", false) and not supply.get_meta("hidden", false):
+			var target: Vector2 = s.interact_point(supply)
+			var supply_path: PackedVector2Array = nav.path_px(spawn, target)
+			var supply_end: Vector2 = supply_path[-1] if not supply_path.is_empty() else spawn
+			supply_reachable = _to_m(supply_end - target).length() <= s.REACH
+		var supply_detail := "missing or gated guaranteed container"
+		if supply != null:
+			var diagnostic_target: Vector2 = s.interact_point(supply)
+			var diagnostic_path: PackedVector2Array = nav.path_px(spawn, diagnostic_target)
+			var diagnostic_end: Vector2 = diagnostic_path[-1] if not diagnostic_path.is_empty() else spawn
+			supply_detail = "target=%s end=%s gap=%.2fm path=%d" % [
+				str(_to_m(diagnostic_target)), str(_to_m(diagnostic_end)),
+				_to_m(diagnostic_end - diagnostic_target).length(), diagnostic_path.size()]
+		_assert(supply_reachable, "%s: key supply reachable without a companion" % lv, supply_detail)
 		for stall in s.markets:
 			var at: Vector2 = _to_m(stall.global_position)
 			var gap := INF
@@ -122,8 +146,8 @@ func _run() -> void:
 	var y := _load("night_explore")
 	await _frames(2)
 	var nav = y.get("nav")
-	var north := _m(10.0, FENCE_Y - 3.0)
-	var south := _m(10.0, FENCE_Y + 3.5)
+	var north := _m(17.0, FENCE_Y - 3.0)
+	var south := _m(17.0, FENCE_Y + 3.5)
 	_assert(not nav.line_clear(north, south), "yard: the fence blocks the straight line at x=10m")
 	var p: PackedVector2Array = nav.path_px(north, south)
 	var through_gap := false
@@ -133,7 +157,7 @@ func _run() -> void:
 			through_gap = true
 	_assert(p.size() > 0 and through_gap, "yard: the path crosses the fence through the cut gap",
 		"%d points" % p.size())
-	var blocked_target := _m(10.0, FENCE_Y)          # 正好在铁丝网上
+	var blocked_target := _m(17.0, FENCE_Y)          # 正好在铁丝网上
 	var pb: PackedVector2Array = nav.path_px(north, blocked_target)
 	_assert(pb.size() > 0 and _to_m(pb[pb.size() - 1] - blocked_target).length() < 1.5,
 		"yard: a target inside the fence resolves to the nearest reachable cell")

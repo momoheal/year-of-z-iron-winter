@@ -1,0 +1,647 @@
+{
+  "schema": "generate2dmap.prop_pack.v2",
+  "tool": {
+    "name": "extract_prop_pack",
+    "version": "0.4.0"
+  },
+  "input": "../../../../80_maps/EagleBeakCliff/cutout-source.png",
+  "source_size": [
+    1536,
+    1024
+  ],
+  "source_sha256": "36487dcec619f5a9f173a81de2e3f46ae7fd8c73fa86c7a1039f7c20cfaca7ab",
+  "source_mode": "RGBA",
+  "layout_mode": "explicit_boxes",
+  "boxes_file": "cutout_boxes.json",
+  "labels_file": null,
+  "background_mode": "native_alpha",
+  "art_source": "host_image",
+  "rows": null,
+  "cols": null,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "despill_radius": 0,
+  "despill": {
+    "mode": "off",
+    "applied": "off",
+    "radius": 0,
+    "margin": 12,
+    "changed_px": 0
+  },
+  "hygiene": {
+    "mode": "both",
+    "floor": 8,
+    "solid_min": 32,
+    "attach_radius": 2,
+    "connectivity": 8,
+    "floor_px": 58695,
+    "detached_px": 1,
+    "detached_components": 1,
+    "max_removed_alpha": 9
+  },
+  "alpha_floor": 8,
+  "alpha_floor_pixels_removed": 58695,
+  "trim_border": 0,
+  "edge_clean_depth": 0,
+  "component_mode": "all",
+  "component_padding": 10,
+  "min_component_area": "auto",
+  "edge_touch_margin": 0,
+  "geometry": {
+    "connectivity": 8,
+    "alpha_geometry_threshold": 16,
+    "anchor_mode": "stance",
+    "support_band_fraction": 0.25,
+    "anchor_rounding": "whole pixels, half-up",
+    "grid_rounding": null,
+    "keep_canvas": false,
+    "world_scale": null
+  },
+  "accepted": [
+    {
+      "index": 0,
+      "label": "switchlever",
+      "display_name": "SwitchLever",
+      "status": "accepted",
+      "image": "props_extracted_final/switchlever/prop.png",
+      "sha256": "e1065e0c7cb5b0a0039a04bac6623d76c2ec1ae82ad75505387b3789e16d4c0e",
+      "output_size": [
+        323,
+        404
+      ],
+      "grid": null,
+      "cell_box": [
+        84,
+        37,
+        443,
+        476
+      ],
+      "source_box": [
+        84,
+        37,
+        443,
+        476
+      ],
+      "source_rect": [
+        102,
+        55,
+        425,
+        459
+      ],
+      "trim_offset": [
+        18,
+        18
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        159,
+        393
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 90,
+      "trim_applied": 0,
+      "crop_bbox": [
+        28,
+        28,
+        331,
+        412
+      ],
+      "padded_crop_bbox": [
+        18,
+        18,
+        341,
+        422
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 43001,
+      "dropped_components": 2,
+      "dropped_area": 2,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 248,
+        "depth": 124,
+        "offset": [
+          -2,
+          -62
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 1,
+      "label": "bogiewheels",
+      "display_name": "BogieWheels",
+      "status": "accepted",
+      "image": "props_extracted_final/bogiewheels/prop.png",
+      "sha256": "e3d4b8f25b539ec25c05a03080d462fe1c4eca087e0ea755ae3fd50a9e84f995",
+      "output_size": [
+        438,
+        327
+      ],
+      "grid": null,
+      "cell_box": [
+        530,
+        92,
+        1004,
+        453
+      ],
+      "source_box": [
+        530,
+        92,
+        1004,
+        453
+      ],
+      "source_rect": [
+        548,
+        109,
+        986,
+        436
+      ],
+      "trim_offset": [
+        18,
+        17
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        206,
+        316
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 98,
+      "trim_applied": 0,
+      "crop_bbox": [
+        28,
+        27,
+        446,
+        334
+      ],
+      "padded_crop_bbox": [
+        18,
+        17,
+        456,
+        344
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 92784,
+      "dropped_components": 0,
+      "dropped_area": 0,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 175,
+        "depth": 87.5,
+        "offset": [
+          80.5,
+          -43.75
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 2,
+      "label": "signallamp",
+      "display_name": "SignalLamp",
+      "status": "accepted",
+      "image": "props_extracted_final/signallamp/prop.png",
+      "sha256": "eb1cd2c5d367d109d69cd6ad03e20bcebcf16cbf00ebae3f7335db8aad247690",
+      "output_size": [
+        256,
+        397
+      ],
+      "grid": null,
+      "cell_box": [
+        1124,
+        42,
+        1416,
+        474
+      ],
+      "source_box": [
+        1124,
+        42,
+        1416,
+        474
+      ],
+      "source_rect": [
+        1142,
+        60,
+        1398,
+        457
+      ],
+      "trim_offset": [
+        18,
+        18
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        138,
+        386
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 72,
+      "trim_applied": 0,
+      "crop_bbox": [
+        28,
+        28,
+        264,
+        405
+      ],
+      "padded_crop_bbox": [
+        18,
+        18,
+        274,
+        415
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 53226,
+      "dropped_components": 0,
+      "dropped_area": 0,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 163,
+        "depth": 81.5,
+        "offset": [
+          1.5,
+          -40.75
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 3,
+      "label": "freightcrates",
+      "display_name": "FreightCrates",
+      "status": "accepted",
+      "image": "props_extracted_final/freightcrates/prop.png",
+      "sha256": "99d502b0210b686f1f576ff9972e288a9f32c5843b4da1d022b74e952ace7400",
+      "output_size": [
+        423,
+        346
+      ],
+      "grid": null,
+      "cell_box": [
+        35,
+        573,
+        494,
+        955
+      ],
+      "source_box": [
+        35,
+        573,
+        494,
+        955
+      ],
+      "source_rect": [
+        53,
+        591,
+        476,
+        937
+      ],
+      "trim_offset": [
+        18,
+        18
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        203,
+        336
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 100,
+      "trim_applied": 0,
+      "crop_bbox": [
+        28,
+        28,
+        431,
+        354
+      ],
+      "padded_crop_bbox": [
+        18,
+        18,
+        441,
+        364
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 89701,
+      "dropped_components": 1,
+      "dropped_area": 1,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 289,
+        "depth": 144.5,
+        "offset": [
+          -6.5,
+          -72.25
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 4,
+      "label": "cablespool",
+      "display_name": "CableSpool",
+      "status": "accepted",
+      "image": "props_extracted_final/cablespool/prop.png",
+      "sha256": "b6df54e23ef5afacbba4aad08b2b560123de88320a34675ad518e5977bfbd843",
+      "output_size": [
+        428,
+        329
+      ],
+      "grid": null,
+      "cell_box": [
+        534,
+        580,
+        998,
+        945
+      ],
+      "source_box": [
+        534,
+        580,
+        998,
+        945
+      ],
+      "source_rect": [
+        552,
+        598,
+        980,
+        927
+      ],
+      "trim_offset": [
+        18,
+        18
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        206,
+        319
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 97,
+      "trim_applied": 0,
+      "crop_bbox": [
+        28,
+        28,
+        436,
+        337
+      ],
+      "padded_crop_bbox": [
+        18,
+        18,
+        446,
+        347
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 86474,
+      "dropped_components": 1,
+      "dropped_area": 1,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 346,
+        "depth": 173,
+        "offset": [
+          17,
+          -86.5
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 5,
+      "label": "tracksidemarker",
+      "display_name": "TracksideMarker",
+      "status": "accepted",
+      "image": "props_extracted_final/tracksidemarker/prop.png",
+      "sha256": "127ad71dab9a779fe866b4d1eb7e639243f4c9374ab93a7efddc27ca7a89d0b7",
+      "output_size": [
+        265,
+        380
+      ],
+      "grid": null,
+      "cell_box": [
+        1119,
+        555,
+        1419,
+        970
+      ],
+      "source_box": [
+        1119,
+        555,
+        1419,
+        970
+      ],
+      "source_rect": [
+        1136,
+        573,
+        1401,
+        953
+      ],
+      "trim_offset": [
+        17,
+        18
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        133,
+        369
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 71,
+      "trim_applied": 0,
+      "crop_bbox": [
+        27,
+        28,
+        272,
+        388
+      ],
+      "padded_crop_bbox": [
+        17,
+        18,
+        282,
+        398
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 40379,
+      "dropped_components": 1,
+      "dropped_area": 1,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 198,
+        "depth": 99,
+        "offset": [
+          5,
+          -49.5
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": [],
+  "warnings": [],
+  "qa": {
+    "status": "pass",
+    "method": "native alpha, not keyed; alpha hygiene both; 8-connected components (all); checks measured on the published pixels",
+    "notProven": [
+      "that each label names the art in its cell or box",
+      "that a prop is complete: clipping is detected only where art meets the cell edge",
+      "keyed-edge quality beyond the edge fringe count",
+      "that anchors and suggested footprints match gameplay contact (both are measured from alpha)",
+      "runtime placement, collision or occlusion"
+    ],
+    "checks": [
+      {
+        "id": "accepted",
+        "status": "pass",
+        "value": 6,
+        "threshold": ">= 1"
+      },
+      {
+        "id": "edge_touch",
+        "status": "pass",
+        "value": [],
+        "threshold": 0
+      },
+      {
+        "id": "dropped_area",
+        "status": "pass",
+        "value": {
+          "switchlever": 0.0,
+          "freightcrates": 0.0,
+          "cablespool": 0.0,
+          "tracksidemarker": 0.0
+        },
+        "threshold": 0.01
+      },
+      {
+        "id": "strategy_aspect",
+        "status": "skipped",
+        "value": null,
+        "threshold": 1.6
+      },
+      {
+        "id": "edge_fringe",
+        "status": "skipped",
+        "value": null,
+        "threshold": 0.02
+      }
+    ],
+    "inputs": [
+      {
+        "path": "../../../../80_maps/EagleBeakCliff/cutout-source.png",
+        "sha256": "36487dcec619f5a9f173a81de2e3f46ae7fd8c73fa86c7a1039f7c20cfaca7ab",
+        "bytes": 1990733
+      },
+      {
+        "path": "cutout_boxes.json",
+        "sha256": "1aaf185f724024dcd925ce69ce0e90b2fb5a3034bf10e4dbc13aa35d3a090847",
+        "bytes": 766
+      }
+    ],
+    "outputs": [
+      {
+        "path": "props_extracted_final/switchlever/prop.png",
+        "sha256": "e1065e0c7cb5b0a0039a04bac6623d76c2ec1ae82ad75505387b3789e16d4c0e",
+        "bytes": 115140
+      },
+      {
+        "path": "props_extracted_final/bogiewheels/prop.png",
+        "sha256": "e3d4b8f25b539ec25c05a03080d462fe1c4eca087e0ea755ae3fd50a9e84f995",
+        "bytes": 222430
+      },
+      {
+        "path": "props_extracted_final/signallamp/prop.png",
+        "sha256": "eb1cd2c5d367d109d69cd6ad03e20bcebcf16cbf00ebae3f7335db8aad247690",
+        "bytes": 131434
+      },
+      {
+        "path": "props_extracted_final/freightcrates/prop.png",
+        "sha256": "99d502b0210b686f1f576ff9972e288a9f32c5843b4da1d022b74e952ace7400",
+        "bytes": 213841
+      },
+      {
+        "path": "props_extracted_final/cablespool/prop.png",
+        "sha256": "b6df54e23ef5afacbba4aad08b2b560123de88320a34675ad518e5977bfbd843",
+        "bytes": 219538
+      },
+      {
+        "path": "props_extracted_final/tracksidemarker/prop.png",
+        "sha256": "127ad71dab9a779fe866b4d1eb7e639243f4c9374ab93a7efddc27ca7a89d0b7",
+        "bytes": 103847
+      }
+    ],
+    "tool": {
+      "name": "extract_prop_pack",
+      "version": "0.4.0"
+    }
+  }
+}

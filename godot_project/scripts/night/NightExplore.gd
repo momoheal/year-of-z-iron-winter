@@ -44,6 +44,8 @@ const MAP_ART_DIRS := {
 	"canteen": "Canteen", "sanitarium": "Sanitarium", "boiler": "Boiler",
 	"underpass": "Underpass", "greenhouse": "Greenhouse", "archive": "Archive",
 	"workshop": "Workshop", "birch": "Birch",
+	"station_buran_yard": "StationBuranYard", "eagle_beak_cliff": "EagleBeakCliff",
+	"broadcast_tower_302": "BroadcastTower302",
 }
 
 const PPM := 64.0
@@ -60,6 +62,16 @@ const OSK_SUPPLY_CATS := ["med", "part"]
 const YELENA_STOP_RANGE := 12.0
 const YELENA_STOP_SECONDS := 8.0
 const YELENA_STOP_COOLDOWN := 25.0
+# ---- Q 背后处决（P2.3）：蹲伏 + 背后 120° + 目标未追击 + 1.2s + 一击毙命 + 3m 噪声 ----
+const EXEC_TIME := 1.2
+const EXEC_BACK_HALF := deg_to_rad(60.0)     # 「背后 120°」= 目标朝向的反方向 ±60°
+const EXEC_RANGE_M := 1.9                    # 与撬棍 reach 同口径：得贴到身边
+const EXEC_NOISE := 3.0
+const EXEC_COOLDOWN := 1.0
+const EXEC_CHASING := ["chase", "windup", "lunge"]
+# ---- AI 脚步（P2.5）：低频脚步 + 遮挡衰减，口径在 NightSfx.occluded_db ----
+const AI_STEP_INTERVAL := 0.46
+const AI_STEP_DB := -13.0
 # ---- 天亮（P1.5）----
 const DAWN_WINDOW := 0.2                                  # 夜长最后 20% 开始天亮
 const NIGHT_MOD := Color(0.27, 0.32, 0.45)                # 与场景里 CanvasModulate 的初值一致
@@ -111,6 +123,8 @@ var cold := 1.0                # cfg.cold：体温下降倍率，同时决定风
 var day_n := 1                 # cfg.day：HUD 标题里的「第 N 夜」
 
 # 关卡身份：由 build_scene.py 写在根节点的 metadata 上（没有就用 yard 的口径，兼容旧场景 / F2）
+const COLDSTORE_TRACE := "北雨棚排水窄缝"
+var first_coldstore_visit := false
 var level_id := "yard"
 var level_zh := "夜间广轨货场"
 var level_en := "Broad-Gauge Freight Yard"
@@ -179,6 +193,10 @@ var mag: Dictionary = {}                  # 武器 id → 弹匣内
 var reserve: Dictionary = {}              # 武器 id → 备弹
 var weapon_mods: Dictionary = {}          # 武器 id → 已安装的改造件 id 列表
 var cool := 0.0                           # 攻击冷却
+var _exec_target: Node = null             # Q 背后处决：正在摸的目标
+var _exec_t := 0.0                        # 处决进度（秒）
+var _exec_cd := 0.0                       # 处决后的冷却
+var _ai_step_t := {}                      # 各 AI 的脚步计时（按 instance_id）
 var reload_left := 0.0                    # 装填剩余时间（>0 = 正在装填）
 var swing_t := 0.0                        # 挥击动画剩余时间
 var muzzle_t := 0.0                       # 枪口焰剩余时间
@@ -206,6 +224,7 @@ var slush: Array = []          # [center_m: Vector2, radii_m: Vector2]
 var warm_lights: Array = []    # [pos_px, radius_m]
 var fade_props: Array = []
 var muted := false
+var debug_draw := false                  # F3 调试层：只影响 Overlay 绘制，不改任何玩法判定
 var t := 0.0
 
 var player
@@ -319,6 +338,8 @@ func _ready() -> void:
 	# P1: 战役出发 → 读 cfg 初始化背包 / 携带物 / 天亮倒计时；F2 独立跑用灰盒默认。
 	in_campaign = RaidBridge.active
 	var cfg: Dictionary = RaidBridge.cfg if in_campaign else {}
+	if in_campaign and level_id == "coldstore" and RaidBridge.sim != null:
+		first_coldstore_visit = int(RaidBridge.sim.node_state(level_id).get("visits", 0)) == 0
 	var mods_v: Variant = cfg.get("weapon_mods", {})
 	weapon_mods = (mods_v as Dictionary).duplicate(true) if mods_v is Dictionary else {}
 	if in_campaign:
@@ -368,7 +389,6 @@ func _ready() -> void:
 	monuments = MonumentsScript.new()
 	monuments.spawn(self)          # 必须在烘寻路网格之前：纪念物挡人
 	_build_nav()
-	cam.limit_bottom += CAM_PAD_BOTTOM
 	player.global_position = $Markers/Spawn.global_position
 	cam.global_position = player.global_position
 	cam.reset_smoothing()
@@ -450,7 +470,7 @@ func _install_generated_map_art() -> void:
 	var ground := get_node_or_null("Ground") as Sprite2D
 	if ground == null or ground.texture == null:
 		return
-	map_bounds_px = Vector2(ground.texture.get_size()) * ground.scale.abs()
+	map_bounds_px = Vector2(cam.limit_right, cam.limit_bottom)
 	var folder := String(MAP_ART_DIRS.get(level_id, ""))
 	if folder == "":
 		return
@@ -464,6 +484,9 @@ func _install_generated_map_art() -> void:
 		map_art_night = load(night_path) as Texture2D
 	if map_art_day == null:
 		return
+	var facade_glow := get_node_or_null("Lights/FacadeGlow") as PointLight2D
+	if facade_glow != null:
+		facade_glow.enabled = false
 	ground.texture = map_art_day
 	ground.centered = false
 	ground.scale = Vector2(map_bounds_px.x / float(map_art_day.get_width()),
@@ -698,19 +721,22 @@ func _update_interact(delta: float) -> void:
 		search_prog = 0.0
 
 func _setup_special_containers() -> void:
-	## 每关放一个「焊死」箱（帕维尔可撬）与一个「隐藏」箱（伊万可显形）。
-	## 运行时按索引确定性选取，不重生成场景，便于测试与平衡。
-	var n := containers.size()
-	if n == 0:
+	## 每关给普通容器放一个「焊死」箱与一个「隐藏」箱；关键目标容器始终保持可见可达。
+	## 运行时按顺序确定性选取，不重生成场景，便于测试与平衡。
+	var candidates: Array[Node2D] = []
+	for c in containers:
+		if String(c.get_meta("guaranteed", "")) != prize:
+			candidates.append(c)
+	if candidates.is_empty():
 		return
-	var li := floori(n * 0.5)
-	containers[li].set_meta("locked", true)
-	if n >= 2:
-		var hi := n - 1
+	var li := floori(candidates.size() * 0.5)
+	candidates[li].set_meta("locked", true)
+	if candidates.size() >= 2:
+		var hi := candidates.size() - 1
 		if hi == li:
 			hi = 0
-		containers[hi].set_meta("hidden", true)
-		containers[hi].modulate = Color(1, 1, 1, 0)   # 未显形前不可见
+		candidates[hi].set_meta("hidden", true)
+		candidates[hi].modulate = Color(1, 1, 1, 0)   # 未显形前不可见
 
 
 func nearest_container() -> Node2D:
@@ -965,6 +991,8 @@ func _finish_search(c: Node2D) -> void:
 	var kind := String(c.get_meta("container", "crate"))
 	var got: Array[String] = []
 	var g := String(c.get_meta("guaranteed", ""))
+	if first_coldstore_visit and c.name == &"SealedMeds":
+		got.append("dial")
 	if g != "":
 		got.append(g)
 	var cats: Array = Data.CONTAINER_CATS.get(kind, CORPSE_CATS)
@@ -984,7 +1012,7 @@ func _finish_search(c: Node2D) -> void:
 		spawn_float(c.global_position + Vector2(0, -90), "+ " + "、".join(names), Color("#fde68a"))
 	for id in got:
 		ammo_from_item(id)
-	if g != "":
+	if g != "" and item_name(g) in names:
 		var note := "拿到了 %s" % item_name(g)
 		if g == "dial":
 			note = "找到了妈妈的透析液"
@@ -1224,6 +1252,37 @@ func step_sound(pos: Vector2, on_slush: bool) -> String:
 		if absf(y - float(band)) <= STEP_RAIL_BAND:
 			return "step_rail"
 	return "step_snow"
+
+
+## AI 脚步：按固定低频间隔出声（只在真的在动时）。各 AI 的 _physics_process 调它。
+## 用节点自己的 velocity 判移动，不另设标记；nav 走直线撞墙时也不会「原地踏步」。
+func ai_step(node: Node2D, delta: float) -> void:
+	if state != "play" or node == null or not is_instance_valid(node):
+		return
+	var vel: Variant = node.get("velocity")
+	if not (vel is Vector2) or (vel as Vector2).length() < 4.0:
+		return
+	var key := node.get_instance_id()
+	var acc := float(_ai_step_t.get(key, 0.0)) + delta
+	if acc < AI_STEP_INTERVAL:
+		_ai_step_t[key] = acc
+		return
+	_ai_step_t[key] = 0.0
+	ai_footstep(node.global_position, node)
+
+
+## 一声 AI 脚步：los_clear 用 layer-1（墙 / 车厢，和子弹 / 视线同口径）判遮挡，
+## 被挡住就走 NightSfx 的衰减口径（更低 db + 轻量延迟反射），不产生噪声半径 / 不惊动 AI。
+func ai_footstep(pos: Vector2, source: Node2D = null) -> void:
+	var clear := true
+	if source != null and player != null and is_instance_valid(source):
+		clear = los_clear(source.global_position, player.global_position, 1)
+	var db := SfxScript.occluded_db(clear, AI_STEP_DB)
+	var sname := step_sound(pos, is_slush(pos))
+	if clear:
+		sfx.play_at(sname, pos, db, 0.09)
+	else:
+		sfx.play_at_occluded(sname, pos, db, 0.09)
 
 func damage_player(amount: float, _by: Node) -> void:
 	if state != "play":
@@ -1561,8 +1620,14 @@ func _return_to_campaign(reason: String) -> void:
 		sim.raid_add_tally(tally, "夜潜%s：亲手灭口" % level_zh, "%s: mercy kill" % level_en)
 	sim.sound_on = not muted        # 战役里的音效开关跟着人走
 	sim.weapon_mods = weapon_mods.duplicate(true)
-	sim.finish_raid(reason)
-	if osk_rifle_recovered and reason not in ["downed", "abort"]:
+	var settlement_reason := "downed" if reason == "frozen" else reason
+	sim.finish_raid(settlement_reason)
+	if first_coldstore_visit:
+		sim.last_report["checked_north_awning"] = COLDSTORE_TRACE in landmark_seen
+		if COLDSTORE_TRACE in landmark_seen:
+			sim.add_log("四号冷库北雨棚：转运票残号 04，姓名栏缺失。",
+				"North awning, Cold Storage No.4: torn transfer slip, digits 04. Name missing.")
+	if osk_rifle_recovered and settlement_reason not in ["downed", "abort"]:
 		sim.register_salvaged_weapon("mosin")
 	get_tree().change_scene_to_file("res://scenes/campaign.tscn")
 
@@ -1649,6 +1714,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		match k:
+			KEY_F3:
+				# 调试层只由 Overlay 读，关掉时和原来画面逐像素一致。
+				debug_draw = not debug_draw
+			KEY_Q:
+				# 夜潜里 Q 是背后处决（room A 的喝水在 Main.gd，另一套场景）。
+				if state == "play":
+					try_execute()
 			KEY_F:
 				if state == "play":
 					player.toggle_flashlight()
@@ -1999,6 +2071,8 @@ func _update_combat(delta: float) -> void:
 	cool = maxf(0.0, cool - delta)
 	swing_t = maxf(0.0, swing_t - delta)
 	muzzle_t = maxf(0.0, muzzle_t - delta)
+	_exec_cd = maxf(0.0, _exec_cd - delta)
+	_update_execute(delta)
 	if reload_left > 0.0:
 		reload_left -= delta
 		if reload_left <= 0.0:
@@ -2262,6 +2336,90 @@ func melee_swing() -> void:
 		_spawn_vfx(TEX_BLOOD,
 			best.global_position + Vector2(0, -44), 1.15, 0.36)
 	emit_noise(player.global_position, float(w.get("noise", 4.5)), "step", true)
+
+
+# ============================================================================
+# Q 背后处决（P2.3）：撬棍的静默杀。和正面挥击分开，条件全在 _exec_candidate。
+# ============================================================================
+## 按 Q 起手。返回 true 才表示真的摸到了背后（测试中据此判定正面 / 追击 / 壮硕的拒绝）。
+func try_execute() -> bool:
+	if state != "play" or player == null or player.frozen:
+		return false
+	if _exec_target != null or _exec_cd > 0.0 or cool > 0.0:
+		return false
+	if cur_is_gun():
+		spawn_float(player.global_position + Vector2(0, -120), "得先换成撬棍才能摸黑处决", Color("#94a3b8"))
+		return false
+	if not player.crouching:
+		spawn_float(player.global_position + Vector2(0, -120), "蹲下才能绕到背后", Color("#94a3b8"))
+		return false
+	var best: Node = null
+	var bd := EXEC_RANGE_M
+	for r in rabids:
+		if not _exec_candidate(r):
+			continue
+		var d := dist_m(player.global_position, r.global_position)
+		if d < bd:
+			bd = d
+			best = r
+	if best == null:
+		return false
+	_exec_target = best
+	_exec_t = 0.0
+	player.frozen = true                   # 1.2 秒里不能挪动，否则「摸背」不成立
+	cool = 0.35
+	sfx.play_at("swing", player.global_position, -10.0)
+	spawn_float(best.global_position + Vector2(0, -118), "摸到背后了…", Color("#94a3b8"))
+	return true
+
+
+## 处决资格：狂暴者 / 活着的 / 非壮硕 / 不在追击 / 背后 120° / 近身 / 无遮挡。
+## 字段口径全部来自 NightRabid（brute、state、facing），没有就按「不存在 → 不拒绝」处理。
+func _exec_candidate(e: Node) -> bool:
+	if not is_instance_valid(e) or not e.is_in_group("night_rabid"):
+		return false
+	if not e.has_method("is_alive") or not bool(e.call("is_alive")):
+		return false
+	if bool(e.get("brute")):               # 壮硕变体拧不动脖子，必须打
+		return false
+	if String(e.get("state")) in EXEC_CHASING:
+		return false
+	var rel := to_m(player.global_position - e.global_position)
+	if rel.length() < 0.01 or rel.length() > EXEC_RANGE_M:
+		return false
+	# facing 是地面角（y 已反压缩），和 to_m 出来的 rel 同口径。
+	# 夹角 ≥ 120° 才算在背后；正面 / 侧面都不给处决。
+	if absf(angle_difference(float(e.get("facing")), rel.angle())) < PI - EXEC_BACK_HALF:
+		return false
+	return los_clear(player.global_position, e.global_position, 1)
+
+
+func _update_execute(delta: float) -> void:
+	if _exec_target == null:
+		return
+	var e: Node = _exec_target
+	if not is_instance_valid(e) or not _exec_candidate(e):
+		_cancel_execute()
+		return
+	_exec_t += delta
+	if _exec_t < EXEC_TIME:
+		return
+	_exec_target = null
+	_exec_t = 0.0
+	_exec_cd = EXEC_COOLDOWN
+	cool = maxf(cool, 0.5)
+	player.frozen = false
+	_damage_enemy(e, 1e9, "player", true)   # 一击毙命，走同一个死亡 / 战果回调
+	emit_noise(e.global_position, EXEC_NOISE, "step")   # 3m 噪声：有真实脚步声，也会惊动近处清杀兵
+	add_shake(0.18)
+	spawn_float(e.global_position + Vector2(0, -132), "背后处决", Color("#fca5a5"))
+
+
+func _cancel_execute() -> void:
+	_exec_target = null
+	_exec_t = 0.0
+	if player != null:
+		player.frozen = false
 
 
 func _spawn_vfx(tex: Texture2D, pos: Vector2, scale_k: float, life: float) -> void:
@@ -2580,6 +2738,8 @@ func _update_landmarks() -> void:
 			add_shake(0.05)
 			spawn_float(player.global_position + Vector2(0, -158), "勘踏 · " + nm, SovietUI.OCHRE)
 			var note := String(l.get("note", ""))
+			if first_coldstore_visit and nm == COLDSTORE_TRACE:
+				note = "饭盒底下压着半张转运票。编号只剩「04」，姓名栏撕掉了。你把这两个数字记下来。"
 			if note != "":
 				spawn_float(player.global_position + Vector2(0, -136), note, SovietUI.BONE_DIM)
 			var story_trigger := String(l.get("story_trigger", ""))
@@ -3290,7 +3450,24 @@ func _refresh_hud() -> void:
 
 	# --- 右上：目标方位 / 撤离方位 / 威胁 / 勘踏 ---
 	var has_prize := pack.has(prize)
-	if has_prize:
+	if first_coldstore_visit:
+		var checked := COLDSTORE_TRACE in landmark_seen
+		if pack.has("dial"):
+			_lbl_target.text = "腹透液已装包。带回 602 给母亲。" if checked else "腹透液已装包。现在撤离，或绕去北雨棚找拉娜的痕迹。"
+		else:
+			_lbl_target.text = "去南库封存箱取母亲的腹透液。背包要留一格。"
+			if bool($World/Props/SealedMeds.get_meta("searched", false)):
+				_lbl_target.text = "封存箱已经搜过。可以撤离了。"
+		_lbl_bearing.text = "北雨棚已查看 · 转运票残号 04" if checked else "可选 · 北雨棚排水窄缝"
+		if not pack.has("dial") and not bool($World/Props/SealedMeds.get_meta("searched", false)):
+			_lbl_bearing.text = "封存箱  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		elif not checked:
+			for landmark in landmarks:
+				if landmark.get("name") == COLDSTORE_TRACE:
+					_lbl_bearing.text += "  " + SovietUI.bearing_line(to_m(_m_px(landmark["pos"]) - player.global_position))
+					break
+		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
+	elif has_prize:
 		_lbl_target.text = "%s 已经在背包里 —— 回撤离点。" % item_name(prize)
 		_lbl_bearing.text = "目标方位  已完成"
 		_lbl_bearing.add_theme_color_override("font_color", SovietUI.ASH)

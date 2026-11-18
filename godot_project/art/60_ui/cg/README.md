@@ -12,6 +12,22 @@
 
 缺图的页会自动退回人物胸像，所以**往本目录补图即可生效，不用改代码**。
 
+## 结局与余波 CG（五种结局）
+
+结局只按 CampaignSim 的五个键显示：A、B、C、True Ending α、True Ending β。结局页直接显示主图；“回看结局与余波”按钮播放对应幻灯。图像与余波页都由 scripts/data/CutsceneData.gd 的 ENDING_SCENES 显式登记。
+
+| 结局 | 主图 | 余波图 | 接入状态 |
+| --- | --- | --- | --- |
+| A · 留在 602 | cg_ending_closed_car_firelight_alt.jpg | cg_aftermath_a_602.jpg | 已接入 ENDING_A_RETURN_HOME |
+| B · 荒诞解放 | cg_ending_broadcast_breach_302_alt.jpg | cg_aftermath_b_release.jpg | 已接入 ENDING_B_FLAWED_LIBERATION |
+| C · 麻木 | cg_ending_crawl_back_cellar_alt.jpg | cg_aftermath_c_numb.jpg | 已接入 ENDING_C_NUMBNESS |
+| True Ending α · 你好，拉娜 | cg_ending_true_alpha_hello_lana.jpg | cg_aftermath_true_alpha.jpg | 已接入 TRUE_ALPHA_HELLO_LANA |
+| True Ending β · 荒原之火 | cg_ending_true_beta_outland_fire.jpg | cg_aftermath_true_beta.jpg | 已接入 TRUE_BETA_OUTLAND_FIRE |
+
+2026-11-18 新增五张结局专属余波图，均为 **1376×768 JPG**；每张均配有同名 `.prompt.txt`。五个结局的 `ENDING_SCENES.aftermath` 已改为一对一图片，不再共用 `cg_aftermath_pasha_crag_mercy.jpg`；C 结局也已补上余波。原始 PNG、实际提示词和导出校验保存在 `art/generation_runs/2026-11-18/aftermath/`。
+
+当前五个结局主图分别是 closed_car_firelight、broadcast_breach_302、crawl_back_cellar、true_alpha_hello_lana、true_beta_outland_fire，均由 `ENDING_SCENES` 接入。`cg_ending_sealed_004_car_alt.jpg` 仍保留在候选表，未被五个结局引用。此前新增的 1376×768 CG（α 重逢、β 荒原火光、帕沙的最后施予）原始 PNG 与提示词保存在 `art/generation_runs/2026-11-18/ending_cg/`。其余 64 项美术变体仍作为候选，逐项列在下方。
+
 ## 早期核心页（原 22 张清单）
 
 - 开场：`cg_intro_city` · `cg_intro_mother` · `cg_intro_lana` · `cg_intro_vent`
@@ -124,11 +140,11 @@
 | `cg_station_buran_arrival_alt2.jpg` | 布拉风号进站备选：墨绿铆接装甲列车、雪犁车头与伊万手提信号灯（候选美术变体，尚未接入剧情数据） | `cg_station_buran_arrival_alt2.prompt.txt` |
 | `cg_eaglecliff_lana_004_rescue_alt2.jpg` | 鹰嘴崖 004 车厢救援备选：阿列克谢打开车门，拉娜平安坐在车厢内（候选美术变体，尚未接入剧情数据） | `cg_eaglecliff_lana_004_rescue_alt2.prompt.txt` |
 | `cg_intro_city_winter_dusk_alt.jpg` | 开场城市雪夜备选：窗前阿列克谢眺望铁路、烟囱和无线电塔（候选美术变体，尚未接入剧情数据） | `cg_intro_city_winter_dusk_alt.prompt.txt` |
-| `cg_ending_sealed_004_car_alt.jpg` | 封闭 004 车厢结局备选：阿列克谢在雪地离开封存车厢（候选美术变体，尚未接入剧情数据） | `cg_ending_sealed_004_car_alt.prompt.txt` |
-| `cg_ending_crawl_back_cellar_alt.jpg` | 结局 C 备选：阿列克谢独自从排污涵洞爬回空地窖（候选美术变体，尚未接入剧情数据） | `cg_ending_crawl_back_cellar_alt.prompt.txt` |
-| `cg_ending_closed_car_firelight_alt.jpg` | 结局 A 备选远景：雪谷中封闭的 004 车厢被火光照亮，不展示伤害（候选美术变体，尚未接入剧情数据） | `cg_ending_closed_car_firelight_alt.prompt.txt` |
+| `cg_ending_sealed_004_car_alt.jpg` | 结局 A 场景备选：阿列克谢在雪地离开封存车厢（候选，未接入剧情数据） | `cg_ending_sealed_004_car_alt.prompt.txt` |
+| `cg_ending_crawl_back_cellar_alt.jpg` | 结局 C 主图：阿列克谢独自从排污涵洞爬回空地窖（已接入 ENDING_C_NUMBNESS） | `cg_ending_crawl_back_cellar_alt.prompt.txt` |
+| `cg_ending_closed_car_firelight_alt.jpg` | 结局 A 主图远景：雪谷中封闭的 004 车厢被火光照亮，不展示伤害（已接入 ENDING_A_RETURN_HOME） | `cg_ending_closed_car_firelight_alt.prompt.txt` |
 | `cg_zakhar_salvage_spotted_alt.jpg` | 扎哈尔搜刮被发现备选：蓝袖章搜刮员装袋时被远处巡逻灯照到（候选美术变体，尚未接入剧情数据） | `cg_zakhar_salvage_spotted_alt.prompt.txt` |
-| `cg_ending_broadcast_breach_302_alt.jpg` | 结局突围备选：阿列克谢背着拉娜与切尔诺夫中士带领铁路工人冲向 302 高地（候选美术变体，尚未接入剧情数据） | `cg_ending_broadcast_breach_302_alt.prompt.txt` |
+| `cg_ending_broadcast_breach_302_alt.jpg` | 结局 B 主图：阿列克谢背着拉娜与切尔诺夫中士带领铁路工人冲向 302 高地（已接入 ENDING_B_FLAWED_LIBERATION） | `cg_ending_broadcast_breach_302_alt.prompt.txt` |
 | `cg_broadcast_pavel_switch_repair_alt.jpg` | 302 广播塔帕维尔抢修备选：绝缘管钳暂时接回发射机，拉娜与安娜守在麦克风旁（候选美术变体，尚未接入剧情数据） | `cg_broadcast_pavel_switch_repair_alt.prompt.txt` |
 | `cg_marshalling_last_train_departure_alt.jpg` | 雪夜末班列车离站备选：调车场信号灯与逐渐远去的车尾（候选美术变体，尚未接入剧情数据） | `cg_marshalling_last_train_departure_alt.prompt.txt` |
 | `cg_lana_external_medical_support_memory_alt.jpg` | 拉娜外部医疗支援回忆候选：她在城外救助点送去干净布料（候选美术变体，尚未接入剧情数据） | `cg_lana_external_medical_support_memory_alt.prompt.txt` |

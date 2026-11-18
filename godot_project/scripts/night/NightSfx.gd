@@ -17,6 +17,9 @@ const RATE := 22050
 const PPM := 64.0                # 1 逻辑米 = 64 px（AudioStreamPlayer2D 的距离单位是像素）
 const POS_VOICES := 12
 const FLAT_VOICES := 6
+## 遮挡衰减：墙 / 车厢（layer-1，和 ctl.los_clear 同一口径）挡住时脚步压低的分贝数。
+const OCCLUSION_DB := -9.0
+const ECHO_DELAY := 0.075          # 遮挡时补一声很轻的延迟反射，代替真实混响总线
 
 ## 每种音色的可闻半径（米）→ AudioStreamPlayer2D.max_distance
 ## 契约：CACHE 里的每个音色都必须有显式键。缺键会被 play_at() 的
@@ -52,6 +55,7 @@ var _ambient: Array = []         # [AudioStreamPlayer/2D, role, base_db]
 var _room: AudioStreamPlayer = null   # 室内低鸣循环（interior 时自动启动）
 var _next_pos := 0
 var _next_flat := 0
+var _echo_queue: Array = []      # [sname, pos, db, 剩余延迟]，遮挡脚步的轻量二次声
 var _beat := 0.0
 var _rng := RandomNumberGenerator.new()
 
@@ -75,6 +79,13 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_mix_ambient()
+	# 遮挡脚步的二次反射：不引入音频文件，也不新增总线，轻量延迟一声即可。
+	for i in range(_echo_queue.size() - 1, -1, -1):
+		var e: Array = _echo_queue[i]
+		e[3] -= delta
+		if e[3] <= 0.0:
+			play_at(String(e[0]), e[1], float(e[2]))
+			_echo_queue.remove_at(i)
 	if muted or tension <= 0.22:
 		_beat = 0.0
 		return
@@ -151,6 +162,20 @@ func play_at(sname: String, pos: Vector2, db := 0.0, jitter := 0.05) -> void:
 	p.pitch_scale = 1.0 + _rng.randf_range(-jitter, jitter)
 	p.max_distance = float(RADIUS_M.get(sname, 18.0)) * PPM
 	p.play()
+
+
+## 遮挡衰减口径：clear=false（被 layer-1 挡住）时音量压低 OCCLUSION_DB。
+## 纯函数，测试可直接断言；AI 脚步与任何「隔墙更闷」的声音都走这一处。
+static func occluded_db(clear: bool, base_db := -13.0) -> float:
+	return base_db if clear else base_db + OCCLUSION_DB
+
+
+## 被遮挡的一次性声：先压低音量，再排队一声更轻的延迟反射（近似混响）。
+func play_at_occluded(sname: String, pos: Vector2, db := -13.0, jitter := 0.09) -> void:
+	play_at(sname, pos, db, jitter)
+	if muted or not _streams.has(sname):
+		return
+	_echo_queue.append([sname, pos, db - 7.0, ECHO_DELAY])
 
 
 ## 挂在实体上的循环声（跟着它走）。radius_m = 多远以外就听不见。

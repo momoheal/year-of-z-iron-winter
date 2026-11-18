@@ -31,7 +31,7 @@ const PANEL_W_L := 452.0
 const PANEL_W_M := 566.0
 const FONT_SIZES := {"h1": 34, "h2": 22, "h3": 17, "body": 14, "small": 12}
 
-# 伙伴立绘（替换原来的 emoji 🐺👩🩺🧰🚂）；id 对不上（如 "none"）时退回 emoji。
+# 伙伴立绘；未知 id 时退回 CampaignData 中的三字母标记。
 const MATE_ART := {
 	"ash": "res://art/30_props/PRP_Ash_Stand.png",
 	"anna": "res://art/30_props/PRP_Anna_Stand.png",
@@ -126,6 +126,24 @@ const STORY_PORTRAITS := {
 		"intense": preload("res://art/10_characters/portraits/PRT_Zakhar_Intense.png"),
 		"wry": preload("res://art/10_characters/portraits/PRT_Zakhar_Wry.png"),
 	},
+	"katya": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Katya_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Katya_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Katya_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Katya_Wry.png"),
+	},
+	"lyudmila": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Lyudmila_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Lyudmila_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Lyudmila_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Lyudmila_Wry.png"),
+	},
+	"vikina": {
+		"calm": preload("res://art/10_characters/portraits/PRT_Vikina_Calm.png"),
+		"sad": preload("res://art/10_characters/portraits/PRT_Vikina_Sad.png"),
+		"intense": preload("res://art/10_characters/portraits/PRT_Vikina_Intense.png"),
+		"wry": preload("res://art/10_characters/portraits/PRT_Vikina_Wry.png"),
+	},
 }
 const STORY_SPEAKERS := {
 	"切尔诺夫中士": "chernov",
@@ -143,6 +161,7 @@ const STORY_SPEAKERS := {
 	"拉娜（0420）": "lana",
 	"帕维尔老爹": "pavel",
 	"七级钳工帕维尔": "pavel",
+	"帕维尔": "pavel",
 	"灰烬": "ash",
 	"灰狼犬灰烬": "ash",
 	"梁诺夫": "leonov",
@@ -155,11 +174,12 @@ const STORY_SPEAKERS := {
 	"调度长": "",
 	"“老轨”伊万": "ivan",
 	"老轨伊万（列车长）": "ivan",
-	"卡佳妈妈": "",
-	"回退期的母亲": "",
+	"卡佳妈妈": "katya",
+	"回退期的母亲": "katya",
 	"谢尔盖": "",
 	"核算员": "",
-	"柳德米拉大娘": "",
+	"柳德米拉大娘": "lyudmila",
+	"维京娜": "vikina",
 	"费奥多尔": "fyodor",
 	"瓦西里": "",
 	"茹科夫专员": "",
@@ -173,8 +193,12 @@ const STORY_PORTRAIT_NAMES := {
 	"aleksei": "Aleksei", "chernov": "Chernov", "fyodor": "Fyodor", "ivan": "Ivan",
 	"anna": "Anna", "pasha": "Pasha", "gulya": "Gulya", "lana": "Lana",
 	"pavel": "Pavel", "ash": "Ash", "leonov": "Leonov", "yelena": "Yelena",
-	"zakhar": "Zakhar", "osk": "OSK",
+	"zakhar": "Zakhar", "osk": "OSK", "katya": "Katya",
+	"lyudmila": "Lyudmila", "vikina": "Vikina",
 }
+# 未存档身份统一使用中性档案占位，绝不借用其他角色的人脸。
+const STORY_PORTRAIT_PLACEHOLDER := preload(
+	"res://art/10_characters/portraits/PRT_Placeholder_NoPhoto.png")
 const MAP_ART_FOLDERS := {
 	"boiler": "Boiler", "coldstore": "Coldstore", "yard": "Yard", "underpass": "Underpass",
 	"canteen": "Canteen", "sanitarium": "Sanitarium", "market": "Market", "manor": "Manor",
@@ -501,9 +525,9 @@ func _refresh(force: bool) -> void:
 	_lbl_tally.text = "卌 %d" % sim.tally
 	var warn := _save_warn != "" and Time.get_ticks_msec() < _save_warn_until
 	if warn:
-		_lbl_sub.text = ("⚠ 这次没存上：" + _save_warn) if sim.lang == "zh" else "⚠ AUTOSAVE FAILED: " + _save_warn
+		_lbl_sub.text = ("存档失败：" + _save_warn) if sim.lang == "zh" else "SAVE FAILED: " + _save_warn
 	elif Time.get_ticks_msec() < _save_note_until:
-		_lbl_sub.text = "✓ 已自动存档 · 第 %d 天" % sim.day if sim.lang == "zh" else "✓ AUTOSAVED · DAY %d" % sim.day
+		_lbl_sub.text = "已自动存档 · 第 %d 天" % sim.day if sim.lang == "zh" else "AUTOSAVED · DAY %d" % sim.day
 	else:
 		if bool(sim.flags.get("market_refuge_found", false)):
 			_lbl_sub.text = ("黑市栖身处已找到 · 602 室仍可返回" if sim.lang == "zh" else "MARKET REFUGE FOUND · ROOM 602 REMAINS OPEN")
@@ -942,7 +966,7 @@ func _build_base() -> void:
 	var dv := _label(("%.1f 天" if sim.lang == "zh" else "%.1f days") % sim.dial, FONT_SIZES["h3"], dial_col)
 	dv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	dial_row.add_child(dv)
-	dial_row.add_child(_chip("🧪 ×%d" % int(sim.stash.get("dial", 0)), Color("#343c3f")))
+	dial_row.add_child(_chip("DIA ×%d" % int(sim.stash.get("dial", 0)), Color("#343c3f")))
 	lv.add_child(dial_row)
 	lv.add_child(_bar(clampf(sim.dial / 3.0 * 100.0, 0.0, 100.0), Color("#b2ab9f")))
 	var md := _label(_tr(
@@ -1020,7 +1044,7 @@ func _build_base() -> void:
 	mh.add_child(_chip(_tr("独自", "solo") if sim.mate == "none" else "1 / 1", Color("#343c3f")))
 	mv.add_child(mh)
 	mv.add_child(_sep())
-	mv.add_child(_mate_row("none", "🚶", _tr("独自行动", "Go alone"),
+	mv.add_child(_mate_row("none", "SOLO", _tr("独自行动", "Go alone"),
 		_tr("没有伙伴的噪音与破绽，也没有他们的能力。", "No companion noise, no companion perks."), true))
 	for m in Data.MATES:
 		var ok: bool = bool(sim.mates.get(String(m["id"]), false))
@@ -1043,13 +1067,21 @@ func _build_base() -> void:
 	rh.add_child(_label(_tr("剧情", "STORY"), FONT_SIZES["h2"], Color("#e3ddcd")))
 	rh.add_child(_chip("%d / %d" % [sim.unlocked_count(), Data.LOCS.size()], Color("#343c3f")))
 	rv.add_child(rh)
+	_add_room_zone_gallery(rv)
+	rv.add_child(_sep())
 	rv.add_child(_label(_tr("当前目标", "Current objective"), FONT_SIZES["small"], Color("#6d6f66")))
 	var obj_panel := PanelContainer.new()
 	obj_panel.add_theme_stylebox_override("panel", _sb(Color("#141a12"), Color("#c8a257"), 7))
 	obj_panel.add_child(_label(sim.objective_text(), FONT_SIZES["body"], Color("#e3ddcd")))
 	rv.add_child(obj_panel)
-	rv.add_child(_btn(_tr("进入 602 室 · 房间分区", "Enter Room 602 · room zones"),
-		func(): _open_room_zones("mother"), true))
+	if sim.last_report.has("checked_north_awning"):
+		var fluid := int(sim.last_report.get("gained", {}).get("dial", 0))
+		var home_note := _tr("这趟带回腹透液 ×%d，可放到透析机旁。", "Dialysis fluid brought home: %d. You can put it by the machine.") % fluid if fluid > 0 else _tr("这趟没带回腹透液。", "No dialysis fluid came home this trip.")
+		if bool(sim.last_report["checked_north_awning"]):
+			home_note += _tr(" 日志里记下了残号 04，票上看不出是谁。", " Your notes say 04. The name was torn off.")
+		else:
+			home_note += _tr(" 日志上，北雨棚那一栏还是空的。", " The north awning entry in your notebook is blank.")
+		rv.add_child(_label(home_note, FONT_SIZES["body"], Color("#e3ddcd")))
 	var display_panel := _panel()
 	var display_box := _vbox(4)
 	display_box.add_child(_label(_tr("602 室陈列架 · 最多 4 件", "Room 602 display · up to 4 items"),
@@ -1094,7 +1126,7 @@ func _build_base() -> void:
 			line2.add_child(_label(_tr("余量 %d%%", "left %d%%") % int(round(float(st["left"]) * 100.0)),
 				FONT_SIZES["small"], Color("#6d6f66")))
 		if not ok2:
-			line2.add_child(_label("🔒", FONT_SIZES["small"], Color("#55534a")))
+			line2.add_child(_label(_tr("锁定", "LOCKED"), FONT_SIZES["small"], Color("#55534a")))
 		lv2.add_child(line2)
 	loc_scroll.add_child(lv2)
 	rv.add_child(loc_scroll)
@@ -1107,7 +1139,7 @@ func _build_base() -> void:
 			FONT_SIZES["small"], Color("#6d6f66")))
 	else:
 		for n in sim.names:
-			rv.add_child(_label("✒ " + String(n), FONT_SIZES["body"], Color("#d8d1bf")))
+			rv.add_child(_label(_tr("记录 · ", "RECORD · ") + String(n), FONT_SIZES["body"], Color("#d8d1bf")))
 
 	rv.add_child(_sep())
 	rv.add_child(_label(_tr("事件记录", "Event log"), FONT_SIZES["small"], Color("#6d6f66")))
@@ -1132,6 +1164,65 @@ func _build_base() -> void:
 	right.add_child(rv)
 	h.add_child(right)
 
+
+func _add_room_zone_gallery(parent: VBoxContainer) -> void:
+	parent.add_child(_label(_tr("602 室 · 选择区域", "ROOM 602 · CHOOSE A ZONE"),
+		FONT_SIZES["small"], Color("#c8a257")))
+	# 文字入口：图片卡没有可读按钮文本，补一个可见可点的双语按钮直达母亲区域。
+	var enter_zones := _btn(_tr("进入 602 室 · 房间分区", "Enter Room 602 · Zones"),
+		func(): _open_room_zones("mother"), true)
+	enter_zones.custom_minimum_size = Vector2(0, 42)
+	parent.add_child(enter_zones)
+	var cards := _hbox(8)
+	cards.custom_minimum_size = Vector2(0, 142)
+	for zone in ["mother", "storage", "weapons"]:
+		var zone_id := String(zone)
+		var card := _btn("", func(): _open_room_zones(zone_id))
+		card.custom_minimum_size = Vector2(0, 142)
+		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		card.clip_contents = true
+		card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		card.tooltip_text = _tr("打开并互动：", "Open and interact: ") + _room_zone_title(zone_id)
+		var bg := TextureRect.new()
+		bg.texture = load(_room_zone_background(zone_id)) as Texture2D
+		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		bg.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card.add_child(bg)
+		match zone_id:
+			"mother":
+				_room_prop(card, "res://art/30_props/PRP_602_Bed_Heirloom.png", Rect2(0.04, 0.27, 0.56, 0.64))
+				_room_prop(card, "res://art/30_props/PRP_602_DialysisMachine.png", Rect2(0.63, 0.22, 0.30, 0.70))
+			"storage":
+				_room_prop(card, "res://art/30_props/PRP_602_StorageCrates.png", Rect2(0.16, 0.20, 0.68, 0.72))
+			"weapons":
+				_room_prop(card, "res://art/30_props/PRP_602_WeaponRack.png", Rect2(0.12, 0.18, 0.76, 0.68))
+		var footer := ColorRect.new()
+		footer.color = Color(0.02, 0.025, 0.025, 0.82)
+		footer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		footer.anchor_top = 0.73
+		footer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card.add_child(footer)
+		var caption := _label(_room_zone_title(zone_id) + _tr(" · 点击进入", " · OPEN"),
+			FONT_SIZES["small"], Color("#f0e5cd"))
+		caption.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		caption.offset_left = 8.0
+		caption.offset_right = -8.0
+		caption.anchor_top = 0.73
+		caption.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card.add_child(caption)
+		var outline := Panel.new()
+		outline.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		outline.add_theme_stylebox_override("panel", _sb(Color(0, 0, 0, 0), Color("#c8a257"), 6, 1))
+		outline.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card.add_child(outline)
+		cards.add_child(card)
+	parent.add_child(cards)
+
 func _mate_row(id: String, ic: String, name: String, desc: String, unlocked: bool) -> Control:
 	var sel: bool = sim.mate == id
 	var p := PanelContainer.new()
@@ -1147,7 +1238,7 @@ func _mate_row(id: String, ic: String, name: String, desc: String, unlocked: boo
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		h.add_child(tr)
 	else:
-		h.add_child(_label("🔒" if not unlocked else ic, 22, Color("#928c7c")))
+		h.add_child(_label(_tr("锁定", "LOCKED") if not unlocked else ic, 22, Color("#928c7c")))
 	var v := _vbox(2)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_child(_label(name, FONT_SIZES["body"], Color("#e3ddcd") if unlocked else Color("#6d6f66")))
@@ -1176,10 +1267,12 @@ func _weapon_row(w: Dictionary) -> Control:
 		Color("#e3ddcd") if own else Color("#6d6f66"))
 	nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(nm)
-	if own:
+	if own and sim.weapon_displayable(w):
 		var ref := "weapon:" + String(w.get("id", ""))
 		top.add_child(_btn(_tr("收起" if sim.base_display.has(ref) else "陈列",
 			"Put away" if sim.base_display.has(ref) else "Display"), func(): _toggle_base_display(ref)))
+	elif own:
+		top.add_child(_label(_tr("非实物", "NOT PHYSICAL"), FONT_SIZES["small"], Color("#6d6f66")))
 	var pips := ""
 	for part in w.get("parts", []):
 		pips += "●" if int(sim.stash.get(String(part), 0)) > 0 else "○"
@@ -1299,10 +1392,9 @@ func _build_map() -> void:
 	chips.add_child(_label(dots, 16, Color("#b8281c")))
 	chips.add_child(_label(_tr("路程 ", "TIME ") + "%d %s" % [sim.travel_minutes(L), _tr("分", "m")],
 		FONT_SIZES["body"], Color("#928c7c")))
-	var snow_marks := ""
-	for k in int(round(float(L["cold"]) * 3.0)):
-		snow_marks += "❄"
-	chips.add_child(_label(_tr("寒冷 ", "COLD ") + snow_marks, FONT_SIZES["body"], Color("#b2ab9f")))
+	var cold_level := int(round(float(L["cold"]) * 3.0))
+	chips.add_child(_label(_tr("寒冷 ×%d", "COLD ×%d") % cold_level,
+		FONT_SIZES["body"], Color("#b2ab9f")))
 	rv.add_child(chips)
 
 	# 节点化地图的「环境档案」：出发前先说清这地方会怎么弄死你
@@ -1349,14 +1441,14 @@ func _build_map() -> void:
 		if why != "":
 			var lp := PanelContainer.new()
 			lp.add_theme_stylebox_override("panel", _sb(Color("#1a1510"), Color("#8c7139"), 6))
-			lp.add_child(_label("🔒 " + why, FONT_SIZES["small"], Color("#e0bf7e")))
+			lp.add_child(_label(_tr("未解锁 · ", "LOCKED · ") + why, FONT_SIZES["small"], Color("#e0bf7e")))
 			rv.add_child(lp)
 
 	rv.add_child(_sep())
 	rv.add_child(_label(_tr("同行（每夜只能带 1 名）", "COMPANION (one per night)"),
 		FONT_SIZES["small"], Color("#6d6f66")))
 	var mrow := _hbox(6)
-	mrow.add_child(_mate_chip("none", "🚶 " + _tr("独自", "solo"), true))
+	mrow.add_child(_mate_chip("none", _tr("独自", "SOLO"), true))
 	for m in Data.MATES:
 		if bool(sim.mates.get(String(m["id"]), false)):
 			mrow.add_child(_mate_chip(String(m["id"]),
@@ -1371,7 +1463,7 @@ func _build_map() -> void:
 		lrow.add_child(_load_slot(String(k)))
 	rv.add_child(lrow)
 
-	var depart := _btn(_tr("🗺 出发（Enter）", "🗺 DEPART (Enter)"), func(): depart_to(L), true)
+	var depart := _btn(_tr("出发（Enter）", "DEPART (Enter)"), func(): depart_to(L), true)
 	depart.custom_minimum_size = Vector2(0, 54)
 	depart.disabled = not sim.can_depart(L)
 	rv.add_child(depart)
@@ -1468,7 +1560,7 @@ func _build_raid_hud() -> void:
 	tl.custom_minimum_size = Vector2(380, 0)
 	var tv := _vbox(6)
 	var hrow := _hbox(10)
-	hrow.add_child(_label("🕯", 20, Color("#c8a257")))
+	hrow.add_child(_label(_tr("夜", "TIME"), FONT_SIZES["small"], Color("#c8a257")))
 	var clock := _label(sim.raid.clock_text(), 24, Color("#e3ddcd"))
 	_live["clock"] = clock
 	hrow.add_child(clock)
@@ -1694,7 +1786,7 @@ func _build_report() -> void:
 	for wid in nw:
 		var wd: Dictionary = Data.weapon(String(wid))
 		var wn: String = String(wd.get("zh" if sim.lang == "zh" else "en", String(wid)))
-		lv.add_child(_chip("🔓 " + _tr("解锁：", "Unlocked: ") + wn, Color("#1a3a24"), Color("#b9e7c9")))
+		lv.add_child(_chip(_tr("已解锁：", "UNLOCKED: ") + wn, Color("#1a3a24"), Color("#b9e7c9")))
 	left.add_child(lv)
 	cols.add_child(left)
 
@@ -1707,7 +1799,11 @@ func _build_report() -> void:
 	if evs.is_empty():
 		rv.add_child(_label(_tr("什么都没发生。这在诺沃斯克是好事。",
 			"Nothing happened. In Novorsk-17 that is a good night."), FONT_SIZES["small"], Color("#928c7c")))
-	var icons := {"good": "✚", "bad": "✖", "note": "·", "kill": "☠", "knife": "⚔", "witness": "👁"}
+	var event_labels := {
+		"good": _tr("顺利", "GOOD"), "bad": _tr("警告", "ALERT"),
+		"note": _tr("记录", "NOTE"), "kill": _tr("击杀", "KILL"),
+		"knife": _tr("武器", "BLADE"), "witness": _tr("目击", "WITNESS"),
+	}
 	var ev_scroll := ScrollContainer.new()
 	ev_scroll.custom_minimum_size = Vector2(0, 330)
 	ev_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -1719,7 +1815,8 @@ func _build_report() -> void:
 		var p := PanelContainer.new()
 		p.add_theme_stylebox_override("panel", _sb(Color("#0b0d0e"), col2, 5))
 		var txt := String((e as Dictionary).get("zh" if sim.lang == "zh" else "en", ""))
-		p.add_child(_label(String(icons.get(kind, "·")) + " " + txt, FONT_SIZES["small"], Color("#d8d1bf")))
+		p.add_child(_label("[%s] %s" % [String(event_labels.get(kind, _tr("记录", "NOTE"))), txt],
+			FONT_SIZES["small"], Color("#d8d1bf")))
 		evv.add_child(p)
 	ev_scroll.add_child(evv)
 	rv.add_child(ev_scroll)
@@ -1767,11 +1864,12 @@ func _report_sleep() -> void:
 func _build_ending() -> void:
 	var prev: Dictionary = sim.ending_preview()
 	var c := _vbox(16)
+	c.name = "EndingScreen"
 	c.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	c.offset_left = -520
-	c.offset_right = 520
-	c.offset_top = -280
-	c.offset_bottom = 280
+	c.offset_left = -560
+	c.offset_right = 560
+	c.offset_top = -480
+	c.offset_bottom = 480
 	body.add_child(c)
 	var t := _label(_tr("一年之后 · 铁冬", "YEAR OF Z: IRON WINTER"), 40, Color("#e3ddcd"))
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -1779,6 +1877,17 @@ func _build_ending() -> void:
 	var sub := _label(String(prev["key"]), FONT_SIZES["body"], Color("#6d6f66"))
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	c.add_child(sub)
+	var ending_image := StorySlides.tex_of(CutsceneData.ending_scene(String(prev["key"])))
+	if ending_image != null:
+		var art := TextureRect.new()
+		art.name = "EndingCG"
+		art.texture = ending_image
+		art.custom_minimum_size = Vector2(920, 506)
+		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		c.add_child(art)
 	var p := _panel()
 	var pv := _vbox(12)
 	pv.add_child(_label(_tr("结局判定", "ENDING RESOLUTION"), FONT_SIZES["h3"], Color("#928c7c")))
@@ -1793,9 +1902,16 @@ func _build_ending() -> void:
 	p.add_child(pv)
 	c.add_child(p)
 	var row := _hbox(12)
+	row.add_child(_btn(_tr("回看结局与余波", "Replay ending & aftermath"), func(): _replay_ending_cg()))
 	row.add_child(_btn(_tr("回到 602 室", "Back to Room 602"), func(): sim.phase = "base"))
 	row.add_child(_btn(_tr("回标题页", "Title screen"), func(): sim.phase = "title"))   # 新开局在标题页确认，结局预览里点错不会盖掉存档
 	c.add_child(row)
+
+
+func _replay_ending_cg() -> void:
+	var prev: Dictionary = sim.ending_preview()
+	var key := String(prev["key"])
+	play_slides(CutsceneData.ending_slides(key), "结局与余波 · " + key, "ENDING & AFTERMATH · " + key)
 
 # ============================================================================
 # 模态框
@@ -2190,20 +2306,22 @@ func _build_story_modal() -> void:
 
 func _story_texture(line: Dictionary) -> Texture2D:
 	var speaker := String(line.get("w", ""))
+	# 未登记说话者或没有专属肖像的角色：统一档案占位，不硬套具体人物的脸。
 	if speaker != "" and not STORY_SPEAKERS.has(speaker):
-		return null
+		return STORY_PORTRAIT_PLACEHOLDER
 	var role := String(STORY_SPEAKERS.get(speaker, "aleksei"))
 	if role == "" or not STORY_PORTRAITS.has(role):
-		return null
+		return STORY_PORTRAIT_PLACEHOLDER
 	var mood := String(line.get("mood", "calm"))
 	# 新增的 Fear / Determined / Hurt 肖像在剧情明确使用这些情绪时自动读取；
-	# 既有 calm / sad / intense / wry 映射保持原样。
+	# 既有 calm / sad / intense / wry 映射保持原样；缺态则回退到 calm。
 	if STORY_PORTRAIT_NAMES.has(role) and mood in ["fear", "determined", "hurt"]:
 		var variant_path := "res://art/10_characters/portraits/PRT_%s_%s.png" % [
 			String(STORY_PORTRAIT_NAMES[role]), mood.capitalize()]
 		if ResourceLoader.exists(variant_path):
 			return load(variant_path) as Texture2D
-	return STORY_PORTRAITS[role].get(mood, STORY_PORTRAITS[role]["calm"])
+	var states: Dictionary = STORY_PORTRAITS[role]
+	return states.get(mood, states.get("calm", STORY_PORTRAIT_PLACEHOLDER))
 
 
 func advance_story() -> bool:
@@ -2320,7 +2438,7 @@ func _build_logbook_modal() -> void:
 		v.add_child(_label(_tr("还没有人为你在纸上活下来。", "Nobody is alive on paper yet."),
 			FONT_SIZES["body"], Color("#6d6f66")))
 	for n in sim.names:
-		v.add_child(_label("✒ " + String(n), FONT_SIZES["body"], Color("#d8d1bf")))
+		v.add_child(_label(_tr("记录 · ", "RECORD · ") + String(n), FONT_SIZES["body"], Color("#d8d1bf")))
 	v.add_child(_sep())
 	v.add_child(_label(_tr("事件记录", "EVENT LOG"), FONT_SIZES["h3"], Color("#e3ddcd")))
 	for l in sim.recent_log(10):

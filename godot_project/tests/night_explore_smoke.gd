@@ -106,16 +106,16 @@ func _run() -> void:
 	await _physics(60)
 	_release()
 	_assert(p.global_position.y >= 3.0 * GY - 2.0, "facade blocks walking north", "%.1f" % p.global_position.y)
-	p.global_position = _m(17.5, 20.5)
+	p.global_position = _m(17.5, 34.0)
 	Input.action_press("move_down")
 	await _physics(40)
 	_release()
-	_assert(p.global_position.y < 21.5 * GY, "fence blocks outside the gap", "%.1f" % p.global_position.y)
-	p.global_position = _m(21.8, 20.5)
+	_assert(p.global_position.y < 35.33 * GY, "fence blocks outside the gap", "%.1f" % p.global_position.y)
+	p.global_position = _m(25.4, 34.0)
 	Input.action_press("move_down")
 	await _physics(70)
 	_release()
-	_assert(p.global_position.y > 21.6 * GY, "fence gap is passable", "%.1f" % p.global_position.y)
+	_assert(p.global_position.y > 35.5 * GY, "fence gap is passable", "%.1f" % p.global_position.y)
 
 	# --- 4. 冻雪泥 ---
 	_assert(s.is_slush(_m(17.0, 29.6)), "slush detected at zone center")
@@ -137,11 +137,11 @@ func _run() -> void:
 	p.crouching = false
 	var ang := atan2((p.global_position.y - sl.global_position.y) / 0.62, p.global_position.x - sl.global_position.x)
 	_assert(s.can_see_player(sl.global_position, 26.0, deg_to_rad(11.0), ang, true) > 0.0, "beam sees player in the open")
-	p.global_position = _m(32.0, 36.0)          # 车厢南侧：光束从东北方来，被车厢挡住
+	p.global_position = _m(29.0, 26.0)          # 车厢南侧：光束从东北方来，被车厢挡住
 	ang = atan2((p.global_position.y - sl.global_position.y) / 0.62, p.global_position.x - sl.global_position.x)
 	var seen_behind: float = s.can_see_player(sl.global_position, 26.0, deg_to_rad(11.0), ang, true)
 	_assert(seen_behind == 0.0, "boxcar blocks the searchlight", str(seen_behind))
-	p.global_position = _m(18.0, 16.8)          # 蒸汽管北侧
+	p.global_position = _m(18.0, 15.6)          # 蒸汽管北侧
 	p.crouching = true
 	var eye := _m(18.0, 19.5)
 	var a2 := atan2((p.global_position.y - eye.y) / 0.62, p.global_position.x - eye.x)
@@ -172,7 +172,7 @@ func _run() -> void:
 	await _physics(60)
 	_assert(s.warmth < w0, "warmth decays in the cold")
 	var w1: float = s.warmth
-	p.global_position = _m(24.0, 11.0)
+	p.global_position = s.get_node("World/Props/Brazier").global_position + Vector2(0, 20)
 	await _physics(60)
 	_assert(s.warmth > w1, "brazier warms the player")
 

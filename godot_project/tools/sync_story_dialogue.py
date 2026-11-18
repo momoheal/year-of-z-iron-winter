@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Sync the canonical literary script into Godot dialogue data and a full transcript."""
+"""Sync the canonical literary script into Godot dialogue data and a full transcript.
+
+English translations are reviewed separately (merge_yoz_en.py). Re-running --sync
+preserves every existing `en` line and `title_en` by scene id + line index, so a
+Chinese-script refresh never wipes the reviewed translation. If a scene loses
+lines, only the indices that still exist are kept; re-run the merge script to
+fill any new lines.
+"""
 
 from __future__ import annotations
 
@@ -19,6 +26,7 @@ ALLOWED_MOODS = {"calm", "sad", "intense"}
 PORTRAIT_ROLES = {
     "aleksei", "chernov", "fyodor", "ivan", "anna", "pasha", "gulya", "lana",
     "pavel", "ash", "leonov", "yelena", "zakhar", "osk",
+    "katya", "lyudmila", "vikina",
 }
 
 # Every named speaker is explicit. An empty portrait key means the character has
@@ -31,13 +39,13 @@ SPEAKERS = {
     "“老轨”伊万": "ivan",
     "老轨伊万": "ivan",
     "老轨伊万（列车长）": "ivan",
-    "卡佳妈妈": "",
-    "回退期的母亲": "",
+    "卡佳妈妈": "katya",
+    "回退期的母亲": "katya",
     "切尔诺夫中士": "chernov",
     "谢尔盖": "",
     "核算员扎哈尔": "zakhar",
     "核算员": "",
-    "柳德米拉大娘": "",
+    "柳德米拉大娘": "lyudmila",
     "费奥多尔": "fyodor",
     "费奥多尔老爹": "fyodor",
     "瓦西里": "",
@@ -57,6 +65,7 @@ SPEAKERS = {
     "博伊科": "",
     "佳娜": "",
     "帕维尔老爹": "pavel",
+    "帕维尔": "pavel",
     "督察专员": "osk",
     "清杀队": "osk",
 }
@@ -166,7 +175,41 @@ def parse_scenes(markdown: str) -> list[dict]:
     return scenes
 
 
-def make_outputs(scenes: list[dict]) -> tuple[str, str]:
+def load_existing_dialogue() -> dict:
+    """Read reviewed English translations keyed by (scene id, line index)."""
+    if not DATA_OUT.exists():
+        return {}
+    try:
+        data = json.loads(DATA_OUT.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"WARN: cannot read existing dialogue for translation preservation: {exc}",
+              file=sys.stderr)
+        return {}
+    existing: dict[str, dict] = {}
+    for scene_id, scene in data.get("scenes", {}).items():
+        lines: dict[int, str] = {}
+        for index, line in enumerate(scene.get("lines", [])):
+            en = str(line.get("en", "")).strip()
+            if en:
+                lines[index] = en
+        existing[str(scene_id)] = {
+            "title_en": str(scene.get("title_en", "")).strip(),
+            "lines": lines,
+        }
+    return existing
+
+
+def make_outputs(scenes: list[dict], existing: dict | None = None) -> tuple[str, str]:
+    # 中文剧本重排后按「场景 id + 行号」回填已审校的英文，绝不静默抹掉译文。
+    existing = existing or {}
+    for scene in scenes:
+        prior = existing.get(scene["id"], {})
+        if prior.get("title_en"):
+            scene["title_en"] = prior["title_en"]
+        for index, line in enumerate(scene["lines"]):
+            en = prior.get("lines", {}).get(index)
+            if en:
+                line["en"] = en
     data = {
         "source": "docs/zh/Z年纪事_全量文学剧本_去AI重排整合版.md",
         "moods": sorted(ALLOWED_MOODS),
@@ -247,7 +290,8 @@ def main() -> int:
     args = parser.parse_args()
     source = SOURCE.read_text(encoding="utf-8")
     scenes = parse_scenes(source)
-    json_text, transcript_text = make_outputs(scenes)
+    existing = load_existing_dialogue()
+    json_text, transcript_text = make_outputs(scenes, existing)
     if args.sync:
         DATA_OUT.parent.mkdir(parents=True, exist_ok=True)
         DATA_OUT.write_text(json_text, encoding="utf-8")

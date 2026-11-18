@@ -31,6 +31,7 @@ import importlib
 # 关卡 id → 模块名。新地图：写一个 levels/<id>.py，然后在这里登记一行。
 LEVELS = ["yard", "marshalling", "manor", "mine", "market", "coldstore", "canteen", "sanitarium"]
 LEVELS += ["boiler", "underpass", "birch", "workshop", "greenhouse", "archive"]
+LEVELS += ["station_buran_yard", "eagle_beak_cliff", "broadcast_tower_302"]
 
 
 def load(name: str):

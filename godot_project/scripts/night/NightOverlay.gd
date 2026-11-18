@@ -13,6 +13,9 @@ const BLOOD_TEX := preload("res://art/50_vfx/VFX_Blood_Mist.png")
 ## 顶部 HUD 面板（左档案卡 / 右任务卡）的下沿，屏幕像素
 const FLOAT_TOP_PX := 225.0
 const CASING_TEX := preload("res://art/50_vfx/VFX_Shell_Casing.png")
+## F3 调试层直接复用 AI 脚本的视锥口径，避免调试图和真实判定各画一套。
+const SoldierScript := preload("res://scripts/night/NightSoldier.gd")
+const DEBUG_PPM := 64.0
 
 @onready var ctl = owner
 
@@ -195,6 +198,9 @@ func _draw() -> void:
 		fp.y = maxf(fp.y, min_y)
 		for ri in rows.size():
 			_text(fp + Vector2(0, 22.0 * ri), rows[ri], fc, 17)
+	# F3 调试层最后画，叠在正常读数之上；开关关闭时整段不执行，画面与原来一致。
+	if bool(ctl.get("debug_draw")):
+		_draw_debug(p)
 
 func _cont_name(c: Node) -> String:
 	var k := String(c.get_meta("container", "crate"))
@@ -328,3 +334,100 @@ func _glyph(c: Vector2, col: Color, w: float, s: float, glyph: String) -> void:
 
 func _arc(c: Vector2, r: float, frac: float, col: Color, w: float) -> void:
 	draw_arc(c, r, -PI / 2.0, -PI / 2.0 + TAU * clampf(frac, 0.0, 1.0), 40, col, w, true)
+
+
+# ============================================================================
+# F3 调试层 —— 只读玩法数据，不写、不改判定，关掉后画面零影响
+# ============================================================================
+func _draw_debug(p: Vector2) -> void:
+	# 清杀兵：视锥 + suspicion + 状态 + 目标点
+	for s in ctl.soldiers:
+		if not is_instance_valid(s) or not bool(s.call("is_alive")):
+			continue
+		var sp: Vector2 = s.global_position
+		_debug_cone(sp, float(s.facing), SoldierScript.VIEW_RANGE, SoldierScript.VIEW_HALF,
+			Color(0.99, 0.85, 0.25))
+		_text(sp + Vector2(0, -152),
+			"OSK %s sus=%.2f" % [String(s.state), clampf(float(s.suspicion), 0.0, 1.0)],
+			Color("#fde047"), 13)
+		_debug_target(s, Color("#fde047"))
+		_debug_nav(s, Color(0.99, 0.85, 0.25, 0.8))
+	# 狂暴者 / 半人：状态 + 目标点 + 导航路径
+	for r in ctl.rabids:
+		if not is_instance_valid(r) or not bool(r.call("is_alive")):
+			continue
+		_text(r.global_position + Vector2(0, -142),
+			"狂 %s%s" % [String(r.state), " [壮硕]" if bool(r.get("brute")) else ""],
+			Color("#f87171"), 13)
+		_debug_target(r, Color("#f87171"))
+		_debug_nav(r, Color(0.96, 0.45, 0.42, 0.8))
+	for h in ctl.halfs:
+		if not is_instance_valid(h) or not bool(h.call("is_alive")):
+			continue
+		_text(h.global_position + Vector2(0, -136), "半 %s" % String(h.state),
+			Color("#fbbf24"), 13)
+		_debug_target(h, Color("#fbbf24"))
+		_debug_nav(h, Color(0.99, 0.75, 0.24, 0.8))
+	# 伙伴：跟随目标 + 导航路径
+	var mate = ctl.get("follower")
+	if mate != null and is_instance_valid(mate):
+		_text(mate.global_position + Vector2(0, -130),
+			"伴 %s" % String(mate.get("mate_id")), Color("#7dd3fc"), 13)
+		_debug_target(mate, Color("#7dd3fc"))
+		_debug_nav(mate, Color(0.49, 0.83, 0.99, 0.8))
+	# 玩家 / 事件噪声半径：复用 ripples 的 max，画完整的「声明半径」外圈
+	for r in ctl.ripples:
+		var rad: float = float(r["max"]) * DEBUG_PPM
+		var c: Color = r["col"]
+		c.a = 0.22
+		_ellipse(r["pos"], rad, rad * SQ, c, 1.0)
+	# 图例（跟着玩家走，永远在视野里；全部半透明，不遮挡玩法读数）
+	var lx := p.x - 470.0
+	var ly := p.y - 250.0
+	var lc := Color(0.82, 0.86, 0.9, 0.8)
+	_text(Vector2(lx, ly), "F3 调试层 · 视锥=suspicion/状态 · X=目标点 · 连线=导航路径 · 圈=噪声半径", lc, 14)
+	_text(Vector2(lx, ly + 20.0), "黄=清杀兵  红=狂暴者  橙=半人  蓝=伙伴  G=寻路终点  (再按 F3 关闭)", lc, 14)
+
+
+## 地面压缩过的扇形（y 乘 SQ），和 can_see_player / 视锥口径一致。
+func _debug_cone(origin: Vector2, facing: float, range_m: float, half: float, col: Color) -> void:
+	var rx := range_m * DEBUG_PPM
+	var ry := rx * SQ
+	var pts := PackedVector2Array()
+	pts.append(origin)
+	for i in 25:
+		var a := facing - half + 2.0 * half * float(i) / 24.0
+		pts.append(origin + Vector2(cos(a) * rx, sin(a) * ry))
+	pts.append(origin)
+	var fill_col := Color(col.r, col.g, col.b, 0.06)
+	draw_colored_polygon(pts, fill_col)
+	draw_polyline(pts, Color(col.r, col.g, col.b, 0.45), 1.3, true)
+
+
+## 目标点：小方框 + 从实体连过去的细线；goal 在 INF 时不画。
+func _debug_target(node: Node2D, col: Color) -> void:
+	var tv: Variant = node.get("target")
+	if not (tv is Vector2):
+		return
+	var tp: Vector2 = tv
+	if tp == Vector2.INF or tp == Vector2.ZERO:
+		return
+	draw_line(node.global_position, tp, Color(col.r, col.g, col.b, 0.35), 1.0, true)
+	draw_rect(Rect2(tp - Vector2(5, 5), Vector2(10, 10)), Color(col.r, col.g, col.b, 0.8), false, 1.5)
+
+
+## NavGrid.Agent 的 path / goal：有路径就连线，有终点就画 G。
+func _debug_nav(node: Node2D, col: Color) -> void:
+	var agent: Object = node.get("_nav")
+	if agent == null:
+		return
+	var pv: Variant = agent.get("path")
+	if pv is PackedVector2Array and (pv as PackedVector2Array).size() > 0:
+		var pts := PackedVector2Array([node.global_position])
+		pts.append_array(pv as PackedVector2Array)
+		draw_polyline(pts, col, 1.5, true)
+	var gv: Variant = agent.get("goal")
+	if gv is Vector2 and (gv as Vector2) != Vector2.INF:
+		var gp: Vector2 = gv
+		draw_rect(Rect2(gp - Vector2(4, 4), Vector2(8, 8)), col, false, 1.5)
+		_text(gp + Vector2(0, -14), "G", col, 11)

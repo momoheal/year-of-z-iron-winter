@@ -22,5 +22,7 @@ docs/ui/acceptance_standalone.html
 
 # Codex 生成演示稿的中间产物与 node_modules（361 MB，可重出；最终稿在 presentations/）。
 .codex/presentation_build/
+# 本地核验/评审构建目录（node_modules、渲染中间产物，可重出）。
+.codex-build/
 # Office 打开时生成的临时锁文件。
 ~$*.pptx

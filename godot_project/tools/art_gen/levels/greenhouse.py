@@ -95,3 +95,7 @@ ZONES = [{'id': 'red', 'rects': [(18, 6, 29, 14)]}, {'id': 'white', 'rects': [(0
 INTERIOR = True
 
 FLOOR = {'zones': [('concrete', 0, 13), ('terrazzo', 13, 27)]}
+
+
+from .plate_registration import register as _register_plate
+_register_plate(globals())

@@ -70,11 +70,16 @@ func _run() -> void:
 	var speakers: Dictionary = sc.hud.STORY_SPEAKERS
 
 	# 新概念头像可以高于原来的 512px，但必须是可用的方形图。
-	for role in ["aleksei", "chernov", "fyodor", "ivan", "anna", "pasha", "gulya", "lana", "pavel", "ash", "leonov"]:
+	for role in ["aleksei", "chernov", "fyodor", "ivan", "anna", "pasha", "gulya", "lana", "pavel", "ash", "leonov",
+		"katya", "lyudmila", "vikina"]:
 		for mood in ["calm", "sad", "intense"]:
 			var tex: Texture2D = portraits[role][mood]
 			_assert(tex != null and tex.get_width() >= 512 and tex.get_width() == tex.get_height(),
 				"asset %s/%s" % [role, mood])
+	var placeholder: Texture2D = sc.hud.STORY_PORTRAIT_PLACEHOLDER
+	_assert(placeholder != null and placeholder.get_width() >= 512
+		and placeholder.get_width() == placeholder.get_height(),
+		"neutral archive placeholder is a usable square portrait")
 
 	# 设定文档角色的常用说话者别名必须落到同一身份。
 	var aliases := {
@@ -182,8 +187,10 @@ func _run() -> void:
 			var mood := String(line.get("mood", "calm"))
 			var tex: Texture2D = sc.hud._story_texture(line)
 			_assert(mood in ["calm", "sad", "intense"], "%s line %d uses supported mood" % [sid, i + 1])
+			# 校验解析后的肖像实际可用：具名角色用专属图，其余统一走中性档案占位。
+			_assert(tex != null, "%s line %d resolves a usable portrait" % [sid, i + 1])
 			if role == "":
-				_assert(tex == null, "%s line %d does not borrow another character portrait" % [sid, i + 1])
+				_assert(tex == placeholder, "%s line %d uses the neutral archive placeholder" % [sid, i + 1])
 			else:
 				_assert(tex == portraits[role][mood], "%s line %d portrait %s/%s" % [sid, i + 1, role, mood])
 			_assert(_has_label(sc.hud.modal, String(line["zh"])), "%s line %d full text visible" % [sid, i + 1])
