@@ -353,7 +353,7 @@ static func scene_image(story_id: String) -> String:
 		return "res://art/40_interiors/BG_Market_Hideout.png"
 	var story_cg := {
 		"broadcast": "cg_broadcast_scene_alt_yelena.jpg",
-		"pasha_watchtower": "cg_pasha_watchtower_scene_v2.jpg",
+		"pasha_watchtower": "cg_pasha_watchtower_scene.jpg",
 		"apartment_exchange": "cg_apartment_exchange_scene.jpg",
 		"mine_sporeface": "cg_mine_sporeface_scene_alt.jpg",
 		"mine_detonator": "cg_mine_detonator_scene.jpg",

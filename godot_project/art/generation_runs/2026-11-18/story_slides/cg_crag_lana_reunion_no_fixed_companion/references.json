@@ -1,0 +1,10 @@
+{
+  "references": [
+    "art/60_ui/cg/cg_eaglecliff_derailment_scene.jpg",
+    "art/60_ui/cg/cg_eaglecliff_lana_004_rescue_alt2.jpg",
+    "art/10_characters/portraits/PRT_Aleksei_Determined.png",
+    "art/10_characters/portraits/PRT_Lana_Calm.png"
+  ],
+  "generated_output": "generated_output.png",
+  "final_file": "art/60_ui/cg/cg_crag_lana_reunion_no_fixed_companion.jpg"
+}
