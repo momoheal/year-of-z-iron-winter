@@ -1,6 +1,6 @@
 {
  "_meta": {
-  "asset_count": 842,
+   "asset_count": 849,
   "generated_by": "tools/art_gen/verify_assets.py",
   "manifest_files": [
    "night_archive_manifest.json",
@@ -28,123 +28,6 @@
    "none": "孤儿：无任何引用",
    "runtime": "printf 模板拼接（如 PRT_%s_%s.png），参数运行时决定"
   }
- },
- "candidate_variants": {
-  "status": "candidate_not_wired",
-  "count": 101,
-  "purpose": "把 README 标注为候选的 CG 变体与 manifest 中 ref=none 的孤儿资产统一登记为「已登记候选」：资产保留在仓库、可在美术档案查看，但不接入剧情数据或余波/结局演出表，避免把「文件存在」误当作已接入。",
-  "breakdown": {
-   "cg_candidate_variants": 64,
-   "ref_none_orphans": 99,
-   "overlap": 62
-  },
-  "sources": {
-   "cg_candidate_variants": "art/60_ui/cg/README.md 中标注「尚未接入剧情数据」的条目",
-   "ref_none_orphans": "art/asset_manifest.json 中 ref == \"none\" 的资产"
-  },
-  "registered_candidates": [
-   "10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet_Expanded.png",
-   "10_characters/portraits/PRT_Aleksei.png",
-   "10_characters/portraits/PRT_Anna.png",
-   "10_characters/portraits/PRT_Chernov.png",
-   "10_characters/portraits/PRT_Fyodor.png",
-   "10_characters/portraits/PRT_Ivan.png",
-   "10_characters/portraits/PRT_Lyudmila.png",
-   "10_characters/portraits/PRT_Yelena.png",
-   "10_characters/portraits/PRT_Zakhar.png",
-   "60_ui/backgrounds/BG_Event_Telegraph_Desk.jpg",
-   "60_ui/backgrounds/BG_Title_602_Stairwell_Night.jpg",
-   "60_ui/cg/cg_aftermath_pasha_crag_mercy.jpg",
-   "60_ui/cg/cg_apartment_exchange_scene_alt.jpg",
-   "60_ui/cg/cg_apartment_mother_reassurance_alt.jpg",
-   "60_ui/cg/cg_apartment_mother_waiting_window_alt.jpg",
-   "60_ui/cg/cg_archive_record_discovery_alt.jpg",
-   "60_ui/cg/cg_birch_ash_tracking_scene_alt.jpg",
-   "60_ui/cg/cg_boiler_heat_returns_residents_alt.jpg",
-   "60_ui/cg/cg_boiler_steamline_discovery_alt.jpg",
-   "60_ui/cg/cg_broadcast_city_listeners_dawn_alt.jpg",
-   "60_ui/cg/cg_broadcast_final_dawn_gathering_alt.jpg",
-   "60_ui/cg/cg_broadcast_lana_anna_testimony_close_alt.jpg",
-   "60_ui/cg/cg_broadcast_pavel_switch_repair_alt.jpg",
-   "60_ui/cg/cg_broadcast_siege_exterior_alt2.jpg",
-   "60_ui/cg/cg_broadcast_siege_scene_alt.jpg",
-   "60_ui/cg/cg_broadcast_testimony_scene_alt.jpg",
-   "60_ui/cg/cg_broadcast_yelena_goldbraid_alt2.jpg",
-   "60_ui/cg/cg_broadcast_yelena_manor_route_alt.jpg",
-   "60_ui/cg/cg_canteen_c0c.jpg",
-   "60_ui/cg/cg_canteen_last_ration_scene_alt.jpg",
-   "60_ui/cg/cg_coldstore_ash_recruitment_alt.jpg",
-   "60_ui/cg/cg_coldstore_c0b.jpg",
-   "60_ui/cg/cg_coldstore_c1b.jpg",
-   "60_ui/cg/cg_companion_estrangement_harsh_route_alt.jpg",
-   "60_ui/cg/cg_companions_trust_compassionate_route_alt.jpg",
-   "60_ui/cg/cg_eaglecliff_004_plaque_recovery_alt.jpg",
-   "60_ui/cg/cg_eaglecliff_derailment_alt.jpg",
-   "60_ui/cg/cg_eaglecliff_lana_004_rescue_alt2.jpg",
-   "60_ui/cg/cg_ending_sealed_004_car_alt.jpg",
-   "60_ui/cg/cg_fire_rescue_lyudmila_handoff_close_alt.jpg",
-   "60_ui/cg/cg_fire_rescue_scene_alt.jpg",
-   "60_ui/cg/cg_greenhouse_seed_cache_discovery_alt.jpg",
-   "60_ui/cg/cg_intro_city_winter_dusk_alt.jpg",
-   "60_ui/cg/cg_lana_external_medical_support_memory_alt.jpg",
-   "60_ui/cg/cg_manor_c0c.jpg",
-   "60_ui/cg/cg_manor_vault_evidence_yelena_alt.jpg",
-   "60_ui/cg/cg_manor_yelena_arrival_alt.jpg",
-   "60_ui/cg/cg_market_c1d.jpg",
-   "60_ui/cg/cg_market_distant_trade_point_alt.jpg",
-   "60_ui/cg/cg_market_halfwolf_trader_alt.jpg",
-   "60_ui/cg/cg_market_zakhar_ledger_alt.jpg",
-   "60_ui/cg/cg_market_zakhar_osk_visual_contrast_alt.jpg",
-   "60_ui/cg/cg_marshalling_c0c.jpg",
-   "60_ui/cg/cg_marshalling_ivan_dispatch_alt.jpg",
-   "60_ui/cg/cg_marshalling_last_train_departure_alt.jpg",
-   "60_ui/cg/cg_marshalling_yelena_patrol_pause_alt.jpg",
-   "60_ui/cg/cg_mine_boiko_rescue_alt.jpg",
-   "60_ui/cg/cg_mine_detonator_scene_alt.jpg",
-   "60_ui/cg/cg_mine_no3_evacuation_alt.jpg",
-   "60_ui/cg/cg_mine_sporeface_scene_alt.jpg",
-   "60_ui/cg/cg_pasha_watchtower_scene_alt.jpg",
-   "60_ui/cg/cg_sanitarium_anna_calm_patients_alt.jpg",
-   "60_ui/cg/cg_sanitarium_c0c.jpg",
-   "60_ui/cg/cg_sanitarium_escape_corridor_alt.jpg",
-   "60_ui/cg/cg_station_buran_arrival_alt2.jpg",
-   "60_ui/cg/cg_station_buran_scene_alt.jpg",
-   "60_ui/cg/cg_station_workers_listen_broadcast_alt.jpg",
-   "60_ui/cg/cg_underpass_dawn_evacuation_alt.jpg",
-   "60_ui/cg/cg_underpass_shelter_meeting_alt.jpg",
-   "60_ui/cg/cg_workshop_lights_return_alt.jpg",
-   "60_ui/cg/cg_workshop_mechanic_repair_alt.jpg",
-   "60_ui/cg/cg_yard_c0b.jpg",
-   "60_ui/cg/cg_yard_chernov_father_son_intro_alt.jpg",
-   "60_ui/cg/cg_yard_searchlight_cover_route_alt.jpg",
-   "60_ui/cg/cg_zakhar_quota_betrayal_alt.jpg",
-   "60_ui/cg/cg_zakhar_salvage_spotted_alt.jpg",
-   "80_maps/Archive/cutout-source.png",
-   "80_maps/Birch/cutout-source.png",
-   "80_maps/Boiler/cutout-source.png",
-   "80_maps/BroadcastTower302/qa/nav/nav-debug.png",
-   "80_maps/Canteen/cutout-source.png",
-   "80_maps/Coldstore/cutout-source.png",
-   "80_maps/EagleBeakCliff/qa/nav/nav-debug.png",
-   "80_maps/Greenhouse/cutout-source.png",
-   "80_maps/Manor/cutout-source.png",
-   "80_maps/Market/cutout-source.png",
-   "80_maps/Marshalling/cutout-source.png",
-   "80_maps/MineNo3/cutout-source.png",
-   "80_maps/Sanitarium/cutout-source.png",
-   "80_maps/StationBuranYard/qa/nav/nav-debug.png",
-   "80_maps/Underpass/cutout-source.png",
-   "80_maps/Workshop/cutout-source.png",
-   "80_maps/Yard/cutout-source.png",
-   "90_concept/CON_01_Novorsk17_Lighting_Script.jpg",
-   "90_concept/CON_02_Character_TriState_Sheet.jpg",
-   "90_concept/CON_03_Diegetic_Work_Logbook.jpg",
-   "90_concept/CON_04_Pasha_DummyTower.png",
-   "90_concept/CON_05_Lyudmila_ChildRescue.png",
-   "90_concept/CON_06_004_BrassPlaque.png",
-   "90_concept/CON_07_666MHz_BrandingForge.png",
-   "90_concept/CON_08_MineNo3_SporeBlast.png"
-  ]
  },
  "assets": {
   "10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png": {
@@ -1022,8 +905,50 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Katya_Determined.png": {
+   "bytes": 503772,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Katya_Determined.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "10_characters/portraits/PRT_Katya_Fear.png": {
+   "bytes": 508616,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Katya_Fear.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "10_characters/portraits/PRT_Katya_Hurt.png": {
+   "bytes": 504810,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Katya_Hurt.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "10_characters/portraits/PRT_Katya_Intense.png": {
    "bytes": 512764,
@@ -1036,8 +961,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Katya_Sad.png": {
    "bytes": 512627,
@@ -1050,8 +975,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Katya_Wry.png": {
    "bytes": 515083,
@@ -1064,8 +989,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Lana_Calm.png": {
    "bytes": 560069,
@@ -1288,8 +1213,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Lyudmila_Determined.png": {
    "bytes": 558596,
@@ -1344,8 +1269,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Lyudmila_Sad.png": {
    "bytes": 563487,
@@ -1358,8 +1283,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Lyudmila_Wry.png": {
    "bytes": 561826,
@@ -1372,8 +1297,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_OSK_Calm.png": {
    "bytes": 501890,
@@ -1697,6 +1622,20 @@
    "ref": "code",
    "ref_by": "完整路径"
   },
+  "10_characters/portraits/PRT_Placeholder_NoPhoto.png": {
+   "bytes": 17928,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Placeholder_NoPhoto.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
   "10_characters/portraits/PRT_Vikina_Calm.png": {
    "bytes": 500137,
    "declared_size": null,
@@ -1708,8 +1647,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Vikina_Determined.png": {
    "bytes": 489727,
@@ -1764,8 +1703,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Vikina_Sad.png": {
    "bytes": 496670,
@@ -1778,8 +1717,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Vikina_Wry.png": {
    "bytes": 498275,
@@ -1792,8 +1731,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Yelena.png": {
    "bytes": 508908,
@@ -2540,8 +2479,8 @@
     1536,
     1024
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
   },
   "30_props/PRP_602_DialysisMachine.png": {
    "bytes": 1292768,
@@ -2554,8 +2493,8 @@
     1086,
     1448
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
   },
   "30_props/PRP_602_StorageCrates.png": {
    "bytes": 2203987,
@@ -2568,8 +2507,8 @@
     1436,
     1095
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
   },
   "30_props/PRP_602_WeaponRack.png": {
    "bytes": 2365757,
@@ -2582,8 +2521,8 @@
     1536,
     1024
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "runtime",
+   "ref_by": "res://art/30_props/PRP_%s_%s.png"
   },
   "30_props/PRP_Aleksei_BrassFieldCompass.png": {
    "bytes": 162532,
@@ -5076,8 +5015,8 @@
     266,
     156
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "manifest",
+   "ref_by": "manifest 登记"
   },
   "30_props/PRP_Fence_ChainLink_B.png": {
    "bytes": 39082,
@@ -5096,8 +5035,8 @@
     266,
     156
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "manifest",
+   "ref_by": "manifest 登记"
   },
   "30_props/PRP_Fence_ChainLink_Torn.png": {
    "bytes": 35340,
@@ -5116,8 +5055,8 @@
     266,
     156
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "manifest",
+   "ref_by": "manifest 登记"
   },
   "30_props/PRP_Fence_ChainLink_TornL.png": {
    "bytes": 34883,
@@ -5136,8 +5075,8 @@
     266,
     156
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "manifest",
+   "ref_by": "manifest 登记"
   },
   "30_props/PRP_Fence_Electric_A.png": {
    "bytes": 41073,
@@ -5156,8 +5095,8 @@
     266,
     156
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "manifest",
+   "ref_by": "manifest 登记"
   },
   "30_props/PRP_Fence_Electric_Cut.png": {
    "bytes": 38127,
@@ -5176,8 +5115,8 @@
     266,
     156
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "manifest",
+   "ref_by": "manifest 登记"
   },
   "30_props/PRP_Flag_Soviet_Tattered.png": {
    "bytes": 52208,
@@ -9920,6 +9859,20 @@
     1672,
     941
    ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "40_interiors/BG_602_Arsenal_Empty.png": {
+   "bytes": 2338249,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/40_interiors/BG_602_Arsenal_Empty.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
    "ref": "code",
    "ref_by": "完整路径"
   },
@@ -9934,6 +9887,20 @@
     1672,
     941
    ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "40_interiors/BG_602_Mother_Integrated.png": {
+   "bytes": 2889167,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/40_interiors/BG_602_Mother_Integrated.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
    "ref": "code",
    "ref_by": "完整路径"
   },
@@ -9943,6 +9910,20 @@
    "family": "other",
    "manifest": null,
    "path": "res://art/40_interiors/BG_602_Storage.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "40_interiors/BG_602_Storage_Integrated.png": {
+   "bytes": 2544314,
+   "declared_size": null,
+   "family": "other",
+   "manifest": null,
+   "path": "res://art/40_interiors/BG_602_Storage_Integrated.png",
    "pivot": null,
    "real_size": [
     1672,
@@ -10881,8 +10862,8 @@
     1376,
     768
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_broadcast_final_dawn_gathering_alt.jpg": {
    "bytes": 427183,
@@ -10895,8 +10876,8 @@
     1376,
     768
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_broadcast_lana_anna_testimony_close_alt.jpg": {
    "bytes": 366115,
@@ -10923,8 +10904,8 @@
     1376,
     768
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_broadcast_scene.jpg": {
    "bytes": 363130,
@@ -11245,8 +11226,8 @@
     1376,
     768
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_eaglecliff_derailment_alt.jpg": {
    "bytes": 455372,
@@ -11287,8 +11268,8 @@
     1376,
     768
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_ending_broadcast_breach_302_alt.jpg": {
    "bytes": 419754,
@@ -12113,8 +12094,8 @@
     1376,
     768
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_station_buran_scene.jpg": {
    "bytes": 578078,

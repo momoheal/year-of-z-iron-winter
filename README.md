@@ -12,7 +12,7 @@
 > - **构建版本 `4.0.0`**：唯一真源是 `godot_project/project.godot` 的 `config/version="4.0.0"`。对外发布、商店页与补丁说明一律以此为准。
 > - **内容规格 `v4.2`**：指 `docs/` 下策划案、总剧本、美术风格参考等**文档与原型的内容规格版本**（历史称 Definitive Master）。它不是构建版本号，也不代表已发布的可执行版本；本轮保留该标签，取舍见 `CHANGELOG.md`，最终定位**待用户拍板**。
 > - **历史规格标签 `v4.0`**：`index.html` 与原型沙盘标题里的「v4.0 诺沃斯克-17 设定」，以及 `project.godot` 的 `config/name` 中的 `(v4.0 Novorsk-17)`，均为早期内容规格 / 命名遗留，**不是构建版本**。
-> - 测试结论不再写死；现行口径见下方「最近一次本地实跑基线」与 `godot_project/tests/logs/`。CI 已接入（`.github/workflows/ci.yml`，自动下载并校验 Godot 4.7.2 headless）；仍无 git tag、无 LICENSE。
+> - 测试结论不再写死；现行口径见下方「最近一次本地实跑基线」与 `godot_project/tests/logs/`。CI 已接入（`.github/workflows/ci.yml`，自动下载并校验 Godot 4.7.2 headless）；仍无 git tag；许可证采用 Apache License 2.0（见根目录 `LICENSE`）。
 > - Windows 试玩包：本机导出到 `build/win64/YearOfZ.exe` + `YearOfZ.pck`（约 857 MB，`build/` 不入库）。当前 `all_resources` 导出模式尚未裁掉出图过程稿，体积优化留待下一轮。
 
 > **"In Novorsk-17, when the teletype terminal lights up green, everyone is fed; when a file number is crossed out, the person is zeroed."**

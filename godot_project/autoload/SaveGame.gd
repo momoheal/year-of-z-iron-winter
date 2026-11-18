@@ -108,7 +108,8 @@ func delete_save(slot: int = AUTO_SLOT) -> void:
 
 ## 现在能不能存：只有 602 室（base）和结算页（report）是安全点。
 static func can_save(sim) -> bool:
-	return sim != null and (String(sim.phase) in ["base", "report"])
+	return sim != null and (String(sim.phase) in ["base", "report"] \
+		or (sim.phase == "ending" and sim.flags.has("final_ending")))
 
 
 ## 写档。只接受 base / report 两个安全点；其余阶段返回 false 不写（不算失败，last_error 为空）。
@@ -331,7 +332,9 @@ static func apply(sim, d: Dictionary) -> void:
 	var rs := String(d.get("rng_state", ""))
 	if rs.is_valid_int():
 		sim.rng.state = rs.to_int()
-	if String(d.get("phase", "base")) == "report":
+	if sim.flags.has("final_ending"):
+		sim.phase = "ending"
+	elif String(d.get("phase", "base")) == "report":
 		# 结算页的收获已入账；进入 602 后由玩家单独选择是否睡到明天。
 		sim.to_base()
 	else:

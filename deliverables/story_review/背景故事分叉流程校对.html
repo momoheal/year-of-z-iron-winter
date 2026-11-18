@@ -164,6 +164,9 @@
     .at-4-1 { grid-column: 4; grid-row: 1; }
     .at-5-1 { grid-column: 5; grid-row: 1; }
     .at-6-1 { grid-column: 6; grid-row: 1; }
+    .at-2-3 { grid-column: 2; grid-row: 3; }
+    .at-3-3 { grid-column: 3; grid-row: 3; }
+    .at-5-3 { grid-column: 5; grid-row: 3; }
     .at-1-2 { grid-column: 1; grid-row: 2; }
     .at-2-2 { grid-column: 2; grid-row: 2; }
     .at-3-2 { grid-column: 3; grid-row: 2; }
@@ -383,11 +386,14 @@
               <p>母亲离世后，市场任务成功撤离或撑到天亮，才发现临时栖身处；倒地或中止不触发。</p>
               <div class="node-foot"><span class="tag red">602 留作纪念与物资据点</span></div>
             </button>
+<button class="flow-node at-2-3" data-id="station" data-tags="main ending" data-tone="gold"><h3>布拉风货场</h3><p>搜查检修柜，抄回交接底单后，开放鹰嘴崖。</p></button>
+<button class="flow-node at-3-3" data-id="crag" data-tags="main ending" data-tone="gold"><h3>鹰嘴崖</h3><p>打开第三节车厢，带拉娜一行从检修路撤离。</p></button>
+<button class="flow-node at-5-3" data-id="tower" data-tags="main ending" data-tone="gold"><h3>302 高地广播塔</h3><p>守住播音台，传输完成后返回，开启正式结局。</p></button>
             <button class="flow-node at-6-3" data-id="endings" data-tags="ending mother market" data-tone="red">
               <div class="node-top"><span class="node-code">ENDING KEY / FLAGS</span><span class="node-mark">结局</span></div>
               <h3>真相、划痕与归来</h3>
               <p>结局由 truth、母亲状态、划痕和 betrayal 共同判定；不是由最后一个对白选项单独决定。</p>
-              <div class="node-foot"><span class="tag red">点此查看四种条件</span></div>
+              <div class="node-foot"><span class="tag red">点此查看五种条件</span></div>
             </button>
           </div>
         </div>
@@ -416,34 +422,14 @@
 
     <section class="section" aria-labelledby="review-title">
       <div class="section-head">
-        <h2 id="review-title">供作者判断的流程疑点</h2>
-        <p>下面列的是代码表现与界面文案之间可核对的差异；是否改成另一种故事走向由你决定。</p>
+        <h2 id="review-title">本轮校对后采用的规则</h2>
+        <p>以下规则与游戏中的目标提示和结算条件同步。</p>
       </div>
       <div class="review-grid">
-        <article class="review-card" data-tone="red">
-          <span class="review-no">CHECK 01 · 庄园入口</span>
-          <h3>解锁说明提到安娜路线，实际旗标只由广播写入</h3>
-          <p>庄园锁定提示说“黑市或安娜给出的庄园线索”。但现有 <code>manor_tip</code> 只在广播剧情的两个选择中设置；疗养院选择写入的是 <code>lana_car3</code>。如果玩家没触发 6.66 MHz，主目标仍会转向被锁住的庄园。</p>
-          <span class="code-ref">CampaignSim.gd · lock_reason / objective<br>CampaignData.gd · STORY[sanitarium], STORY[broadcast]</span>
-        </article>
-        <article class="review-card" data-tone="gold">
-          <span class="review-no">CHECK 02 · 资源代价</span>
-          <h3>疗养院选项写着消耗医疗物资，数据没有扣除</h3>
-          <p>选项名称写“消耗 1 份医疗物资”，地点准入也要求医疗物资 ×1；但该选项的实际效果列表没有 <code>take</code> 操作。因此当前代码只检查持有，不会在救出安娜和古丽娅后扣掉物资。</p>
-          <span class="code-ref">CampaignData.gd · STORY[sanitarium].choices<br>CampaignSim.gd · loc_unlocked / resolve_story</span>
-        </article>
-        <article class="review-card" data-tone="blue">
-          <span class="review-no">CHECK 03 · 线索顺序</span>
-          <h3>货场会先揭示第三节车厢，但系统旗标仍等到疗养院</h3>
-          <p>货场剧情已说出 0420 在第三节车厢；但真正解锁调车场的 <code>lana_car3</code> 只由疗养院救援选择写入。与此同时，目标提示优先要求维京娜线索、档案馆和资源。你可以判断这是否是有意的“传闻 → 证实”。</p>
-          <span class="code-ref">CampaignData.gd · STORY[yard], STORY[sanitarium]<br>CampaignSim.gd · objective / loc_unlocked</span>
-        </article>
-        <article class="review-card" data-tone="red">
-          <span class="review-no">CHECK 04 · True Beta</span>
-          <h3>结局判定比结局文案覆盖的状态更宽</h3>
-          <p>当 truth 已有、划痕为 0，但因 betrayed 标记不满足 Alpha 时，ending_key() 会落到 True Beta；预览文本却固定写“没能带回母亲”。若“母亲存活但遭到背叛”可达，这个结局的叙述需要确认。</p>
-          <span class="code-ref">CampaignSim.gd · ending_key(), ending_preview()<br>CampaignSim.gd · Zakhar betrayal settlement</span>
-        </article>
+        <article class="review-card"><h3>庄园入口</h3><p>在铁路黑市接触伊万，勘踏 6.66 MHz 电台棚并返回。本次夜潜的频率发现才有效。</p></article>
+        <article class="review-card"><h3>疗养院救援物资</h3><p>选项显示并扣除一件绷带、阿司匹林或抗生素。腹透液可留给母亲。</p></article>
+        <article class="review-card"><h3>线索顺序</h3><p>北雨棚的残号 04 是可选线索。维京娜指出底单去向，货场编组单提供纸面旁证，安娜亲眼见过拉娜，鹰嘴崖才见到本人。</p></article>
+        <article class="review-card"><h3>结局 β 字幕</h3><p>母亲在世但队伍遭背叛时，沿用 β 的判定，以对应字幕说明母亲仍在。</p></article>
       </div>
     </section>
 
@@ -452,6 +438,7 @@
         <h2 id="endings-title">结局判定表</h2>
         <p>规则按 <code>CampaignSim.ending_key()</code> 的判断顺序排列；先匹配到的条件优先。</p>
       </div>
+      <p>完成 302 广播后返回即可进入正式结局。尚无罪证时，完成鹰嘴崖救援或找到市场栖身处后，也可在 602 选择结束追查，按母亲生死进入 A 或 C。结局预览仍可查看当前条件。</p>
       <div class="endings-panel">
         <div class="ending-grid">
           <article class="ending alpha">
@@ -460,15 +447,16 @@
           </article>
           <article class="ending beta">
             <strong>TRUE BETA</strong><h3>荒原之火</h3>
-            <p>truth 已有、划痕为 0，但不满足 α；当前文案指向母亲没能留下。</p>
+            <p>truth 已有、划痕为 0，但不满足 α；文案和字幕随母亲生死变化。</p>
           </article>
           <article class="ending b">
             <strong>ENDING B</strong><h3>荒诞解放</h3>
             <p>truth 已有且划痕 &gt; 0；日志上的划痕改变拉娜对阿列克谢的反应。</p>
           </article>
+          <article class="ending"><strong>ENDING A</strong><h3>留在 602</h3><p>未取得真相，母亲存活。</p></article>
           <article class="ending c">
             <strong>ENDING C</strong><h3>麻木</h3>
-            <p>truth 缺失。这个条件先于划痕判断，因此即使有划痕也会落到 C。</p>
+            <p>未取得真相，母亲离世。</p>
           </article>
         </div>
       </div>
@@ -487,7 +475,7 @@
       </div>
     </section>
 
-    <footer class="footer">本文件为故事复核草图，不会更改游戏存档、对白或任务数据。图中虚线用于暴露前置条件与目标指引可能不一致的地方；请以节点详情和代码来源为准。</footer>
+    <footer class="footer">实线表示连续推进，虚线表示条件入口。地图行动成功后才结算关键成果。</footer>
   </div>
 
   <script>
@@ -517,21 +505,21 @@
         title: "档案馆电报局", sub: "由维京娜线索打开的证据地点。",
         trigger: ["archive_lead 解锁档案馆。", "疗养院另外要求情报 ×2 与医疗物资 ×1。"],
         effects: ["目标文案要求到档案馆找调度底单；档案馆地点目前没有单独 STORY 节点。", "sanitarium 的准入检查的是 archive_lead 或 lana_car3 与物资数量，并不检查是否实际访问过档案馆。"],
-        next: ["持有足够情报与医疗物资后，目标转向疗养院。", "节点详情中的 CHECK 03 解释了 Yard 提前说出车厢信息的情况。"],
+        next: ["持有足够情报与医疗物资后，目标转向疗养院。", "货场编组单是纸面证据，安娜的亲眼目击才证实拉娜在车厢内。"],
         source: "CampaignData.gd · LOCS[archive], LOCS[sanitarium]；CampaignSim.gd · objective(), loc_unlocked()"
       },
       sanitarium: {
         title: "疗养院：救出安娜与古丽娅", sub: "主线证实拉娜所在车厢，并开放西站调车场。",
         trigger: ["第一幕结束后，需先有 archive_lead 或 lana_car3。", "还需情报 ×2、医疗物资 ×1。"],
-        effects: ["唯一选项救出安娜（0419）与古丽娅，良知 +6。", "设置 lana_car3，开放调车场；当前选项文案说会消耗医疗物资，但 ops 没有扣除操作。"],
-        next: ["主目标转向西站调车场，抄下铁壳号 23:00 发车令。", "若该项医疗物资确实应被消耗，数据还需要对应 take 操作。"],
+        effects: ["唯一选项救出安娜（0419）与古丽娅，良知 +6。", "设置 lana_car3，开放调车场；确认救援时实际扣除一件救援药品。"],
+        next: ["主目标转向西站调车场，抄下铁壳号 23:00 发车令。", "扣除顺序为绷带、阿司匹林、抗生素。按钮显示本次实际扣除的道具。"],
         source: "CampaignData.gd · STORY[sanitarium]；CampaignSim.gd · loc_unlocked(), objective(), resolve_story()"
       },
       marshalling: {
         title: "西站调车场：终局时刻", sub: "lana_car3 是调车场的解锁旗标。",
         trigger: ["安娜确认拉娜在第三节车厢后，调车场开放。", "首次进入时播放调度令剧情。"],
         effects: ["抄下发车时刻：情报 +1，设置 endgame_known。", "若扎哈尔仍在队且路线达到 ruthless（划痕 ≥2 或良知 ≤25），他会被安排在之后的结算中背叛并离队。"],
-        next: ["主目标接着指向松林庄园。", "庄园地图实际上要求 manor_tip；图中的 CHECK 01 标出了主目标与解锁条件的差异。"],
+        next: ["主目标指向布拉风货场。", "庄园由黑市电台的叶莲娜线索开放，可提前探索。"],
         source: "CampaignData.gd · STORY[marshalling]；CampaignSim.gd · objective(), resolve_story(), finish_raid()"
       },
       sidegate: {
@@ -571,8 +559,8 @@
       },
       manor: {
         title: "庄园：留下真相", sub: "manor_tip 是现有关卡的明确解锁旗标。",
-        trigger: ["地图准入要求 manor_tip。当前 flag 由广播剧情的两个分支写入。", "objective() 在 endgame_known 后提示去庄园，但没有同时检查 manor_tip。"],
-        effects: ["拍下焚毁台账、带走腹透液：dial +2、photo +1、设置 truth、良知 +5。"],
+        trigger: ["地图准入要求 manor_tip。当前 flag 由广播剧情的两个分支写入。", "若追查到庄园阶段时尚未取得线索，主目标先指向铁路黑市和电台棚。"],
+        effects: ["在进料口搜查拍照，照片结算时保留即可获得 truth；腹透液从托盘另取。"],
         next: ["truth 使真相相关结局可达。", "最终判定仍看母亲状态、划痕与 betrayed，而非只看这次选择。"],
         source: "CampaignData.gd · LOCS[manor], STORY[manor]；CampaignSim.gd · objective(), ending_key()"
       },
@@ -590,11 +578,14 @@
         next: ["602 室转为纪念地与物资据点。", "地图上的栖身处是黑市支线场景，不会替代后续找拉娜的主线。"],
         source: "CampaignSim.gd · objective(), finish_raid(), resolve_story()；CampaignData.gd · STORY[market_refuge]"
       },
+      station: {"title": "布拉风货场", "sub": "搜查检修柜，抄回交接底单后，开放鹰嘴崖。", "trigger": ["西站发车令已抄录。"], "effects": ["搜查检修柜并成功返回，确认鹰嘴崖检修路。"], "next": [], "source": "CampaignSim.gd · _settle_story_objective()"},
+      crag: {"title": "鹰嘴崖", "sub": "打开第三节车厢，带拉娜一行从检修路撤离。", "trigger": ["交接底单已经抄回。出发前选择救援范围。"], "effects": ["亲自从撤离点离开才完成救援。全救会增加良知，只救拉娜则留下一道划痕。"], "next": [], "source": "CampaignSim.gd · _settle_story_objective()"},
+      tower: {"title": "302 高地广播塔", "sub": "守住播音台，传输完成后返回，开启正式结局。", "trigger": ["鹰嘴崖救援完成，而且持有庄园罪证。"], "effects": ["长按 E 12 秒传输。返回时根据选择记下完整播报名单或仅播罪证。"], "next": [], "source": "CampaignSim.gd · _settle_story_objective()"},
       endings: {
-        title: "四种结局：按条件顺序判定", sub: "点击下方结局卡可用来比较故事判定条件。",
+        title: "五种结局：按条件顺序判定", sub: "点击下方结局卡可用来比较故事判定条件。",
         trigger: ["ending_key() 依次检查 alpha、缺 truth、划痕，再落到 beta。", "alpha 需要母亲存活、truth、零划痕且无 betrayed。"],
-        effects: ["truth 缺失优先进入 Ending C，即使还有划痕也不转到 B。", "truth 存在且划痕 >0 则 Ending B；truth 存在、零划痕但不满足 alpha 则 True Beta。"],
-        next: ["完整条件见本页下方判定表。", "四类结局描述来自 CampaignSim.ending_preview()。"],
+        effects: ["无真相时，由母亲生死决定 A 或 C。", "truth 存在且划痕 >0 则 Ending B；truth 存在、零划痕但不满足 alpha 则 True Beta。"],
+        next: ["完整条件见本页下方判定表。", "五类结局描述来自 CampaignSim.ending_preview()。"],
         source: "CampaignSim.gd · ending_key(), ending_preview()"
       }
     };
@@ -605,9 +596,13 @@
       { from: "vikina", to: "archive", kind: "main", tags: "main" },
       { from: "archive", to: "sanitarium", kind: "conditional", tags: "main" },
       { from: "sanitarium", to: "marshalling", kind: "main", tags: "main ending" },
-      { from: "marshalling", to: "manor", kind: "conditional", tags: "main ending" },
-      { from: "marshalling", to: "endings", kind: "conditional", tags: "ending" },
-      { from: "manor", to: "endings", kind: "main", tags: "ending" },
+      { from: "marshalling", to: "station", kind: "main", tags: "main" },
+      { from: "station", to: "crag", kind: "main", tags: "main" },
+      { from: "crag", to: "tower", kind: "conditional", tags: "main ending" },
+      { from: "manor", to: "tower", kind: "conditional", tags: "main ending" },
+      { from: "tower", to: "endings", kind: "main", tags: "main ending" },
+      { from: "crag", to: "endings", kind: "risk", tags: "ending" },
+      { from: "refuge", to: "endings", kind: "risk", tags: "ending mother" },
       { from: "coldstore", to: "sidegate", kind: "side", tags: "companions market" },
       { from: "sidegate", to: "yard", kind: "side", tags: "companions" },
       { from: "sidegate", to: "canteen", kind: "side", tags: "companions" },
@@ -617,7 +612,6 @@
       { from: "coldstore", to: "mother", kind: "risk", tags: "mother" },
       { from: "mother", to: "refuge", kind: "risk", tags: "mother" },
       { from: "market", to: "refuge", kind: "risk", tags: "mother market" },
-      { from: "market", to: "endings", kind: "risk", tags: "ending" }
     ];
 
     const board = document.getElementById("board");

@@ -86,6 +86,9 @@ func _run() -> void:
 		var beat: Dictionary = beats.for_level(String(row[0]))
 		_assert(beats.id_for_scene(String(row[1])) == String(row[0]) and beat.landmarks.size() >= 3,
 			"%s has a registered dossier and landmarks" % row[0])
+		var target := scene.get_node("World/Props/%s" % row[3]) as Node2D
+		scene._finish_search(target)
+		_assert(sim.raid.story_objective_reached, "%s interaction reaches the objective through RaidBridge" % row[0])
 		bridge.clear()
 		root.remove_child(scene)
 		scene.free()
@@ -98,8 +101,15 @@ func _run() -> void:
 	_assert(trigger_sim.depart(station) and trigger_sim.story_open and trigger_sim.story_id == "station_buran_yard",
 		"first departure triggers the Buran handover story")
 	trigger_sim.resolve_story(0)
-	_assert(bool(trigger_sim.flags.get("station_route", false)), "handover choice records the Crag route")
-	trigger_sim.cancel_departure()
+	_assert(not bool(trigger_sim.flags.get("station_route", false)), "handover choice leaves route locked")
+	trigger_sim.raid.story_objective_reached = true
+	trigger_sim.finish_raid("downed")
+	_assert(not bool(trigger_sim.flags.get("station_route", false)), "downed loses the handover")
+	trigger_sim.advance_day()
+	_assert(trigger_sim.depart(station) and not trigger_sim.story_open, "handover can be retried")
+	trigger_sim.raid.story_objective_reached = true
+	trigger_sim.finish_raid("extracted")
+	_assert(bool(trigger_sim.flags.get("station_route", false)), "extraction opens the Crag route")
 	bridge.clear()
 
 	var crag_sim = SimScript.new()
@@ -109,8 +119,15 @@ func _run() -> void:
 	_assert(crag_sim.depart(crag) and crag_sim.story_open and crag_sim.story_id == "eagle_beak_cliff",
 		"first departure triggers the Eagle's Crag story")
 	crag_sim.resolve_story(0)
-	_assert(bool(crag_sim.flags.get("eagle_escape", false)), "Crag choice unlocks the broadcast route")
-	crag_sim.cancel_departure()
+	_assert(not bool(crag_sim.flags.get("eagle_escape", false)), "rescue choice alone leaves the route locked")
+	crag_sim.raid.story_objective_reached = true
+	crag_sim.finish_raid("dawn")
+	_assert(not bool(crag_sim.flags.get("eagle_escape", false)), "dawn does not evacuate the survivors")
+	crag_sim.advance_day()
+	_assert(crag_sim.depart(crag), "failed rescue can be retried")
+	crag_sim.raid.story_objective_reached = true
+	crag_sim.finish_raid("extracted")
+	_assert(bool(crag_sim.flags.get("eagle_escape", false)), "exit after opening the car completes rescue")
 	bridge.clear()
 
 	var tower_sim = SimScript.new()
@@ -123,7 +140,8 @@ func _run() -> void:
 	tower_sim.resolve_story(0)
 	_assert(bool(tower_sim.flags.get("broadcast_plan", false)) and not bool(tower_sim.flags.get("broadcast_complete", false)),
 		"broadcast choice records the plan without completing the raid")
-	tower_sim.cancel_departure()
+	tower_sim.finish_raid("extracted")
+	_assert(not bool(tower_sim.flags.get("broadcast_complete", false)), "exiting before transmission leaves the finale pending")
 	bridge.clear()
 
 	var finish_sim = SimScript.new()
@@ -132,10 +150,63 @@ func _run() -> void:
 	finish_sim.flags["truth"] = true
 	finish_sim.story_done["broadcast_tower_302"] = true
 	_assert(finish_sim.depart(tower), "tower finale can be departed for a smoke completion")
+	finish_sim.raid.story_objective_reached = true
 	finish_sim.finish_raid("extracted")
 	finish_sim.to_base()
 	_assert(bool(finish_sim.flags.get("broadcast_complete", false)) and finish_sim.finished_demo,
 		"successful tower extraction completes the campaign finale")
+	bridge.clear()
+
+	var evidence_sim = SimScript.new()
+	evidence_sim.flags["first_act_pending"] = false
+	evidence_sim.flags["manor_tip"] = true
+	var manor := Data.loc("manor")
+	_assert(evidence_sim.depart(manor), "manor accessible with the radio lead")
+	evidence_sim.resolve_story(0)
+	_assert(not evidence_sim.flags.get("truth", false), "manor dialogue does not award the truth")
+	evidence_sim.raid.pack.assign(["scrap", "photo"])
+	evidence_sim.raid.manor_photo_slot = 1
+	evidence_sim.finish_raid("dawn")
+	_assert(not evidence_sim.flags.get("truth", false), "dawn can lose the specific ledger photo")
+	evidence_sim.advance_day()
+	_assert(evidence_sim.depart(manor), "manor can be retried")
+	evidence_sim.raid.pack.assign(["photo"])
+	evidence_sim.raid.manor_photo_slot = 0
+	evidence_sim.finish_raid("extracted")
+	_assert(evidence_sim.flags.get("truth", false), "retained ledger photo unlocks the truth")
+	bridge.clear()
+
+	var medical_sim = SimScript.new()
+	medical_sim.flags["first_act_pending"] = false
+	medical_sim.flags["archive_lead"] = true
+	medical_sim.stash = {"dial": 1, "intel": 2}
+	var sanitarium := Data.loc("sanitarium")
+	_assert(not medical_sim.loc_unlocked(sanitarium), "dialysis fluid cannot be used for the rescue")
+	medical_sim.add_item("band", 1)
+	_assert(medical_sim.depart(sanitarium), "can depart with a bandage")
+	medical_sim.resolve_story(0)
+	_assert(medical_sim.stash.get("band", 0) == 0 and medical_sim.stash.get("dial", 0) == 1, "only the rescue medicine is removed")
+	medical_sim.cancel_departure()
+	bridge.clear()
+
+	var signal_sim = SimScript.new()
+	signal_sim.flags["first_act_pending"] = false
+	signal_sim.flags["broadcast_signal"] = true
+	signal_sim.story_done["market"] = true
+	_assert(signal_sim.depart(Data.loc("market")), "market is accessible")
+	signal_sim.raid.market_signal_found = true
+	signal_sim.finish_raid("abort")
+	_assert(not signal_sim.story_open, "aborted radio discovery does not trigger Yelena")
+	signal_sim.advance_day()
+	_assert(signal_sim.depart(Data.loc("yard")), "yard is accessible after the aborted market")
+	signal_sim.resolve_story(0)
+	signal_sim.finish_raid("extracted")
+	_assert(not signal_sim.story_open, "radio discovery does not leak into another raid")
+	signal_sim.finish_campaign()
+	_assert(signal_sim.phase == "ending" and signal_sim.flags["final_ending"] == "ENDING_A_RETURN_HOME",
+		"finishing without truth while Mother lives selects A")
+	var saved_end := preload("res://autoload/SaveGame.gd").to_dict(signal_sim)
+	_assert(saved_end["flags"]["final_ending"] == "ENDING_A_RETURN_HOME", "the formal ending persists in the save")
 	bridge.clear()
 
 	print("== RESULT: %d passed, %d failed ==" % [passes, failures.size()])

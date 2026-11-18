@@ -19,8 +19,8 @@ const ENDING_SCENES := {
 	"ENDING_A_RETURN_HOME": {
 		"img": CG + "cg_ending_closed_car_firelight_alt.jpg",
 		"focus": Vector2(0.69, 0.54),
-		"zh": "004 号车厢仍封在雪里。阿列克谢没带回真相，转身回到 602 室陪母亲。",
-		"en": "Car 004 remains sealed in the snow. Aleksei brings no truth home and returns to Room 602 to stay with Mother.",
+		"zh": "阿列克谢决定停止追查，回到 602 室陪母亲。",
+		"en": "Aleksei ends his search and returns to Room 602 to stay with Mother.",
 		"aftermath": [
 			{"img": CG + "cg_aftermath_a_602.jpg", "focus": Vector2(0.52, 0.56),
 				"zh": "夜深时，阿列克谢仍坐在母亲床边。窗外雪压住封存车厢的方向，屋里的灯没有熄。",
@@ -284,15 +284,18 @@ const AFTERMATH := {
 ## Room 602 interactions. These are used both in the hub UI and the review deck.
 const ROOM_DIALOGUE := {
 	"mother": [
-		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.58, 0.56),
+		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Katya_Calm.png", "show_portrait": true,
+			"focus": Vector2(0.58, 0.56),
 			"zh": "卡佳：阿廖沙，手怎么这么凉？把手套放到炉边吧。\n阿列克谢：我没事，妈。今晚我会把背包里的东西理好。",
 			"en": "Katya: Alyosha, your hands are freezing. Leave your gloves by the stove.\nAleksei: I'm all right, Mama. I'll sort what I brought back tonight."},
-		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.62, 0.52),
+		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Katya_Determined.png", "show_portrait": true,
+			"focus": Vector2(0.62, 0.52),
 			"zh": "卡佳：别总想着替所有人扛事。先坐下喝口热水，让我看看你有没有伤着。\n她说得很轻，像怕惊动透析机。",
 			"en": "Katya: You can't carry everyone. Sit down and drink something warm; let me see if you're hurt.\nShe speaks softly, as if not to wake the dialysis machine."},
 	],
 	"mother_waiting": [
-		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.6, 0.55),
+		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Katya_Fear.png", "show_portrait": true,
+			"focus": Vector2(0.6, 0.55),
 			"zh": "卡佳：机器还能撑一阵。别为了我一个人，把自己也搭进去。\n阿列克谢看了看透析机旁空着的位置，没有回答。",
 			"en": "Katya: The machine can hold for a little while. Don't lose yourself trying to save me.\nAleksei looks at the empty space beside the dialysis machine and says nothing."},
 	],
@@ -302,20 +305,36 @@ const ROOM_DIALOGUE := {
 			"en": "Only silence remains after the dialysis machine stops. You fold your mother's scarf and set it beside the bed."},
 	],
 	"fluid_given": [
-		{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.52, 0.58),
+		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Katya_Determined.png", "show_portrait": true,
+			"focus": Vector2(0.52, 0.58),
 			"zh": "阿列克谢把一袋透析液放到机器旁。\n卡佳：这一袋先留着，明早再换。你总算肯让我也替你省着点力气了。",
 			"en": "Aleksei sets a bag of dialysis fluid beside the machine.\nKatya: Keep this one for the morning. At last you're letting me help you save a little strength."},
 	],
 	"vikina_lead": [
-		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Vikina_Calm.png", "focus": Vector2(0.42, 0.5),
+		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Vikina_Calm.png", "show_portrait": true,
+			"focus": Vector2(0.42, 0.5),
 			"zh": "楼道里，邻居维京娜隔着半掩的门和人说话。她正抱怨电报局把一份旧底单退回了档案馆。",
 			"en": "In the hall, neighbor Vikina talks through a half-open door. She complains that the telegraph office returned an old dispatch copy to the archive."},
-		{"img": CG + "cg_intro_vent.jpg", "portrait": PRT + "PRT_Vikina_Intense.png", "focus": Vector2(0.62, 0.55),
+		{"img": CG + "cg_intro_vent.jpg", "portrait": PRT + "PRT_Vikina_Wry.png", "show_portrait": true,
+			"focus": Vector2(0.62, 0.55),
 			"zh": "维京娜：封面写着 0420，底下还铅笔记了“第三节”。谁会把这种旧名单当回事？我只想找回配给单。\n她没意识到自己说出了什么。",
 			"en": "Vikina: The cover said 0420, with “third car” pencilled underneath. Who cares about an old list? I only want my ration slip back.\nShe doesn't realize what she has just said."},
-		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Vikina_Calm.png", "focus": Vector2(0.5, 0.42),
+		{"img": CG + "cg_intro_mother.jpg", "portrait": PRT + "PRT_Aleksei_Determined.png", "show_portrait": true,
+			"focus": Vector2(0.5, 0.42),
 			"zh": "阿列克谢：0420……拉娜的档案号。\n名单被退回档案馆，底单就在电报局。今晚我去找它。",
-			"en": "Aleksei: 0420... Lana's file number.\nThe list went back to the archive; the dispatch copy is at the telegraph office. I'll find it tonight."},
+			"en": "Aleksei: 0420... Lana's file number.\nThe list went back to the archive; the dispatch copy is at the telegraph office. I'll find it tonight.",
+			"choices": [
+				{"id": "vikina_ask", "zh": "追问维京娜，确认底单去向", "en": "Ask Vikina where the copy went",
+					"followup": {"img": CG + "cg_intro_vent.jpg", "portrait": PRT + "PRT_Vikina_Sad.png", "show_portrait": true,
+						"focus": Vector2(0.58, 0.48),
+						"zh": "维京娜的笑意淡了下去。她只确认底单已经退回档案馆，随后把门轻轻合上。阿列克谢没有再问，把这句话记进日志。",
+						"en": "Vikina's smile fades. She confirms only that the copy went back to the archive, then gently closes the door. Aleksei writes it in his log and asks nothing more."}},
+				{"id": "vikina_quiet", "zh": "记下线索，暂不惊动她", "en": "Keep the clue to yourself",
+					"followup": {"img": CG + "cg_intro_vent.jpg", "portrait": PRT + "PRT_Aleksei_Determined.png", "show_portrait": true,
+						"focus": Vector2(0.62, 0.52),
+						"zh": "阿列克谢没有敲门。他把 0420 和“第三节”记在手套内侧，转身朝档案馆电报局走去。维京娜仍不知道自己递出了一条线索。",
+						"en": "Aleksei does not knock. He writes 0420 and “third car” inside his glove and heads for the Archive & Telegraph Office. Vikina never learns she gave him the lead."}},
+			]},
 	],
 	"market_refuge": [
 		{"img": "res://art/40_interiors/BG_Market_Hideout.png", "focus": Vector2(0.5, 0.5),
@@ -362,7 +381,7 @@ static func ending_aftermath(ending_key: String) -> Array:
 
 
 ## 用于“回看结局与余波”按钮的完整幻灯顺序。
-static func ending_slides(ending_key: String) -> Array:
+static func ending_slides(ending_key: String, mother_alive := false) -> Array:
 	var entry: Dictionary = ENDING_SCENES.get(ending_key, {})
 	if entry.is_empty():
 		return []
@@ -371,6 +390,11 @@ static func ending_slides(ending_key: String) -> Array:
 		"zh": String(entry.get("zh", "")), "en": String(entry.get("en", "")),
 	}]
 	slides.append_array(ending_aftermath(ending_key))
+	if ending_key == "TRUE_BETA_OUTLAND_FIRE" and mother_alive:
+		slides[0]["zh"] = "母亲还活着。真相已经传开，出卖他们的人也把消息送到了清杀队。"
+		slides[0]["en"] = "Mother is alive. The truth is out, and someone has passed word to the OSK."
+		slides[1]["zh"] = "城外火光下，拉娜和阿列克谢分着守夜。他们等天亮，再找路回去。"
+		slides[1]["en"] = "Outside the city, Lana and Aleksei take turns watching the fire. At dawn they will look for a way back."
 	return slides
 
 

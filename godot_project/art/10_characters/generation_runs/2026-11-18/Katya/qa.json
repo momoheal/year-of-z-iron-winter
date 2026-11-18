@@ -21,5 +21,16 @@
       "portrait_tiles/portrait-atlas.json"
     ],
     "visual_review": "same silver-gray-haired mature woman, beige shawl and gray-brown house dress across all states; thick impasto finish matches project portraits"
+  },
+  "additional_portrait_checks": {
+    "states": [
+      "PRT_Katya_Fear.png",
+      "PRT_Katya_Determined.png",
+      "PRT_Katya_Hurt.png"
+    ],
+    "dimensions": "3/3 are 512x512",
+    "mode": "3/3 are RGBA",
+    "visual_review": "same silver-gray-haired mature woman, beige shawl, gray-brown dress, dark oil-painted background; fearful / resolved / hurt expressions are distinct and no visible atlas seams remain",
+    "manifest": "3 entries added to godot_project/art/asset_manifest.json"
   }
 }

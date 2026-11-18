@@ -171,7 +171,7 @@ func _autosave() -> void:
 	if key == _save_key:
 		return
 	_save_key = key
-	if sim.phase == "base" or sim.phase == "report":
+	if SaveGame.can_save(sim):
 		if SaveGame.save(sim):
 			hud.note_saved()
 		elif SaveGame.last_error != "":
@@ -214,11 +214,6 @@ func _input(event: InputEvent) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo \
-			and event.keycode == KEY_ESCAPE and hud.room_zones_open():
-		hud.close_room_zones()
-		get_viewport().set_input_as_handled()
-		return
 	if hud.overlay_active() or sim.pending_scene != "":
 		return
 	if event is InputEventKey and event.pressed and not event.echo:

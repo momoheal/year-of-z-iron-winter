@@ -708,7 +708,8 @@ func _update_interact(delta: float) -> void:
 		if search_target != c:
 			search_target = c
 			search_prog = 0.0
-		search_prog += delta / (SEARCH_TIME * (1.8 if locked else 1.0))
+		var duration := 12.0 if in_campaign and level_id == "broadcast_tower_302" and c.name == &"RadioDesk" else SEARCH_TIME
+		search_prog += delta / (duration * (1.8 if locked else 1.0))
 		player.frozen = true
 		_search_noise -= delta
 		if _search_noise <= 0.0:
@@ -725,7 +726,7 @@ func _setup_special_containers() -> void:
 	## 运行时按顺序确定性选取，不重生成场景，便于测试与平衡。
 	var candidates: Array[Node2D] = []
 	for c in containers:
-		if String(c.get_meta("guaranteed", "")) != prize:
+		if String(c.get_meta("guaranteed", "")) != prize and not (level_id == "manor" and c.name == &"IncineratorFeed"):
 			candidates.append(c)
 	if candidates.is_empty():
 		return
@@ -934,8 +935,8 @@ func choose(idx: int) -> bool:
 				choice_msg = "你翻遍口袋：没有阿司匹林，或者热水壶已经空了。"
 				_show_choice()
 				return false
-			pack.erase("asp")
-			pack.erase("water")
+			_remove_pack_item(pack.find("asp"))
+			_remove_pack_item(pack.find("water"))
 			conscience += 7.0
 			half_saved += 1
 			h.save()
@@ -977,6 +978,16 @@ func on_half_killed(h, by: String) -> void:
 func interact_point(c: Node2D) -> Vector2:
 	return c.global_position + Vector2(c.get_meta("interact_offset", Vector2.ZERO))
 
+func _remove_pack_item(slot: int) -> void:
+	if slot < 0:
+		return
+	if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
+		var attempt = RaidBridge.sim.raid
+		if slot < attempt.manor_photo_slot:
+			attempt.manor_photo_slot -= 1
+	pack.remove_at(slot)
+
+
 func _finish_search(c: Node2D) -> void:
 	if soldiers.has(c) or rabids.has(c) or halfs.has(c):
 		_finish_corpse_search(c)
@@ -1006,8 +1017,24 @@ func _finish_search(c: Node2D) -> void:
 		if pack.size() >= bag_max:
 			spawn_float(c.global_position + Vector2(0, -90), "背包满了 · Bag full", Color("#fbbf24"))
 			break
+		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+			and level_id == "manor" and c.name == &"IncineratorFeed" and id == "photo" \
+			and RaidBridge.sim.raid.manor_photo_slot < 0:
+			RaidBridge.sim.raid.manor_photo_slot = pack.size()
 		pack.append(id)
 		names.append(item_name(id))
+	if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
+		var clue := (level_id == "station_buran_yard" and c.name == &"DispatchLocker") \
+			or (level_id == "eagle_beak_cliff" and c.name == &"BrakeVan") \
+			or (level_id == "broadcast_tower_302" and c.name == &"RadioDesk")
+		if clue:
+			RaidBridge.sim.raid.story_objective_reached = true
+			var message := "目标已完成：撤离后确认结果"
+			if level_id == "eagle_beak_cliff":
+				message = "车厢已打开。带拉娜一行走检修路撤离。"
+			elif level_id == "broadcast_tower_302":
+				message = "传输完毕。沿南门撤离。"
+			spawn_float(c.global_position + Vector2(0, -150), message, SovietUI.OCHRE)
 	if not names.is_empty():
 		spawn_float(c.global_position + Vector2(0, -90), "+ " + "、".join(names), Color("#fde68a"))
 	for id in got:
@@ -1962,7 +1989,7 @@ func _toggle_weapon_mod(mod_id: String) -> void:
 		if slot < 0:
 			spawn_float(player.global_position + Vector2(0, -125), "背包里没有" + item_name(mod_id), Color("#fbbf24"))
 			return
-		pack.remove_at(slot)
+		_remove_pack_item(slot)
 		installed.append(mod_id)
 		spawn_float(player.global_position + Vector2(0, -125), "已装上" + item_name(mod_id), Color("#7dd3fc"))
 	if installed.is_empty():
@@ -2659,6 +2686,8 @@ func _init_beats() -> void:
 
 ## 关键物资在哪：优先找「必出 prize」的容器，找不到就退回撤离点（HUD 不会指错方向）。
 func _find_objective_point() -> Vector2:
+	if in_campaign and level_id == "manor" and RaidBridge.sim != null and not RaidBridge.sim.flags.get("truth", false):
+		return interact_point($World/Props/IncineratorFeed)
 	for c in containers:
 		if String(c.get_meta("guaranteed", "")) == prize:
 			return interact_point(c)
@@ -2749,7 +2778,9 @@ func _update_landmarks() -> void:
 				var campaign_sim = bridge.get("sim") if bridge != null else null
 				if campaign_sim != null and bool(campaign_sim.flags.get(String(l.get("requires_flag", "")), false)) \
 					and not bool(campaign_sim.story_done.get(story_trigger, false)):
-					campaign_sim.flags["broadcast_pending"] = true
+					if campaign_sim.raid == null:
+						continue
+					campaign_sim.raid.market_signal_found = true
 					spawn_float(player.global_position + Vector2(0, -190),
 						"频率确认：撤离后前往信号室", SovietUI.OCHRE)
 
@@ -3450,7 +3481,20 @@ func _refresh_hud() -> void:
 
 	# --- 右上：目标方位 / 撤离方位 / 威胁 / 勘踏 ---
 	var has_prize := pack.has(prize)
-	if first_coldstore_visit:
+	var attempt = RaidBridge.sim.raid if in_campaign and RaidBridge.sim != null else null
+	if attempt != null and level_id in ["station_buran_yard", "eagle_beak_cliff", "broadcast_tower_302"]:
+		_lbl_target.text = "目标已完成。沿标记撤离。" if attempt.story_objective_reached else objective_zh
+		if level_id == "broadcast_tower_302" and not attempt.story_objective_reached:
+			_lbl_target.text = "在播音台长按 E，等传输完成"
+			if search_target != null and search_target.name == &"RadioDesk":
+				_lbl_target.text = "正在传输 · %d%%" % int(search_prog * 100)
+		_lbl_bearing.text = "撤离方向见下方" if attempt.story_objective_reached else "目标方位  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
+	elif attempt != null and level_id == "manor" and not RaidBridge.sim.flags.get("truth", false):
+		_lbl_target.text = "台账照片已装包，带它回去。" if attempt.manor_photo_slot >= 0 else "在焚化炉进料口拍下台账，保留一格背包"
+		_lbl_bearing.text = "进料口  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
+	elif first_coldstore_visit:
 		var checked := COLDSTORE_TRACE in landmark_seen
 		if pack.has("dial"):
 			_lbl_target.text = "腹透液已装包。带回 602 给母亲。" if checked else "腹透液已装包。现在撤离，或绕去北雨棚找拉娜的痕迹。"
@@ -3533,7 +3577,12 @@ func _refresh_hud() -> void:
 	elif dist_m(player.global_position, exit_px) <= REACH:
 		_lbl_hint.text = "长按 E · " + extract_zh
 	else:
-		_lbl_hint.text = objective_zh + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电　Esc 暂停"
+		var action_hint := objective_zh
+		if in_campaign and level_id == "broadcast_tower_302":
+			action_hint = "到播音台长按 E 12 秒完成广播，再撤离"
+		elif in_campaign and level_id == "manor":
+			action_hint = "在焚化炉进料口拍下台账，留出一格装照片"
+		_lbl_hint.text = action_hint + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电　Esc 暂停"
 	if state == "play":
 		_lbl_hint.text += "　·　T 武器改造"
 	if state == "play" and mate_id == "yelena":

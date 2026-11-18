@@ -130,9 +130,9 @@ func _run() -> void:
 	broadcast_sim.phase = "map"
 	broadcast_sim.flags["first_act_pending"] = false
 	broadcast_sim.flags["broadcast_signal"] = true
-	broadcast_sim.flags["broadcast_pending"] = true
 	broadcast_sim.story_done["market"] = true
 	_assert(broadcast_sim.depart(Data.loc("market")), "market raid can carry the broadcast discovery home")
+	broadcast_sim.raid.market_signal_found = true
 	broadcast_sim.finish_raid("extracted")
 	_assert(broadcast_sim.story_open and broadcast_sim.story_id == "broadcast"
 		and not bool(broadcast_sim.flags.get("broadcast_pending", false)),
@@ -171,6 +171,7 @@ func _run() -> void:
 	for sid in Data.STORY:
 		var beat: Dictionary = Data.STORY[sid]
 		var lines: Array = sc.sim.story_lines(String(sid))
+		sc.sim.add_item("band", 1)
 		sc.sim.story_id = sid
 		sc.sim.story_open = true
 		sc.hud._story_beat = ""
@@ -202,6 +203,8 @@ func _run() -> void:
 				"viewport=%s panel=%s" % [str(panel.get_viewport_rect()) if panel != null else "null", str(panel.get_global_rect()) if panel != null else "null"])
 			var choice: Dictionary = beat["choices"][0]
 			var choice_text := String(choice["zh"])
+			if sid == "sanitarium":
+				choice_text = "撬开铁笼，带她们走（交出 %s ×1）" % sc.sim.item_name("band")
 			if i < lines.size() - 1:
 				_assert(not _has_button(sc.hud.modal, choice_text), "%s line %d choices hidden" % [sid, i + 1])
 			else:
@@ -236,7 +239,7 @@ func _run() -> void:
 		_press_key(KEY_SPACE)
 		await process_frame
 	await _frames(3)
-	_assert(_has_button(sc.hud.modal, String(Data.STORY["sanitarium"]["choices"][0]["zh"])),
+	_assert(_has_button(sc.hud.modal, "撬开铁笼，带她们走（交出 %s ×1）" % sc.sim.item_name("band")),
 		"keyboard final choices visible")
 
 	# 文学重塑的关键锚点：背景原罪链、受难者控诉与道德抉择语气。
@@ -263,7 +266,7 @@ func _run() -> void:
 	star.set_value(0.0)
 	_assert(star.lit_segments() == 0, "star meter empty at zero")
 	star.queue_free()
-	var choice_button := _find_button(sc.hud.modal, String(Data.STORY["sanitarium"]["choices"][0]["zh"]))
+	var choice_button := _find_button(sc.hud.modal, "撬开铁笼，带她们走（交出 %s ×1）" % sc.sim.item_name("band"))
 	_assert(choice_button != null, "art audit finds story choice button")
 	if choice_button != null:
 		var normal := choice_button.get_theme_stylebox("normal") as StyleBoxFlat

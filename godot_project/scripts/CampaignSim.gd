@@ -212,6 +212,16 @@ func med_count() -> int:
 	return int(stash.get("asp", 0)) + int(stash.get("band", 0)) \
 		+ int(stash.get("abx", 0)) + int(stash.get("dial", 0))
 
+func rescue_medicine() -> String:
+	var stock := stash.duplicate()
+	if raid != null:
+		for item in raid.load:
+			stock[item] = int(stock.get(item, 0)) + int(raid.load[item])
+	for item in ["band", "asp", "abx"]:
+		if int(stock.get(item, 0)) > 0:
+			return item
+	return ""
+
 func intel_count() -> int:
 	return int(stash.get("intel", 0))
 
@@ -251,7 +261,7 @@ func loc_unlocked(L: Dictionary) -> bool:
 	var req: Dictionary = L.get("req", {})
 	if req.has("intel") and intel_count() < int(req["intel"]):
 		return false
-	if req.has("med") and med_count() < int(req["med"]):
+	if req.has("med") and rescue_medicine() == "":
 		return false
 	return true
 
@@ -263,8 +273,8 @@ func lock_reason(L: Dictionary) -> String:
 		return "需要：先听维京娜提到的档案馆线索" if lang == "zh" else "Requires: follow Vikina's archive lead first"
 	var rf: String = String(L.get("req_flag", ""))
 	if rf == "manor_tip":
-		return "需要：黑市或安娜给出的松林庄园线索" if lang == "zh" \
-			else "Requires: the Pine Manor lead from the market or Anna"
+		return "需要：铁路黑市 6.66 MHz 电台给出的庄园线索" if lang == "zh" \
+			else "Requires: the 6.66 MHz radio lead in the rail market"
 	if rf == "lana_car3":
 		return "需要：先确认妹妹在第三节车厢（救援安娜）" if lang == "zh" \
 			else "Requires: confirm Lana is in Boxcar 3 (rescue Anna)"
@@ -288,7 +298,7 @@ func lock_reason(L: Dictionary) -> String:
 	if req.has("intel"):
 		parts.append(("情报 ×%d" if lang == "zh" else "Intel ×%d") % int(req["intel"]))
 	if req.has("med"):
-		parts.append(("医疗 ×%d" if lang == "zh" else "Medical ×%d") % int(req["med"]))
+		parts.append(("绷带、阿司匹林或抗生素 ×%d" if lang == "zh" else "Bandage, aspirin or antibiotics ×%d") % int(req["med"]))
 	if parts.is_empty():
 		return ""
 	return ("需要：" if lang == "zh" else "Requires: ") + " · ".join(parts)
@@ -370,7 +380,7 @@ func weapon_displayable(w: Dictionary) -> bool:
 # 目标
 # ============================================================================
 func objective() -> Dictionary:
-	if not bool(story_done.get(FIRST_ACT_LOC, false)) and names.is_empty():
+	if first_act_pending():
 		return {
 			"zh": "去四号铁路冷库。南库的封存箱里有母亲用的腹透液。拉娜也经过那儿吗？如果来得及，去北雨棚看看。",
 			"en": "Go to Cold Storage No.4. The sealed crate in the south hall holds Mother's dialysis fluid. If there is time, check the north awning for a trace of Lana.",
@@ -391,10 +401,18 @@ func objective() -> Dictionary:
 				"zh": "先在 602 室找维京娜确认档案馆线索。",
 				"en": "Ask Vikina in Room 602 to confirm the archive lead first.",
 			}
-		if intel_count() < 2 or med_count() < 1:
+		if intel_count() < 2 or rescue_medicine() == "":
+			var lead_note_zh := ""
+			var lead_note_en := ""
+			if bool(flags.get("vikina_told_directly", false)):
+				lead_note_zh = "你追问过维京娜；她确认底单退回了档案馆。"
+				lead_note_en = "You asked Vikina directly; she confirmed the copy went back to the archive."
+			elif bool(flags.get("vikina_kept_quiet", false)):
+				lead_note_zh = "你没有惊动维京娜，把线索记在心里。"
+				lead_note_en = "You kept Vikina out of it and memorized the clue."
 			return {
-				"zh": "按维京娜提到的线索去档案馆电报局找调度底单；凑够情报 ×2 和医疗物资 ×1，再去疗养院找安娜（0419）。",
-				"en": "Follow Vikina's lead to the Archive & Telegraph Office for dispatch records. Gather 2 Intel and 1 medical item, then find Anna (0419) at the sanatorium.",
+				"zh": lead_note_zh + "按线索去档案馆电报局找调度底单；凑够情报 ×2 和救援药品 ×1（绷带、阿司匹林或抗生素），再去疗养院找安娜（0419）。",
+				"en": lead_note_en + " Follow the lead to the Archive & Telegraph Office for dispatch records. Gather 2 Intel and one bandage, aspirin or antibiotics, then find Anna (0419) at the sanatorium.",
 			}
 		return {
 			"zh": "情报和医疗物资已经够了；去旧传染病疗养院地下室找安娜（0419）。",
@@ -411,6 +429,9 @@ func objective() -> Dictionary:
 	if not bool(flags.get("eagle_escape", false)):
 		return {"zh": "沿检修路去鹰嘴崖，找到第三节车厢并带幸存者撤离。",
 			"en": "Follow the maintenance route to Eagle's Crag, find Boxcar Three, and extract the survivors."}
+	if not bool(flags.get("manor_tip", false)) and not bool(flags.get("truth", false)):
+		return {"zh": "去铁路黑市找伊万，再到 6.66 MHz 电台棚勘踏。带着频率记录撤回后，听叶莲娜说出庄园线索。",
+			"en": "Find Ivan at the rail market, then investigate the 6.66 MHz radio shed. Return with the frequency and hear Yelena's Manor lead."}
 	if not bool(flags.get("truth", false)):
 		return {"zh": "去松林庄园拍下焚化台账，带回 409 批腹透液和罪证。",
 			"en": "Photograph the furnace ledger at Pine Manor and bring back Batch-409 fluid and evidence."}
@@ -542,6 +563,12 @@ func story_lines(id: String) -> Array:
 						break
 			if use_source:
 				lines = source_lines
+	if id == "sanitarium" and not bool(mates.get("ash", false)):
+		for i in lines.size():
+			var text := String(lines[i].get("zh", ""))
+			if "灰烬" in text and "鼻尖" in text:
+				lines[i] = {"w": "", "zh": "阿列克谢走到床边，轻敲铁栏。姑娘抬起头，眼里的紫黑充血已经退了。",
+					"en": "Aleksei comes to the bedside and taps the bars. She looks up. The purple has faded from her eyes."}
 	if id == "market" and not mother_alive and not bool(flags.get("market_refuge_found", false)):
 		lines.append_array([
 			{"w": "阿列克谢", "mood": "sad",
@@ -618,6 +645,16 @@ func resolve_story(choice_index: int) -> Dictionary:
 		return {}
 	var ch: Dictionary = choices[choice_index]
 	var applied: Array[String] = []
+	if story_id == "sanitarium":
+		var medicine := rescue_medicine()
+		if medicine == "":
+			return {}
+		if not take_item(medicine, 1):
+			raid.load[medicine] = int(raid.load[medicine]) - 1
+			var bridge := (Engine.get_main_loop() as SceneTree).root.get_node_or_null("RaidBridge")
+			if bridge != null and bridge.sim == self:
+				bridge.cfg["load"][medicine] = raid.load[medicine]
+		applied.append("−1 " + item_name(medicine))
 	for op in ch.get("ops", []):
 		var arr: Array = op
 		if arr.is_empty():
@@ -709,12 +746,13 @@ func finish_raid(reason: String) -> Dictionary:
 	if raid == null:
 		return {}
 	var r = raid
-	if bool(flags.get("broadcast_pending", false)) and bool(flags.get("broadcast_signal", false)) \
-		and not bool(story_done.get("broadcast", false)) \
-		and reason != "downed" and reason != "abort":
+	var loc_id := String(r.loc["id"])
+	var returned := reason in ["extracted", "dawn"]
+	flags.erase("broadcast_pending") # 旧存档里的待播标记不跨夜使用
+	if loc_id == "market" and returned and r.market_signal_found \
+		and bool(flags.get("broadcast_signal", false)) and not bool(story_done.get("broadcast", false)):
 		story_id = "broadcast"
 		story_open = true
-		flags.erase("broadcast_pending")
 	var kept: Array = []
 	match reason:
 		"downed", "abort":
@@ -751,10 +789,8 @@ func finish_raid(reason: String) -> Dictionary:
 	# 节点状态：每次踏足余量 -50%，余量下限 5%
 	var loc: Dictionary = r.loc
 	night_complete = true
-	if String(loc.get("id", "")) == "broadcast_tower_302" and reason in ["extracted", "dawn"]:
-		flags["broadcast_complete"] = true
-		add_log("302 台把证词和幸存者名单送进了全城的收音机。",
-			"Tower 302 carries the testimony and survivor list into radios across the city.")
+	if returned:
+		_settle_story_objective(loc_id, reason)
 	var st: Dictionary = node_state(String(loc["id"]))
 	st["visits"] = int(st["visits"]) + 1
 	st["left"] = clampf(float(st["left"]) - 0.5, 0.05, 1.0)
@@ -806,6 +842,42 @@ func finish_raid(reason: String) -> Dictionary:
 	_sync_logbook()
 	return last_report
 
+func _settle_story_objective(loc_id: String, reason: String) -> void:
+	match loc_id:
+		"station_buran_yard":
+			if raid.story_objective_reached and not bool(flags.get("station_route", false)):
+				flags["station_route"] = true
+				_report_story_success("交接底单已抄回，鹰嘴崖检修路开放。", "The copied handover opens the Eagle's Crag maintenance route.")
+		"eagle_beak_cliff":
+			if reason == "extracted" and raid.story_objective_reached and not bool(flags.get("eagle_escape", false)):
+				flags["eagle_escape"] = true
+				if bool(flags.get("crag_rescue_lana", false)):
+					add_tally(1, "只带拉娜撤离", "Extracted only Lana")
+					_report_story_success("拉娜已撤离，车厢里的人留在身后。", "Lana is safe. The others remain in the car.")
+				else:
+					conscience = minf(100.0, conscience + 5.0)
+					_report_story_success("拉娜和能走的幸存者已撤离。", "Lana and the survivors able to walk are safe.")
+		"manor":
+			var slot: int = raid.manor_photo_slot
+			if slot >= 0 and (reason == "extracted" or slot % 2 == 0) and not bool(flags.get("truth", false)):
+				flags["truth"] = true
+				conscience = minf(100.0, conscience + 5.0)
+				_report_story_success("带回了焚化台账的照片。", "The photograph of the furnace ledger made it back.")
+		"broadcast_tower_302":
+			if raid.story_objective_reached and not bool(flags.get("broadcast_complete", false)):
+				flags["broadcast_complete"] = true
+				if not bool(flags.get("broadcast_omit_names", false)):
+					if bool(flags.get("broadcast_names", false)):
+						conscience = minf(100.0, conscience + 5.0)
+					_report_story_success("302 台播出了证词和幸存者名单。", "Tower 302 aired the testimony and the survivor list.")
+				else:
+					add_tally(1, "广播省略姓名", "Omitted names from the broadcast")
+					_report_story_success("302 台播出了罪证，省略了幸存者姓名。", "Tower 302 aired the evidence and omitted the survivors' names.")
+
+func _report_story_success(zh: String, en: String) -> void:
+	raid.add_event("good", zh, en)
+	add_log(zh, en)
+
 func report_meta(reason: String) -> Dictionary:
 	match reason:
 		"extracted":
@@ -823,7 +895,13 @@ func report_meta(reason: String) -> Dictionary:
 func to_base() -> void:
 	phase = "base"
 	if bool(flags.get("broadcast_complete", false)):
-		finished_demo = true
+		finish_campaign()
+
+func finish_campaign() -> void:
+	if not flags.has("final_ending"):
+		flags["final_ending"] = ending_key()
+	finished_demo = true
+	phase = "ending"
 
 var finished_demo := false
 
@@ -835,6 +913,22 @@ func receive_vikina_lead() -> bool:
 	flags["archive_lead"] = true
 	add_log("维京娜无意间提到，档案馆电报局留有 0420 号调度底单。阿列克谢决定今晚去找原件。",
 		"Vikina casually mentions that the Archive & Telegraph Office keeps the dispatch copy for file 0420. Aleksei decides to look for the original tonight.")
+	return true
+
+
+func resolve_vikina_dialogue(choice_id: String) -> bool:
+	if not bool(flags.get("archive_lead", false)):
+		return false
+	if choice_id not in ["vikina_ask", "vikina_quiet"]:
+		return false
+	flags["vikina_told_directly"] = choice_id == "vikina_ask"
+	flags["vikina_kept_quiet"] = choice_id == "vikina_quiet"
+	if choice_id == "vikina_ask":
+		add_log("阿列克谢追问维京娜，她确认底单已退回档案馆；她不愿再多说。",
+			"Aleksei asked Vikina directly. She confirmed the dispatch copy had gone back to the archive, then declined to say more.")
+	else:
+		add_log("阿列克谢没有惊动维京娜，把 0420 和“第三节”记了下来。",
+			"Aleksei left Vikina undisturbed and memorized 0420 and “third car.”")
 	return true
 
 func advance_day() -> void:
@@ -905,11 +999,11 @@ func ending_key() -> String:
 	return "TRUE_BETA_OUTLAND_FIRE"
 
 func ending_preview() -> Dictionary:
-	var key := ending_key()
+	var key := String(flags.get("final_ending", ending_key()))
 	var texts := {
 		"ENDING_A_RETURN_HOME": {
-			"zh": "【结局 A · 留在 602】你保住了母亲，卻没能带回真相。鹰嘴崖上的车厢仍封着，广播没有响起。",
-			"en": "[ENDING A · Room 602] You kept Mother alive, but brought back no truth. The car at Eagle's Crag remains sealed, and the broadcast never begins."},
+			"zh": "【结局 A · 留在 602】你回到母亲床边，决定到此为止。全城的收音机没有播出你找到的线索。",
+			"en": "[ENDING A · Room 602] You return to Mother's bedside and end the search. The city's radios never air what you found."},
 		"TRUE_ALPHA_HELLO_LANA": {
 			"zh": "【真结局 α · 你好，拉娜】零划痕、母亲存活、真相在手——鹰嘴崖的第三节车厢门被撬开。",
 			"en": "[TRUE ENDING α · Hello, Lana] Zero strokes, mother alive, the truth in hand — Boxcar 3 opens at Eagle's Crag."},
@@ -925,7 +1019,10 @@ func ending_preview() -> Dictionary:
 		"_": {"zh": "", "en": ""},
 	}
 	var t: Dictionary = texts.get(key, texts["_"])
-	if bool(flags.get("truth", false)):
+	if key == "TRUE_BETA_OUTLAND_FIRE" and mother_alive:
+		t["zh"] = "【真结局 β · 荒原之火】母亲还在，真相已经播出。有人出卖了你们，拉娜陪你守着城外的火。"
+		t["en"] = "[TRUE ENDING β · Outland Fire] Mother lives, and the truth is on air. Someone gave you up. Lana keeps watch by the fire outside the city."
+	if bool(flags.get("broadcast_complete", false)):
 		t["zh"] = String(t["zh"]) + "\n\n" + Data.PASHA_EPILOGUE_ZH
 		t["en"] = String(t["en"]) + "\n\n" + Data.PASHA_EPILOGUE_EN
 	return {"key": key, "zh": String(t["zh"]), "en": String(t["en"])}

@@ -109,6 +109,9 @@ var thrown_cans: Array[ThrownCan] = []
 
 var cam: Vector2 = Vector2.ZERO
 var pack: Array[String] = []
+var market_signal_found := false
+var story_objective_reached := false
+var manor_photo_slot := -1
 var pack_max: int = Data.BAG
 var load: Dictionary = {}
 var weapon: Dictionary = Data.weapon("crowbar")

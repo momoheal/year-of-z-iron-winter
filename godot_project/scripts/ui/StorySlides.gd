@@ -6,7 +6,9 @@ extends CanvasLayer
 ##
 ## 每页的数据（Dictionary，全部可选）：
 ##   img        String / Texture2D / Array —— 插图；Array 时取第一张存在的（方便以后补图自动生效）
-##   portrait   String —— 没有插图时显示的人物胸像
+##   portrait   String —— 人物胸像；有背景图时需同时设置 show_portrait=true 才叠加显示
+##   show_portrait bool —— 在场景图右下方叠加人物胸像
+##   choices    Array[Dictionary] —— 当前页结束后显示选项；每项含 id / zh / en / followup
 ##   zh / en    旁白
 ##   focus      Vector2(0..1) —— 镜头推向画面的哪个位置（默认正中）
 ##   zoom       Vector2(from, to) —— 镜头缩放（默认 1.03 → 1.12）
@@ -17,6 +19,7 @@ extends CanvasLayer
 ## 结束（看完或跳过）时发 finished 并 queue_free。本层不碰任何战役数据。
 
 signal finished
+signal choice_selected(choice_id: String)
 
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const HERO := preload("res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png")
@@ -42,8 +45,12 @@ var hero: TextureRect
 var soldier: TextureRect
 var portrait_frame: PanelContainer
 var portrait_rect: TextureRect
+var portrait_stage: CenterContainer
 var card_panel: PanelContainer
 var card_box: VBoxContainer
+var next_button: Button
+var skip_button: Button
+var choice_row: HBoxContainer
 
 var _root: Control
 var _fade: ColorRect
@@ -112,6 +119,7 @@ func _build() -> void:
 
 	# ---- 没有插图时的人物胸像 ----
 	var pc := CenterContainer.new()
+	portrait_stage = pc
 	pc.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	pc.offset_top = 70
 	pc.offset_bottom = -250
@@ -208,29 +216,40 @@ func _build() -> void:
 	counter.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(counter)
 
-	var next := Button.new()
-	next.text = "继续 ▸" if lang == "zh" else "NEXT ▸"
-	next.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	next.offset_left = -270
-	next.offset_right = -90
-	next.offset_top = -70
-	next.offset_bottom = -20
-	next.focus_mode = Control.FOCUS_NONE
-	SovietUI.dress_button(next, true, 16)
-	next.pressed.connect(press)
-	_root.add_child(next)
+	next_button = Button.new()
+	next_button.text = "继续 ▸" if lang == "zh" else "NEXT ▸"
+	next_button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	next_button.offset_left = -270
+	next_button.offset_right = -90
+	next_button.offset_top = -70
+	next_button.offset_bottom = -20
+	next_button.focus_mode = Control.FOCUS_NONE
+	SovietUI.dress_button(next_button, true, 16)
+	next_button.pressed.connect(press)
+	_root.add_child(next_button)
 
-	var skip := Button.new()
-	skip.text = "跳过 (Esc)" if lang == "zh" else "SKIP (Esc)"
-	skip.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	skip.offset_left = -440
-	skip.offset_right = -290
-	skip.offset_top = -70
-	skip.offset_bottom = -20
-	skip.focus_mode = Control.FOCUS_NONE
-	SovietUI.dress_button(skip, false, 14)
-	skip.pressed.connect(close)
-	_root.add_child(skip)
+	skip_button = Button.new()
+	skip_button.text = "跳过 (Esc)" if lang == "zh" else "SKIP (Esc)"
+	skip_button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	skip_button.offset_left = -440
+	skip_button.offset_right = -290
+	skip_button.offset_top = -70
+	skip_button.offset_bottom = -20
+	skip_button.focus_mode = Control.FOCUS_NONE
+	SovietUI.dress_button(skip_button, false, 14)
+	skip_button.pressed.connect(close)
+	_root.add_child(skip_button)
+
+	choice_row = HBoxContainer.new()
+	choice_row.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	choice_row.offset_left = 100
+	choice_row.offset_right = -480
+	choice_row.offset_top = -74
+	choice_row.offset_bottom = -20
+	choice_row.add_theme_constant_override("separation", 12)
+	choice_row.mouse_filter = Control.MOUSE_FILTER_STOP
+	choice_row.visible = false
+	_root.add_child(choice_row)
 
 	# 页间黑场：最后加，盖在所有东西上面
 	_fade = ColorRect.new()
@@ -275,12 +294,29 @@ func _show_page() -> void:
 	backdrop.modulate = Color(1, 1, 1, 1)
 	var card: Dictionary = s.get("card", {}) if s.get("card", {}) is Dictionary else {}
 	var has_card := not card.is_empty()
+	var choices: Array = s.get("choices", []) if s.get("choices", []) is Array else []
+	var has_choices := not choices.is_empty()
 	if has_card:
 		backdrop.modulate = Color(0.42, 0.44, 0.48, 1)      # 结果卡那页把底图压暗
 	actors.visible = bool(s.get("actors", false))
 	var ptex := tex_of(s.get("portrait", ""))
-	portrait_frame.visible = tex == null and ptex != null and not has_card
+	var portrait_overlay := tex != null and bool(s.get("show_portrait", false))
+	portrait_frame.visible = ptex != null and not has_card and (tex == null or portrait_overlay)
 	portrait_rect.texture = ptex
+	if portrait_overlay:
+		portrait_stage.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+		portrait_stage.offset_left = -430
+		portrait_stage.offset_right = -100
+		portrait_stage.offset_top = -675
+		portrait_stage.offset_bottom = -285
+		portrait_frame.custom_minimum_size = Vector2(310, 310)
+		portrait_rect.custom_minimum_size = Vector2(290, 290)
+	else:
+		portrait_stage.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		portrait_stage.offset_top = 70
+		portrait_stage.offset_bottom = -250
+		portrait_frame.custom_minimum_size = Vector2(0, 0)
+		portrait_rect.custom_minimum_size = Vector2(460, 460)
 	card_panel.visible = has_card
 	if has_card:
 		_fill_card(card)
@@ -290,6 +326,24 @@ func _show_page() -> void:
 	_zoom = z if z is Vector2 else Vector2(1.03, 1.12)
 	caption.text = String(s.get("zh" if lang == "zh" else "en", ""))
 	caption.visible_characters = 0
+	counter.visible = not has_choices
+	next_button.visible = not has_choices
+	choice_row.visible = has_choices
+	for child in choice_row.get_children():
+		choice_row.remove_child(child)
+		child.queue_free()
+	if has_choices:
+		for option in choices:
+			if not option is Dictionary:
+				continue
+			var choice_button := Button.new()
+			choice_button.text = String(option.get("zh" if lang == "zh" else "en", ""))
+			choice_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			choice_button.custom_minimum_size = Vector2(0, 52)
+			choice_button.focus_mode = Control.FOCUS_NONE
+			SovietUI.dress_button(choice_button, true, 16)
+			choice_button.pressed.connect(_choose_dialogue.bind(String(option.get("id", ""))))
+			choice_row.add_child(choice_button)
 	_typed = 0.0
 	heading.text = heading_zh if lang == "zh" else heading_en
 	var fmt := "%d / %d   ·   空格 / 回车 / 点击 继续   ·   Esc 跳过" if lang == "zh" \
@@ -390,6 +444,12 @@ func _input(event: InputEvent) -> void:
 		elif k == KEY_SPACE or k == KEY_ENTER or k == KEY_KP_ENTER:
 			get_viewport().set_input_as_handled()
 			press()
+		elif k == KEY_1 or k == KEY_2:
+			get_viewport().set_input_as_handled()
+			var options: Array = current().get("choices", []) if current().get("choices", []) is Array else []
+			var index := 0 if k == KEY_1 else 1
+			if index < options.size() and options[index] is Dictionary:
+				_choose_dialogue(String(options[index].get("id", "")))
 		else:
 			# 演出期间别让其它热键（L / M / F1…）漏到下面的战役界面
 			get_viewport().set_input_as_handled()
@@ -409,6 +469,8 @@ func press() -> void:
 	if not text_done():
 		caption.visible_characters = -1
 		return
+	if not (current().get("choices", []) as Array).is_empty():
+		return
 	advance()
 
 
@@ -416,11 +478,35 @@ func press() -> void:
 func advance() -> void:
 	if _closed:
 		return
+	if not (current().get("choices", []) as Array).is_empty():
+		return
 	page += 1
 	if page >= slides.size():
 		close()
 	else:
 		_show_page()
+
+
+func _choose_dialogue(choice_id: String) -> void:
+	if _closed or choice_id == "":
+		return
+	var s := current()
+	var selected: Dictionary = {}
+	for option in s.get("choices", []):
+		if option is Dictionary and String(option.get("id", "")) == choice_id:
+			selected = option
+			break
+	if selected.is_empty():
+		return
+	choice_selected.emit(choice_id)
+	var followup: Variant = selected.get("followup", {})
+	if followup is Dictionary and not followup.is_empty():
+		s.erase("choices")
+		slides.append(followup.duplicate(true))
+		page += 1
+		_show_page()
+	else:
+		close()
 
 
 func close() -> void:

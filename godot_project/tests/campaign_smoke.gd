@@ -446,7 +446,7 @@ func _run_tests() -> void:
 	sim.flags.erase("betrayed")
 	sim.mother_alive = true
 	_assert(sim.ending_key() == "TRUE_ALPHA_HELLO_LANA", "77. truth + clean hands → TRUE α")
-	_assert(String(sim.ending_preview()["zh"]).contains("帕沙"), "77b. Pasha epilogue follows the breakout")
+	_assert(not String(sim.ending_preview()["zh"]).contains("帕沙"), "77b. preview omits the epilogue before the broadcast")
 	sim.tally = 1
 	_assert(sim.ending_key() == "ENDING_B_FLAWED_LIBERATION", "78. strokes → ending B")
 	sim.mother_alive = false
@@ -503,41 +503,34 @@ func _run_tests() -> void:
 	await _frames(2)
 	_assert(hud.body.get_child_count() > 0, "87. base screen builds")
 	var base_buttons: Array = hud.body.find_children("*", "Button", true, false)
-	var has_talk := false
-	var has_fluid := false
-	var has_display := false
+	var room_buttons: Array[String] = []
 	for button in base_buttons:
-		var button_text := String((button as Button).text)
-		has_talk = has_talk or button_text == "和妈妈说话"
-		has_fluid = has_fluid or button_text == "交透析液 ×1"
-		has_display = has_display or button_text == "陈列"
-	_assert(has_talk and has_fluid and has_display, "87a. Room 602 exposes mother, dialysis and display interactions")
-	var has_room_zones := false
-	for button in base_buttons:
-		has_room_zones = has_room_zones or String((button as Button).text) == "进入 602 室 · 房间分区"
-	_assert(has_room_zones, "87c. base screen exposes the room-zone UI")
-	hud.call("_open_room_zones", "mother")
+		room_buttons.append((button as Button).text)
+	_assert(room_buttons.count("和妈妈说话") == 1 and room_buttons.count("交透析液 ×1") == 1
+		and not room_buttons.has("陈列"), "87a. mother actions appear once, inside the mother tab")
+	var art := hud.body.find_child("RoomZoneBackground", true, false) as TextureRect
+	var actions := hud.body.find_child("RoomZoneActions", true, false) as ScrollContainer
+	_assert(art != null and actions != null and not art.get_global_rect().intersects(actions.get_global_rect()),
+		"87c. room art and controls occupy distinct areas")
+	_assert(room_buttons.has("母亲区域") and room_buttons.has("储物区") and room_buttons.has("武器与队伍"),
+		"87d. room tabs are available directly on the base screen")
+	hud.call("_select_room_zone", "storage")
 	hud.refresh()
 	await _frames(2)
-	_assert(hud.room_zones_open() and String(hud.get("_modal_kind")) == "room_zones",
-		"87d. room-zone modal opens on the mother area")
-	var room_buttons: Array = hud.modal.find_children("*", "Button", true, false)
-	var room_tabs := {"母亲区域": false, "储物区": false, "武器区": false}
-	for button in room_buttons:
-		var room_text := String((button as Button).text)
-		if room_tabs.has(room_text): room_tabs[room_text] = true
-	_assert(bool(room_tabs["母亲区域"]) and bool(room_tabs["储物区"]) and bool(room_tabs["武器区"]),
-		"87e. 602 has mother, storage and weapon tabs")
+	var storage_buttons := []
+	for button in hud.body.find_children("*", "Button", true, false):
+		storage_buttons.append(button.text)
+	_assert(storage_buttons.has("陈列") and not storage_buttons.has("和妈妈说话"),
+		"87e. storage exposes display controls only")
 	sim.flags["market_refuge_found"] = true
 	hud.call("_select_room_zone", "refuge")
 	hud.refresh()
 	await _frames(2)
-	var refuge_background := hud.modal.find_child("RoomZoneBackground", true, false) as TextureRect
+	var refuge_background := hud.body.find_child("RoomZoneBackground", true, false) as TextureRect
 	_assert(refuge_background != null and refuge_background.texture != null
 		and refuge_background.texture.resource_path.ends_with("BG_Market_Hideout.png"),
 		"87f. unlocked refuge tab displays its generated background")
 	sim.flags.erase("market_refuge_found")
-	hud.call("close_room_zones")
 	hud.refresh()
 	await _frames(2)
 	sim.phase = "report"
