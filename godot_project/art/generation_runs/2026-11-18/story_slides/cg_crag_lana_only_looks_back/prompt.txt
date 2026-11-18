@@ -1,0 +1,9 @@
+Use case: illustration-story
+Asset type: 16:9 Godot narrative cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input images: Image 1 is the just-established sibling reunion at Eagle's Crag and locks Lana and Aleksei's identities, clothing, and oil-painting style; Image 2 is the same Crag wreck and maintenance path.
+Scene/backdrop: The same snowy maintenance path outside the buckled Boxcar Three from Image 2, moments after the reunion in Image 1.
+Subject: Only Lana and Aleksei, shown from behind/three-quarter view. Lana has stopped on the snow slope and looks back toward the boxcar door as it begins to close. Aleksei stands beside her with his original pack. Their two sets of footprints continue away from the car; the empty path behind them is visible.
+Style/medium: Match Image 1's realistic thick impasto oil painting, natural adult proportions, cold gray-blue snow, dirty white, rusted rail and worn winter clothes.
+Composition/framing: Wide landscape 16:9, siblings in the upper middle, boxcar door and empty path readable behind them, lower area kept calm for subtitle text.
+Lighting/mood: Cold, wind-driven dawn light, quiet and unresolved.
+Constraints: Exactly the two siblings. Do not show people inside or beyond the boxcar, bodies, rescued crowds, other companions, or a third figure. Do not imply that anyone else was rescued. No readable text, captions, UI, title, or watermark. Maintain both identities and clothing from Image 1.

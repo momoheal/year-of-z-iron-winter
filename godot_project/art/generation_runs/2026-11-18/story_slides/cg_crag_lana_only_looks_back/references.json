@@ -1,0 +1,8 @@
+{
+  "references": [
+    "generated:cg_crag_lana_reunion_no_fixed_companion",
+    "art/60_ui/cg/cg_eaglecliff_derailment_scene.jpg"
+  ],
+  "generated_output": "generated_output.png",
+  "final_file": "art/60_ui/cg/cg_crag_lana_only_looks_back.jpg"
+}
