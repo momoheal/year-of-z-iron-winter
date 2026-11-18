@@ -15,6 +15,7 @@ const SPEED_INVESTIGATE := 2.1
 const SPEED_ALERT := 3.1
 const AIM_TIME := 0.5
 const SHOOT_RANGE := 14.0
+const MARKET_STANDOFF_M := 20.0 # 仅巡逻路点避让黑市；一旦有调查/警戒目标就改以目标为准，否则会背对近处玩家
 
 @export var route: PackedVector2Array = PackedVector2Array()   # 像素坐标
 @export_enum("loop", "pingpong") var mode := "loop"
@@ -218,6 +219,11 @@ func command_stop(seconds: float) -> void:
 	_moving = false
 
 func _move_to(p: Vector2, spd_m: float, arrive_px: float = 6.0) -> bool:
+	# 有调查/警戒目标时，朝向和移动都以目标为准；黑市 standoff 只用于无目标的巡逻路点。
+	# 否则 standoff 会把追向玩家的脚步和手电一起拽向黑市反方向，让玩家永远落在视锥外。
+	var pursuing := state in ["investigate", "alert"]
+	if not pursuing:
+		p = _market_standoff_goal(p)
 	var d := p - global_position
 	if d.length() <= arrive_px:
 		velocity = Vector2.ZERO
@@ -225,12 +231,50 @@ func _move_to(p: Vector2, spd_m: float, arrive_px: float = 6.0) -> bool:
 	# 绕障：有共享网格就朝下一个路点走，直线可达时路点就是目标本身
 	var wp: Vector2 = _nav.next(ctl.get("nav") if ctl != null else null, global_position, p,
 		get_physics_process_delta_time())
+	if not pursuing:
+		wp = _market_standoff_goal(wp)
 	var dw := wp - global_position
 	var dm := Vector2(dw.x / PPM, dw.y / (PPM * SQ)).normalized()
 	velocity = Vector2(dm.x * PPM, dm.y * PPM * SQ) * spd_m
 	move_and_slide()
-	facing = lerp_angle(facing, atan2(dm.y, dm.x), 0.18)
+	var face_dir: Vector2 = dm
+	if pursuing:
+		var to_target := Vector2((p.x - global_position.x) / PPM,
+			(p.y - global_position.y) / (PPM * SQ))
+		if to_target.length_squared() > 0.0001:
+			face_dir = to_target.normalized()
+	facing = lerp_angle(facing, atan2(face_dir.y, face_dir.x), 0.18)
 	return false
+
+
+func _market_standoff_goal(destination: Vector2) -> Vector2:
+	if ctl == null:
+		return destination
+	for market in ctl.markets:
+		if not is_instance_valid(market):
+			continue
+		var market_node := market as Node2D
+		var from_market := Vector2((global_position.x - market_node.global_position.x) / PPM,
+			(global_position.y - market_node.global_position.y) / (PPM * SQ))
+		var to_goal := Vector2((destination.x - market_node.global_position.x) / PPM,
+			(destination.y - market_node.global_position.y) / (PPM * SQ))
+		var closest := to_goal
+		var segment := to_goal - from_market
+		if segment.length_squared() > 0.0001:
+			var along := clampf(-from_market.dot(segment) / segment.length_squared(), 0.0, 1.0)
+			closest = from_market + segment * along
+		if from_market.length() >= MARKET_STANDOFF_M \
+			and to_goal.length() >= MARKET_STANDOFF_M \
+			and closest.length() >= MARKET_STANDOFF_M - 0.05:
+			continue
+		var away := from_market
+		if away.length_squared() < 0.01:
+			away = -to_goal
+		if away.length_squared() < 0.01:
+			away = Vector2.RIGHT
+		var safe_offset := away.normalized() * MARKET_STANDOFF_M
+		destination = market_node.global_position + Vector2(safe_offset.x * PPM, safe_offset.y * PPM * SQ)
+	return destination
 
 func _arrive_waypoint() -> void:
 	var at_end := mode == "loop" or _wp == 0 or _wp == route.size() - 1

@@ -1810,12 +1810,49 @@ func _displayed_weapon_art(weapon_id: String) -> String:
 	return ""
 
 
+func _room_weapon_mount(parent: Control, art_path: String, rect: Rect2) -> void:
+	if not ResourceLoader.exists(art_path):
+		return
+	var mount := Control.new()
+	mount.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	mount.anchor_left = rect.position.x
+	mount.anchor_top = rect.position.y
+	mount.anchor_right = rect.position.x + rect.size.x
+	mount.anchor_bottom = rect.position.y + rect.size.y
+	mount.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(mount)
+	var weapon := TextureRect.new()
+	weapon.texture = load(art_path) as Texture2D
+	weapon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	weapon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	weapon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	weapon.modulate = Color(0.9, 0.86, 0.76, 1.0)
+	weapon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	weapon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	weapon.z_index = 1
+	mount.add_child(weapon)
+	# A narrow warm metal keeper sits over the hook contact point. The old pair of
+	# broad vertical bars floated across each weapon and made it look taped on.
+	var keeper := ColorRect.new()
+	keeper.color = Color(0.58, 0.45, 0.28, 0.88)
+	keeper.anchor_left = 0.47
+	keeper.anchor_right = 0.53
+	keeper.anchor_top = 0.37
+	keeper.anchor_bottom = 0.62
+	keeper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	keeper.z_index = 2
+	mount.add_child(keeper)
+
+
 func _add_displayed_weapon_props(parent: Control) -> void:
 	var slots := [
-		Rect2(0.375, 0.292, 0.15, 0.105),
-		Rect2(0.535, 0.292, 0.15, 0.105),
-		Rect2(0.375, 0.432, 0.15, 0.105),
-		Rect2(0.535, 0.432, 0.15, 0.105),
+		# Center each prop on the painted hook: upper row at x≈0.38/0.61,
+		# lower row at x≈0.44/0.59. Slightly wider silhouettes read as real stock,
+		# not tiny icons floating over the rack.
+		Rect2(0.29, 0.285, 0.18, 0.12),
+		Rect2(0.52, 0.285, 0.18, 0.12),
+		Rect2(0.35, 0.375, 0.18, 0.12),
+		Rect2(0.50, 0.375, 0.18, 0.12),
 	]
 	var slot_index := 0
 	for ref in sim.base_display:
@@ -1825,7 +1862,7 @@ func _add_displayed_weapon_props(parent: Control) -> void:
 		var art_path := _displayed_weapon_art(parts[1])
 		if art_path == "" or slot_index >= slots.size():
 			continue
-		_room_prop(parent, art_path, slots[slot_index])
+		_room_weapon_mount(parent, art_path, slots[slot_index])
 		slot_index += 1
 
 
@@ -1908,7 +1945,7 @@ func _build_weapon_zone(actions: VBoxContainer) -> void:
 		actions.add_child(_weapon_row(weapon))
 	actions.add_child(_sep())
 	actions.add_child(_label(_tr("同行伙伴", "Companion"), FONT_SIZES["h3"], SovietUI.BONE))
-	actions.add_child(_mate_row("none", "🚶", _tr("独自行动", "Go alone"),
+	actions.add_child(_mate_row("none", "—", _tr("独自行动", "Go alone"),
 		_tr("独自潜入。", "Infiltrate alone."), true))
 	for mate in Data.MATES:
 		var id := String(mate["id"])

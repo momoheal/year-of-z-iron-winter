@@ -146,7 +146,7 @@ var shake := 0.0               # 创伤量 0..1（实际位移按 shake²）
 var punch := 0.0               # 受伤时的推镜量
 var _shake_t := 0.0
 
-var state := "play"            # play | choice | modding | frozen | downed | extracted | dawn | abort
+var state := "play"            # play | choice | interaction | modding | frozen | downed | extracted | dawn | abort
 var pack: Array[String] = []
 var warmth := 100.0
 var hp := 100.0
@@ -173,9 +173,17 @@ var zone_curfew := false       # 红区：已经被清杀队盯上
 var zone_seen := {}            # 已经进过的区（只报一次「进入黑区」）
 var markets: Array = []        # 黑市（night_market）
 var market_used := false       # 黑市一夜只做一次买卖
+var market_rumor_heard := false
 var robbed_markets := {}
 var survivors: Array = []      # 黑区的幸存者（night_survivor）
 var survivor_seen := {}
+var survivor_rumor_heard := {}
+var survivor_ration_given := {}
+var loot_pickups: Array[Node2D] = []
+var interaction_target: Node2D = null
+var interaction_kind := ""
+var interaction_message := ""
+var _interaction_options: Array[Dictionary] = []
 
 var conscience := 0.0          # 本夜良知变化
 var tally := 0                 # 卌 划痕（亲手灭口才划）
@@ -268,6 +276,10 @@ var _brief_lbl: Label
 var _choice_panel: PanelContainer
 var _choice_head: Label
 var _choice_lbl: Label
+var _interaction_panel: PanelContainer
+var _interaction_head: Label
+var _interaction_lbl: Label
+var _interaction_actions: VBoxContainer
 var _weapon_mod_panel: PanelContainer
 var _weapon_mod_label: Label
 var _osk_bark_panel: PanelContainer = null
@@ -675,9 +687,17 @@ func _update_interact(delta: float) -> void:
 	if mech != null and Input.is_action_just_pressed("interact"):
 		use_mechanism(mech)
 		return
+	var drop := nearest_loot_pickup()
+	if drop != null and Input.is_action_just_pressed("interact"):
+		_collect_loot_pickup(drop)
+		return
 	var mkt := nearest_market()
 	if mkt != null and Input.is_action_just_pressed("interact"):
-		trade_market(mkt)
+		_open_market_interaction(mkt)
+		return
+	var sv := nearest_survivor()
+	if sv != null and Input.is_action_just_pressed("interact"):
+		_open_survivor_interaction(sv)
 		return
 	var holding := Input.is_action_pressed("interact")
 	var near_exit := dist_m(player.global_position, exit_px) <= REACH
@@ -769,6 +789,153 @@ func nearest_corpse() -> Node2D:
 			best = n as Node2D
 	return best
 
+
+func nearest_loot_pickup() -> Node2D:
+	var best: Node2D = null
+	var bd := REACH * 1.4
+	for drop in loot_pickups:
+		if not is_instance_valid(drop):
+			continue
+		var d := dist_m(player.global_position, drop.global_position)
+		if d < bd:
+			bd = d
+			best = drop
+	return best
+
+
+func _weapon_pickup_texture(id: String) -> String:
+	match id:
+		"rifle": return "res://art/30_props/PRP_Rifle_Mosin.png"
+		"shotgun": return "res://art/30_props/PRP_Shotgun_Sawn.png"
+		"pistol": return "res://art/30_props/PRP_Pistol_TT.png"
+		"crowbar": return "res://art/30_props/PRP_Crowbar_Rail.png"
+		"cleaver": return "res://art/30_props/PRP_CleaverBoard.png"
+	return ""
+
+
+func _spawn_loot_pickup(kind: String, id: String, pos: Vector2, label_text: String,
+		amount := 0) -> Node2D:
+	var drop := Node2D.new()
+	drop.name = "LootPickup"
+	drop.add_to_group("night_loot_pickup")
+	drop.set_meta("loot_kind", kind)
+	drop.set_meta("loot_id", id)
+	drop.set_meta("label_zh", label_text)
+	drop.set_meta("amount", amount)
+	drop.z_index = 2
+	$World.add_child(drop)
+	drop.global_position = pos
+	var ground_mark := Polygon2D.new()
+	ground_mark.polygon = PackedVector2Array([
+		Vector2(0, -11), Vector2(24, 0), Vector2(0, 11), Vector2(-24, 0)])
+	ground_mark.color = Color(0.54, 0.39, 0.18, 0.42)
+	drop.add_child(ground_mark)
+	var icon_path := "res://art/30_props/PRP_Aleksei_FieldBackpack.png"
+	var icon_scale := Vector2(0.14, 0.14)
+	if kind == "weapon":
+		icon_path = _weapon_pickup_texture(id)
+		icon_scale = Vector2(0.32, 0.32)
+	elif kind == "ammo":
+		icon_path = "res://art/30_props/PRP_Ammo_Box_Open.png"
+		icon_scale = Vector2(0.48, 0.48)
+	if icon_path == "" or not ResourceLoader.exists(icon_path):
+		icon_path = "res://art/30_props/PRP_Aleksei_FieldBackpack.png"
+	var icon := Sprite2D.new()
+	icon.texture = load(icon_path) as Texture2D
+	icon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	icon.centered = true
+	icon.scale = icon_scale
+	icon.position = Vector2(0, -9)
+	icon.z_index = 1
+	drop.add_child(icon)
+	var tag := Label.new()
+	tag.text = label_text
+	tag.position = Vector2(-82, -67)
+	tag.size = Vector2(164, 22)
+	tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tag.add_theme_font_override("font", SovietUI.mono_font())
+	tag.add_theme_font_size_override("font_size", 11)
+	tag.add_theme_color_override("font_color", Color("#f3d293"))
+	tag.add_theme_color_override("font_outline_color", Color("#131719"))
+	tag.add_theme_constant_override("outline_size", 5)
+	tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tag.z_index = 2
+	drop.add_child(tag)
+	loot_pickups.append(drop)
+	return drop
+
+
+func _spawn_item_drop(id: String, pos: Vector2) -> void:
+	_spawn_loot_pickup("item", id, pos, item_name(id))
+
+
+func _spawn_osk_drops(soldier: Node2D) -> void:
+	var weapon_id := String(soldier.get("loot_weapon_id"))
+	if not Arsenal.is_gun(weapon_id):
+		weapon_id = "rifle"
+	var weapon_name := "缴获 · %s" % Arsenal.name_zh(weapon_id)
+	_spawn_loot_pickup("weapon", weapon_id, soldier.global_position + Vector2(-26, 10), weapon_name)
+	var supply_count := 2 if mate_id == "zakhar" else 1
+	var supplies := _roll_items(OSK_SUPPLY_CATS, supply_count)
+	for i in supplies.size():
+		var offset := Vector2(26.0 + float(i) * 18.0, 12.0 + float(i % 2) * 11.0)
+		_spawn_item_drop(supplies[i], soldier.global_position + offset)
+	# 掉落物是地面拾取物；corpse_searched 只由 _finish_corpse_search 记录「搜尸→直接进包」，
+	# 不能在这里提前置位，否则缴获武器/补给的搜尸路径会被整段跳过。
+	spawn_float(soldier.global_position + Vector2(0, -154),
+		"清杀兵掉落了武器和补给 · 按 E 拾取", Color("#f3d293"))
+
+
+func _collect_loot_pickup(drop: Node2D) -> bool:
+	if not is_instance_valid(drop):
+		return false
+	var kind := String(drop.get_meta("loot_kind", "item"))
+	var id := String(drop.get_meta("loot_id", ""))
+	var note := ""
+	match kind:
+		"weapon":
+			if not weapons.has(id):
+				_add_weapon(id)
+				note = "缴获武器：%s" % Arsenal.name_zh(id)
+			else:
+				var spec: Dictionary = Arsenal.spec(id)
+				var mag_cap := int(spec.get("mag", 0))
+				var reserve_cap := int(spec.get("reserve_max", 0))
+				var mag_add := mini(maxi(1, int(mag_cap / 2.0)), maxi(0, mag_cap - int(mag.get(id, 0))))
+				var reserve_add := mini(maxi(2, int(int(spec.get("reserve", 0)) / 3.0)),
+					maxi(0, reserve_cap - int(reserve.get(id, 0))))
+				if mag_add + reserve_add <= 0:
+					spawn_float(drop.global_position + Vector2(0, -98), "这把枪的弹药已经补满", Color("#94a3b8"))
+					return false
+				mag[id] = int(mag.get(id, 0)) + mag_add
+				reserve[id] = int(reserve.get(id, 0)) + reserve_add
+				note = "%s · 弹药补充" % Arsenal.name_zh(id)
+		"ammo":
+			var cap := int(Arsenal.spec(id).get("reserve_max", 32))
+			var current := int(reserve.get(id, 0))
+			var gained := mini(int(drop.get_meta("amount", 0)), maxi(0, cap - current))
+			if gained <= 0:
+				spawn_float(drop.global_position + Vector2(0, -98), "这类弹药已经装满", Color("#94a3b8"))
+				return false
+			reserve[id] = current + gained
+			note = "+%d %s" % [gained, Arsenal.short_zh(id)]
+		"item":
+			if pack.size() >= bag_max:
+				spawn_float(drop.global_position + Vector2(0, -98), "背包已满 · 物资留在地上", Color("#fbbf24"))
+				return false
+			pack.append(id)
+			ammo_from_item(id)
+			note = "拾取：%s" % item_name(id)
+	if kind == "weapon" and id == "rifle":
+		osk_rifle_recovered = true
+	loot_pickups.erase(drop)
+	var at := drop.global_position
+	drop.queue_free()
+	spawn_float(at + Vector2(0, -112), note, Color("#f3d293"))
+	sfx.play("beep")
+	emit_noise(at, 1.2, "search")
+	return true
+
 # ============================================================================
 # 三区（白 / 红 / 黑）：进区提示、红区禁止进入的盘问、黑区资源加成
 # ============================================================================
@@ -837,7 +1004,57 @@ func nearest_market() -> Node2D:
 	return best
 
 
+func nearest_survivor() -> Node2D:
+	var best: Node2D = null
+	var bd := REACH * 1.4
+	for candidate in survivors:
+		if not is_instance_valid(candidate) or String(candidate.get_meta("role", "survivor")) == "trader":
+			continue
+		var n := candidate as Node2D
+		var d := dist_m(player.global_position, n.global_position)
+		if d < bd:
+			bd = d
+			best = n
+	return best
+
+
+func _market_ammo_quote(m: Node2D) -> Dictionary:
+	var wid := ""
+	if in_campaign:
+		if RaidBridge.sim != null:
+			var wv: Variant = RaidBridge.cfg.get("weapon", {})
+			var campaign_id := String(wv.get("id", "crowbar")) if wv is Dictionary else String(wv)
+			var mapped := String(CARRY_MAP.get(campaign_id, ""))
+			if weapons.has(mapped) and Arsenal.is_gun(mapped):
+				wid = mapped
+	else:
+		for id in ["rifle", "shotgun", "pistol"]:
+			if weapons.has(id):
+				wid = id
+				break
+	var cost := int(m.get_meta("cans", 1))
+	var gain := int(m.get_meta("ammo", 8))
+	var quote := {"weapon": wid, "cost": cost, "gain": gain, "amount": 0, "reason": ""}
+	if market_used:
+		quote["reason"] = "今晚的交易额度已用"
+	elif wid == "":
+		quote["reason"] = "你还没有枪"
+	elif cans < cost:
+		quote["reason"] = "罐头不足（需要 %d）" % cost
+	else:
+		var cap := int(Arsenal.spec(wid).get("reserve_max", 32))
+		var cur := int(reserve.get(wid, 0))
+		quote["amount"] = mini(gain, maxi(0, cap - cur))
+		if int(quote["amount"]) <= 0:
+			quote["reason"] = "这把枪的备弹已满"
+	return quote
+
+
 func trade_market(m: Node2D) -> bool:
+	var quote := _market_ammo_quote(m)
+	if String(quote["reason"]) != "":
+		spawn_float(m.global_position + Vector2(0, -110), "摊主：%s" % String(quote["reason"]), Color("#94a3b8"))
+		return false
 	if market_used:
 		spawn_float(m.global_position + Vector2(0, -110), "摊主：今晚就这样了", Color("#94a3b8"))
 		return false
@@ -870,7 +1087,169 @@ func trade_market(m: Node2D) -> bool:
 	return true
 
 
-## 幸存者：走近了说一句话（不挡路、不交互，纯气氛 + 黑区有人在的证明）
+func _open_market_interaction(m: Node2D) -> void:
+	_open_interaction("market", m)
+
+
+func _open_survivor_interaction(sv: Node2D) -> void:
+	_open_interaction("survivor", sv)
+
+
+func _open_interaction(kind: String, target: Node2D) -> void:
+	if state != "play" or not is_instance_valid(target):
+		return
+	interaction_kind = kind
+	interaction_target = target
+	interaction_message = ""
+	state = "interaction"
+	player.frozen = true
+	search_target = null
+	search_prog = 0.0
+	extract_prog = 0.0
+	_show_interaction()
+
+
+func _close_interaction() -> void:
+	if state != "interaction":
+		return
+	state = "play"
+	player.frozen = false
+	interaction_target = null
+	interaction_kind = ""
+	_interaction_panel.visible = false
+
+
+func _add_interaction_option(id: String, label: String, enabled := true) -> void:
+	_interaction_options.append({"id": id, "label": label, "enabled": enabled})
+
+
+func _show_interaction() -> void:
+	if _interaction_panel == null or not is_instance_valid(interaction_target):
+		return
+	_interaction_options.clear()
+	if interaction_kind == "market":
+		var quote := _market_ammo_quote(interaction_target)
+		var ammo_text := "一罐头换 %d 发 %s弹药" % [int(quote["gain"]), Arsenal.short_zh(String(quote["weapon"]))]
+		if String(quote["reason"]) != "":
+			ammo_text += "（%s）" % String(quote["reason"])
+		_add_interaction_option("ammo", ammo_text, String(quote["reason"]) == "")
+		var band_reason := ""
+		if market_used:
+			band_reason = "今晚的交易额度已用"
+		elif cans < 2:
+			band_reason = "罐头不足（需要 2）"
+		elif pack.size() >= bag_max:
+			band_reason = "背包已满"
+		var band_text := "两罐头换一卷绷带"
+		if band_reason != "":
+			band_text += "（%s）" % band_reason
+		_add_interaction_option("bandage", band_text, band_reason == "")
+		_add_interaction_option("rumor",
+			"打听附近线索（已问过）" if market_rumor_heard else "打听附近线索",
+			not market_rumor_heard)
+		_add_interaction_option("leave", "离开摊位")
+	else:
+		var key := str(interaction_target.get_instance_id())
+		_add_interaction_option("rumor",
+			"问问附近的情况（已问过）" if bool(survivor_rumor_heard.get(key, false)) else "问问附近的情况",
+			not bool(survivor_rumor_heard.get(key, false)))
+		var ration_reason := ""
+		if bool(survivor_ration_given.get(key, false)):
+			ration_reason = "已经给过他罐头"
+		elif cans < 1:
+			ration_reason = "没有罐头"
+		var ration_text := "分给对方 1 罐头（良知 +3）"
+		if ration_reason != "":
+			ration_text += "（%s）" % ration_reason
+		_add_interaction_option("ration", ration_text, ration_reason == "")
+		_add_interaction_option("leave", "告别")
+
+	_interaction_head.text = "ЧЕРНЫЙ РЫНОК · 黑市商人" if interaction_kind == "market" \
+		else String(interaction_target.get_meta("title_zh", "附近的幸存者"))
+	_interaction_lbl.text = interaction_message if interaction_message != "" \
+		else "你可以按数字选择，也可以用鼠标点击。按 Esc 离开。"
+	for child in _interaction_actions.get_children():
+		child.free()
+	for i in _interaction_options.size():
+		var option: Dictionary = _interaction_options[i]
+		var button := Button.new()
+		button.text = "[%d] %s" % [i + 1, String(option["label"])]
+		button.custom_minimum_size = Vector2(0, 48)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.disabled = not bool(option["enabled"])
+		SovietUI.dress_button(button, true, 15)
+		button.pressed.connect(_choose_interaction.bind(i))
+		_interaction_actions.add_child(button)
+	_interaction_panel.visible = true
+
+
+func _choose_interaction(index: int) -> void:
+	if state != "interaction" or index < 0 or index >= _interaction_options.size():
+		return
+	var option: Dictionary = _interaction_options[index]
+	if not bool(option["enabled"]):
+		return
+	var id := String(option["id"])
+	if id == "leave":
+		_close_interaction()
+		return
+	if id == "ammo":
+		if trade_market(interaction_target):
+			interaction_message = "交易完成。商人把货物推到灯影里，今晚不再做第二笔。"
+		else:
+			interaction_message = "商人摇了摇头：今晚这笔交易做不成。"
+	elif id == "bandage":
+		if market_used or cans < 2 or pack.size() >= bag_max:
+			interaction_message = "商人摆摆手：罐头不够、背包已满，或今晚的交易额度已经用完。"
+		else:
+			cans -= 2
+			pack.append("band")
+			market_used = true
+			interaction_message = "你用两罐头换到一卷绷带。今晚的交易额度已用。"
+			spawn_float(interaction_target.global_position + Vector2(0, -110),
+				"黑市：−2 罐头 · +1 绷带", SovietUI.SIGNAL)
+			sfx.play("click", -2.0)
+			emit_noise(interaction_target.global_position, 2.0, "search")
+	elif id == "rumor":
+		if interaction_kind == "market":
+			market_rumor_heard = true
+		else:
+			survivor_rumor_heard[str(interaction_target.get_instance_id())] = true
+		interaction_message = _landmark_rumor(interaction_target.global_position)
+	elif id == "ration":
+		var key := str(interaction_target.get_instance_id())
+		if cans < 1 or bool(survivor_ration_given.get(key, false)):
+			interaction_message = "你翻了翻口袋，已没有可以分给他的罐头。"
+		else:
+			cans -= 1
+			survivor_ration_given[key] = true
+			conscience += 3.0
+			var title := String(interaction_target.get_meta("title_zh", "幸存者"))
+			interaction_message = "%s接过罐头，低声道谢。良知 +3。" % title
+			spawn_float(interaction_target.global_position + Vector2(0, -112),
+				"−1 罐头 · 良知 +3", Color("#86efac"))
+			sfx.play("click", -4.0)
+	_show_interaction()
+
+
+func _landmark_rumor(anchor: Vector2) -> String:
+	var best: Dictionary = {}
+	var best_distance := INF
+	for landmark in landmarks:
+		var name := String(landmark.get("name", ""))
+		var note := String(landmark.get("note", ""))
+		if name.is_empty() or note.is_empty() or landmark_seen.has(name):
+			continue
+		var distance := dist_m(anchor, _m_px(landmark.get("pos", [0.0, 0.0])))
+		if distance < best_distance:
+			best_distance = distance
+			best = landmark
+	if best.is_empty():
+		return "对方压低声音：「附近能打听的事，我知道的你都已经查过了。」"
+	return "对方压低声音，提起「%s」：%s" % [String(best["name"]), String(best["note"])]
+
+
+## 幸存者：靠近时仍保留环境台词，按 E 还可以询问线索或分出一罐口粮。
 func _survivor_lines() -> void:
 	for sv in survivors:
 		var n := sv as Node2D
@@ -961,6 +1340,10 @@ func choose(idx: int) -> bool:
 
 func on_half_killed(h, by: String) -> void:
 	_splat(h.global_position, "s")                 # 半人已经没多少血了
+	h.set_meta("corpse_searched", true)
+	var pocket_items := _roll_items(CORPSE_CATS, 2 if mate_id == "zakhar" else 1)
+	for i in pocket_items.size():
+		_spawn_item_drop(pocket_items[i], h.global_position + Vector2(20 + i * 16, 12 + i * 8))
 	if by == "player":
 		# 抉择面板之外也灭得了口（撬棍 / 枪）：账一样要记，但别重复记
 		if h.resolved != "mercy":
@@ -1404,7 +1787,7 @@ func _decals_root() -> Node2D:
 
 ## 往地面上贴一张。pool = "marks"（血泊 / 弹孔，不褪）或 "tracks"（脚印，fade 秒化掉）。
 func add_decal(key: String, at: Vector2, angle := 0.0,
-		pool := "marks", fade := 0.0) -> Sprite2D:
+		pool := "marks", fade := 0.0, scale_factor: float = 1.0) -> Sprite2D:
 	var tex: Texture2D = DECAL_TEX.get(key, null)
 	if tex == null:
 		return null
@@ -1412,7 +1795,9 @@ func add_decal(key: String, at: Vector2, angle := 0.0,
 	s.texture = tex
 	s.light_mask = 2                                  # 和 Ground 一致：只吃地面灯的投影
 	# 贴花的锚点在纹理中心，抬 4 px 让印子压在脚下而不是长在小腿上
-	s.transform = _ground_transform(angle, at + Vector2(0, -4))
+	var decal_transform := _ground_transform(angle, at + Vector2(0, -4))
+	s.transform = Transform2D(decal_transform.x * scale_factor,
+		decal_transform.y * scale_factor, decal_transform.origin)
 	_decals_root().add_child(s)
 	if pool == "tracks":
 		_tracks.append(s)
@@ -1458,21 +1843,39 @@ func _splat(pos: Vector2, size := "m") -> void:
 	var key := "blood_" + size
 	if not DECAL_TEX.has(key):
 		key = "blood_m"
-	add_decal(key, pos, rng.randf_range(-PI, PI), "marks")
+	var scale_factor := 0.24 if size == "s" else (0.29 if size == "m" else 0.35)
+	var blood_pos := _clamp_blood_position(pos)
+	add_decal(key, blood_pos, rng.randf_range(-PI, PI), "marks", 0.0, scale_factor)
 	# 边界别是正圆：一半的尸体旁边再甩一道拖痕
 	if rng.randf() < 0.5:
-		add_decal("blood_trail", pos + Vector2(rng.randf_range(-10.0, 10.0), rng.randf_range(-6.0, 6.0)),
-			rng.randf_range(-PI, PI), "marks")
+		var trail_pos := _clamp_blood_position(blood_pos + Vector2(rng.randf_range(-10.0, 10.0), rng.randf_range(-6.0, 6.0)))
+		add_decal("blood_trail", trail_pos, rng.randf_range(-PI, PI), "marks", 0.0, 0.18)
 	# 血刚落地还亮着，一两秒后冻成上面那摊暗红 —— 用一张会褪的亮溅当过渡
 	var flash := Sprite2D.new()
 	flash.texture = TEX_BLOOD_SPLAT
 	flash.light_mask = 2
-	flash.transform = _ground_transform(rng.randf_range(-PI, PI), pos + Vector2(0, -4))
+	var flash_transform := _ground_transform(rng.randf_range(-PI, PI), blood_pos + Vector2(0, -4))
+	flash.transform = Transform2D(flash_transform.x * 0.25, flash_transform.y * 0.25,
+		flash_transform.origin)
 	flash.modulate = Color(1.0, 1.0, 1.0, 0.85)
 	_decals_root().add_child(flash)
 	var tw := flash.create_tween()
 	tw.tween_property(flash, "modulate:a", 0.0, 1.4)
 	tw.tween_callback(flash.queue_free)
+
+
+func _clamp_blood_position(pos: Vector2) -> Vector2:
+	if cam == null:
+		return pos
+	# 最宽血池旋转后仍不越过相机限定的可玩区域。
+	var margin := 64.0
+	var left := float(cam.limit_left) + margin
+	var top := float(cam.limit_top) + margin
+	var right := float(cam.limit_right) - margin
+	var bottom := float(cam.limit_bottom) - margin
+	if right <= left or bottom <= top:
+		return pos
+	return Vector2(clampf(pos.x, left, right), clampf(pos.y, top, bottom))
 
 
 ## 弹孔落在什么材质上。碰撞体上写了 meta "surface" 就用它；
@@ -1490,6 +1893,10 @@ func _bullet_key(col: Object) -> String:
 
 func on_rabid_killed(r: Node2D, by: String) -> void:
 	_splat(r.global_position, "l")                 # 一百公斤的东西，血摊得最大
+	r.set_meta("corpse_searched", true)
+	var pocket_items := _roll_items(CORPSE_CATS, 2 if mate_id == "zakhar" else 1)
+	for i in pocket_items.size():
+		_spawn_item_drop(pocket_items[i], r.global_position + Vector2(22 + i * 16, 10 + i * 8))
 	sfx.play_at("bonejam", r.global_position, -6.0)      # 一百公斤的东西倒在雪里
 	if by == "player":
 		rabid_kills += 1
@@ -1726,6 +2133,20 @@ func _unhandled_input(event: InputEvent) -> void:
 					_toggle_weapon_mod("scope")
 				KEY_ESCAPE, KEY_T:
 					_close_weapon_mod_panel()
+			get_viewport().set_input_as_handled()
+			return
+		if state == "interaction":
+			match k:
+				KEY_1, KEY_KP_1:
+					_choose_interaction(0)
+				KEY_2, KEY_KP_2:
+					_choose_interaction(1)
+				KEY_3, KEY_KP_3:
+					_choose_interaction(2)
+				KEY_4, KEY_KP_4:
+					_choose_interaction(3)
+				KEY_ESCAPE:
+					_close_interaction()
 			get_viewport().set_input_as_handled()
 			return
 		if state == "choice":
@@ -2287,8 +2708,7 @@ func _hit_radius(e: Node) -> float:
 func _damage_enemy(e: Node, dmg: float, by: String, melee := false) -> void:
 	if not e.has_method("hit"):
 		return
-	# 命中确认的三段式：极短停帧 → 敌人暖白闪 → 震动/命中标记/血雾。
-	# 只冻结几十毫秒，不改变武器伤害、AI 判定或战役结算。
+	# 命中确认：停帧、暖白闪、镜头推近与更明显的受击震动；不改伤害判定。
 	var spr = e.get("sprite")
 	if spr is Sprite2D:
 		spr.modulate.r = 2.4
@@ -2298,8 +2718,14 @@ func _damage_enemy(e: Node, dmg: float, by: String, melee := false) -> void:
 		flash.tween_property(spr, "modulate:r", 1.0, 0.13)
 		flash.tween_property(spr, "modulate:g", 1.0, 0.13)
 		flash.tween_property(spr, "modulate:b", 1.0, 0.13)
-	hit_stop(0.058 if melee else 0.028)
 	e.hit(dmg, by)
+	var killed := e.has_method("is_alive") and not bool(e.call("is_alive"))
+	var stop_time := (0.12 if killed else 0.075) if melee else (0.075 if killed else 0.045)
+	hit_stop(stop_time)
+	add_shake(0.2 if killed else 0.1)
+	punch = maxf(punch, 0.82 if killed else 0.42)
+	if by == "player" and not e.is_in_group("night_osk"):
+		sfx.play_at("bonejam", e.global_position, -8.0, 0.02)
 
 
 ## 跟随伙伴在玩家附近自动加入交战；目标仍通过相同的生命值 / 死亡回调结算。
@@ -2488,6 +2914,7 @@ func on_soldier_killed(s: Node, by: String) -> void:
 		companion_kills += 1
 	conscience -= 0.5
 	_splat(s.global_position, "m")
+	_spawn_osk_drops(s as Node2D)
 	sfx.play_at("bonejam", s.global_position, -4.0)
 	spawn_float(s.global_position + Vector2(0, -140),
 		"清杀兵倒了 —— 剩下的人会搜得更凶", SovietUI.BLOOD_LIT)
@@ -3246,6 +3673,33 @@ func _build_hud() -> void:
 	_choice_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	cv.add_child(_choice_lbl)
 
+	# ---- 商人 / 幸存者交互：交易、询问线索、分出物资 ----
+	_interaction_panel = PanelContainer.new()
+	_interaction_panel.name = "NPCInteractionPanel"
+	_interaction_panel.add_theme_stylebox_override("panel",
+		SovietUI.plate(Color(0.035, 0.042, 0.045, 0.98), SovietUI.SIGNAL, 2, 18))
+	_interaction_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_interaction_panel.offset_left = -440
+	_interaction_panel.offset_right = 440
+	_interaction_panel.offset_top = -250
+	_interaction_panel.offset_bottom = 250
+	_interaction_panel.visible = false
+	_interaction_panel.z_index = 15
+	hud_root.add_child(_interaction_panel)
+	var iv := VBoxContainer.new()
+	iv.add_theme_constant_override("separation", 12)
+	_interaction_panel.add_child(iv)
+	_interaction_head = _mono_label("ЧЕРНЫЙ РЫНОК · 黑市商人", 12, SovietUI.SIGNAL)
+	_interaction_head.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	iv.add_child(_interaction_head)
+	_interaction_lbl = _label("", 17, SovietUI.BONE)
+	_interaction_lbl.custom_minimum_size = Vector2(760, 92)
+	_interaction_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	iv.add_child(_interaction_lbl)
+	_interaction_actions = VBoxContainer.new()
+	_interaction_actions.add_theme_constant_override("separation", 8)
+	iv.add_child(_interaction_actions)
+
 	# ---- 武器改造：持有部件后可在夜潜中暂停安装 / 拆卸 ----
 	_weapon_mod_panel = PanelContainer.new()
 	_weapon_mod_panel.name = "WeaponModPanel"
@@ -3565,15 +4019,22 @@ func _refresh_hud() -> void:
 	# --- 底栏：电传提示 ---
 	var mech := nearest_mechanism()
 	var near_half = nearest_half()
+	var near_drop := nearest_loot_pickup()
 	if dawn_t > 0.0:
 		_lbl_hint.text = "天要亮了 —— %s（长按 E）" % extract_zh
+	elif near_half != null:
+		_lbl_hint.text = "E · 半人 %s 在发烧 —— 喂药 / 绕开 / 灭口" % near_half.tag
+	elif not mech.is_empty():
+		_lbl_hint.text = "E · " + String(mech.get("prompt", ""))
+	elif near_drop != null:
+		_lbl_hint.text = "E · 拾取掉落：%s" % String(near_drop.get_meta("label_zh", "物资"))
+	elif nearest_market() != null:
+		_lbl_hint.text = "E · 与黑市商人交谈 / 交易"
+	elif nearest_survivor() != null:
+		_lbl_hint.text = "E · 与幸存者交谈"
 	elif has_prize:
 		_lbl_hint.text = "%s到手 —— %s（长按 E）" % [item_name(prize), extract_zh] \
 			+ ("　·　F5 重来　Esc 返回战役" if not in_campaign else "")
-	elif not mech.is_empty():
-		_lbl_hint.text = "E · " + String(mech.get("prompt", ""))
-	elif near_half != null:
-		_lbl_hint.text = "E · 半人 %s 在发烧 —— 喂药 / 绕开 / 灭口" % near_half.tag
 	elif dist_m(player.global_position, exit_px) <= REACH:
 		_lbl_hint.text = "长按 E · " + extract_zh
 	else:
@@ -3611,7 +4072,7 @@ func _refresh_hud() -> void:
 	# --- 中央读数 ---
 	var again_hint := "R / Enter 重来" if not in_campaign else "Enter 回 602 室"
 	match state:
-		"play", "choice":
+		"play", "choice", "interaction":
 			_lbl_center.text = ""
 		"downed":
 			var downed_text := "被狂暴者扑倒了\n高烧的身体烫得像炉子。" \
@@ -3645,10 +4106,10 @@ func _refresh_hud() -> void:
 				"R / Enter 再来一夜　Esc 返回战役" if not in_campaign else "Enter 回 602 室 · 结算"]
 			_lbl_center.add_theme_color_override("font_color", Color("#bbf7d0"))
 	if _btn_end_return != null:
-		_btn_end_return.visible = in_campaign and state not in ["play", "choice", "modding"]
+		_btn_end_return.visible = in_campaign and state not in ["play", "choice", "modding", "interaction"]
 		_btn_end_return.text = "回到 602 室" if in_campaign else ""
 
 
 func _on_end_return_pressed() -> void:
-	if in_campaign and state not in ["play", "choice", "modding"]:
+	if in_campaign and state not in ["play", "choice", "modding", "interaction"]:
 		_return_to_campaign(state)
