@@ -1,0 +1,9 @@
+Use case: illustration-story
+Asset type: 16:9 Godot narrative cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input images: Image 1 is the Buran Yard setting, railcar and winter lighting reference; Image 2 is Aleksei's identity reference.
+Scene/backdrop: The frozen maintenance locker beside the rear cars at Buran Yard, matching the rail siding, metalwork and snow in Image 1.
+Subject: Aleksei alone, about 31, in his faded railway padded coat and round nearsighted glasses, black tape only at the glasses hinge. He angles a hand torch into the open old steel locker, then compares an unclosed handover copy with a West Yard dispatch order laid over a worn yard map. A faint pencil maintenance route has no words.
+Style/medium: Realistic thick impasto oil painting, adult proportions, restrained gray-blue snow, rusted iron, dirty white and worn military green, consistent with existing game CGs.
+Composition/framing: Wide landscape 16:9, medium close shot, Aleksei and papers in upper two-thirds, lower strip clean for subtitles.
+Lighting/mood: Torchlight cuts through cold blue night and catches the unclosed paperwork.
+Constraints: Aleksei is the only person. No second pair of hands, Ivan, white-bearded conductor, other companions, legible writing, readable symbols, modern screens, game UI, title, or watermark. Preserve the setting from Image 1.
