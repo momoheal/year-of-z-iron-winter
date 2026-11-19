@@ -66,12 +66,20 @@ func _run() -> void:
 	check(fb.card_panel.visible and fb.card_box.get_child_count() >= 4, "result card is filled")
 	fb.close()
 	await process_frame
-	# 余波数据：每个主线抉择都配了幻灯
+	# 检查静态余波，以及替换旧入口的现场演出。
 	var Data = load("res://scripts/CampaignData.gd")
 	for sid in Data.STORY.keys():
 		var choices: Array = Data.STORY[sid].get("choices", [])
 		for ci in choices.size():
 			var pages: Array = CutsceneData.aftermath(String(sid), ci)
+			if sid == "manor":
+				var plan: String = ["evidence", "trade", "release"][ci]
+				var context := {"manor_plan": plan, "yelena_present": true}
+				pages = CutsceneData.story_event_slides("manor_confrontation", context)
+				pages.append_array(CutsceneData.story_event_slides("manor_outcome", context))
+			elif sid == "pasha_watchtower":
+				check(pages.is_empty(), "Pasha's choice does not reveal the later epilogue")
+				continue
 			check(pages.size() >= 2, "aftermath slides for %s:%d" % [sid, ci])
 			for pg in pages:
 				var has_art: bool = Slides.tex_of(pg.get("img", "")) != null \

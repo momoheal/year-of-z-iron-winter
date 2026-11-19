@@ -101,7 +101,8 @@ func _run_tests() -> void:
 		"6. projection 26 px/m, y-squash 0.62")
 	_assert(Data.BAG == 12 and Data.SIGHT == 12.0 and is_equal_approx(Data.SIGHT_CRACKED, 7.2),
 		"7. bag 12, sight 12m / 7.2m cracked")
-	_assert(Data.ITEMS.size() == 26, "8. 26 item types", str(Data.ITEMS.size()))
+	_assert(Data.ITEMS.has("ration_ticket") and "ration_ticket" in Data.LOOT_CATS["val"],
+		"8. ration tickets are registered and can drop with valuables")
 	_assert(Data.WEAPONS.size() == 5 and Data.MATES.size() == 7 and Data.LOCS.size() == 17,
 		"9. 5 weapons / 7 mates / 17 locations")
 	_assert(Data.STORY.size() >= 5, "10. story beats present", str(Data.STORY.size()))

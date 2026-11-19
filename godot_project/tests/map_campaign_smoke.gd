@@ -115,19 +115,36 @@ func _run() -> void:
 	var crag_sim = SimScript.new()
 	crag_sim.flags["first_act_pending"] = false
 	crag_sim.flags["station_route"] = true
+	crag_sim.dial_machine_bags = 2
 	var crag: Dictionary = Data.loc("eagle_beak_cliff")
 	_assert(crag_sim.depart(crag) and crag_sim.story_open and crag_sim.story_id == "eagle_beak_cliff",
 		"first departure triggers the Eagle's Crag story")
 	crag_sim.resolve_story(0)
-	_assert(not bool(crag_sim.flags.get("eagle_escape", false)), "rescue choice alone leaves the route locked")
+	_assert(crag_sim.raid.crag_rescue_scope == "" and not bool(crag_sim.flags.get("eagle_escape", false)),
+		"entry briefing neither selects a rescue scope nor unlocks the route")
 	crag_sim.raid.story_objective_reached = true
+	crag_sim.raid.crag_rescue_scope = "lana"
 	crag_sim.finish_raid("dawn")
-	_assert(not bool(crag_sim.flags.get("eagle_escape", false)), "dawn does not evacuate the survivors")
+	_assert(not bool(crag_sim.flags.get("eagle_escape", false)) and not crag_sim.flags.has("crag_rescue_lana"),
+		"dawn does not commit the rescue scope")
 	crag_sim.advance_day()
 	_assert(crag_sim.depart(crag), "failed rescue can be retried")
+	_assert(crag_sim.raid.crag_rescue_scope == "", "retry requires another boxcar choice")
 	crag_sim.raid.story_objective_reached = true
+	crag_sim.raid.crag_rescue_scope = "all"
 	crag_sim.finish_raid("extracted")
-	_assert(bool(crag_sim.flags.get("eagle_escape", false)), "exit after opening the car completes rescue")
+	_assert(bool(crag_sim.flags.get("eagle_escape", false)) and bool(crag_sim.flags.get("crag_rescue_all", false)),
+		"successful extraction commits the selected rescue scope")
+	bridge.clear()
+
+	var no_scope_sim = SimScript.new()
+	no_scope_sim.flags["first_act_pending"] = false
+	no_scope_sim.flags["station_route"] = true
+	no_scope_sim.story_done["eagle_beak_cliff"] = true
+	_assert(no_scope_sim.depart(crag), "no-scope fixture reaches the Crag")
+	no_scope_sim.raid.story_objective_reached = true
+	no_scope_sim.finish_raid("extracted")
+	_assert(not bool(no_scope_sim.flags.get("eagle_escape", false)), "opening the door without a choice does not settle rescue")
 	bridge.clear()
 
 	var tower_sim = SimScript.new()
@@ -153,8 +170,15 @@ func _run() -> void:
 	finish_sim.raid.story_objective_reached = true
 	finish_sim.finish_raid("extracted")
 	finish_sim.to_base()
-	_assert(bool(finish_sim.flags.get("broadcast_complete", false)) and finish_sim.finished_demo,
-		"successful tower extraction completes the campaign finale")
+	_assert(bool(finish_sim.flags.get("broadcast_complete", false)) and not finish_sim.finished_demo,
+		"successful tower extraction leaves the finale pending until the broadcast slide")
+	_assert(finish_sim.take_story_slide() == "broadcast_complete", "broadcast completion queues its result slide")
+	finish_sim.prepare_base_story_events()
+	_assert(finish_sim.take_story_slide() == "eagle_escape", "a legacy save backfills the escape slide")
+	_assert(finish_sim.take_story_slide() == "evidence_handover", "a legacy save backfills the evidence slide")
+	finish_sim.prepare_base_story_events()
+	_assert(finish_sim.finished_demo and finish_sim.phase == "ending",
+		"after the result slide, the campaign opens the ending")
 	bridge.clear()
 
 	var evidence_sim = SimScript.new()
@@ -166,12 +190,14 @@ func _run() -> void:
 	_assert(not evidence_sim.flags.get("truth", false), "manor dialogue does not award the truth")
 	evidence_sim.raid.pack.assign(["scrap", "photo"])
 	evidence_sim.raid.manor_photo_slot = 1
+	evidence_sim.raid.story_objective_reached = true
 	evidence_sim.finish_raid("dawn")
 	_assert(not evidence_sim.flags.get("truth", false), "dawn can lose the specific ledger photo")
 	evidence_sim.advance_day()
 	_assert(evidence_sim.depart(manor), "manor can be retried")
 	evidence_sim.raid.pack.assign(["photo"])
 	evidence_sim.raid.manor_photo_slot = 0
+	evidence_sim.raid.story_objective_reached = true
 	evidence_sim.finish_raid("extracted")
 	_assert(evidence_sim.flags.get("truth", false), "retained ledger photo unlocks the truth")
 	bridge.clear()
