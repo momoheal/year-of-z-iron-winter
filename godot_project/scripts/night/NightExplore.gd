@@ -37,6 +37,8 @@ const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
 const PauseMenuScript := preload("res://scripts/ui/PauseMenu.gd")
 const NavGridScript := preload("res://scripts/night/NavGrid.gd")
 const NightMiniMapScript := preload("res://scripts/night/NightMiniMap.gd")
+const StorySlidesScript := preload("res://scripts/ui/StorySlides.gd")
+const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
 
 const MAP_ART_DIRS := {
 	"yard": "Yard", "marshalling": "Marshalling", "manor": "Manor",
@@ -146,7 +148,11 @@ var shake := 0.0               # 创伤量 0..1（实际位移按 shake²）
 var punch := 0.0               # 受伤时的推镜量
 var _shake_t := 0.0
 
-var state := "play"            # play | choice | interaction | modding | frozen | downed | extracted | dawn | abort
+var state := "play"            # play | choice | interaction | modding | cutscene | frozen | downed | extracted | dawn | abort
+var _night_story_kind := ""
+var _vasily_qte_target: Node2D = null
+var _vasily_failed_target: Node2D = null
+var _vasily_qte_attempted := false
 var pack: Array[String] = []
 var warmth := 100.0
 var hp := 100.0
@@ -650,6 +656,70 @@ func _process(delta: float) -> void:
 	_update_post()
 	_refresh_hud()
 	$OverlayLayer/Overlay.queue_redraw()
+
+
+func _show_night_story_slides(event_id: String) -> void:
+	var pages: Array = CutsceneData.story_event_slides(event_id, {"ivan_present": mate_id == "ivan"})
+	if pages.is_empty():
+		return
+	_night_story_kind = event_id
+	state = "cutscene"
+	if player != null:
+		player.frozen = true
+	var deck = StorySlidesScript.new()
+	deck.slides = pages
+	deck.lang = RaidBridge.sim.lang if in_campaign and RaidBridge.sim != null else "zh"
+	var heading := "剧情记录"
+	var heading_en := "STORY RECORD"
+	if event_id == "crag_reveal":
+		heading = "鹰嘴崖 · 车厢内"
+		heading_en = "EAGLE'S CRAG · INSIDE THE BOXCAR"
+	elif event_id == "mine_inscriptions":
+		heading = "三号矿坑 · 岩壁刻字"
+		heading_en = "MINE NO.3 · WORDS IN THE ROCK"
+	elif event_id == "canteen_vasily_qte":
+		heading = "东街食堂 · 卡刀"
+		heading_en = "EAST STREET CANTEEN · THE BLADE JAMS"
+	elif event_id == "redzone_mother":
+		heading = "红区外围 · 退烧的母亲"
+		heading_en = "RED ZONE PERIMETER · HER FEVER BROKE"
+	deck.heading_zh = heading
+	deck.heading_en = heading_en
+	deck.choice_selected.connect(_on_night_story_choice_selected)
+	deck.qte_finished.connect(_on_night_story_qte_finished)
+	deck.finished.connect(_on_night_story_slides_finished)
+	add_child(deck)
+
+
+func _on_night_story_choice_selected(choice_id: String) -> void:
+	if level_id == "eagle_beak_cliff" and in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
+		if choice_id in ["all", "lana"]:
+			RaidBridge.sim.raid.crag_rescue_scope = choice_id
+
+
+func _on_night_story_qte_finished(success: bool) -> void:
+	if _night_story_kind != "canteen_vasily_qte" or not is_instance_valid(_vasily_qte_target):
+		return
+	var target := _vasily_qte_target
+	_vasily_qte_target = null
+	if not target.has_method("is_alive") or not bool(target.call("is_alive")):
+		return
+	if success:
+		_damage_enemy(target, float(target.get("hp")) + 1.0, "player", true)
+	else:
+		_vasily_failed_target = target
+
+
+func _on_night_story_slides_finished() -> void:
+	if state == "cutscene":
+		state = "play"
+		if player != null:
+			player.frozen = false
+	if is_instance_valid(_vasily_failed_target):
+		damage_player(22.0, _vasily_failed_target)
+		spawn_float(player.global_position + Vector2(0, -124), "刀没拔出来。瓦西里的手仍扣在你肩上。", Color("#fca5a5"))
+		_vasily_failed_target = null
+	_night_story_kind = ""
 
 # ============================================================================
 # 天亮（P1.5）：夜长最后 DAWN_WINDOW 里的天色渐变
@@ -1366,6 +1436,14 @@ func _remove_pack_item(slot: int) -> void:
 		return
 	if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
 		var attempt = RaidBridge.sim.raid
+		if slot == attempt.archive_copy_slot:
+			attempt.archive_copy_slot = -1
+		elif slot < attempt.archive_copy_slot:
+			attempt.archive_copy_slot -= 1
+		if slot == attempt.manor_trade_slot:
+			attempt.manor_trade_slot = -1
+		elif slot < attempt.manor_trade_slot:
+			attempt.manor_trade_slot -= 1
 		if slot < attempt.manor_photo_slot:
 			attempt.manor_photo_slot -= 1
 	pack.remove_at(slot)
@@ -1397,6 +1475,16 @@ func _finish_search(c: Node2D) -> void:
 		got.append(String(pool[rng.randi() % pool.size()]))
 	var names: Array[String] = []
 	for id in got:
+		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+		and level_id == "manor" and c.name == &"BatchPallet" and id == "dial" \
+		and bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+			RaidBridge.sim.raid.manor_trade_slot = -2 # Ration slip is carried in the story, not in the pack.
+			continue
+		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+		and level_id == "manor" and c.name == &"IncineratorFeed" and id == "photo" \
+		and (bool(RaidBridge.sim.flags.get("manor_plan_trade", false)) \
+			or bool(RaidBridge.sim.flags.get("manor_plan_release", false))):
+			continue
 		if pack.size() >= bag_max:
 			spawn_float(c.global_position + Vector2(0, -90), "背包满了 · Bag full", Color("#fbbf24"))
 			break
@@ -1404,6 +1492,14 @@ func _finish_search(c: Node2D) -> void:
 			and level_id == "manor" and c.name == &"IncineratorFeed" and id == "photo" \
 			and RaidBridge.sim.raid.manor_photo_slot < 0:
 			RaidBridge.sim.raid.manor_photo_slot = pack.size()
+		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+			and level_id == "manor" and c.name == &"BatchPallet" and id == "dial" \
+			and RaidBridge.sim.raid.manor_trade_slot < 0:
+			RaidBridge.sim.raid.manor_trade_slot = pack.size()
+		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+			and level_id == "archive" and c.name == &"File0420" and id == "intel" \
+			and RaidBridge.sim.raid.archive_copy_slot < 0:
+			RaidBridge.sim.raid.archive_copy_slot = pack.size()
 		pack.append(id)
 		names.append(item_name(id))
 	if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
@@ -1414,10 +1510,31 @@ func _finish_search(c: Node2D) -> void:
 			RaidBridge.sim.raid.story_objective_reached = true
 			var message := "目标已完成：撤离后确认结果"
 			if level_id == "eagle_beak_cliff":
-				message = "车厢已打开。带拉娜一行走检修路撤离。"
+				message = "车厢门已打开。先看清里面的人。"
 			elif level_id == "broadcast_tower_302":
 				message = "传输完毕。沿南门撤离。"
 			spawn_float(c.global_position + Vector2(0, -150), message, SovietUI.OCHRE)
+			if level_id == "eagle_beak_cliff":
+				_show_night_story_slides("crag_reveal")
+		if level_id == "manor":
+			var manor_plan := "evidence"
+			if bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+				manor_plan = "trade"
+			elif bool(RaidBridge.sim.flags.get("manor_plan_release", false)):
+				manor_plan = "release"
+			var manor_goal_reached := false
+			if manor_plan == "evidence":
+				manor_goal_reached = c.name == &"IncineratorFeed" and RaidBridge.sim.raid.manor_photo_slot >= 0
+			elif manor_plan == "trade":
+				manor_goal_reached = c.name == &"BatchPallet" and RaidBridge.sim.raid.manor_trade_slot != -1
+			elif manor_plan == "release" and c.name == &"GateBox":
+				RaidBridge.sim.raid.manor_release_reached = true
+				manor_goal_reached = true
+				spawn_float(c.global_position + Vector2(0, -150), "锁盒里的铁栓弹开了。地下室有人沿墙向外走。", SovietUI.OCHRE)
+			if manor_goal_reached:
+				RaidBridge.sim.raid.story_objective_reached = true
+				var done_note := "地下室的人已放出。现在可以撤离。" if manor_plan == "release" else "目标已完成。现在可以撤离。"
+				spawn_float(c.global_position + Vector2(0, -176), done_note, SovietUI.OCHRE)
 	if not names.is_empty():
 		spawn_float(c.global_position + Vector2(0, -90), "+ " + "、".join(names), Color("#fde68a"))
 	for id in got:
@@ -1894,6 +2011,9 @@ func _bullet_key(col: Object) -> String:
 func on_rabid_killed(r: Node2D, by: String) -> void:
 	_splat(r.global_position, "l")                 # 一百公斤的东西，血摊得最大
 	r.set_meta("corpse_searched", true)
+	if level_id == "canteen" and String(r.name) == "Rabid_Vasily" and by in ["player", "companion"] \
+	and in_campaign and RaidBridge.sim != null:
+		RaidBridge.sim.flags["vasily_killed"] = true
 	var pocket_items := _roll_items(CORPSE_CATS, 2 if mate_id == "zakhar" else 1)
 	for i in pocket_items.size():
 		_spawn_item_drop(pocket_items[i], r.global_position + Vector2(22 + i * 16, 10 + i * 8))
@@ -2780,6 +2900,14 @@ func melee_swing() -> void:
 			bd = d
 			best = e
 	if best != null:
+		if level_id == "canteen" and in_campaign and String(best.name) == "Rabid_Vasily" \
+		and RaidBridge.sim != null and bool(RaidBridge.sim.flags.get("ptsd", false)) \
+		and not _vasily_qte_attempted:
+			_vasily_qte_attempted = true
+			_vasily_qte_target = best as Node2D
+			_damage_enemy(best, 8.0, "player", true)
+			_show_night_story_slides("canteen_vasily_qte")
+			return
 		_damage_enemy(best, float(w.get("dmg", 34.0)), "player", true)
 		sfx.play_at("crowbar_hit", best.global_position, 0.0)
 		add_shake(0.46)
@@ -3114,6 +3242,10 @@ func _init_beats() -> void:
 ## 关键物资在哪：优先找「必出 prize」的容器，找不到就退回撤离点（HUD 不会指错方向）。
 func _find_objective_point() -> Vector2:
 	if in_campaign and level_id == "manor" and RaidBridge.sim != null and not RaidBridge.sim.flags.get("truth", false):
+		if bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+			return interact_point($World/Props/BatchPallet)
+		if bool(RaidBridge.sim.flags.get("manor_plan_release", false)):
+			return interact_point($World/Props/GateBox)
 		return interact_point($World/Props/IncineratorFeed)
 	for c in containers:
 		if String(c.get_meta("guaranteed", "")) == prize:
@@ -3199,6 +3331,16 @@ func _update_landmarks() -> void:
 			if note != "":
 				spawn_float(player.global_position + Vector2(0, -136), note, SovietUI.BONE_DIM)
 			var story_trigger := String(l.get("story_trigger", ""))
+			if level_id == "mine" and nm == "爆破断面" and in_campaign and RaidBridge.sim != null \
+			and not bool(RaidBridge.sim.flags.get("mine_inscriptions_seen", false)):
+				RaidBridge.sim.flags["mine_inscriptions_seen"] = true
+				_show_night_story_slides("mine_inscriptions")
+				return
+			if story_trigger == "redzone_mother" and level_id == "yard" and in_campaign \
+			and RaidBridge.sim != null and not bool(RaidBridge.sim.flags.get("redzone_mother_seen", false)):
+				RaidBridge.sim.flags["redzone_mother_seen"] = true
+				_show_night_story_slides("redzone_mother")
+				return
 			if story_trigger == "broadcast" and in_campaign:
 				var tree := Engine.get_main_loop() as SceneTree
 				var bridge := tree.root.get_node_or_null("RaidBridge") if tree != null else null
@@ -3945,8 +4087,28 @@ func _refresh_hud() -> void:
 		_lbl_bearing.text = "撤离方向见下方" if attempt.story_objective_reached else "目标方位  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
 		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
 	elif attempt != null and level_id == "manor" and not RaidBridge.sim.flags.get("truth", false):
-		_lbl_target.text = "台账照片已装包，带它回去。" if attempt.manor_photo_slot >= 0 else "在焚化炉进料口拍下台账，保留一格背包"
-		_lbl_bearing.text = "进料口  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		var manor_plan := "evidence"
+		if bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+			manor_plan = "trade"
+		elif bool(RaidBridge.sim.flags.get("manor_plan_release", false)):
+			manor_plan = "release"
+		if attempt.story_objective_reached:
+			if manor_plan == "release":
+				_lbl_target.text = "地下室的人已放出。沿标记撤离。"
+			elif manor_plan == "trade":
+				_lbl_target.text = "配给凭条已取。沿标记撤离。"
+			else:
+				_lbl_target.text = "照片已拍。沿标记撤离。"
+			_lbl_bearing.text = "撤离方向见下方"
+		elif manor_plan == "trade":
+			_lbl_target.text = "去配给托盘取凭条，回去后才算成交。"
+			_lbl_bearing.text = "配给托盘  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		elif manor_plan == "release":
+			_lbl_target.text = "打开门禁锁盒，让地下室的人沿围墙离开。"
+			_lbl_bearing.text = "门禁锁盒  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		else:
+			_lbl_target.text = "在焚化炉进料口拍下台账，保留一格背包。"
+			_lbl_bearing.text = "进料口  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
 		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
 	elif first_coldstore_visit:
 		var checked := COLDSTORE_TRACE in landmark_seen
@@ -4042,7 +4204,19 @@ func _refresh_hud() -> void:
 		if in_campaign and level_id == "broadcast_tower_302":
 			action_hint = "到播音台长按 E 12 秒完成广播，再撤离"
 		elif in_campaign and level_id == "manor":
-			action_hint = "在焚化炉进料口拍下台账，留出一格装照片"
+			var manor_plan_hint := "evidence"
+			if bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+				manor_plan_hint = "trade"
+			elif bool(RaidBridge.sim.flags.get("manor_plan_release", false)):
+				manor_plan_hint = "release"
+			if attempt != null and attempt.story_objective_reached:
+				action_hint = "目标已完成，沿标记撤离。"
+			elif manor_plan_hint == "trade":
+				action_hint = "去配给托盘取凭条，带回去才算成交。"
+			elif manor_plan_hint == "release":
+				action_hint = "打开门禁锁盒，让地下室的人沿围墙离开。"
+			else:
+				action_hint = "在焚化炉进料口拍下台账，留出一格装照片。"
 		_lbl_hint.text = action_hint + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电　Esc 暂停"
 	if state == "play":
 		_lbl_hint.text += "　·　T 武器改造"

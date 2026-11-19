@@ -1,6 +1,6 @@
 {
  "_meta": {
-   "asset_count": 849,
+  "asset_count": 879,
   "generated_by": "tools/art_gen/verify_assets.py",
   "manifest_files": [
    "night_archive_manifest.json",
@@ -124,6 +124,20 @@
    "ref": "code",
    "ref_by": "完整路径"
   },
+  "10_characters/portraits/PRT_Accountant_Calm.png": {
+   "bytes": 576216,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Accountant_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
   "10_characters/portraits/PRT_Aleksei.png": {
    "bytes": 526435,
    "declared_size": null,
@@ -150,7 +164,7 @@
     512
    ],
    "ref": "code",
-   "ref_by": "完整文件名"
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Aleksei_Concept.png": {
    "bytes": 2696665,
@@ -163,8 +177,8 @@
     1254,
     1254
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "runtime",
+   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
   },
   "10_characters/portraits/PRT_Aleksei_Determined.png": {
    "bytes": 571093,
@@ -177,8 +191,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "10_characters/portraits/PRT_Aleksei_Fear.png": {
    "bytes": 566349,
@@ -460,6 +474,20 @@
    "ref": "code",
    "ref_by": "完整路径"
   },
+  "10_characters/portraits/PRT_Boyko_Calm.png": {
+   "bytes": 588664,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Boyko_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
   "10_characters/portraits/PRT_Chernov.png": {
    "bytes": 528431,
    "declared_size": null,
@@ -564,6 +592,20 @@
    "family": "portrait",
    "manifest": null,
    "path": "res://art/10_characters/portraits/PRT_Chernov_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Dispatcher_Calm.png": {
+   "bytes": 606743,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Dispatcher_Calm.png",
    "pivot": null,
    "real_size": [
     512,
@@ -894,6 +936,20 @@
    "ref": "code",
    "ref_by": "完整路径"
   },
+  "10_characters/portraits/PRT_Jana_Calm.png": {
+   "bytes": 593812,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Jana_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
   "10_characters/portraits/PRT_Katya_Calm.png": {
    "bytes": 517450,
    "declared_size": null,
@@ -947,8 +1003,8 @@
     512,
     512
    ],
-   "ref": "code",
-   "ref_by": "完整文件名"
+   "ref": "runtime",
+   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
   },
   "10_characters/portraits/PRT_Katya_Intense.png": {
    "bytes": 512764,
@@ -1300,6 +1356,20 @@
    "ref": "code",
    "ref_by": "完整路径"
   },
+  "10_characters/portraits/PRT_MedicineSeller_Calm.png": {
+   "bytes": 641098,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_MedicineSeller_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
   "10_characters/portraits/PRT_OSK_Calm.png": {
    "bytes": 501890,
    "declared_size": null,
@@ -1339,8 +1409,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_OSK_Determined.png": {
    "bytes": 550210,
@@ -1423,8 +1493,8 @@
     512,
     512
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/10_characters/portraits/PRT_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "10_characters/portraits/PRT_Pasha_Calm.png": {
    "bytes": 552529,
@@ -1628,6 +1698,34 @@
    "family": "portrait",
    "manifest": null,
    "path": "res://art/10_characters/portraits/PRT_Placeholder_NoPhoto.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Sergei_Calm.png": {
+   "bytes": 591600,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Sergei_Calm.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Vasily_Calm.png": {
+   "bytes": 580694,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Vasily_Calm.png",
    "pivot": null,
    "real_size": [
     512,
@@ -1950,6 +2048,20 @@
    "family": "portrait",
    "manifest": null,
    "path": "res://art/10_characters/portraits/PRT_Zakhar_Wry.png",
+   "pivot": null,
+   "real_size": [
+    512,
+    512
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "10_characters/portraits/PRT_Zhukov_Calm.png": {
+   "bytes": 583307,
+   "declared_size": null,
+   "family": "portrait",
+   "manifest": null,
+   "path": "res://art/10_characters/portraits/PRT_Zhukov_Calm.png",
    "pivot": null,
    "real_size": [
     512,
@@ -2549,8 +2661,8 @@
     419,
     319
    ],
-   "ref": "runtime",
-   "ref_by": "res://art/30_props/PRP_%s_%s.png"
+   "ref": "code",
+   "ref_by": "完整路径"
   },
   "30_props/PRP_Aleksei_ForgedLanaNote.png": {
    "bytes": 143415,
@@ -10708,8 +10820,8 @@
     1376,
     768
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_aftermath_true_alpha.jpg": {
    "bytes": 552322,
@@ -10795,6 +10907,20 @@
    "ref": "none",
    "ref_by": null
   },
+  "60_ui/cg/cg_archive_0420_dispatch_copy.jpg": {
+   "bytes": 525723,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_archive_0420_dispatch_copy.jpg",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
   "60_ui/cg/cg_archive_record_discovery_alt.jpg": {
    "bytes": 420279,
    "declared_size": null,
@@ -10850,6 +10976,20 @@
    ],
    "ref": "none",
    "ref_by": null
+  },
+  "60_ui/cg/cg_boxcar03_survivors_reveal_v1.png": {
+   "bytes": 2401309,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_boxcar03_survivors_reveal_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_broadcast_city_listeners_dawn_alt.jpg": {
    "bytes": 414984,
@@ -11100,6 +11240,34 @@
     1376,
     768
    ],
+   "ref": "runtime",
+   "ref_by": "cg_%s_scene.jpg"
+  },
+  "60_ui/cg/cg_canteen_vasily_qte_fyodor_v1.png": {
+   "bytes": 2231218,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_canteen_vasily_qte_fyodor_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "60_ui/cg/cg_canteen_vasily_qte_fyodor_v2.png": {
+   "bytes": 2379810,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_canteen_vasily_qte_fyodor_v2.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
    "ref": "code",
    "ref_by": "完整文件名"
   },
@@ -11211,6 +11379,34 @@
    "real_size": [
     1376,
     768
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "60_ui/cg/cg_crag_lana_only_looks_back.jpg": {
+   "bytes": 717685,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_crag_lana_only_looks_back.jpg",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_crag_lana_reunion_no_fixed_companion.jpg": {
+   "bytes": 614644,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_crag_lana_reunion_no_fixed_companion.jpg",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
    ],
    "ref": "none",
    "ref_by": null
@@ -11355,6 +11551,34 @@
    "ref": "code",
    "ref_by": "完整路径"
   },
+  "60_ui/cg/cg_fire_ash_guides_jana_v1.png": {
+   "bytes": 2806369,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_fire_ash_guides_jana_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_fire_pavel_cutting_torch_v1.png": {
+   "bytes": 2381869,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_fire_pavel_cutting_torch_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
   "60_ui/cg/cg_fire_rescue_lyudmila_handoff_close_alt.jpg": {
    "bytes": 305549,
    "declared_size": null,
@@ -11366,8 +11590,8 @@
     1376,
     768
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_fire_rescue_scene.jpg": {
    "bytes": 533804,
@@ -11393,6 +11617,20 @@
    "real_size": [
     1376,
     768
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_fire_stairwell_neighbors_breach_v1.png": {
+   "bytes": 2323311,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_fire_stairwell_neighbors_breach_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
    ],
    "ref": "code",
    "ref_by": "完整文件名"
@@ -11578,6 +11816,20 @@
    ],
    "ref": "none",
    "ref_by": null
+  },
+  "60_ui/cg/cg_manor_yelena_zhukov_confront_v1.png": {
+   "bytes": 2402616,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_manor_yelena_zhukov_confront_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_market_c0.jpg": {
    "bytes": 257275,
@@ -11929,6 +12181,20 @@
    "ref": "none",
    "ref_by": null
   },
+  "60_ui/cg/cg_mine_no3_wall_inscription_v1.png": {
+   "bytes": 3068196,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_mine_no3_wall_inscription_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
   "60_ui/cg/cg_mine_sporeface_scene.jpg": {
    "bytes": 523058,
    "declared_size": null,
@@ -11968,8 +12234,8 @@
     1376,
     768
    ],
-   "ref": "runtime",
-   "ref_by": "cg_%s_scene.jpg"
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_pasha_watchtower_scene_alt.jpg": {
    "bytes": 434302,
@@ -11995,6 +12261,104 @@
    "real_size": [
     1376,
     768
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "60_ui/cg/cg_redzone_mother_aftermath_v1.png": {
+   "bytes": 2684642,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_redzone_mother_aftermath_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_redzone_mother_gate_v1.png": {
+   "bytes": 2542992,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_redzone_mother_gate_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_redzone_mother_osk_v1.png": {
+   "bytes": 2654116,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_redzone_mother_osk_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_redzone_mother_scales_v1.png": {
+   "bytes": 2416587,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_redzone_mother_scales_v1.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_room602_empty_bed_folded_scarf.jpg": {
+   "bytes": 547487,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_room602_empty_bed_folded_scarf.jpg",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_room602_evidence_handover_table.jpg": {
+   "bytes": 646128,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_room602_evidence_handover_table.jpg",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_sanitarium_anna_cage_no_ash.jpg": {
+   "bytes": 622655,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_sanitarium_anna_cage_no_ash.jpg",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
    ],
    "ref": "code",
    "ref_by": "完整文件名"
@@ -12125,6 +12489,20 @@
    "ref": "none",
    "ref_by": null
   },
+  "60_ui/cg/cg_station_handover_desk_solo.jpg": {
+   "bytes": 662910,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_station_handover_desk_solo.jpg",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
   "60_ui/cg/cg_station_workers_listen_broadcast_alt.jpg": {
    "bytes": 401985,
    "declared_size": null,
@@ -12138,6 +12516,48 @@
    ],
    "ref": "none",
    "ref_by": null
+  },
+  "60_ui/cg/cg_tower302_aleksei_at_transmitter.jpg": {
+   "bytes": 673150,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_tower302_aleksei_at_transmitter.jpg",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_tower302_listener_numbers_only.jpg": {
+   "bytes": 631396,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_tower302_listener_numbers_only.jpg",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_tower302_pavel_aleksei_switch_repair.jpg": {
+   "bytes": 560401,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_tower302_pavel_aleksei_switch_repair.jpg",
+   "pivot": null,
+   "real_size": [
+    1679,
+    937
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_underpass_dawn_evacuation_alt.jpg": {
    "bytes": 400051,
@@ -12276,8 +12696,8 @@
     1376,
     768
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_zakhar_salvage_spotted_alt.jpg": {
    "bytes": 329404,
@@ -12603,7 +13023,7 @@
    "ref_by": null
   },
   "80_maps/Canteen/map.png": {
-   "bytes": 3585409,
+   "bytes": 3195008,
    "declared_size": [
     1672,
     941
@@ -12623,7 +13043,7 @@
    "ref_by": "完整文件名"
   },
   "80_maps/Canteen/map_night.png": {
-   "bytes": 2868976,
+   "bytes": 2817145,
    "declared_size": null,
    "family": "other",
    "manifest": null,

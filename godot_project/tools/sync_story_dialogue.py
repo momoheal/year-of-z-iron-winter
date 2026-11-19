@@ -26,7 +26,8 @@ ALLOWED_MOODS = {"calm", "sad", "intense"}
 PORTRAIT_ROLES = {
     "aleksei", "chernov", "fyodor", "ivan", "anna", "pasha", "gulya", "lana",
     "pavel", "ash", "leonov", "yelena", "zakhar", "osk",
-    "katya", "lyudmila", "vikina",
+    "katya", "lyudmila", "vikina", "dispatcher", "sergei", "accountant",
+    "vasily", "zhukov", "medicine_seller", "boyko", "jana",
 }
 
 # Every named speaker is explicit. An empty portrait key means the character has
@@ -35,20 +36,20 @@ SPEAKERS = {
     "旁白 / 阿列克谢": "aleksei",
     "旁白": "aleksei",
     "阿列克谢": "aleksei",
-    "调度长": "",
+    "调度长": "dispatcher",
     "“老轨”伊万": "ivan",
     "老轨伊万": "ivan",
     "老轨伊万（列车长）": "ivan",
     "卡佳妈妈": "katya",
     "回退期的母亲": "katya",
     "切尔诺夫中士": "chernov",
-    "谢尔盖": "",
+    "谢尔盖": "sergei",
     "核算员扎哈尔": "zakhar",
-    "核算员": "",
+    "核算员": "accountant",
     "柳德米拉大娘": "lyudmila",
     "费奥多尔": "fyodor",
     "费奥多尔老爹": "fyodor",
-    "瓦西里": "",
+    "瓦西里": "vasily",
     "帕沙": "pasha",
     "清杀队新兵帕沙": "pasha",
     "古丽娅": "gulya",
@@ -60,10 +61,10 @@ SPEAKERS = {
     "拉娜": "lana",
     "拉娜（0420）": "lana",
     "叶莲娜": "yelena",
-    "茹科夫专员": "",
-    "假药贩": "",
-    "博伊科": "",
-    "佳娜": "",
+    "茹科夫专员": "zhukov",
+    "假药贩": "medicine_seller",
+    "博伊科": "boyko",
+    "佳娜": "jana",
     "帕维尔老爹": "pavel",
     "帕维尔": "pavel",
     "督察专员": "osk",
@@ -109,7 +110,7 @@ def parse_scenes(markdown: str) -> list[dict]:
         end = starts[n + 1][0] if n + 1 < len(starts) else len(lines)
         body = lines[start + 1 : end]
         for i, line in enumerate(body):
-            if line.startswith("## 附录"):
+            if line.startswith("## "):
                 body = body[:i]
                 break
 
@@ -119,7 +120,7 @@ def parse_scenes(markdown: str) -> list[dict]:
         stage = ""
         in_choices = False
         for paragraph in split_paragraphs(body):
-            if paragraph.startswith("---"):
+            if paragraph.startswith(("---", "> **演出备注**")):
                 continue
             if re.match(r"^\*\*【(?:抉择|终局闸)", paragraph):
                 in_choices = True
@@ -165,6 +166,9 @@ def parse_scenes(markdown: str) -> list[dict]:
                 "zh": text,
                 "stage": stage,
             })
+            # An explicit speaker label applies to one dialogue block. The next
+            # unlabelled paragraph is narration, even within the same scene.
+            speaker = "旁白 / 阿列克谢"
             stage = ""
         scenes.append({
             "id": scene_id,

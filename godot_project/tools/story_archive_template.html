@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="《Z年纪事：凛冬铁轨》剧情审计，查阅战役演出、地图、人物、字幕和结局。">
+<title>凛冬铁轨｜剧情档案</title>
+<style>
+  :root { color-scheme: dark; --paper:#121e2a; --snow:#e6eef3;
+    --muted:#a9bbc9; --rule:#3d556a; --amber:#f6cd87; --panel:#203447; }
+  * { box-sizing:border-box; }
+  html { scroll-padding-top:8rem; }
+  body { margin:0; background:var(--paper); color:var(--snow);
+    font:1rem/1.7 system-ui,"Microsoft YaHei",sans-serif; }
+  a { color:var(--amber); text-underline-offset:.22em; }
+  :focus-visible { outline:2px solid var(--amber); outline-offset:.25rem; }
+  header { min-height:28rem; display:grid; align-items:end; border-bottom:1px solid var(--rule);
+    background:linear-gradient(90deg,#121e2af9 5%,#121e2adb 37%,#121e2a1a 100%),
+    url("../../godot_project/art/80_maps/Yard/map_night.png") center 63%/cover; }
+  header > div, main { width:min(76rem,calc(100% - 3rem)); margin:auto; }
+  header > div { margin-bottom:3.5rem; }
+  h1,h2 { font-family:"Noto Serif SC","Songti SC",SimSun,serif; line-height:1.15; }
+  h1 { margin:.3rem 0 .9rem; font-size:clamp(2.8rem,7.5vw,6.4rem); }
+  h2 { font-size:clamp(1.6rem,4vw,2.3rem); }
+  header p { max-width:36rem; }
+  nav { display:flex; flex-wrap:wrap; gap:1.2rem; }
+  .counts,.meta { color:var(--muted); font-size:.9rem; }
+  main { padding:2rem 0 5rem; }
+  .progression { display:flex; flex-wrap:wrap; padding:0; gap:.8rem; list-style:none; }
+  .progression li { padding:.4rem .75rem; border-bottom:2px solid var(--rule); }
+  #audit { margin:2rem 0 3rem; border-block:1px solid var(--rule); padding:.85rem 0; }
+  summary { cursor:pointer; }
+  .table-scroll { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; }
+  th,td { text-align:left; padding:.75rem; vertical-align:top; border-bottom:1px solid var(--rule); }
+  th { background:var(--panel); }
+  td:first-child { color:var(--amber); min-width:8rem; }
+  .controls { position:sticky; top:0; z-index:1; padding:.7rem 0;
+    background:var(--paper); display:flex; flex-wrap:wrap; gap:.65rem; align-items:center; }
+  input,select,button { font:inherit; color:inherit; background:var(--panel);
+    border:1px solid var(--rule); padding:.45rem .65rem; border-radius:.2rem; }
+  input { flex:1 1 15rem; min-width:0; }
+  button { cursor:pointer; }
+  .record { border-bottom:1px solid var(--rule); padding:.2rem 0; }
+  .record > summary { padding:.85rem .15rem; }
+  .record > summary strong { color:var(--snow); }
+  .record > summary span { margin-inline-start:.8rem; color:var(--muted); font-size:.9rem; }
+  .record[open] > summary strong { color:var(--amber); }
+  .cast { color:var(--muted); }
+  .frames { margin:0; padding:0 0 0 1.65rem; }
+  .frame { padding:1rem 0; border-top:1px solid var(--rule); }
+  .frame > div { display:inline-block; width:49%; padding-inline-end:.9rem; vertical-align:top; }
+  .frame p { margin:0 0 .7rem; }
+  .cg { display:block; max-width:52rem; margin-bottom:.65rem; }
+  .cg img { display:block; width:100%; aspect-ratio:16/9; object-fit:contain; background:#0a131b; }
+  .portrait img { max-width:6rem; max-height:7rem; object-fit:contain; }
+  .caption { white-space:pre-wrap; }
+  .translation { margin:.4rem 0; color:var(--muted); }
+  .translation p { white-space:pre-wrap; }
+  aside { margin-top:.6rem; padding:.5rem .75rem; border-left:2px solid var(--rule); }
+  aside ol { padding-inline-start:1.3rem; }
+  @media (max-width:700px) {
+    header { min-height:23rem; }
+    header > div, main { width:calc(100% - 1.6rem); }
+    .record > summary span { display:block; margin-inline-start:1.1rem; }
+    .frame > div { display:block; width:100%; padding-inline-end:0; }
+    html { scroll-padding-top:12rem; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <p>诺沃斯克-17　／　战役演出档案</p>
+    <h1>凛冬铁轨</h1>
+    <p>按剧情进度查阅幻灯、双语字幕、出场人物和地图。页面含完整结局和分支剧透。</p>
+    <p class="counts">@@COUNTS@@</p>
+    <nav aria-label="页面导航"><a href="#audit">附件审计</a><a href="#catalog">演出目录</a><a href="../../">项目主页</a></nav>
+  </div>
+</header>
+<main>
+  <section aria-labelledby="progress">
+    <h2 id="progress">战役进度</h2>
+    <p>封城第十个月，货运调度员阿列克谢白天为区配给委员会搬货，夜里从锅炉房钻出去。他要给 602 室的母亲找透析液，也要查清编号 0420 的妹妹拉娜被送去了哪里。</p>
+    <ol class="progression">
+      <li>602 与冷库</li><li>货场与食堂</li><li>疗养院与黑市</li><li>松林庄园与矿坑</li>
+      <li>发车令与交接底单</li><li>鹰嘴崖开门及撤离</li><li>602 证据交接</li><li>302 播报及结局</li>
+    </ol>
+    <p>这是便于审计的阅读顺序。行动可按解锁情况穿插，支线、同行者与撤离结果会改变演出。</p>
+  </section>
+  <details id="audit">
+    <summary><strong>查看 z (6).html 台词与结局采纳记录</strong></summary>
+    <div class="table-scroll">@@AUDIT@@</div>
+  </details>
+  <section aria-labelledby="catalog">
+    <h2 id="catalog">演出目录</h2>
+    <div class="controls">
+      <input type="search" id="search" aria-label="搜索台词、角色、地点或幕次" placeholder="搜索台词、角色、地点或幕次">
+      <select id="group" aria-label="按内容筛选"><option value="">全部内容</option>@@FILTERS@@</select>
+      <button id="reset" type="button">重置</button>
+      <span id="match-count" class="counts" aria-live="polite"></span>
+    </div>
+    <div id="records">@@RECORDS@@</div>
+  </section>
+</main>
+<script>
+  const records = [...document.querySelectorAll('.record')];
+  const search = document.getElementById('search');
+  const group = document.getElementById('group');
+  const count = document.getElementById('match-count');
+  const searchable = records.map(record => (record.dataset.search + ' ' + record.textContent).toLowerCase());
+
+  function filter() {
+    const query = search.value.trim().toLowerCase().split(/\s+/);
+    let shown = 0;
+    records.forEach((record, index) => {
+      const matches = (!group.value || group.value === record.dataset.group) &&
+        query.every(word => searchable[index].includes(word));
+      record.hidden = !matches;
+      if (matches) shown += 1;
+    });
+    count.textContent = shown + ' 条';
+  }
+
+  function revealAnchor() {
+    const target = document.getElementById(location.hash.slice(1));
+    if (!(target instanceof HTMLDetailsElement)) return;
+    if (target.hidden) {
+      search.value = '';
+      group.value = '';
+      filter();
+    }
+    target.open = true;
+    target.scrollIntoView();
+  }
+
+  search.addEventListener('input', filter);
+  group.addEventListener('change', filter);
+  document.getElementById('reset').addEventListener('click', () => {
+    search.value = '';
+    group.value = '';
+    filter();
+    search.focus();
+  });
+  window.addEventListener('hashchange', revealAnchor);
+  filter();
+  revealAnchor();
+</script>
+</body>
+</html>

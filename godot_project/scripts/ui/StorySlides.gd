@@ -9,6 +9,8 @@ extends CanvasLayer
 ##   portrait   String —— 人物胸像；有背景图时需同时设置 show_portrait=true 才叠加显示
 ##   show_portrait bool —— 在场景图右下方叠加人物胸像
 ##   choices    Array[Dictionary] —— 当前页结束后显示选项；每项含 id / zh / en / followup
+##   required_choice bool —— 必须选完当前页选项才能关闭
+##   qte        {required, seconds, prompt_zh, prompt_en} —— 本页按键连击，结束后自动翻页
 ##   zh / en    旁白
 ##   focus      Vector2(0..1) —— 镜头推向画面的哪个位置（默认正中）
 ##   zoom       Vector2(from, to) —— 镜头缩放（默认 1.03 → 1.12）
@@ -20,6 +22,7 @@ extends CanvasLayer
 
 signal finished
 signal choice_selected(choice_id: String)
+signal qte_finished(success: bool)
 
 const SovietUI := preload("res://scripts/ui/SovietUI.gd")
 const HERO := preload("res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png")
@@ -51,6 +54,9 @@ var card_box: VBoxContainer
 var next_button: Button
 var skip_button: Button
 var choice_row: HBoxContainer
+var qte_row: HBoxContainer
+var qte_label: Label
+var qte_bar: ProgressBar
 
 var _root: Control
 var _fade: ColorRect
@@ -58,6 +64,11 @@ var _typed := 0.0
 var _closed := false
 var _focus := Vector2(0.5, 0.5)
 var _zoom := Vector2(1.03, 1.12)
+var _qte_hits := 0
+var _qte_required := 0
+var _qte_timer := 0.0
+var _qte_started := false
+var _qte_resolved := false
 
 
 ## 把 img 字段解析成贴图：路径不存在（图还没画 / 还没导入）时返回 null，由调用方退回胸像。
@@ -204,6 +215,30 @@ func _build() -> void:
 	caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(caption)
 
+	qte_row = HBoxContainer.new()
+	qte_row.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	qte_row.offset_left = 100
+	qte_row.offset_right = -480
+	qte_row.offset_top = -306
+	qte_row.offset_bottom = -260
+	qte_row.add_theme_constant_override("separation", 18)
+	qte_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	qte_row.visible = false
+	_root.add_child(qte_row)
+	qte_label = Label.new()
+	qte_label.custom_minimum_size = Vector2(440, 0)
+	qte_label.add_theme_font_size_override("font_size", 19)
+	qte_label.add_theme_font_override("font", SovietUI.body_font())
+	qte_label.add_theme_color_override("font_color", Color("e7dfcc"))
+	qte_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	qte_row.add_child(qte_label)
+	qte_bar = ProgressBar.new()
+	qte_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	qte_bar.custom_minimum_size = Vector2(220, 18)
+	qte_bar.show_percentage = false
+	qte_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	qte_row.add_child(qte_bar)
+
 	counter = Label.new()
 	counter.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	counter.offset_left = 100
@@ -296,6 +331,8 @@ func _show_page() -> void:
 	var has_card := not card.is_empty()
 	var choices: Array = s.get("choices", []) if s.get("choices", []) is Array else []
 	var has_choices := not choices.is_empty()
+	var qte: Dictionary = s.get("qte", {}) if s.get("qte", {}) is Dictionary else {}
+	var has_qte := not qte.is_empty()
 	if has_card:
 		backdrop.modulate = Color(0.42, 0.44, 0.48, 1)      # 结果卡那页把底图压暗
 	actors.visible = bool(s.get("actors", false))
@@ -327,8 +364,19 @@ func _show_page() -> void:
 	caption.text = String(s.get("zh" if lang == "zh" else "en", ""))
 	caption.visible_characters = 0
 	counter.visible = not has_choices
-	next_button.visible = not has_choices
+	next_button.visible = not has_choices and not has_qte
 	choice_row.visible = has_choices
+	qte_row.visible = has_qte
+	skip_button.visible = not bool(s.get("required_choice", false))
+	_qte_hits = 0
+	_qte_required = maxi(1, int(qte.get("required", 1))) if has_qte else 0
+	_qte_timer = maxf(0.1, float(qte.get("seconds", 3.0))) if has_qte else 0.0
+	_qte_started = false
+	_qte_resolved = false
+	if has_qte:
+		qte_label.text = "%s · 0 / %d" % [String(qte.get("prompt_zh" if lang == "zh" else "prompt_en", "")), _qte_required]
+		qte_bar.max_value = float(_qte_required)
+		qte_bar.value = 0.0
 	for child in choice_row.get_children():
 		choice_row.remove_child(child)
 		child.queue_free()
@@ -346,9 +394,14 @@ func _show_page() -> void:
 			choice_row.add_child(choice_button)
 	_typed = 0.0
 	heading.text = heading_zh if lang == "zh" else heading_en
-	var fmt := "%d / %d   ·   空格 / 回车 / 点击 继续   ·   Esc 跳过" if lang == "zh" \
-		else "%d / %d   ·   Space / Enter / click to continue   ·   Esc to skip"
-	counter.text = fmt % [page + 1, slides.size()]
+	if has_qte:
+		counter.text = "QTE · 连按拔刀" if lang == "zh" else "QTE · MASH TO PULL FREE"
+	elif bool(s.get("required_choice", false)):
+		counter.text = "请选择一条路" if lang == "zh" else "CHOOSE A ROUTE"
+	else:
+		var fmt := "%d / %d   ·   空格 / 回车 / 点击 继续   ·   Esc 跳过" if lang == "zh" \
+			else "%d / %d   ·   Space / Enter / click to continue   ·   Esc to skip"
+		counter.text = fmt % [page + 1, slides.size()]
 	elapsed = 0.0
 	_apply_camera()
 
@@ -412,6 +465,12 @@ func _process(delta: float) -> void:
 			caption.visible_characters = int(_typed)
 	if actors.visible:
 		_animate_actors()
+	if qte_row.visible and text_done():
+		_qte_started = true
+		_qte_timer = maxf(0.0, _qte_timer - delta)
+		_update_qte_widget()
+		if _qte_hits >= _qte_required or _qte_timer <= 0.0:
+			_finish_qte(_qte_hits >= _qte_required)
 
 
 ## 启用角色叠层时播放行走动画。
@@ -440,7 +499,8 @@ func _input(event: InputEvent) -> void:
 		var k := (event as InputEventKey).keycode
 		if k == KEY_ESCAPE:
 			get_viewport().set_input_as_handled()
-			close()
+			if not bool(current().get("required_choice", false)):
+				close()
 		elif k == KEY_SPACE or k == KEY_ENTER or k == KEY_KP_ENTER:
 			get_viewport().set_input_as_handled()
 			press()
@@ -469,8 +529,34 @@ func press() -> void:
 	if not text_done():
 		caption.visible_characters = -1
 		return
+	if qte_row.visible:
+		if _qte_started:
+			_qte_hits += 1
+			_update_qte_widget()
+			if _qte_hits >= _qte_required:
+				_finish_qte(true)
+		return
 	if not (current().get("choices", []) as Array).is_empty():
 		return
+	advance()
+
+
+func _update_qte_widget() -> void:
+	if qte_label == null or qte_bar == null:
+		return
+	var s := current()
+	var qte: Dictionary = s.get("qte", {}) if s.get("qte", {}) is Dictionary else {}
+	var prompt := String(qte.get("prompt_zh" if lang == "zh" else "prompt_en", ""))
+	qte_label.text = "%s · %d / %d · %.1fs" % [prompt, _qte_hits, _qte_required, _qte_timer]
+	qte_bar.max_value = float(maxi(1, _qte_required))
+	qte_bar.value = float(_qte_hits)
+
+
+func _finish_qte(success: bool) -> void:
+	if _qte_resolved:
+		return
+	_qte_resolved = true
+	qte_finished.emit(success)
 	advance()
 
 
@@ -498,6 +584,8 @@ func _choose_dialogue(choice_id: String) -> void:
 			break
 	if selected.is_empty():
 		return
+	s["required_choice"] = false
+	slides[page] = s
 	choice_selected.emit(choice_id)
 	var followup: Variant = selected.get("followup", {})
 	if followup is Dictionary and not followup.is_empty():
@@ -512,6 +600,11 @@ func _choose_dialogue(choice_id: String) -> void:
 func close() -> void:
 	if _closed:
 		return
+	if bool(current().get("required_choice", false)):
+		return
+	if qte_row.visible and not _qte_resolved:
+		_qte_resolved = true
+		qte_finished.emit(false)
 	_closed = true
 	finished.emit()
 	queue_free()
