@@ -105,6 +105,15 @@ summary{cursor:pointer}
 .reading article{max-width:56rem}
 .reading .slide-detail,.reading .map-view{max-width:none}
 .reading aside{padding:.7rem 1rem;border-left:2px solid var(--line);margin-top:1rem}
+.static-archive{padding:0 clamp(1rem,3.2vw,3rem) 3rem;max-width:105rem;margin:auto}
+.static-archive section{margin:2rem 0;scroll-margin-top:1rem}
+.static-archive .static-list{display:grid;gap:.65rem}
+.static-archive .record{padding:.8rem 1rem;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.static-archive summary span{display:block;color:var(--muted);font-size:.86rem}
+.static-archive .record:target{border-color:var(--gold)}
+.static-archive .atlas .record .cg{display:block;margin:.6rem 0}
+.static-archive .people .portrait img{width:100%;max-height:15rem}
+.static-archive .frames li+li{border-top:1px solid var(--line)}
 @media(max-width:760px){
  .shell{display:block}.rail{height:auto;position:static;padding:.65rem .85rem;border-right:0;border-bottom:1px solid var(--line)}
  .rail nav{display:flex;overflow:auto;margin:.45rem 0 0;gap:.2rem}
@@ -132,12 +141,14 @@ summary{cursor:pointer}
       <span>@@COUNTS@@</span>
       <label><span>全库搜索</span><input id="search" type="search" placeholder="搜索台词、人物、地点" aria-label="搜索台词、人物、地点"></label>
     </div>
-    <main id="view" tabindex="-1"><noscript>请启用 JavaScript 浏览档案，或查阅 <a href="z6-audit.md">台词审计原稿</a>。</noscript></main>
+    <main id="view" tabindex="-1"><div id="home">@@HOME@@</div></main>
+    <div id="static-archive" class="static-archive">
+      @@RECORDS@@
+      <section id="audit"><h2>台词审计</h2><div class="table-scroll">@@AUDIT@@</div></section>
+    </div>
   </div>
 </div>
-<template id="source">@@RECORDS@@</template>
-<template id="audit-source">@@AUDIT@@</template>
-<template id="home-source">
+<!-- HOME MARKUP BEGIN -->
   <div class="hero"><div>
     <p class="kicker">诺沃斯克-17　封城第十个月</p><h1>凛冬铁轨</h1>
     <p>锅炉房的气窗还开着。阿列克谢必须趁夜出门，给 602 室的母亲找药，也要查清编号 0420 的妹妹被送去了哪里。</p>
@@ -149,11 +160,14 @@ summary{cursor:pointer}
     <a class="highlight" href="#atlas"><strong>17 张夜潜地图</strong>按地点查看日夜画面，并回查对应剧情。</a>
     <a class="highlight" href="#audit"><strong>台词采纳记录</strong>从原稿到游戏，逐段核对取舍。</a>
   </div>
-</template>
+<!-- HOME MARKUP END -->
 <script>
 const main = document.getElementById('view');
 const search = document.getElementById('search');
-const records = [...document.getElementById('source').content.querySelectorAll('.record')].map(node => {
+const staticArchive = document.getElementById('static-archive');
+const homeMarkup = document.getElementById('home').innerHTML;
+const auditMarkup = staticArchive.querySelector('#audit .table-scroll').innerHTML;
+const records = [...staticArchive.querySelectorAll('.record')].map(node => {
   const summary = node.querySelector(':scope > summary');
   const images = node.querySelectorAll('img');
   const title = summary.querySelector('strong').textContent;
@@ -201,10 +215,9 @@ function area(r) {
 function section(key) {
   const [title, subtitle] = screens[key];
   if (key === 'home') {
-    main.replaceChildren(document.getElementById('home-source').content.cloneNode(true));
+    main.innerHTML = homeMarkup;
   } else if (key === 'audit') {
-    main.innerHTML = heading(title, subtitle) + '<div class="table-scroll"></div>';
-    main.lastElementChild.append(document.getElementById('audit-source').content.cloneNode(true));
+    main.innerHTML = heading(title, subtitle) + '<div class="table-scroll">' + auditMarkup + '</div>';
   } else if (key === 'story') {
     const items = records.filter(r => area(r) === key);
     const chapters = [...new Set(items.map(r => r.meta.split(' / ')[0]))];
@@ -369,6 +382,7 @@ search.addEventListener('input', () => {
 });
 addEventListener('hashchange', route);
 route();
+staticArchive.remove();
 </script>
 </body>
 </html>

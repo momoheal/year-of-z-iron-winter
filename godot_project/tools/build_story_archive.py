@@ -258,8 +258,37 @@ def main(export):
     page_count = sum(len(deck["pages"]) for deck in data["decks"] if deck["group"] != "战役对白")
     page_count += sum("followup" in choice for deck in data["decks"] for p in deck["pages"] for choice in p.get("choices", []))
     counts = f'{page_count} 页幻灯（含分支） · {len(locations)} 张战役地图 · {len(literary)} 场文学底稿'
-    replacements = {"COUNTS": counts, "AUDIT": audit_table, "RECORDS": "\n".join(records)}
-    output = re.sub(r"@@(COUNTS|AUDIT|RECORDS)@@", lambda match: replacements[match[1]], page)
+    sections = {
+        "story": ("剧情分镜", "static-list"), "atlas": ("夜潜地图", "grid atlas"),
+        "people": ("人物档案", "grid people"), "endings": ("结局与余波", "static-list"),
+        "library": ("对白与底稿", "static-list"),
+    }
+    buckets = {key: [] for key in sections}
+    for item in records:
+        group = re.search(r'data-group="([^"]+)"', item).group(1)
+        if group == "地图":
+            key = "atlas"
+        elif group in ("人物", "伙伴"):
+            key = "people"
+        elif group == "结局":
+            key = "endings"
+        elif group in ("开场", "602 室", "现场与余波", "抉择余波表"):
+            key = "story"
+        else:
+            key = "library"
+        if key == "atlas" or 'id="deck-prologue-' in item:
+            item = item.replace('<details class="record"', '<details open class="record"', 1)
+        buckets[key].append(item)
+    grouped = "".join(
+        f'<section id="{key}"><h2>{title}</h2><div class="{layout}">' + "\n".join(buckets[key]) + "</div></section>"
+        for key, (title, layout) in sections.items()
+    )
+    start = "<!-- HOME MARKUP BEGIN -->"
+    end = "<!-- HOME MARKUP END -->"
+    before, rest = page.split(start)
+    home, after = rest.split(end)
+    replacements = {"COUNTS": counts, "AUDIT": audit_table, "RECORDS": grouped, "HOME": home}
+    output = re.sub(r"@@(COUNTS|AUDIT|RECORDS|HOME)@@", lambda match: replacements[match[1]], before + after)
     (OUT / "index.html").write_text(output, encoding="utf-8", newline="\n")
 
 
