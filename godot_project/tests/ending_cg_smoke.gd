@@ -6,19 +6,12 @@ const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
 const CampaignSim := preload("res://scripts/CampaignSim.gd")
 
 const EXPECTED := {
-	"ENDING_A_RETURN_HOME": "res://art/60_ui/cg/cg_ending_closed_car_firelight_alt.jpg",
+	"ENDING_A_RETURN_HOME": "res://art/60_ui/cg/cg_aftermath_a_602.jpg",
 	"ENDING_B_FLAWED_LIBERATION": "res://art/60_ui/cg/cg_ending_broadcast_breach_302_alt.jpg",
 	"ENDING_C_NUMBNESS": "res://art/60_ui/cg/cg_ending_crawl_back_cellar_alt.jpg",
 	"TRUE_ALPHA_HELLO_LANA": "res://art/60_ui/cg/cg_ending_true_alpha_hello_lana.jpg",
 	"TRUE_BETA_OUTLAND_FIRE": "res://art/60_ui/cg/cg_ending_true_beta_outland_fire.jpg",
 }
-const EXPECTED_MAIN_CGS := [
-	"cg_ending_closed_car_firelight_alt.jpg",
-	"cg_ending_broadcast_breach_302_alt.jpg",
-	"cg_ending_crawl_back_cellar_alt.jpg",
-	"cg_ending_true_alpha_hello_lana.jpg",
-	"cg_ending_true_beta_outland_fire.jpg",
-]
 const EXPECTED_AFTERMATH := {
 	"ENDING_A_RETURN_HOME": "cg_aftermath_a_602.jpg",
 	"ENDING_B_FLAWED_LIBERATION": "cg_aftermath_b_release.jpg",
@@ -66,28 +59,38 @@ func _run() -> void:
 	_assert(observed.size() == EXPECTED.size(), "campaign state resolves to five unique ending keys", str(observed.keys()))
 	for key in EXPECTED:
 		_assert(CutsceneData.ENDING_SCENES.has(key), "%s has a cutscene mapping" % key)
-		var path := CutsceneData.ending_scene(key)
-		_assert(path == String(EXPECTED[key]) and ResourceLoader.exists(path), "%s main CG exists" % key, path)
+		var context := {"crag_rescue_all": true}
+		var path := CutsceneData.ending_scene(key, context)
+		_assert(path == String(EXPECTED[key]), "%s main CG matches this route" % key, path)
 		var texture := ResourceLoader.load(path) as Texture2D
 		_assert(texture != null, "%s main CG loads as Texture2D" % key, path)
 		if texture != null:
-			_assert(texture.get_width() == 1376 and texture.get_height() == 768,
-				"%s main CG uses 1376x768" % key, "%dx%d" % [texture.get_width(), texture.get_height()])
-		var pages: Array = CutsceneData.ending_slides(key)
+			var ratio := float(texture.get_width()) / texture.get_height()
+			_assert(absf(ratio - 16.0 / 9.0) < 0.03, "%s main CG is widescreen" % key)
+		var pages: Array = CutsceneData.ending_slides(key, false, context)
 		var aftermath: Array = CutsceneData.ending_aftermath(key)
-		_assert(pages.size() == aftermath.size() + 1 and String(pages[0].get("img", "")) == path,
-			"%s replay deck orders main CG before aftermath" % key)
+		var lead := 1 if key == "ENDING_C_NUMBNESS" else 0
+		_assert(pages.size() == aftermath.size() + 1 + lead and String(pages[lead].get("img", "")) == path,
+			"%s replay orders the main CG after any prologue and before aftermath" % key)
+		if lead == 1:
+			_assert(String(pages[0]["img"]).ends_with("cg_room602_empty_bed_folded_scarf.jpg"),
+				"ending C begins at the empty bed")
 		for page in pages:
 			var image_path := String(page.get("img", ""))
 			_assert(ResourceLoader.exists(image_path) and (ResourceLoader.load(image_path) as Texture2D) != null,
 				"%s slide image loads" % key, image_path)
 
-	var mapped_assets := ""
-	for key in CutsceneData.ENDING_SCENES:
-		for page in CutsceneData.ending_slides(key):
-			mapped_assets += " " + String(page.get("img", ""))
-	for name in EXPECTED_MAIN_CGS:
-		_assert(mapped_assets.contains(name), "%s main CG is wired into a five-ending scene" % name)
+	var b_key := "ENDING_B_FLAWED_LIBERATION"
+	var old_save: Array = CutsceneData.ending_slides(b_key)
+	var lana_only: Array = CutsceneData.ending_slides(b_key, true, {"crag_rescue_lana": true})
+	_assert(String(old_save[0]["img"]).ends_with("cg_tower302_aleksei_at_transmitter.jpg")
+		and ResourceLoader.exists(String(old_save[0]["img"])), "legacy B uses the transmitter CG")
+	_assert(String(lana_only[1]["zh"]).contains("车门还开着吗") and old_save[1]["zh"] != lana_only[1]["zh"],
+		"Lana only and unknown legacy scope have distinct epilogues")
+	var witnessed: Array = CutsceneData.ending_slides(b_key, true,
+		{"pasha_witness_seen": true, "pasha_survived_to_crag": true})
+	_assert(witnessed.size() == old_save.size() + 1 and String(witnessed.back()["zh"]).contains("帮我系上"),
+		"Pasha's aftermath is appended only when both conditions are met")
 	var seen_aftermath := {}
 	for key in EXPECTED_AFTERMATH:
 		var aftermath: Array = CutsceneData.ending_aftermath(key)

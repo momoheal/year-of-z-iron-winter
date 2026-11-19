@@ -163,6 +163,22 @@
 | `cg_companions_trust_compassionate_route_alt.jpg` | 仁慈路线伙伴信任备选：安娜、叶莲娜、铁路工人、维修工与灰烬仍靠近阿列克谢（候选美术变体，尚未接入剧情数据） | `cg_companions_trust_compassionate_route_alt.prompt.txt` |
 | `cg_manor_vault_evidence_yelena_alt.jpg` | 松林庄园保险库备选：阿列克谢与金发辫叶莲娜发现底片和焦黑账本（候选美术变体，尚未接入剧情数据） | `cg_manor_vault_evidence_yelena_alt.prompt.txt` |
 
+## 2026-11-19 新增过场资产（已接入）
+
+| 文件 | 用途与触发 |
+| --- | --- |
+| `cg_canteen_vasily_qte_fyodor_v2.png` | 食堂卡刀 QTE 与回访；右侧人物为瓦西里的父亲费奥多尔，非女性人物。 |
+| `cg_manor_yelena_zhukov_confront_v1.png` | 叶莲娜同行时的父女对峙与庄园结果页；她缺席时切回通用庄园 CG。 |
+| `cg_mine_no3_wall_inscription_v1.png` | 靠近 3 号矿坑爆破断面时播放刻字幻灯。 |
+| `cg_fire_stairwell_neighbors_breach_v1.png` | 帕维尔不同行时，住户合力破门的火场分支。 |
+| `cg_fire_pavel_cutting_torch_v1.png` | 帕维尔同行时，由他切开焊死横梁的火场分支。 |
+| `cg_boxcar03_survivors_reveal_v1.png` | 鹰嘴崖打开第三节车厢后的幸存者与拉娜揭示页。 |
+| `cg_fire_ash_guides_jana_v1.png` | 灰烬同行时，灰犬把佳娜带向避风处的专属火场页。 |
+| `cg_redzone_mother_gate_v1.png` | 首次靠近货场锅炉房通风口时的红区目击：退烧母亲隔门呼救；同图变焦承接对白。 |
+| `cg_redzone_mother_osk_v1.png` | 清杀队在探照灯下逼近母亲。 |
+| `cg_redzone_mother_aftermath_v1.png` | 枪击后的雪地余波，母亲倒地、铜钥匙落在沟边。 |
+| `cg_redzone_mother_scales_v1.png` | 末页只呈现钥匙、雪水和脱落鳞屑，不出现人形，避免产生死者复活的错觉。 |
+
 
 ## 游戏内查看
 

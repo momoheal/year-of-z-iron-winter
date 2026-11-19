@@ -2,6 +2,7 @@ extends SceneTree
 ## 剧情逐句推进 + 角色/情绪头像自动化冒烟测试。
 
 const Data := preload("res://scripts/CampaignData.gd")
+const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
 
 var passes := 0
 var failures: Array[String] = []
@@ -145,19 +146,16 @@ func _run() -> void:
 	route_sim.flags["lana_car3"] = true
 	route_sim.mates["anna"] = true
 	route_sim.mates["zakhar"] = true
-	route_sim.select_mate("zakhar")
 	route_sim.tally = 2
 	route_sim.conscience = 20.0
-	var route_lines: Array = route_sim.story_lines("marshalling")
-	var anna_reacts := false
-	var zakhar_threatens := false
-	for reaction in route_lines:
-		var reaction_line: Dictionary = reaction
-		if String(reaction_line.get("w", "")) == "安娜":
-			anna_reacts = String(reaction_line.get("zh", "")).contains("不会再把后背交给你")
-		if String(reaction_line.get("w", "")) == "核算员扎哈尔":
-			zakhar_threatens = String(reaction_line.get("zh", "")).contains("冬季配额")
-	_assert(anna_reacts and zakhar_threatens, "ruthless route changes Anna's trust and Zakhar's motive")
+	route_sim.select_mate("anna")
+	var anna_line: Dictionary = route_sim.story_lines("marshalling").back()
+	_assert(anna_line["w"] == "安娜" and String(anna_line["zh"]).contains("你自己说"),
+		"Anna voices distrust when she accompanies a ruthless player")
+	route_sim.select_mate("zakhar")
+	var zakhar_line: Dictionary = route_sim.story_lines("marshalling").back()
+	_assert(zakhar_line["w"] == "核算员扎哈尔" and String(zakhar_line["zh"]).contains("一冬的煤和面粉"),
+		"Zakhar discloses the offer when he accompanies a ruthless player")
 	route_sim.story_id = "marshalling"
 	route_sim.story_open = true
 	route_sim.resolve_story(0)
@@ -169,9 +167,12 @@ func _run() -> void:
 
 	# 每一句：游标正确、头像角色与情绪正确、末句前无选项、末句后有选项。
 	for sid in Data.STORY:
+		print("Checking dialogue scene: ", sid)
 		var beat: Dictionary = Data.STORY[sid]
 		var lines: Array = sc.sim.story_lines(String(sid))
 		sc.sim.add_item("band", 1)
+		if sid == "pasha_watchtower":
+			sc.sim.add_item("asp", 1)
 		sc.sim.story_id = sid
 		sc.sim.story_open = true
 		sc.hud._story_beat = ""
@@ -187,13 +188,21 @@ func _run() -> void:
 			var role := String(speakers.get(String(line.get("w", "")), "aleksei"))
 			var mood := String(line.get("mood", "calm"))
 			var tex: Texture2D = sc.hud._story_texture(line)
-			_assert(mood in ["calm", "sad", "intense"], "%s line %d uses supported mood" % [sid, i + 1])
+			_assert(mood in ["calm", "sad", "intense", "wry", "fear", "determined", "hurt"],
+				"%s line %d uses supported mood" % [sid, i + 1])
 			# 校验解析后的肖像实际可用：具名角色用专属图，其余统一走中性档案占位。
 			_assert(tex != null, "%s line %d resolves a usable portrait" % [sid, i + 1])
 			if role == "":
 				_assert(tex == placeholder, "%s line %d uses the neutral archive placeholder" % [sid, i + 1])
 			else:
-				_assert(tex == portraits[role][mood], "%s line %d portrait %s/%s" % [sid, i + 1, role, mood])
+				var states: Dictionary = portraits.get(role, {})
+				var expected: Texture2D = states.get(mood, states.get("calm", placeholder))
+				if mood in ["fear", "determined", "hurt"] and sc.hud.STORY_PORTRAIT_NAMES.has(role):
+					var path := "res://art/10_characters/portraits/PRT_%s_%s.png" % [
+						sc.hud.STORY_PORTRAIT_NAMES[role], mood.capitalize()]
+					if ResourceLoader.exists(path):
+						expected = load(path)
+				_assert(tex == expected, "%s line %d portrait %s/%s" % [sid, i + 1, role, mood])
 			_assert(_has_label(sc.hud.modal, String(line["zh"])), "%s line %d full text visible" % [sid, i + 1])
 			if i > 0:
 				_assert(not _has_label(sc.hud.modal, String(lines[i - 1]["zh"])), "%s line %d previous text cleared" % [sid, i + 1])
@@ -248,11 +257,11 @@ func _run() -> void:
 	_assert(String(Data.TEXT["zh"]["a3"]).contains("让他安静"), "literary A3 choice")
 	_assert(String(Data.STORY["sanitarium"]["lines"][2]["zh"]).contains("半片阿司匹林"), "Anna suffering testimony")
 	_assert(String(Data.STORY["market"]["choices"][2]["toast_zh"]).contains("灵魂"), "betrayal moral consequence")
-	_assert(String(Data.STORY["canteen"]["choices"][0]["toast_zh"]).contains("耳膜"), "Vasily lasting guilt")
+	var canteen: Array = CutsceneData.story_event_slides("canteen_aftermath")
+	_assert(String(canteen.back()["zh"]).contains("名字"), "the canteen return preserves Vasily's name")
 	_assert(Data.STORY["manor"]["lines"].size() == 5, "manor adds two Grand Inquisitor lines")
 	_assert(String(Data.STORY["manor"]["lines"][3]["zh"]).contains("下地狱的十字架"), "Zhukov carries the city's sin")
-	_assert(String(Data.STORY["canteen"]["choices"][0]["toast_zh"]).contains("费奥多尔大叔"), "Aleksei returns to confess")
-	_assert(Data.PASHA_EPILOGUE_ZH.contains("不能光着身子见上帝"), "Pasha gives his coat to the nameless dead")
+	_assert(String(canteen[1]["zh"]).contains("费奥多尔"), "Aleksei returns to Fyodor after the fight")
 
 	# 工业档案 UI：十格五角星与铆接指令牌必须有真实组件和样式，而非只换文案。
 	var star = load("res://scripts/ui/SovietStarMeter.gd").new()

@@ -29,6 +29,19 @@ By day, you play as former freight dispatcher **Aleksei "Alyosha" Morozov**, acc
 
 ---
 
+## 剧情档案与台词审计
+
+[查看剧情档案网页](https://momoheal.github.io/year-of-z-iron-winter/deliverables/story_review/) · [仓库内的 HTML](deliverables/story_review/index.html) · [z (6).html 采纳记录](deliverables/story_review/z6-audit.md)
+
+档案包含剧透。按进度查看游戏幻灯、双语字幕、出场人物、日夜地图、条件余波及五种结局。可搜索角色、地点或台词，并对照文学底稿、战役运行文案与附件的采纳决定。网页版随 GitHub Pages 的 `main` 分支更新。本地克隆后可直接打开 HTML。
+
+维护时在仓库根目录运行以下命令，把 `ABSOLUTE_JSON_PATH` 换成同一个临时文件的绝对路径，再提交生成的 HTML。
+
+```text
+godot --headless --path godot_project -s tools/export_story_archive.gd -- ABSOLUTE_JSON_PATH
+python godot_project/tools/build_story_archive.py ABSOLUTE_JSON_PATH
+```
+
 ## 📂 Repository Structure | 仓库文件目录
 
 ```text

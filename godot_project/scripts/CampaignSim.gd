@@ -481,6 +481,10 @@ func can_depart(L: Dictionary) -> bool:
 func depart(L: Dictionary) -> bool:
 	if phase == "raid" or not can_depart(L):
 		return false
+	if String(L.get("id", "")) == "eagle_beak_cliff" and not bool(flags.get("eagle_escape", false)):
+		# Remove route choices written by older builds before the boxcar is actually opened.
+		flags.erase("crag_rescue_all")
+		flags.erase("crag_rescue_lana")
 	# 扣除携带物（与 HTML depart 一致）
 	for k in load.keys():
 		var n := int(load[k])
@@ -563,12 +567,49 @@ func story_lines(id: String) -> Array:
 						break
 			if use_source:
 				lines = source_lines
-	if id == "sanitarium" and not bool(mates.get("ash", false)):
+	if id == "canteen":
+		# The pantry clash happens in the playable raid; pre-raid dialogue stops before the fatal swing.
+		for i in lines.size():
+			if String(lines[i].get("zh", "")).contains("阿列克谢猛地抽出砍骨刀"):
+				lines = lines.slice(0, i)
+				break
+	if id == "manor":
+		if mate == "yelena" and bool(mates.get("yelena", false)):
+			lines.append_array([
+				{"w": "茹科夫专员", "mood": "sad", "zh": "把通行证收起来。警卫问起门是谁开的，你让我写谁？", "en": "Put the pass away. When the guards ask who opened the door, whose name should I write?"},
+				{"w": "叶莲娜", "mood": "intense", "zh": "写我。门是我开的，水也是我递的。他们还在楼下。", "en": "Write mine. I opened the door and brought them water. They're still downstairs."},
+			])
+		else:
+			lines.append_array([
+				{"w": "茹科夫专员", "mood": "calm", "zh": "地下室还有几个人，名单上写的是零。桌上有一张配给凭条，也有能留下焚毁记录的底片。", "en": "There are several people in the cellar; the list calls them zero. On the desk are a ration slip and a negative that can preserve the burn record."},
+				{"w": "阿列克谢", "mood": "calm", "zh": "门后还有人在敲。账本和配给都在眼前，我得先决定带走什么。", "en": "Someone is still knocking behind the door. The ledger and ration are in front of me; I have to decide what to take first."},
+			])
+	if id == "sanitarium" and (mate != "ash" or not bool(mates.get("ash", false))):
 		for i in lines.size():
 			var text := String(lines[i].get("zh", ""))
 			if "灰烬" in text and "鼻尖" in text:
 				lines[i] = {"w": "", "zh": "阿列克谢走到床边，轻敲铁栏。姑娘抬起头，眼里的紫黑充血已经退了。",
 					"en": "Aleksei comes to the bedside and taps the bars. She looks up. The purple has faded from her eyes."}
+	if id == "station_buran_yard" and (mate != "ivan" or not bool(mates.get("ivan", false))):
+		for i in lines.size():
+			if String(lines[i].get("w", "")) == "老轨伊万":
+				lines[i] = {"w": "阿列克谢", "zh": "表格只写了发车，没有写到站。交接底单还在车尾；没有销账章，就不能说车里的人已经死了。",
+					"en": "The forms record the departure, not the arrival. The handover copy remains by the rear cars; without a closure stamp, nobody can say those aboard are dead."}
+	if id == "market_refuge" and (String(last_report.get("mate", "")) != "ivan" \
+		or not bool(last_report.get("mate_present", false))):
+		for i in lines.size():
+			if String(lines[i].get("w", "")) == "老轨伊万":
+				lines[i] = {"w": "", "zh": "电台里断断续续传来一串调度呼号。阿列克谢把频率记进日志，没有听见熟悉的声音。",
+					"en": "A broken dispatch call sign comes over the radio. Aleksei writes down the frequency and hears no familiar voice."}
+	if id == "broadcast_tower_302":
+		for i in lines.size():
+			var speaker := String(lines[i].get("w", ""))
+			if speaker == "叶莲娜" and (mate != "yelena" or not bool(mates.get("yelena", false))):
+				lines[i] = {"w": "阿列克谢", "zh": "把底单和庄园照片接进播音台。证词不能只剩一串数字。",
+					"en": "Feed the handover copy and Manor photographs into the board. The testimony cannot be reduced to numbers."}
+			elif speaker == "帕维尔" and (mate != "pavel" or not bool(mates.get("pavel", false))):
+				lines[i] = {"w": "阿列克谢", "zh": "发射机只要再响一分钟，够全城听见就够了。",
+					"en": "Keep the transmitter alive for one more minute. If the city hears it, that is enough."}
 	if id == "market" and not mother_alive and not bool(flags.get("market_refuge_found", false)):
 		lines.append_array([
 			{"w": "阿列克谢", "mood": "sad",
@@ -578,6 +619,10 @@ func story_lines(id: String) -> Array:
 				"zh": "市场最里面有间废信号室，门后能睡人。先活着找到它，别问是谁把钥匙留在那儿。",
 				"en": "There's an abandoned signal room at the back of the market. A person can sleep behind that door. Find it alive; don't ask who left the key."},
 		])
+		if mate != "ivan" or not bool(mates.get("ivan", false)):
+			lines[lines.size() - 1] = {"w": "", "mood": "calm",
+				"zh": "市场最里面有间废信号室，门后能睡人。钥匙留在门边，先活着找到它。",
+				"en": "There is an abandoned signal room at the back of the market. A key rests by the door; find it alive."}
 	if id == "marshalling":
 		lines.append_array(_route_reaction_lines())
 	return lines
@@ -593,37 +638,40 @@ func _route_reaction_lines() -> Array:
 	var ruthless := _route_is_ruthless()
 	var compassionate := _route_is_compassionate()
 	var reactions := {
-		"ash": ["灰烬", "灰烬贴着你的靴边低低呜咽，项圈下那圈旧伤被炉火照得发白。", "Ash presses against your boot and whines softly. The old ring of scar tissue pales in the furnace light."],
-		"anna": ["安娜", "安娜", "Anna"],
-		"gulya": ["古丽娅", "古丽娅", "Gulya"],
-		"ivan": ["老轨伊万", "伊万", "Old Ivan"],
-		"pavel": ["帕维尔老爹", "帕维尔", "Pavel"],
-		"yelena": ["叶莲娜", "叶莲娜", "Yelena"],
+		"anna": ["安娜",
+			["拉娜认得我的声音。车门一开，我先喊她。", "Lana knows my voice. When the door opens, I'll call her first."],
+			["把「第三节」再念一遍。我怕一慌就记岔。", "Say 'Boxcar Three' again. I don't want to get it wrong if I panic."],
+			["我跟你去找她。见了她，这一路的事你自己说。", "I'll help find her. When we do, you can tell her what happened on the way."]],
+		"gulya": ["古丽娅",
+			["车厢号报给我。我抄进病历，到了先看谁还能站。", "Give me the car number. I'll put it in the records and see who can stand when we get there."],
+			["你去找检修线。我把干净绷带分好。", "Find the service line. I'll sort the clean bandages."],
+			["药我背着。到了车门边，先让我看人。", "I'll carry the medicine. At the door, let me see the people first."]],
+		"ivan": ["老轨伊万",
+			["时刻我记住了。待会儿跟紧我，过道岔别打灯。", "I've got the time. Stay close, and keep your light off at the points."],
+			["先核检修线，车可不等人。", "Check the service line first. The train won't wait."],
+			["路我照样带。过道岔时你走前头，我得看得见你的手。", "I'll still show you the way. You go first at the points. I need to see your hands."]],
+		"pavel": ["帕维尔老爹",
+			["铁门要是卡死，我来扛。你腾两只手接里面的人。", "If the door jams, I'll hold it. Keep both hands free for the people inside."],
+			["图递过来。先找准哪儿能下撬棍。", "Hand me the plan. Let's find where the bar can get a grip."],
+			["门我照开，人我照接。出口我自己看。", "I'll open the door and help them out. I'll check the exit myself."]],
+		"yelena": ["叶莲娜",
+			["发车令我抄一份。你带原件，两份分开放。", "I'll copy the dispatch order. Take the original. We should keep them apart."],
+			["把时刻念给我，我核一遍山线图。", "Read me the times. I'll check them against the mountain-line map."],
+			["原件交给我。你记路线，别的到了再说。", "Give me the original. Remember the route. We'll talk about the rest when we get there."]],
 	}
-	for id in reactions:
-		if not bool(mates.get(id, false)):
-			continue
-		var row: Array = reactions[id]
-		var zh := String(row[1])
-		var en := String(row[2])
-		if id == "ash":
-			out.append({"w": row[0], "mood": "sad" if ruthless else "calm", "zh": zh, "en": en})
-			continue
-		if ruthless:
-			zh = "%s看着你，仍记得你救过车厢里的人；可你一路把其他人当成东西，他/她不会再把后背交给你。" % String(row[1])
-			en = "%s remembers that you saved the boxcar, but will not trust you with their back after the people you treated as things." % String(row[2])
-		elif compassionate:
-			zh = "%s把手搭上你的肩。你一路留下的名字和救过的人，让他/她愿意与你一起守住广播。" % String(row[1])
-			en = "%s rests a hand on your shoulder. The names you kept and lives you saved make them ready to defend the broadcast with you." % String(row[2])
-		else:
-			zh = "%s没有靠近也没有离开，只说：先把这一夜撑过去，之后再谈信任。" % String(row[1])
-			en = "%s neither comes closer nor leaves. " + String(row[2]) + " says: survive this night first; we can speak of trust later."
-		out.append({"w": row[0], "mood": "intense" if ruthless else ("sad" if not compassionate else "calm"), "zh": zh, "en": en})
-	if bool(mates.get("zakhar", false)):
+	if bool(mates.get(mate, false)) and reactions.has(mate):
+		var row: Array = reactions[mate]
+		var words: Array = row[3 if ruthless else (1 if compassionate else 2)]
+		out.append({"w": row[0], "mood": "intense" if ruthless else "calm", "zh": words[0], "en": words[1]})
+	elif mate == "ash" and bool(mates.get("ash", false)):
+		out.append({"w": "", "mood": "calm",
+			"zh": "灰烬把湿冷的鼻尖抵在你靴边，低低呜咽。它抬头望着调车场入口。",
+			"en": "Ash presses his cold, wet nose against your boot and whines. He looks toward the yard entrance."})
+	if mate == "zakhar" and bool(mates.get("zakhar", false)):
 		if ruthless:
 			out.append({"w": "核算员扎哈尔", "mood": "intense",
-				"zh": "清杀队答应给我冬季配额。你把我带到这里，我就把你的坐标报给他们。",
-				"en": "OSK offered me a winter ration quota. You brought me here; I will give them your position."})
+				"zh": "清杀队出一冬的煤和面粉，只买你今晚的去向。这样的单子，你当初也签过一张。",
+				"en": "The OSK offered a winter's coal and flour for where you're going tonight. You signed an order like that once."})
 		else:
 			out.append({"w": "核算员扎哈尔", "mood": "calm",
 				"zh": "只要配额还比不上活命，我就跟着你。别把这当忠诚。",
@@ -643,8 +691,14 @@ func resolve_story(choice_index: int) -> Dictionary:
 	if choice_index < 0 or choice_index >= choices.size():
 		story_open = false
 		return {}
+	if story_id == "pasha_watchtower" and choice_index == 0 and int(stash.get("asp", 0)) < 1:
+		return {}
 	var ch: Dictionary = choices[choice_index]
 	var applied: Array[String] = []
+	if story_id == "manor":
+		flags.erase("manor_plan_evidence")
+		flags.erase("manor_plan_trade")
+		flags.erase("manor_plan_release")
 	if story_id == "sanitarium":
 		var medicine := rescue_medicine()
 		if medicine == "":
@@ -693,8 +747,18 @@ func resolve_story(choice_index: int) -> Dictionary:
 		var bridge := (Engine.get_main_loop() as SceneTree).root.get_node_or_null("RaidBridge")
 		if bridge != null and bridge.sim == self:
 			bridge.cfg["mate"] = mate
-	if story_id == "marshalling" and _route_is_ruthless() and bool(mates.get("zakhar", false)):
+	if story_id == "marshalling" and mate == "zakhar" and _route_is_ruthless() and bool(mates.get("zakhar", false)):
 		flags["zakhar_betrayal_pending"] = true
+	if story_id == "pasha_watchtower":
+		flags["pasha_witness_seen"] = true
+		if choice_index != 0:
+			flags.erase("pasha_survived_to_crag")
+		flags.erase("pasha_scene_pending")
+	if story_id == "eagle_beak_cliff":
+		flags["fire_rescue_mate"] = mate if bool(mates.get(mate, false)) else ""
+		flags["fire_rescue_ash_present"] = mate == "ash" and bool(mates.get("ash", false))
+		flags["fire_rescue_pending"] = true
+		queue_story_slide("fire_rescue")
 	story_done[story_id] = true
 	flags["story_" + story_id] = true
 	if story_id == FIRST_ACT_LOC and not bool(flags.get("archive_lead", false)):
@@ -748,11 +812,17 @@ func finish_raid(reason: String) -> Dictionary:
 	var r = raid
 	var loc_id := String(r.loc["id"])
 	var returned := reason in ["extracted", "dawn"]
+	var previous_station_route := bool(flags.get("station_route", false))
+	var previous_eagle_escape := bool(flags.get("eagle_escape", false))
+	var previous_truth := bool(flags.get("truth", false))
+	var previous_broadcast_complete := bool(flags.get("broadcast_complete", false))
 	flags.erase("broadcast_pending") # 旧存档里的待播标记不跨夜使用
 	if loc_id == "market" and returned and r.market_signal_found \
 		and bool(flags.get("broadcast_signal", false)) and not bool(story_done.get("broadcast", false)):
 		story_id = "broadcast"
 		story_open = true
+	if loc_id == "canteen" and returned and bool(flags.get("vasily_killed", false)):
+		queue_story_slide("canteen_aftermath")
 	var kept: Array = []
 	match reason:
 		"downed", "abort":
@@ -763,6 +833,8 @@ func finish_raid(reason: String) -> Dictionary:
 					kept.append(r.pack[i])
 		_:
 			kept = r.pack.duplicate()
+	var archive_copy_returned: bool = loc_id == "archive" and r.archive_copy_slot >= 0 \
+		and (reason == "extracted" or (reason == "dawn" and r.archive_copy_slot % 2 == 0))
 	var p = r.player
 	if reason == "dawn":
 		p.hp = maxf(6.0, p.hp - 22.0)
@@ -791,6 +863,20 @@ func finish_raid(reason: String) -> Dictionary:
 	night_complete = true
 	if returned:
 		_settle_story_objective(loc_id, reason)
+		if not previous_station_route and bool(flags.get("station_route", false)):
+			queue_story_slide("station_route")
+		if not previous_eagle_escape and bool(flags.get("eagle_escape", false)):
+			queue_story_slide("eagle_escape")
+		if (not previous_truth or not previous_eagle_escape) \
+		and bool(flags.get("truth", false)) and bool(flags.get("eagle_escape", false)):
+			queue_story_slide("evidence_handover")
+		if not previous_broadcast_complete and bool(flags.get("broadcast_complete", false)):
+			var broadcast_mate := String(r.mate_id)
+			flags["broadcast_slide_mate"] = broadcast_mate if bool(mates.get(broadcast_mate, false)) else ""
+			queue_story_slide("broadcast_complete")
+	if archive_copy_returned and not bool(flags.get("archive_copy_found", false)):
+		flags["archive_copy_found"] = true
+		queue_story_slide("archive_copy")
 	var st: Dictionary = node_state(String(loc["id"]))
 	st["visits"] = int(st["visits"]) + 1
 	st["left"] = clampf(float(st["left"]) - 0.5, 0.05, 1.0)
@@ -802,6 +888,7 @@ func finish_raid(reason: String) -> Dictionary:
 		flags["zakhar_betrayed"] = true
 		flags["osk_alert"] = true
 		flags["betrayed"] = true
+		queue_story_slide("zakhar_betrayed")
 		add_log("扎哈尔把你的位置报给清杀队，换取冬季配额。他离开了队伍；清杀队已提高警戒。",
 			"Zakhar reported your position to OSK for a winter ration quota and left the crew. OSK is now more alert.")
 	last_report = {
@@ -817,6 +904,8 @@ func finish_raid(reason: String) -> Dictionary:
 		"hp": int(round(p.hp)),
 		"warmth": int(round(p.warmth)),
 		"new_weapons": new_w,
+		"mate": String(r.mate_id),
+		"mate_present": bool(mates.get(String(r.mate_id), false)),
 		"day": day,
 		"pack": kept.size(),
 		"story": story_result.duplicate(),
@@ -827,6 +916,7 @@ func finish_raid(reason: String) -> Dictionary:
 	if reached_market_refuge:
 		flags["market_refuge_found"] = true
 		last_report["market_refuge_found"] = true
+		queue_story_slide("market_refuge")
 		add_log("你在黑市废信号室找到一处临时栖身处。清杀队仍在搜查，天亮前不能久留。",
 			"You find a temporary refuge in the market's abandoned signal room. OSK is still searching; you cannot stay long after dawn.")
 		if not bool(story_done.get("market_refuge", false)):
@@ -835,6 +925,8 @@ func finish_raid(reason: String) -> Dictionary:
 			else:
 				story_id = "market_refuge"
 				story_open = true
+	if loc_id == "marshalling" and returned and not bool(story_done.get("pasha_watchtower", false)):
+		flags["pasha_scene_pending"] = true
 	# 天亮了/倒地后次日结算由「回到 602 室」触发
 	raid = null
 	phase = "report"
@@ -849,23 +941,58 @@ func _settle_story_objective(loc_id: String, reason: String) -> void:
 				flags["station_route"] = true
 				_report_story_success("交接底单已抄回，鹰嘴崖检修路开放。", "The copied handover opens the Eagle's Crag maintenance route.")
 		"eagle_beak_cliff":
-			if reason == "extracted" and raid.story_objective_reached and not bool(flags.get("eagle_escape", false)):
+			var rescue_scope := String(raid.crag_rescue_scope)
+			if reason == "extracted" and raid.story_objective_reached \
+			and rescue_scope in ["all", "lana"] and not bool(flags.get("eagle_escape", false)):
+				flags.erase("crag_rescue_all")
+				flags.erase("crag_rescue_lana")
+				flags["crag_rescue_" + rescue_scope] = true
 				flags["eagle_escape"] = true
-				if bool(flags.get("crag_rescue_lana", false)):
+				flags["eagle_escape_result_version"] = 2
+				if rescue_scope == "lana":
 					add_tally(1, "只带拉娜撤离", "Extracted only Lana")
 					_report_story_success("拉娜已撤离，车厢里的人留在身后。", "Lana is safe. The others remain in the car.")
 				else:
 					conscience = minf(100.0, conscience + 5.0)
 					_report_story_success("拉娜和能走的幸存者已撤离。", "Lana and the survivors able to walk are safe.")
 		"manor":
-			var slot: int = raid.manor_photo_slot
-			if slot >= 0 and (reason == "extracted" or slot % 2 == 0) and not bool(flags.get("truth", false)):
-				flags["truth"] = true
-				conscience = minf(100.0, conscience + 5.0)
-				_report_story_success("带回了焚化台账的照片。", "The photograph of the furnace ledger made it back.")
+			if reason in ["extracted", "dawn"] and raid.story_objective_reached:
+				var manor_plan := "evidence"
+				if bool(flags.get("manor_plan_trade", false)):
+					manor_plan = "trade"
+				elif bool(flags.get("manor_plan_release", false)):
+					manor_plan = "release"
+				var completed := false
+				if manor_plan == "evidence":
+					var photo_slot: int = raid.manor_photo_slot
+					if photo_slot >= 0 and (reason == "extracted" or photo_slot % 2 == 0) \
+					and not bool(flags.get("truth", false)):
+						flags["truth"] = true
+						conscience = minf(100.0, conscience + 5.0)
+						_report_story_success("带回了焚化台账的照片。", "The photograph of the furnace ledger made it back.")
+						completed = true
+				elif manor_plan == "trade":
+					var trade_slot: int = raid.manor_trade_slot
+					if trade_slot == -2 or (trade_slot >= 0 and (reason == "extracted" or trade_slot % 2 == 0)):
+						flags["manor_sold_semyon"] = true
+						if trade_slot == -2:
+							add_item("dial", 1)
+						add_tally(1, "用老谢苗换取配给", "Traded old Semyon for a ration allocation")
+						_report_story_success("你带着配给离开，老谢苗的位置进了茹科夫的账。", "You leave with the ration; old Semyon's location is now in Zhukov's ledger.")
+						completed = true
+				elif manor_plan == "release" and raid.manor_release_reached:
+					flags["manor_workers_freed"] = true
+					conscience = minf(100.0, conscience + 5.0)
+					_report_story_success("地下室的工人沿围墙离开了庄园。", "The cellar workers escaped along the manor wall.")
+					completed = true
+				if completed:
+					flags["manor_outcome_plan"] = manor_plan
+					queue_story_slide("manor_outcome")
 		"broadcast_tower_302":
 			if raid.story_objective_reached and not bool(flags.get("broadcast_complete", false)):
 				flags["broadcast_complete"] = true
+				var broadcast_mate := String(raid.mate_id)
+				flags["broadcast_slide_mate"] = broadcast_mate if bool(mates.get(broadcast_mate, false)) else ""
 				if not bool(flags.get("broadcast_omit_names", false)):
 					if bool(flags.get("broadcast_names", false)):
 						conscience = minf(100.0, conscience + 5.0)
@@ -894,6 +1021,70 @@ func report_meta(reason: String) -> Dictionary:
 # ============================================================================
 func to_base() -> void:
 	phase = "base"
+
+
+func queue_story_slide(event_id: String) -> void:
+	if event_id == "":
+		return
+	var seen: Dictionary = flags.get("story_slide_seen", {})
+	if bool(seen.get(event_id, false)):
+		return
+	var queue: Array = flags.get("story_slide_queue", [])
+	if queue.has(event_id):
+		return
+	queue.append(event_id)
+	flags["story_slide_queue"] = queue
+
+
+func take_story_slide() -> String:
+	var queue: Array = flags.get("story_slide_queue", [])
+	if queue.is_empty():
+		return ""
+	var event_id := String(queue.pop_front())
+	flags["story_slide_queue"] = queue
+	if event_id == "fire_rescue":
+		flags.erase("fire_rescue_pending")
+	var seen: Dictionary = flags.get("story_slide_seen", {})
+	seen[event_id] = true
+	flags["story_slide_seen"] = seen
+	return event_id
+
+
+func has_pending_story_slides() -> bool:
+	var queue: Array = flags.get("story_slide_queue", [])
+	return not queue.is_empty()
+
+
+func prepare_base_story_events() -> void:
+	if phase != "base":
+		return
+	# Reconstruct one-time beats for older saves from durable story outcomes.
+	if bool(flags.get("archive_copy_found", false)):
+		queue_story_slide("archive_copy")
+	if bool(flags.get("station_route", false)):
+		queue_story_slide("station_route")
+	if bool(flags.get("eagle_escape", false)):
+		queue_story_slide("eagle_escape")
+	if not mother_alive:
+		queue_story_slide("mother_lost")
+	if bool(flags.get("truth", false)) and bool(flags.get("eagle_escape", false)):
+		queue_story_slide("evidence_handover")
+	if bool(flags.get("market_refuge_found", false)):
+		queue_story_slide("market_refuge")
+	if bool(flags.get("zakhar_betrayed", false)):
+		queue_story_slide("zakhar_betrayed")
+	if bool(flags.get("broadcast_complete", false)):
+		queue_story_slide("broadcast_complete")
+	if bool(flags.get("fire_rescue_pending", false)):
+		queue_story_slide("fire_rescue")
+	if story_open:
+		return
+	if bool(flags.get("pasha_scene_pending", false)) and not bool(story_done.get("pasha_watchtower", false)):
+		story_id = "pasha_watchtower"
+		story_open = true
+		return
+	if has_pending_story_slides():
+		return
 	if bool(flags.get("broadcast_complete", false)):
 		finish_campaign()
 
@@ -947,6 +1138,7 @@ func advance_day() -> void:
 			if dial <= 0.0:
 				mother_alive = false
 				flags["mother_lost"] = true
+				queue_story_slide("mother_lost")
 				conscience = clampf(conscience - 10.0, 0.0, 100.0)
 				day_message = "母亲在急性肺水肿中走了。602 室已空；去铁路黑市找栖身处。" if lang == "zh" \
 					else "She died of acute pulmonary oedema. Room 602 is empty; find shelter at the rail black market."
@@ -1005,14 +1197,14 @@ func ending_preview() -> Dictionary:
 			"zh": "【结局 A · 留在 602】你回到母亲床边，决定到此为止。全城的收音机没有播出你找到的线索。",
 			"en": "[ENDING A · Room 602] You return to Mother's bedside and end the search. The city's radios never air what you found."},
 		"TRUE_ALPHA_HELLO_LANA": {
-			"zh": "【真结局 α · 你好，拉娜】零划痕、母亲存活、真相在手——鹰嘴崖的第三节车厢门被撬开。",
-			"en": "[TRUE ENDING α · Hello, Lana] Zero strokes, mother alive, the truth in hand — Boxcar 3 opens at Eagle's Crag."},
+			"zh": "【真结局 α · 你好，拉娜】602 的灯还亮着。拉娜抬起手，敲了敲门。",
+			"en": "[TRUE ENDING α · Hello, Lana] The light in Room 602 is still on. Lana raises her hand and knocks."},
 		"TRUE_BETA_OUTLAND_FIRE": {
 			"zh": "【真结局 β · 荒原之火】你带走了真相，却没能带回母亲；火在荒原上烧了整夜。",
 			"en": "[TRUE ENDING β · Outland Fire] You carried out the truth, not your mother; the fire burned all night on the waste."},
 		"ENDING_B_FLAWED_LIBERATION": {
-			"zh": "【结局 B · 荒诞解放】车厢门开了，但《工作日志》背面的划痕让拉娜认不出你。",
-			"en": "[ENDING B · Flawed Liberation] The car opens, but the strokes on your logbook's back page mean Lana does not recognise you."},
+			"zh": "【结局 B · 荒诞解放】拉娜活着走出了车厢。广播结束后，你还有话没能告诉她。",
+			"en": "[ENDING B · Flawed Liberation] Lana walked out alive. After the broadcast, there are things you still haven't told her."},
 		"ENDING_C_NUMBNESS": {
 			"zh": "【结局 C · 麻木】你没有留下真相。第二天，诺沃斯克-17 的雪把一切都盖平了。",
 			"en": "[ENDING C · Numbness] You kept no truth. By morning the snow of Novorsk-17 had levelled everything."},
@@ -1022,9 +1214,6 @@ func ending_preview() -> Dictionary:
 	if key == "TRUE_BETA_OUTLAND_FIRE" and mother_alive:
 		t["zh"] = "【真结局 β · 荒原之火】母亲还在，真相已经播出。有人出卖了你们，拉娜陪你守着城外的火。"
 		t["en"] = "[TRUE ENDING β · Outland Fire] Mother lives, and the truth is on air. Someone gave you up. Lana keeps watch by the fire outside the city."
-	if bool(flags.get("broadcast_complete", false)):
-		t["zh"] = String(t["zh"]) + "\n\n" + Data.PASHA_EPILOGUE_ZH
-		t["en"] = String(t["en"]) + "\n\n" + Data.PASHA_EPILOGUE_EN
 	return {"key": key, "zh": String(t["zh"]), "en": String(t["en"])}
 
 # ============================================================================
