@@ -3,148 +3,372 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="《Z年纪事：凛冬铁轨》剧情审计，查阅战役演出、地图、人物、字幕和结局。">
-<title>凛冬铁轨｜剧情档案</title>
+<title>凛冬铁轨 / 剧情档案</title>
 <style>
-  :root { color-scheme: dark; --paper:#121e2a; --snow:#e6eef3;
-    --muted:#a9bbc9; --rule:#3d556a; --amber:#f6cd87; --panel:#203447; }
-  * { box-sizing:border-box; }
-  html { scroll-padding-top:8rem; }
-  body { margin:0; background:var(--paper); color:var(--snow);
-    font:1rem/1.7 system-ui,"Microsoft YaHei",sans-serif; }
-  a { color:var(--amber); text-underline-offset:.22em; }
-  :focus-visible { outline:2px solid var(--amber); outline-offset:.25rem; }
-  header { min-height:28rem; display:grid; align-items:end; border-bottom:1px solid var(--rule);
-    background:linear-gradient(90deg,#121e2af9 5%,#121e2adb 37%,#121e2a1a 100%),
-    url("../../godot_project/art/80_maps/Yard/map_night.png") center 63%/cover; }
-  header > div, main { width:min(76rem,calc(100% - 3rem)); margin:auto; }
-  header > div { margin-bottom:3.5rem; }
-  h1,h2 { font-family:"Noto Serif SC","Songti SC",SimSun,serif; line-height:1.15; }
-  h1 { margin:.3rem 0 .9rem; font-size:clamp(2.8rem,7.5vw,6.4rem); }
-  h2 { font-size:clamp(1.6rem,4vw,2.3rem); }
-  header p { max-width:36rem; }
-  nav { display:flex; flex-wrap:wrap; gap:1.2rem; }
-  .counts,.meta { color:var(--muted); font-size:.9rem; }
-  main { padding:2rem 0 5rem; }
-  .progression { display:flex; flex-wrap:wrap; padding:0; gap:.8rem; list-style:none; }
-  .progression li { padding:.4rem .75rem; border-bottom:2px solid var(--rule); }
-  #audit { margin:2rem 0 3rem; border-block:1px solid var(--rule); padding:.85rem 0; }
-  summary { cursor:pointer; }
-  .table-scroll { overflow-x:auto; }
-  table { width:100%; border-collapse:collapse; margin:1rem 0; }
-  th,td { text-align:left; padding:.75rem; vertical-align:top; border-bottom:1px solid var(--rule); }
-  th { background:var(--panel); }
-  td:first-child { color:var(--amber); min-width:8rem; }
-  .controls { position:sticky; top:0; z-index:1; padding:.7rem 0;
-    background:var(--paper); display:flex; flex-wrap:wrap; gap:.65rem; align-items:center; }
-  input,select,button { font:inherit; color:inherit; background:var(--panel);
-    border:1px solid var(--rule); padding:.45rem .65rem; border-radius:.2rem; }
-  input { flex:1 1 15rem; min-width:0; }
-  button { cursor:pointer; }
-  .record { border-bottom:1px solid var(--rule); padding:.2rem 0; }
-  .record > summary { padding:.85rem .15rem; }
-  .record > summary strong { color:var(--snow); }
-  .record > summary span { margin-inline-start:.8rem; color:var(--muted); font-size:.9rem; }
-  .record[open] > summary strong { color:var(--amber); }
-  .cast { color:var(--muted); }
-  .frames { margin:0; padding:0 0 0 1.65rem; }
-  .frame { padding:1rem 0; border-top:1px solid var(--rule); }
-  .frame > div { display:inline-block; width:49%; padding-inline-end:.9rem; vertical-align:top; }
-  .frame p { margin:0 0 .7rem; }
-  .cg { display:block; max-width:52rem; margin-bottom:.65rem; }
-  .cg img { display:block; width:100%; aspect-ratio:16/9; object-fit:contain; background:#0a131b; }
-  .portrait img { max-width:6rem; max-height:7rem; object-fit:contain; }
-  .caption { white-space:pre-wrap; }
-  .translation { margin:.4rem 0; color:var(--muted); }
-  .translation p { white-space:pre-wrap; }
-  aside { margin-top:.6rem; padding:.5rem .75rem; border-left:2px solid var(--rule); }
-  aside ol { padding-inline-start:1.3rem; }
-  @media (max-width:700px) {
-    header { min-height:23rem; }
-    header > div, main { width:calc(100% - 1.6rem); }
-    .record > summary span { display:block; margin-inline-start:1.1rem; }
-    .frame > div { display:block; width:100%; padding-inline-end:0; }
-    html { scroll-padding-top:12rem; }
-  }
+:root{color-scheme:dark;--base:#10161b;--rail:#151f26;--panel:#1a262e;--line:#34454d;--ink:#eaf0ed;--muted:#a8b9be;--gold:#f5c980;--ice:#9ed4d6}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--base);color:var(--ink);font:15px/1.65 system-ui,"Microsoft YaHei",sans-serif}
+a{color:var(--ice);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input,select{font:inherit;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:.52rem .76rem}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+button:disabled{opacity:.38;cursor:default}
+h1,h2,h3,p,figure{margin:0}
+h1,h2{line-height:1.12}
+h1{font-family:"Noto Serif SC","Songti SC",SimSun,serif;font-size:clamp(2.75rem,7vw,6.4rem);letter-spacing:.035em}
+h2{font-size:clamp(1.85rem,4vw,3.2rem)}
+h3{font-size:1.12rem}
+p{margin-block:.5rem}
+img{max-width:100%;display:block}
+.shell{display:grid;grid-template-columns:13.2rem minmax(0,1fr);min-height:100vh}
+.rail{position:sticky;top:0;align-self:start;height:100vh;background:var(--rail);border-right:1px solid var(--line);padding:1.5rem 1rem;display:flex;flex-direction:column}
+.brand{font-weight:800;letter-spacing:.12em;color:var(--ink);font-size:1.15rem;padding:.25rem .5rem}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:.73rem;margin-top:.2rem}
+.rail nav{display:grid;gap:.3rem;margin-top:2rem}
+.rail nav a{padding:.55rem .7rem;color:var(--muted);border-radius:6px}
+.rail nav a[aria-current]{background:var(--panel);color:var(--gold)}
+.repo{margin-top:auto;padding:.5rem;color:var(--muted)}
+.workspace{min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;border-bottom:1px solid var(--line);padding:.75rem clamp(1rem,3.2vw,3rem)}
+.topbar span{color:var(--muted)}
+.topbar label{display:flex;align-items:center;gap:.65rem}
+.topbar input{width:min(38vw,22rem)}
+main{padding:clamp(1rem,3.2vw,3rem);max-width:105rem;margin:auto}
+main:focus{outline:none}
+.hero{position:relative;min-height:clamp(22rem,45vw,37rem);display:grid;align-items:end;background:linear-gradient(0deg,#10161bf8 0%,#10161b82 39%,#10161b0d 78%),url("../../godot_project/art/80_maps/Yard/map_night.png") center/cover;border-radius:12px;overflow:hidden}
+.hero>div{padding:clamp(1.5rem,4vw,4rem)}
+.hero p{max-width:34rem;color:#e0e9e8}
+.kicker,.muted,.meta,.cast,.caption+details{color:var(--muted)}
+.kicker{letter-spacing:.08em}
+.cta{display:inline-block;background:var(--gold);color:#24201b;padding:.55rem 1rem;border-radius:5px;font-weight:750;margin-top:.65rem}
+.route{display:flex;overflow:auto;gap:0;list-style:none;padding:0;margin:1rem 0 2rem}
+.route li{flex:none;border-top:2px solid var(--line);padding:.65rem 1rem .35rem 0;margin-right:.5rem}
+.route li:first-child{border-color:var(--gold)}
+.highlights{display:grid;grid-template-columns:1.6fr 1fr;gap:1.2rem}
+.highlight{border:1px solid var(--line);border-radius:8px;padding:1.2rem;background:var(--panel);color:var(--ink)}
+.highlight strong{display:block;font-size:1.2rem}
+.heading{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:1rem;margin:0 0 1.55rem}
+.heading p{margin-bottom:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,15rem),1fr));gap:1rem}
+.tile{display:block;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;color:var(--ink)}
+.tile:hover{border-color:var(--ice);text-decoration:none}
+.tile .cover{width:100%;aspect-ratio:16/9;object-fit:cover;background:#0b1217}
+.tile .tiletext{display:block;padding:.75rem}
+.tile small,.list-row small{display:block;color:var(--muted);margin-top:.2rem}
+.atlas{grid-template-columns:repeat(auto-fill,minmax(min(100%,20rem),1fr));gap:1.15rem}
+.atlas .cover{aspect-ratio:1.55;object-fit:contain}
+.people{grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr))}
+.people .cover{aspect-ratio:4/5;object-fit:contain;object-position:bottom;background:radial-gradient(ellipse at 50% 65%,#324752,#172129 75%)}
+.people .tiletext{border-top:1px solid var(--line)}
+.list{max-width:58rem}
+.list-row{display:block;border-bottom:1px solid var(--line);padding:.8rem 0}
+.list-row strong{color:var(--ink)}
+.list-row:focus-within,.list-row:hover{background:var(--panel)}
+.ending-routes{display:grid;gap:1rem}
+.ending-route{display:grid;grid-template-columns:minmax(13rem,32%) 1fr;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.ending-route img{width:100%;height:100%;aspect-ratio:16/9;object-fit:cover}
+.ending-route>div{padding:1rem 1.25rem}
+.ending-route h3{color:var(--gold)}
+.ending-route a{display:block;margin-block:.35rem}
+.table-scroll{overflow:auto}
+table{border-collapse:collapse;width:100%;min-width:40rem}
+td,th{padding:.85rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--panel)}
+td:first-child{width:21%;color:var(--gold)}
+td:nth-child(2){width:23%}
+.back{display:inline-block;margin-bottom:.9rem}
+.reading .heading{margin-bottom:.75rem}
+.reading{max-width:66rem}
+.stage{border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden}
+.frames{margin:0;padding:0;list-style:none}
+.frame>div:nth-child(2){padding:1rem 1.2rem}
+.frame>div:empty{display:none}
+.cg img{width:100%;aspect-ratio:16/9;object-fit:contain;background:#0b1217}
+.frame .cg+.cg{border-top:1px solid var(--line)}
+.caption,.translation p{white-space:pre-wrap}
+.translation{margin-top:.6rem;color:var(--muted)}
+summary{cursor:pointer}
+.portrait img{width:6rem;max-height:8rem;object-fit:contain}
+.cast-detail{max-width:54rem;display:grid;grid-template-columns:minmax(8rem,15rem) 1fr;gap:1.5rem}
+.cast-detail .portrait img{width:100%;max-height:27rem}
+.cast-detail ul{margin:0;padding-left:1.25rem}
+.cast-detail li{margin-bottom:.45rem}
+.controls{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.7rem 1rem;border-top:1px solid var(--line)}
+.thumbstrip{display:flex;gap:.5rem;overflow:auto;padding:.7rem 1rem;border-top:1px solid var(--line)}
+.thumbstrip button{flex:0 0 6rem;padding:.15rem}
+.thumbstrip img{aspect-ratio:16/9;object-fit:cover;width:100%}
+.thumbstrip [aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
+.map-view figure{margin:1rem 0}
+.map-toggle button[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
+.reading article{max-width:56rem}
+.reading .slide-detail,.reading .map-view{max-width:none}
+.reading aside{padding:.7rem 1rem;border-left:2px solid var(--line);margin-top:1rem}
+@media(max-width:760px){
+ .shell{display:block}.rail{height:auto;position:static;padding:.65rem .85rem;border-right:0;border-bottom:1px solid var(--line)}
+ .rail nav{display:flex;overflow:auto;margin:.45rem 0 0;gap:.2rem}
+ .rail nav a{white-space:nowrap}.brand small,.repo{display:none}.highlights{grid-template-columns:1fr}
+ .topbar span{display:none}.topbar label{width:100%}.topbar input{width:100%}.cast-detail{grid-template-columns:1fr}
+ .cast-detail .portrait img{max-width:14rem}
+ .ending-route{grid-template-columns:1fr}.ending-route img{max-height:12rem}
+}
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <p>诺沃斯克-17　／　战役演出档案</p>
-    <h1>凛冬铁轨</h1>
-    <p>按剧情进度查阅幻灯、双语字幕、出场人物和地图。页面含完整结局和分支剧透。</p>
-    <p class="counts">@@COUNTS@@</p>
-    <nav aria-label="页面导航"><a href="#audit">附件审计</a><a href="#catalog">演出目录</a><a href="../../">项目主页</a></nav>
-  </div>
-</header>
-<main>
-  <section aria-labelledby="progress">
-    <h2 id="progress">战役进度</h2>
-    <p>封城第十个月，货运调度员阿列克谢白天为区配给委员会搬货，夜里从锅炉房钻出去。他要给 602 室的母亲找透析液，也要查清编号 0420 的妹妹拉娜被送去了哪里。</p>
-    <ol class="progression">
-      <li>602 与冷库</li><li>货场与食堂</li><li>疗养院与黑市</li><li>松林庄园与矿坑</li>
-      <li>发车令与交接底单</li><li>鹰嘴崖开门及撤离</li><li>602 证据交接</li><li>302 播报及结局</li>
-    </ol>
-    <p>这是便于审计的阅读顺序。行动可按解锁情况穿插，支线、同行者与撤离结果会改变演出。</p>
-  </section>
-  <details id="audit">
-    <summary><strong>查看 z (6).html 台词与结局采纳记录</strong></summary>
-    <div class="table-scroll">@@AUDIT@@</div>
-  </details>
-  <section aria-labelledby="catalog">
-    <h2 id="catalog">演出目录</h2>
-    <div class="controls">
-      <input type="search" id="search" aria-label="搜索台词、角色、地点或幕次" placeholder="搜索台词、角色、地点或幕次">
-      <select id="group" aria-label="按内容筛选"><option value="">全部内容</option>@@FILTERS@@</select>
-      <button id="reset" type="button">重置</button>
-      <span id="match-count" class="counts" aria-live="polite"></span>
+<div class="shell">
+  <aside class="rail">
+    <a class="brand" href="#home">凛冬铁轨<small>诺沃斯克-17 剧情档案</small></a>
+    <nav aria-label="档案目录">
+      <a href="#home" data-view="home">总览</a><a href="#story" data-view="story">剧情分镜</a>
+      <a href="#atlas" data-view="atlas">夜潜地图</a><a href="#people" data-view="people">人物档案</a>
+      <a href="#endings" data-view="endings">结局与余波</a><a href="#library" data-view="library">对白与底稿</a>
+      <a href="#audit" data-view="audit">台词审计</a>
+    </nav>
+    <a class="repo" href="../../">项目主页</a>
+  </aside>
+  <div class="workspace">
+    <div class="topbar">
+      <span>@@COUNTS@@</span>
+      <label><span>全库搜索</span><input id="search" type="search" placeholder="搜索台词、人物、地点" aria-label="搜索台词、人物、地点"></label>
     </div>
-    <div id="records">@@RECORDS@@</div>
-  </section>
-</main>
+    <main id="view" tabindex="-1"><noscript>请启用 JavaScript 浏览档案，或查阅 <a href="z6-audit.md">台词审计原稿</a>。</noscript></main>
+  </div>
+</div>
+<template id="source">@@RECORDS@@</template>
+<template id="audit-source">@@AUDIT@@</template>
+<template id="home-source">
+  <div class="hero"><div>
+    <p class="kicker">诺沃斯克-17　封城第十个月</p><h1>凛冬铁轨</h1>
+    <p>锅炉房的气窗还开着。阿列克谢必须趁夜出门，给 602 室的母亲找药，也要查清编号 0420 的妹妹被送去了哪里。</p>
+    <a href="#story" class="cta">查看剧情分镜</a>
+  </div></div>
+  <h3 style="margin-top:1.6rem">战役进度</h3>
+  <ol class="route"><li>602 与冷库</li><li>夜潜货场</li><li>疗养院与黑市</li><li>庄园与矿坑</li><li>西站交接底单</li><li>鹰嘴崖救援</li><li>302 广播</li></ol>
+  <div class="highlights">
+    <a class="highlight" href="#atlas"><strong>17 张夜潜地图</strong>按地点查看日夜画面，并回查对应剧情。</a>
+    <a class="highlight" href="#audit"><strong>台词采纳记录</strong>从原稿到游戏，逐段核对取舍。</a>
+  </div>
+</template>
 <script>
-  const records = [...document.querySelectorAll('.record')];
-  const search = document.getElementById('search');
-  const group = document.getElementById('group');
-  const count = document.getElementById('match-count');
-  const searchable = records.map(record => (record.dataset.search + ' ' + record.textContent).toLowerCase());
-
-  function filter() {
-    const query = search.value.trim().toLowerCase().split(/\s+/);
-    let shown = 0;
-    records.forEach((record, index) => {
-      const matches = (!group.value || group.value === record.dataset.group) &&
-        query.every(word => searchable[index].includes(word));
-      record.hidden = !matches;
-      if (matches) shown += 1;
-    });
-    count.textContent = shown + ' 条';
-  }
-
-  function revealAnchor() {
-    const target = document.getElementById(location.hash.slice(1));
-    if (!(target instanceof HTMLDetailsElement)) return;
-    if (target.hidden) {
-      search.value = '';
-      group.value = '';
-      filter();
+const main = document.getElementById('view');
+const search = document.getElementById('search');
+const records = [...document.getElementById('source').content.querySelectorAll('.record')].map(node => {
+  const summary = node.querySelector(':scope > summary');
+  const images = node.querySelectorAll('img');
+  const title = summary.querySelector('strong').textContent;
+  const meta = summary.querySelector('span').textContent;
+  const body = [...node.children].filter(child => child !== summary).map(child => child.outerHTML).join('');
+  return {
+    id: node.id, group: node.dataset.group, title, meta, body, thumbnail: images[0]?.getAttribute('src'),
+    index: (node.dataset.search + ' ' + node.textContent).toLowerCase()
+  };
+});
+const byId = new Map(records.map(record => [record.id, record]));
+const deck = r => r.id.startsWith('deck-');
+const isEnding = r => r.group === '结局';
+const isPerson = r => ['人物','伙伴'].includes(r.group);
+const isLibrary = r => (!deck(r) && r.group !== '地图' && !isPerson(r)) || r.group === '战役对白';
+const screens = {
+  home: ['总览',''], story: ['剧情分镜','按幕次找场景，打开后逐页查看画面与字幕。'],
+  atlas: ['夜潜地图','进入地点查看日景、夜景和关联演出。'],
+  people: ['人物档案','按立绘浏览人物，打开档案查看相关演出。'],
+  endings: ['结局与余波','此处包含全部结局。选择一条路线查看字幕和收束画面。'],
+  library: ['对白与底稿','文学稿、运行时对白、战斗喊话和随机遭遇可分别查阅。'],
+  audit: ['台词审计','z (6).html 的逐段采纳决定与结局改写记录。']
+};
+let chapter = '';
+let libraryGroup = '文学剧本';
+const escape = value => String(value ?? '').replace(/[&<>"']/g, char =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char]);
+function heading(title, description, control = '') {
+  return '<div class="heading"><div><h2>' + escape(title) + '</h2><p class="muted">' + escape(description) + '</p></div>' + control + '</div>';
+}
+function tile(r) {
+  const photo = r.thumbnail ? '<img class="cover" src="' + escape(r.thumbnail) + '" alt="" loading="lazy">' : '';
+  return '<a class="tile" href="#' + r.id + '">' + photo + '<span class="tiletext"><strong>' + escape(r.title) + '</strong><small>' + escape(r.meta) + '</small></span></a>';
+}
+function row(r) {
+  return '<a class="list-row" href="#' + r.id + '"><strong>' + escape(r.title) + '</strong><small>' + escape(r.meta) + '</small></a>';
+}
+function picker(id, name, values, current) {
+  return '<label>' + name + ' <select id="' + id + '">' + values.map(([value, label]) =>
+    '<option value="' + escape(value) + '"' + (current === value ? ' selected' : '') + '>' + escape(label) + '</option>').join('') + '</select></label>';
+}
+function area(r) {
+  return isEnding(r) ? 'endings' : r.group === '地图' ? 'atlas' : isPerson(r) ? 'people' : isLibrary(r) ? 'library' : 'story';
+}
+function section(key) {
+  const [title, subtitle] = screens[key];
+  if (key === 'home') {
+    main.replaceChildren(document.getElementById('home-source').content.cloneNode(true));
+  } else if (key === 'audit') {
+    main.innerHTML = heading(title, subtitle) + '<div class="table-scroll"></div>';
+    main.lastElementChild.append(document.getElementById('audit-source').content.cloneNode(true));
+  } else if (key === 'story') {
+    const items = records.filter(r => area(r) === key);
+    const chapters = [...new Set(items.map(r => r.meta.split(' / ')[0]))];
+    const control = picker('chapter','幕次',[['','全部'], ...chapters.map(c => [c,c])],chapter);
+    const chosen = items.filter(r => !chapter || r.meta.startsWith(chapter + ' / '));
+    main.innerHTML = heading(title, subtitle, control) + '<div class="grid">' + chosen.map(tile).join('') + '</div>';
+    document.getElementById('chapter').onchange = event => {
+      chapter = event.target.value;
+      section(key);
+      document.getElementById('chapter').focus();
+    };
+  } else if (key === 'library') {
+    const items = records.filter(isLibrary);
+    const groups = [...new Set(items.map(r => r.group))];
+    const control = picker('kind','文本类型',groups.map(g => [g,g]),libraryGroup);
+    main.innerHTML = heading(title, subtitle, control) + '<div class="list">' +
+      items.filter(r => r.group === libraryGroup).map(row).join('') + '</div>';
+    document.getElementById('kind').onchange = event => {
+      libraryGroup = event.target.value;
+      section(key);
+      document.getElementById('kind').focus();
+    };
+  } else if (key === 'endings') {
+    const routes = new Map();
+    for (const record of records.filter(isEnding)) {
+      if (!routes.has(record.title)) routes.set(record.title, []);
+      routes.get(record.title).push(record);
     }
-    target.open = true;
-    target.scrollIntoView();
+    const panels = [...routes.values()].map(variants => {
+      const first = variants[0];
+      const cover = first.thumbnail ? '<img src="' + escape(first.thumbnail) + '" alt="" loading="lazy">' : '';
+      const links = variants.map(record => {
+        const bits = record.meta.split(' / ');
+        const label = bits.length > 3 ? bits.at(-1) : '查看演出';
+        return '<a href="#' + record.id + '">' + escape(label) + '</a>';
+      }).join('');
+      return '<section class="ending-route">' + cover + '<div><h3>' + escape(first.title) + '</h3>' + links + '</div></section>';
+    });
+    main.innerHTML = heading(title, subtitle) + '<div class="ending-routes">' + panels.join('') + '</div>';
+  } else {
+    main.innerHTML = heading(title, subtitle) + '<div class="grid ' + key + '">' +
+      records.filter(r => area(r) === key).map(tile).join('') + '</div>';
   }
-
-  search.addEventListener('input', filter);
-  group.addEventListener('change', filter);
-  document.getElementById('reset').addEventListener('click', () => {
-    search.value = '';
-    group.value = '';
-    filter();
-    search.focus();
+}
+function storyNotes(place, exclude) {
+  return records.filter(r => deck(r) && r.id !== exclude && r.meta.split(' / ')[1] === place);
+}
+function mapDetail(record, slot) {
+  const holder = document.createElement('div');
+  holder.innerHTML = record.body;
+  const photo = holder.querySelector('a.cg');
+  const night = photo?.getAttribute('href');
+  const day = holder.querySelector('a[href$="/map.png"]')?.getAttribute('href');
+  if (night && day) {
+    const img = photo.querySelector('img');
+    const figure = document.createElement('figure');
+    photo.before(figure);
+    figure.append(photo);
+    const toggle = document.createElement('div');
+    toggle.className = 'map-toggle';
+    toggle.innerHTML = '<button type="button" aria-pressed="true">夜景</button> <button type="button" aria-pressed="false">日景</button>';
+    figure.before(toggle);
+    [...toggle.children].forEach((button, index, buttons) => button.onclick = () => {
+      const src = index ? day : night;
+      img.src = src;
+      img.alt = record.title + ' ' + button.textContent;
+      photo.href = src;
+      buttons.forEach((other, i) => other.setAttribute('aria-pressed', String(i === index)));
+    });
+  }
+  slot.append(...holder.childNodes);
+  const linked = storyNotes(record.title, '');
+  if (linked.length) slot.insertAdjacentHTML('beforeend','<h3>关联演出</h3><div class="list">' + linked.map(row).join('') + '</div>');
+}
+function stage(slot) {
+  const frames = [...slot.querySelectorAll('.frame')];
+  if (frames.length <= 1) return;
+  const list = slot.querySelector('.frames');
+  list.parentElement.classList.add('stage');
+  let current = 0;
+  const controls = document.createElement('div');
+  controls.className = 'controls';
+  controls.innerHTML = '<button type="button">上一页</button><span aria-live="polite"></span><button type="button">下一页</button>';
+  const [prev, status, next] = controls.children;
+  list.after(controls);
+  const strip = document.createElement('div');
+  strip.className = 'thumbstrip';
+  strip.setAttribute('aria-label','幻灯缩略图');
+  controls.after(strip);
+  const buttons = frames.map((frame, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.setAttribute('aria-label','第 ' + (index + 1) + ' 页');
+    const img = frame.querySelector('img');
+    if (img) {
+      const thumb = img.cloneNode();
+      thumb.alt = '';
+      button.append(thumb);
+    } else button.textContent = String(index + 1);
+    button.onclick = () => draw(index);
+    strip.append(button);
+    return button;
   });
-  window.addEventListener('hashchange', revealAnchor);
-  filter();
-  revealAnchor();
+  function draw(index) {
+    if (index < 0 || index >= frames.length) return;
+    current = index;
+    frames.forEach((frame, i) => {
+      frame.hidden = i !== index;
+      buttons[i].setAttribute('aria-pressed', String(i === index));
+    });
+    status.textContent = '第 ' + (index + 1) + ' / ' + frames.length + ' 页';
+    prev.disabled = index === 0;
+    next.disabled = index === frames.length - 1;
+  }
+  prev.onclick = () => draw(current - 1);
+  next.onclick = () => draw(current + 1);
+  slot.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      draw(current + (event.key === 'ArrowLeft' ? -1 : 1));
+    }
+  });
+  draw(0);
+}
+function detail(record, key) {
+  main.innerHTML = '<div class="reading"><a class="back" href="#' + key + '">返回' + screens[key][0] +
+    '</a>' + heading(record.title, record.meta) + '<article class="body"></article></div>';
+  const slot = main.querySelector('.body');
+  if (key === 'atlas') {
+    slot.classList.add('map-view');
+    mapDetail(record,slot);
+  } else {
+    slot.innerHTML = record.body;
+    if (key === 'people') {
+      slot.classList.add('cast-detail');
+    } else if (deck(record)) {
+      if (key !== 'library') slot.classList.add('slide-detail');
+      stage(slot);
+    }
+  }
+}
+function route() {
+  const hash = location.hash.slice(1);
+  const record = byId.get(hash);
+  const key = record ? area(record) : Object.hasOwn(screens, hash) ? hash : 'home';
+  document.querySelectorAll('[data-view]').forEach(link => {
+    if (link.dataset.view === key) link.setAttribute('aria-current','page');
+    else link.removeAttribute('aria-current');
+  });
+  search.value = '';
+  if (record) detail(record, key); else section(key);
+  window.scrollTo(0,0);
+  main.focus({preventScroll:true});
+}
+search.addEventListener('input', () => {
+  const query = search.value.trim().toLowerCase();
+  if (!query) {route(); search.focus(); return;}
+  const words = query.split(/\s+/);
+  const matches = records.filter(r => words.every(word => r.index.includes(word)));
+  main.innerHTML = heading('搜索结果', '共 ' + matches.length + ' 条') +
+    '<div class="list">' + matches.map(row).join('') + '</div>';
+});
+addEventListener('hashchange', route);
+route();
 </script>
 </body>
 </html>

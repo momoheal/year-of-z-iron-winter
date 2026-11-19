@@ -258,10 +258,8 @@ def main(export):
     page_count = sum(len(deck["pages"]) for deck in data["decks"] if deck["group"] != "战役对白")
     page_count += sum("followup" in choice for deck in data["decks"] for p in deck["pages"] for choice in p.get("choices", []))
     counts = f'{page_count} 页幻灯（含分支） · {len(locations)} 张战役地图 · {len(literary)} 场文学底稿'
-    groups = dict.fromkeys(re.findall(r'data-group="([^"]+)"', "".join(records)))
-    filters = "".join(f'<option value="{group}">{group}</option>' for group in groups)
-    replacements = {"COUNTS": counts, "AUDIT": audit_table, "FILTERS": filters, "RECORDS": "\n".join(records)}
-    output = re.sub(r"@@(COUNTS|AUDIT|FILTERS|RECORDS)@@", lambda match: replacements[match[1]], page)
+    replacements = {"COUNTS": counts, "AUDIT": audit_table, "RECORDS": "\n".join(records)}
+    output = re.sub(r"@@(COUNTS|AUDIT|RECORDS)@@", lambda match: replacements[match[1]], page)
     (OUT / "index.html").write_text(output, encoding="utf-8", newline="\n")
 
 
