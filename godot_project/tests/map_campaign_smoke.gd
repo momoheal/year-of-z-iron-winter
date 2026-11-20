@@ -179,6 +179,7 @@ func _run() -> void:
 	var medical_sim = SimScript.new()
 	medical_sim.flags["first_act_pending"] = false
 	medical_sim.flags["archive_lead"] = true
+	medical_sim.flags["story_yard"] = true
 	medical_sim.stash = {"dial": 1, "intel": 2}
 	var sanitarium := Data.loc("sanitarium")
 	_assert(not medical_sim.loc_unlocked(sanitarium), "dialysis fluid cannot be used for the rescue")

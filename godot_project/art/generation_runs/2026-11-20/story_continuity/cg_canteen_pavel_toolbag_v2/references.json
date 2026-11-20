@@ -1,0 +1,18 @@
+{
+  "stem": "cg_canteen_pavel_toolbag_v2",
+  "date": "2026-11-20",
+  "references": [
+    "godot_project/art/60_ui/cg/cg_canteen_c0.jpg",
+    "godot_project/art/10_characters/portraits/PRT_Pavel_Calm.png",
+    "godot_project/art/10_characters/portraits/PRT_Fyodor_Calm.png"
+  ],
+  "prompt_status": "Exact image_gen tool prompt",
+  "generator": "Codex built-in image_gen",
+  "original": "generated_output.png",
+  "export": "godot_project/art/60_ui/cg/cg_canteen_pavel_toolbag_v2.jpg",
+  "export_size": [
+    1664,
+    936
+  ],
+  "prompt_file": "prompt.txt"
+}

@@ -163,7 +163,46 @@
 | `cg_companions_trust_compassionate_route_alt.jpg` | 仁慈路线伙伴信任备选：安娜、叶莲娜、铁路工人、维修工与灰烬仍靠近阿列克谢（候选美术变体，尚未接入剧情数据） | `cg_companions_trust_compassionate_route_alt.prompt.txt` |
 | `cg_manor_vault_evidence_yelena_alt.jpg` | 松林庄园保险库备选：阿列克谢与金发辫叶莲娜发现底片和焦黑账本（候选美术变体，尚未接入剧情数据） | `cg_manor_vault_evidence_yelena_alt.prompt.txt` |
 
+## 2026-11-19 新增过场资产（已接入）
+
+| 文件 | 用途与触发 |
+| --- | --- |
+| `cg_canteen_vasily_qte_fyodor_v2.png` | 食堂卡刀 QTE 与回访；右侧人物为瓦西里的父亲费奥多尔，非女性人物。 |
+| `cg_manor_yelena_zhukov_confront_v1.png` | 叶莲娜同行时的父女对峙与庄园结果页；她缺席时切回通用庄园 CG。 |
+| `cg_mine_no3_wall_inscription_v1.png` | 旧版矿坑刻字概念图，留作版本档案，不再用于当前剧情。 |
+| `cg_mine_no3_tape_recording_v1.png` | 当前矿坑证词镜头：红漆庆功标语、爆破断面与摔裂的便携磁带记录器。 |
+| `cg_fire_stairwell_neighbors_breach_v1.png` | 帕维尔不同行时，住户合力破门的火场分支。 |
+| `cg_fire_pavel_cutting_torch_v1.png` | 帕维尔同行时，由他切开焊死横梁的火场分支。 |
+| `cg_boxcar03_survivors_reveal_v1.png` | 鹰嘴崖打开第三节车厢后的幸存者与拉娜揭示页。 |
+| `cg_fire_ash_guides_jana_v1.png` | 灰烬同行时，灰犬把佳娜带向避风处的专属火场页。 |
+| `cg_redzone_mother_gate_v1.png` | 首次靠近货场锅炉房通风口时的红区目击：退烧母亲隔门呼救；同图变焦承接对白。 |
+| `cg_redzone_mother_osk_v1.png` | 清杀队在探照灯下逼近母亲。 |
+| `cg_redzone_mother_aftermath_v1.png` | 枪击后的雪地余波，母亲倒地、铜钥匙落在沟边。 |
+| `cg_redzone_mother_scales_v1.png` | 末页只呈现钥匙、雪水和脱落鳞屑，不出现人形，避免产生死者复活的错觉。 |
+
+
+## 剧情连贯性修订分镜（2026-11-19 至 2026-11-20）
+
+| 文件 | 分镜 |
+| --- | --- |
+| `cg_intro_lana_receipt_v2.jpg` | 0420 红码回执初稿，去向被盖住。 |
+| `cg_intro_lana_receipt_v3.jpg` | 0420 红码回执定稿，素红线栏与遮盖去向的黑章。 |
+| `cg_canteen_pavel_toolbag_v2.jpg` | 食堂回访。帕维尔提着工具包起身，费奥多尔守在木箱旁。 |
+| `cg_manor_confront_ledger_v2.jpg` | 叶莲娜把通行证按在总账上。 |
+| `cg_manor_confront_cup_v2.jpg` | 茹科夫站起来，顿裂茶杯。 |
+| `cg_manor_confront_challenge_v2.jpg` | 叶莲娜将父亲的钢笔按向名单空栏。 |
+| `cg_manor_confront_pen_v2.jpg` | 笔尖洇开墨点，空栏仍空着。 |
+| `cg_crag_lana_hand_v2.jpg` | 鹰嘴崖重逢。拉娜攥住哥哥的袖口，工牌在近处，幸存者在车厢深处。 |
+| `cg_crag_lana_hand_v3.jpg` | 鹰嘴崖重逢动作修订。阿列克谢从左侧伸手，拉娜握住他的手腕，朝画面右侧的车厢内拉。 |
+| `cg_crag_lana_hand_v4.png` | 鹰嘴崖重逢备选。手部数量与朝向仍有缺陷。 |
+| `cg_crag_lana_hand_v5.png` | 重绘中间稿，手部简化，但随后仍按标记区局部修正。 |
+| `cg_crag_lana_hand_v6.png` | 局部重绘手部后的当前稿：只保留阿列克谢与拉娜各一只可见手，拉娜将他往车厢内拉。当前剧情引用。 |
+| `cg_tower302_lana_first_name_v2.jpg` | 302 塔姓名路线。拉娜压住名单，阿列克谢在麦克风前开口。 |
+
+同名 `.prompt.txt` 记录出图提示词。原图、参考和生成配置见 `art/generation_runs/2026-11-19/story_continuity/` 与 `art/generation_runs/2026-11-20/story_continuity/`。11 月 19 日三个 Luna 场景记录的是提交给编排模型的场景提示，11 月 20 日保存传入内置 ImageGen 的原文。
 
 ## 游戏内查看
 
 战役界面顶栏的「美术档案」按分页展示本目录的全部 CG 与备选图。叶莲娜广播点剧情已改用金发辫清晰、手部与电报机关系明确的 `cg_broadcast_scene_alt_yelena.jpg`；其他候选图仍可在档案内查看，未被擅自插入对白页。
+
+

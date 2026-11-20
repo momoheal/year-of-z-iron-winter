@@ -1,0 +1,17 @@
+{
+  "generator": "Codex built-in image_gen",
+  "prompt_orchestrator": "codex/gpt-6-luna",
+  "reasoning_effort": "max",
+  "service_tier": "priority",
+  "speed_multiplier_from_model_catalog": 1.5,
+  "provider": "magpie",
+  "reference": "godot_project/art/60_ui/cg/cg_archive_0420_dispatch_copy.jpg",
+  "original": "generated_output.png",
+  "export": "godot_project/art/60_ui/cg/cg_intro_lana_receipt_v2.jpg",
+  "export_size": [
+    1664,
+    936
+  ],
+  "prompt_file": "submitted_prompt.txt",
+  "prompt_status": "Scene brief supplied to the worker. Image tool payload is not confirmed by its output trace."
+}

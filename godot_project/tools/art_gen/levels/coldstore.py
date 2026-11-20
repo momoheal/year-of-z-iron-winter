@@ -7,7 +7,7 @@ META = dict(
     scene="res://scenes/night_coldstore.tscn",
     manifest="night_coldstore_manifest.json",
     facade="coldstore",                              # 北侧立面：冷库主楼（保温板 + 冷风机）
-    objective_zh="目标：南库封存的医疗耗材箱（abx）· 档案 0892 说这里在册人数 0，可柱子后面全是活人",
+    objective_zh="目标：南库封存的医疗耗材箱（abx）· 档案 0892 说这里在册人数 0，可柱后还有活人",
     extract_zh="回铁路专用线侧铁丝网豁口撤离",
     prize="abx",                                     # 封存抗生素 =「真药到底在哪」的另一半答案
     danger=2,

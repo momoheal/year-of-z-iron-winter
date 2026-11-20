@@ -150,13 +150,17 @@ func _run_tests() -> void:
 	var sanitarium: Dictionary = Data.loc("sanitarium")
 	_assert(not sim.loc_unlocked(sanitarium), "18. sanatorium gated at start")
 	sim.add_item("intel", 2)
-	_assert(sim.loc_unlocked(sanitarium), "19. sanatorium unlocks with 2 intel + 1 med")
+	_assert(not sim.loc_unlocked(sanitarium), "19a. the yard consist precedes the sanatorium")
+	sim.flags["story_yard"] = true
+	_assert(sim.loc_unlocked(sanitarium), "19. sanatorium unlocks with the consist, 2 intel and medicine")
 	_assert(not sim.loc_unlocked(Data.loc("manor")), "20. manor gated behind the pine-manor flag")
 	sim.flags["manor_tip"] = true
 	_assert(sim.loc_unlocked(Data.loc("manor")), "21. manor unlocks with manor_tip")
 	_assert(not sim.loc_unlocked(Data.loc("marshalling")), "22. marshalling gated behind lana_car3")
 	sim.flags["lana_car3"] = true
-	_assert(sim.loc_unlocked(Data.loc("marshalling")), "23. marshalling unlocks with lana_car3")
+	_assert(not sim.loc_unlocked(Data.loc("marshalling")), "23a. West Station requires Ivan’s destination lead")
+	sim.flags["story_market"] = true
+	_assert(sim.loc_unlocked(Data.loc("marshalling")), "23. West Station unlocks after Anna and Ivan")
 
 	# --- 5. 队伍 / 携带物 ---------------------------------------------------
 	sim.select_mate("ash")
@@ -428,7 +432,8 @@ func _run_tests() -> void:
 	_assert(sim.receive_vikina_lead() and bool(sim.flags.get("archive_lead", false))
 		and sim.loc_unlocked(Data.loc("archive")), "72a. Vikina's lead points to the archive")
 	sim.add_item("intel", 2)
-	_assert(sim.loc_unlocked(Data.loc("sanitarium")), "72b. archive lead plus the required supplies unlocks the sanatorium")
+	sim.flags["story_yard"] = true
+	_assert(sim.loc_unlocked(Data.loc("sanitarium")), "72b. archive lead, yard consist and supplies unlock the sanatorium")
 	var res2: Dictionary = sim.resolve_story(1)
 	_assert(res2.is_empty(), "73. replaying a finished beat is a no-op")
 

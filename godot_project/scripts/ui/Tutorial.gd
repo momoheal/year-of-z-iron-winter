@@ -50,8 +50,8 @@ const SECTIONS := {
 			"en": "The right side is the dossier: danger, cold, and how much is left to find.\nPick a companion, pack tins, hot water, aspirin and bandages, then set out. Whatever you do not use comes home with you."},
 		{"area": "",
 			"t_zh": "夜潜的规矩", "t_en": "RULES OF THE NIGHT",
-			"zh": "天亮前回到撤离点，才能带走全部物资；拖到天亮只带得回一半；倒下或放弃，一无所获。\n第一夜建议去近处、危险度低的地方。到了外面，屏幕上方会继续提示怎么走、怎么躲。",
-			"en": "Reach the extraction point before dawn and you keep everything. Stay until dawn and you keep half. Go down or give up and you keep nothing.\nFor a first night, pick somewhere close and low-risk. Once outside, hints at the top of the screen will show you how to move and hide."},
+			"zh": "天亮前回到撤离点，可以带走全部物资。拖到天亮只带得回一半，倒下或放弃会失去这趟物资。\n进入夜潜后，右上角的小地图会标出任务和撤离点，左下角会随行动显示新手提示。",
+			"en": "Extract before dawn to keep everything. Stay until dawn and you keep half. Go down or give up and you lose this night's haul.\nIn the field, find objectives and extraction on the map at the top right. The tips at the bottom left follow your actions."},
 	],
 }
 

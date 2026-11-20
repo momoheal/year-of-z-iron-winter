@@ -1,0 +1,7 @@
+Use case: precise-object-edit. Asset type: 16:9 story CG for a Godot narrative game.
+Input image 1: edit target and composition reference; input image 2: Fyodor identity reference.
+Primary request: replace only the older feminine figure near x=80%, y=22% with Fyodor, Vasily's father: an older adult man with gray hair and beard, wearing a cook's apron over a worn winter work shirt, reaching toward his son in alarm.
+Scene/backdrop: preserve the cold institutional kitchen, prep table, injured young man in the foreground, and all environmental details.
+Composition/framing: retain the original wide 16:9 shot, perspective, character placements, and painterly oil illustration style.
+Lighting/mood: preserve the harsh cold kitchen light and urgent distress.
+Constraints: change only the identity and gender presentation of that background figure. Give him a clearly male face, gray beard, masculine brow and jaw; no feminine facial features and no eyepatch. Keep Vasily, Aleksei, props, violence level, camera, palette, and all other details as close to the edit target as possible. No text or watermark.

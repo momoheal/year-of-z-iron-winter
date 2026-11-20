@@ -144,6 +144,14 @@ const STORY_PORTRAITS := {
 		"intense": preload("res://art/10_characters/portraits/PRT_Vikina_Intense.png"),
 		"wry": preload("res://art/10_characters/portraits/PRT_Vikina_Wry.png"),
 	},
+	"dispatcher": {"calm": preload("res://art/10_characters/portraits/PRT_Dispatcher_Calm.png")},
+	"sergei": {"calm": preload("res://art/10_characters/portraits/PRT_Sergei_Calm.png")},
+	"accountant": {"calm": preload("res://art/10_characters/portraits/PRT_Accountant_Calm.png")},
+	"vasily": {"calm": preload("res://art/10_characters/portraits/PRT_Vasily_Calm.png")},
+	"zhukov": {"calm": preload("res://art/10_characters/portraits/PRT_Zhukov_Calm.png")},
+	"medicine_seller": {"calm": preload("res://art/10_characters/portraits/PRT_MedicineSeller_Calm.png")},
+	"boyko": {"calm": preload("res://art/10_characters/portraits/PRT_Boyko_Calm.png")},
+	"jana": {"calm": preload("res://art/10_characters/portraits/PRT_Jana_Calm.png")},
 }
 const STORY_SPEAKERS := {
 	"切尔诺夫中士": "chernov",
@@ -171,21 +179,21 @@ const STORY_SPEAKERS := {
 	"旁白 / 阿列克谢": "aleksei",
 	"旁白": "aleksei",
 	"阿列克谢": "aleksei",
-	"调度长": "",
+	"调度长": "dispatcher",
 	"“老轨”伊万": "ivan",
 	"老轨伊万（列车长）": "ivan",
 	"卡佳妈妈": "katya",
 	"回退期的母亲": "katya",
-	"谢尔盖": "",
-	"核算员": "",
+	"谢尔盖": "sergei",
+	"核算员": "accountant",
 	"柳德米拉大娘": "lyudmila",
 	"维京娜": "vikina",
 	"费奥多尔": "fyodor",
-	"瓦西里": "",
-	"茹科夫专员": "",
-	"假药贩": "",
-	"博伊科": "",
-	"佳娜": "",
+	"瓦西里": "vasily",
+	"茹科夫专员": "zhukov",
+	"假药贩": "medicine_seller",
+	"博伊科": "boyko",
+	"佳娜": "jana",
 	"督察专员": "osk",
 	"清杀队": "osk",
 }
@@ -516,7 +524,64 @@ func _on_art_archive_closed() -> void:
 func refresh() -> void:
 	if sim == null:
 		return
+	if not overlay_active():
+		sim.prepare_base_story_events()
 	_refresh(false)
+	_advance_campaign_story_slides()
+
+
+func _advance_campaign_story_slides() -> void:
+	if sim == null or overlay_active() or sim.story_open or sim.logbook_open or sim.help_open or sim.abort_confirm:
+		return
+	if sim.phase == "base":
+		var event_id: String = sim.take_story_slide()
+		if event_id == "":
+			return
+		var context: Dictionary = sim.flags.duplicate(true)
+		context["pavel_present"] = String(sim.flags.get("fire_rescue_mate", "")) == "pavel"
+		context["ash_present"] = bool(sim.flags.get("fire_rescue_ash_present", false))
+		context["yelena_present"] = String(sim.flags.get("manor_outcome_mate", "")) == "yelena" \
+			or (sim.mate == "yelena" and bool(sim.mates.get("yelena", false)))
+		context["manor_plan"] = String(sim.flags.get("manor_outcome_plan", "evidence"))
+		context["crag_rescue_scope"] = "lana" if bool(sim.flags.get("crag_rescue_lana", false)) \
+			else ("all" if bool(sim.flags.get("crag_rescue_all", false)) else "")
+		context["broadcast_mate"] = String(sim.flags.get("broadcast_slide_mate", ""))
+		context["broadcast_names_aired"] = bool(sim.flags.get("broadcast_names", false)) \
+			and not bool(sim.flags.get("broadcast_omit_names", false))
+		context["market_mate"] = String(sim.last_report.get("mate", ""))
+		var pages: Array = CutsceneData.story_event_slides(event_id, context)
+		if pages.is_empty():
+			return
+		_persist_story_cutscene_state()
+		var headings := {
+			"archive_copy": ["档案馆 · 0420 退件底单", "ARCHIVE · FILE 0420 COPY"],
+			"station_route": ["西站 · 交接底单", "WEST YARD · HANDOVER COPY"],
+			"eagle_escape": ["鹰嘴崖 · 第三节车厢", "EAGLE'S CRAG · BOXCAR THREE"],
+			"evidence_handover": ["602 室 · 三份证据", "ROOM 602 · THREE PIECES OF EVIDENCE"],
+			"broadcast_complete": ["302 台 · 城市听见了", "TOWER 302 · THE CITY HEARD"],
+			"market_refuge": ["黑市 · 一夜栖身处", "MARKET · ONE-NIGHT REFUGE"],
+			"fire_rescue": ["住宅区 · 烟里的出口", "RESIDENTIAL BLOCK · AN EXIT THROUGH SMOKE"],
+			"canteen_aftermath": ["东街食堂 · 瓦西里的名字", "EAST STREET CANTEEN · VASILY'S NAME"],
+			"manor_outcome": ["松林庄园 · 你带走的东西", "PINE MANOR · WHAT YOU CARRIED OUT"],
+			"zakhar_betrayed": ["西站 · 扎哈尔离队", "WEST YARD · ZAKHAR LEAVES"],
+			"mother_lost": ["602 室 · 空床", "ROOM 602 · THE EMPTY BED"],
+		}
+		var heading: Array = headings.get(event_id, ["剧情记录", "STORY RECORD"])
+		play_slides(pages, String(heading[0]), String(heading[1]))
+		return
+	if sim.phase == "ending" and not bool(sim.flags.get("ending_cutscene_seen", false)):
+		var ending_key := String(sim.flags.get("final_ending", sim.ending_key()))
+		var ending_pages: Array = CutsceneData.ending_slides(ending_key, sim.mother_alive, sim.ending_scene_context())
+		if ending_pages.is_empty():
+			return
+		sim.flags["ending_cutscene_seen"] = true
+		_persist_story_cutscene_state()
+		play_slides(ending_pages, "結局與余波 · " + ending_key, "ENDING & AFTERMATH · " + ending_key)
+
+
+func _persist_story_cutscene_state() -> void:
+	if SaveGame.can_save(sim) and not SaveGame.save(sim) and SaveGame.last_error != "":
+		warn_save(SaveGame.last_error)
 
 func _refresh(force: bool) -> void:
 	if sim == null or root == null:
@@ -704,9 +769,9 @@ func _build_title() -> void:
 	var p := _panel()
 	var pv := _vbox(12)
 	pv.add_child(_label(_tr(
-		"为了母亲的 409 批腹透液，你曾在第 004 号车皮调拨单上签名；如今，妹妹拉娜的编号 0420 正在那节车厢的名单里。\n" \
+		"为了母亲的 409 批腹透液，你曾在第 004 号车皮调拨单上签名；如今，筛查队带走了妹妹拉娜。回执上的档案号是 0420。\n" \
 		+ "白昼替台账搬运活人，黑夜在探照灯之间把他们找回来。每夜只能去一个地方，天亮前必须回到撤离点。",
-		"You signed Car 004's transfer order to buy Mother's Batch-409 dialysis fluid; now Lana, file 0420, is listed inside that same car.\n" \
+		"You signed Car 004's transfer order to buy Mother's Batch-409 dialysis fluid; now the screening patrol has taken Lana. The receipt says File 0420.\n" \
 		+ "By day the ledger moves living people; by night you try to bring them back. One location per night. Return before dawn."),
 		FONT_SIZES["body"], Color("#b4ad9c")))
 	pv.add_child(_sep())
@@ -1194,8 +1259,9 @@ func _build_map() -> void:
 	rv.add_child(title)
 
 	# 俯视成图用于出发前辨认地点；正式潜行场景仍使用各自的碰撞与巡逻布局。
+	var reveal_crag := String(L["id"]) != "eagle_beak_cliff" or bool(sim.flags.get("station_route", false))
 	var map_art_path := _map_art_path(String(L["id"]))
-	if map_art_path != "":
+	if reveal_crag and map_art_path != "":
 		var overview := TextureRect.new()
 		overview.name = "SelectedLocationArtPreview"
 		overview.texture = load(map_art_path) as Texture2D
@@ -1224,7 +1290,7 @@ func _build_map() -> void:
 	# 节点化地图的「环境档案」：出发前先说清这地方会怎么弄死你
 	var sc := String(L.get("scene", ""))
 	var lid := LevelBeats.id_for_scene(sc)
-	if lid != "":
+	if reveal_crag and lid != "":
 		var beats: Dictionary = LevelBeats.for_level(lid)
 		var env_box := PanelContainer.new()
 		env_box.add_theme_stylebox_override("panel", SovietUI.plate(Color("1a1510"), SovietUI.OCHRE_DIM, 1, 10))
@@ -1679,7 +1745,9 @@ func _kv(k: String, v: String) -> Control:
 
 func _report_sleep() -> void:
 	sim.to_base()
-	if sim.phase != "ending":
+	sim.prepare_base_story_events()
+	if sim.phase != "ending" and not sim.story_open and not sim.has_pending_story_slides() \
+		and not bool(sim.flags.get("broadcast_complete", false)):
 		sim.advance_day()
 	_sig = ""
 
@@ -1702,7 +1770,7 @@ func _build_ending() -> void:
 	var sub := _label(String(prev["key"]), FONT_SIZES["body"], Color("#6d6f66"))
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	c.add_child(sub)
-	var ending_image := StorySlides.tex_of(CutsceneData.ending_scene(String(prev["key"])))
+	var ending_image := StorySlides.tex_of(CutsceneData.ending_scene(String(prev["key"]), sim.flags))
 	if ending_image != null:
 		var art := TextureRect.new()
 		art.name = "EndingCG"
@@ -1737,7 +1805,7 @@ func _build_ending() -> void:
 func _replay_ending_cg() -> void:
 	var prev: Dictionary = sim.ending_preview()
 	var key := String(prev["key"])
-	play_slides(CutsceneData.ending_slides(key, sim.mother_alive), "结局与余波 · " + key, "ENDING & AFTERMATH · " + key)
+	play_slides(CutsceneData.ending_slides(key, sim.mother_alive, sim.ending_scene_context()), "结局与余波 · " + key, "ENDING & AFTERMATH · " + key)
 
 # ============================================================================
 # 模态框
@@ -1777,7 +1845,9 @@ func _room_zone_title(zone: String) -> String:
 
 func _room_zone_background(zone: String) -> String:
 	match zone:
-		"mother": return "res://art/40_interiors/BG_602_Mother_Integrated.png"
+		"mother":
+			return "res://art/40_interiors/BG_602_Mother_Alive_Integrated.png" if sim.mother_alive \
+				else "res://art/40_interiors/BG_602_Mother_Integrated.png"
 		"storage": return "res://art/40_interiors/BG_602_Storage_Integrated.png"
 		"weapons": return "res://art/40_interiors/BG_602_Arsenal_Empty.png"
 		"refuge": return "res://art/40_interiors/BG_Market_Hideout.png"
@@ -1957,8 +2027,9 @@ func _build_refuge_zone(actions: VBoxContainer) -> void:
 	actions.add_child(_label(_tr("临时据点 · 旧铁路信号室", "TEMPORARY BASE · ABANDONED SIGNAL ROOM"), FONT_SIZES["h3"], Color("#e3ddcd")))
 	actions.add_child(_label(_tr("这里能暂时避开清杀队，但不是家。602 室仍保存着母亲留下的东西；维京娜的闲话也指向拉娜的线索。",
 		"This room can hide you from OSK for now, but it is not home. Mother's things remain in Room 602, and Vikina's offhand remark still points toward Lana."), FONT_SIZES["body"], Color("#b9b5a8")))
-	actions.add_child(_btn(_tr("听一听短波与伊万的留言", "Listen to the shortwave and Ivan's note"),
-		func(): play_slides(CutsceneData.room_dialogue("market_refuge"), "黑市栖身处", "MARKET REFUGE"), true))
+	actions.add_child(_btn(_tr("回听短波与栖身处记录", "Replay the shortwave and refuge record"),
+		func(): play_slides(CutsceneData.story_event_slides("market_refuge", {"market_mate": String(sim.last_report.get("mate", ""))}),
+			"黑市栖身处", "MARKET REFUGE"), true))
 	actions.add_child(_label(_tr("临时栖身处已记录到存档。", "Temporary refuge recorded in the save."), FONT_SIZES["small"], Color("#a7e8bf")))
 
 func _dim(alpha: float = 0.82) -> ColorRect:
@@ -1987,9 +2058,20 @@ func _build_story_modal() -> void:
 	if beat.is_empty():
 		sim.story_open = false
 		return
-	# Galgame 式底部横框。有场景插图就铺满全屏当背景；没有插图时：
-	# 出发前播的剧情（pending_scene 还没切）把背后的灰盒压到近乎全黑，其余情况保留场景可见度。
-	var scene_tex: Texture2D = StorySlides.tex_of(CutsceneData.scene_image(String(sim.story_id)))
+	if _story_beat != sim.story_id:
+		_story_beat = sim.story_id
+		_story_line = 0
+	var lines: Array = sim.story_lines(String(sim.story_id))
+	_story_line = clampi(_story_line, 0, maxi(0, lines.size() - 1))
+
+	# Some dialogue pages have their own scene art.
+	var scene_path := String(lines[_story_line].get("img", "")) if not lines.is_empty() else ""
+	if scene_path.is_empty():
+		scene_path = CutsceneData.scene_image(String(sim.story_id), {
+			"mate": sim.mate,
+			"ash_present": sim.mate == "ash" and bool(sim.mates.get("ash", false)),
+		})
+	var scene_tex: Texture2D = StorySlides.tex_of(scene_path)
 	if scene_tex != null:
 		_dim(1.0)
 		var bg := TextureRect.new()
@@ -2010,11 +2092,6 @@ func _build_story_modal() -> void:
 		_dim(0.97)
 	else:
 		_dim(0.46)
-	if _story_beat != sim.story_id:
-		_story_beat = sim.story_id
-		_story_line = 0
-	var lines: Array = sim.story_lines(String(sim.story_id))
-	_story_line = clampi(_story_line, 0, maxi(0, lines.size() - 1))
 
 	var dock := _vbox(0)
 	dock.name = "GalgameBottomDock"
@@ -2091,12 +2168,14 @@ func _build_story_modal() -> void:
 	if lines.is_empty() or _story_line >= lines.size() - 1:
 		text_col.add_child(_sep())
 		var choices: Array = beat.get("choices", [])
-		text_col.add_child(_label(_tr("点击选项，或按 1–%d" % choices.size(), "Click an option or press 1–%d" % choices.size()),
+		var choice_indices: Array[int] = _story_choice_indices()
+		text_col.add_child(_label(_tr("点击选项，或按 1–%d" % choice_indices.size(), "Click an option or press 1–%d" % choice_indices.size()),
 			FONT_SIZES["small"], Color("#a8a294")))
-		for i in choices.size():
-			var c: Dictionary = choices[i]
+		for visible_index in choice_indices.size():
+			var original_index := choice_indices[visible_index]
+			var c: Dictionary = choices[original_index]
 			var cls := String(c.get("cls", ""))
-			var b := _btn(String(c.get("zh" if sim.lang == "zh" else "en", "")), func(): choose_story(i), cls == "good")
+			var b := _btn(String(c.get("zh" if sim.lang == "zh" else "en", "")), func(): choose_story(visible_index), cls == "good")
 			if sim.story_id == "sanitarium":
 				var medicine: String = sim.rescue_medicine()
 				b.disabled = medicine == ""
@@ -2151,27 +2230,79 @@ func advance_story() -> bool:
 func choose_story(idx: int) -> void:
 	if not sim.story_open:
 		return
-	var beat: Dictionary = Data.STORY.get(sim.story_id, {})
 	var lines: Array = sim.story_lines(String(sim.story_id))
+	var choice_indices: Array[int] = _story_choice_indices()
+	if _story_line >= lines.size() - 1 and idx >= 0 and idx < choice_indices.size():
+		_resolve_story(choice_indices[idx])
+
+
+func _story_choice_indices() -> Array[int]:
+	var indices: Array[int] = []
+	var beat: Dictionary = Data.STORY.get(sim.story_id, {})
 	var choices: Array = beat.get("choices", [])
-	if _story_line >= lines.size() - 1 and idx >= 0 and idx < choices.size():
-		_resolve_story(idx)
+	for i in choices.size():
+		if sim.story_id == "pasha_watchtower" and i == 0 and int(sim.stash.get("asp", 0)) < 1:
+			continue
+		indices.append(i)
+	return indices
 
 
 func _resolve_story(idx: int) -> void:
 	var sid := String(sim.story_id)
+	var previous_mates: Dictionary = sim.mates.duplicate()
 	var res: Dictionary = sim.resolve_story(idx)
 	if not res.is_empty():
 		ui_sfx.emit("beep")
-		if sid not in ["station_buran_yard", "eagle_beak_cliff", "manor", "broadcast_tower_302"]:
-			play_aftermath(sid, idx, res)
+		var companion_pages := _companion_join_pages(previous_mates)
+		if sid == "pasha_watchtower":
+			_persist_story_cutscene_state()
+		if sid == "manor":
+			sim.flags["manor_outcome_mate"] = sim.mate if bool(sim.mates.get(sim.mate, false)) else ""
+			var context := {"manor_plan": "evidence", "yelena_present": sim.mate == "yelena" and bool(sim.mates.get("yelena", false))}
+			if bool(sim.flags.get("manor_plan_trade", false)):
+				context["manor_plan"] = "trade"
+			elif bool(sim.flags.get("manor_plan_release", false)):
+				context["manor_plan"] = "release"
+			if not bool(context["yelena_present"]):
+				var pages: Array = CutsceneData.story_event_slides("manor_confrontation", context)
+				pages.append_array(companion_pages)
+				play_slides(pages, "松林庄园 · 审计总账", "PINE MANOR · AUDIT LEDGER")
+		elif sid not in ["canteen", "station_buran_yard", "eagle_beak_cliff", "broadcast_tower_302", "market_refuge", "pasha_watchtower"]:
+			play_aftermath(sid, idx, res, companion_pages)
+		elif not companion_pages.is_empty():
+			play_slides(companion_pages, "同行伙伴", "COMPANIONS")
 	_sig = ""
 
 
+func _companion_join_pages(previous_mates: Dictionary) -> Array:
+	var pages: Array = []
+	for mate_data in Data.MATES:
+		var id := String(mate_data["id"])
+		if bool(previous_mates.get(id, false)) or not bool(sim.mates.get(id, false)):
+			continue
+		var mate_name := String(mate_data["zh" if sim.lang == "zh" else "en"])
+		var perk := String(mate_data["zh_p" if sim.lang == "zh" else "en_p"])
+		if id == "ash":
+			perk = _tr(
+				"灰烬会自动跟随，标记 6 米内发现的容器和生物。他对狂暴者吠叫，遇到半人会呜咽，遇到幸存者会摇尾。遭到攻击时他也会帮忙。",
+				"Ash follows automatically and marks containers and creatures he detects within 6 m. He barks at rabids, whines at half-humans and wags his tail at survivors. He helps when you come under attack.")
+		var selection := _tr(
+			"每晚可以带一名伙伴。到城市地图的出发面板选择同行者。",
+			"You can take one companion per night. Choose who comes with you in the city map's departure panel.")
+		if id == "ash" and sim.mate == id:
+			selection = _tr(
+				"灰烬今晚会跟你一起出发。以后可在城市地图的出发面板更换同行者，每晚带一名。",
+				"Ash is coming with you tonight. You can choose one companion per night in the city map's departure panel.")
+		pages.append({"card": {"title": _tr("%s 已入队", "%s has joined") % mate_name,
+			"lines": [perk, selection]}})
+	return pages
+
+
 ## 关键抉择之后的图片幻灯：几页「余波」+ 最后一页「档案变更」结果卡（这次选择改了什么）。
-func play_aftermath(story_id: String, choice_index: int, res: Dictionary) -> void:
+func play_aftermath(story_id: String, choice_index: int, res: Dictionary, companion_pages: Array = []) -> void:
 	var pages: Array = CutsceneData.aftermath(story_id, choice_index)
 	if pages.is_empty():
+		play_slides(companion_pages, "同行伙伴", "COMPANIONS")
 		return
 	var last: Dictionary = pages[pages.size() - 1]
 	var lines: Array = []
@@ -2187,6 +2318,7 @@ func play_aftermath(story_id: String, choice_index: int, res: Dictionary) -> voi
 		"zh": "这一笔，已经记进了《工作日志》。它不会再被划掉。",
 		"en": "It is in the logbook now. It will not be crossed out.",
 	})
+	pages.append_array(companion_pages)
 	var title := String(res.get("title", ""))
 	play_slides(pages, "抉择之后 · " + title, "AFTERMATH · " + title)
 

@@ -443,15 +443,15 @@
         <div class="ending-grid">
           <article class="ending alpha">
             <strong>TRUE ALPHA</strong><h3>你好，拉娜</h3>
-            <p>母亲仍在、truth 已有、划痕为 0、没有 betrayed 标记。</p>
+            <p>母亲仍在、truth 已有、划痕少于 5、没有 betrayed 标记；划痕为 0 时另有奖励对白与分镜。</p>
           </article>
           <article class="ending beta">
             <strong>TRUE BETA</strong><h3>荒原之火</h3>
-            <p>truth 已有、划痕为 0，但不满足 α；文案和字幕随母亲生死变化。</p>
+            <p>truth 已有、划痕少于 5，但不满足 α；文案和字幕随母亲生死变化。划痕为 0 时另有奖励对白与分镜。</p>
           </article>
           <article class="ending b">
             <strong>ENDING B</strong><h3>荒诞解放</h3>
-            <p>truth 已有且划痕 &gt; 0；日志上的划痕改变拉娜对阿列克谢的反应。</p>
+            <p>truth 已有且划痕不少于 5；日志上的划痕改变拉娜对阿列克谢的反应。</p>
           </article>
           <article class="ending"><strong>ENDING A</strong><h3>留在 602</h3><p>未取得真相，母亲存活。</p></article>
           <article class="ending c">
@@ -583,8 +583,8 @@
       tower: {"title": "302 高地广播塔", "sub": "守住播音台，传输完成后返回，开启正式结局。", "trigger": ["鹰嘴崖救援完成，而且持有庄园罪证。"], "effects": ["长按 E 12 秒传输。返回时根据选择记下完整播报名单或仅播罪证。"], "next": [], "source": "CampaignSim.gd · _settle_story_objective()"},
       endings: {
         title: "五种结局：按条件顺序判定", sub: "点击下方结局卡可用来比较故事判定条件。",
-        trigger: ["ending_key() 依次检查 alpha、缺 truth、划痕，再落到 beta。", "alpha 需要母亲存活、truth、零划痕且无 betrayed。"],
-        effects: ["无真相时，由母亲生死决定 A 或 C。", "truth 存在且划痕 >0 则 Ending B；truth 存在、零划痕但不满足 alpha 则 True Beta。"],
+        trigger: ["ending_key() 依次检查 alpha、缺 truth、划痕是否达到 5，再落到 beta。", "alpha 需要母亲存活、truth、划痕少于 5 且无 betrayed。划痕为 0 时额外追加奖励对白与分镜。"],
+        effects: ["无真相时，由母亲生死决定 A 或 C。", "truth 存在且划痕 ≥5 则 Ending B；truth 存在、划痕 <5 但不满足 alpha 则 True Beta。划痕为 0 的 β 也有专属奖励对白与分镜。"],
         next: ["完整条件见本页下方判定表。", "五类结局描述来自 CampaignSim.ending_preview()。"],
         source: "CampaignSim.gd · ending_key(), ending_preview()"
       }

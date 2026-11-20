@@ -1,0 +1,20 @@
+{
+  "stem": "cg_manor_confront_ledger_v2",
+  "date": "2026-11-19",
+  "references": [
+    "godot_project/art/60_ui/cg/cg_manor_yelena_zhukov_confront_v1.png"
+  ],
+  "prompt_orchestrator": "gpt-6-luna",
+  "reasoning_effort": "max",
+  "service_tier": "priority",
+  "speed_multiplier_from_model_catalog": 1.5,
+  "prompt_status": "Scene brief supplied to CLI. Image tool payload not confirmed in output trace.",
+  "generator": "Codex built-in image_gen",
+  "original": "generated_output.png",
+  "export": "godot_project/art/60_ui/cg/cg_manor_confront_ledger_v2.jpg",
+  "export_size": [
+    1664,
+    936
+  ],
+  "prompt_file": "prompt.txt"
+}

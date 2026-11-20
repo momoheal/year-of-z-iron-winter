@@ -29,6 +29,22 @@ var _step := 0.0
 @onready var flash_pivot: Node2D = $Flashlight/Pivot
 @onready var flashlight: Node2D = $Flashlight
 
+func _ready() -> void:
+	_configure_flashlight_occlusion()
+
+
+func _configure_flashlight_occlusion() -> void:
+	# The Objects pass lights characters and props; it must use the same wall
+	# occluders as the ground pass or the visible cone leaks through walls.
+	var objects_light := flash_pivot.get_node_or_null("Objects") as PointLight2D
+	if objects_light == null:
+		return
+	objects_light.shadow_enabled = true
+	objects_light.shadow_filter = 1
+	objects_light.shadow_filter_smooth = 1.5
+	objects_light.shadow_item_cull_mask = 1
+
+
 func _physics_process(delta: float) -> void:
 	if ctl == null:
 		return

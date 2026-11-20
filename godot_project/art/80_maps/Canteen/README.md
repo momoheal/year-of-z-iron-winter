@@ -4,3 +4,4 @@
 - 6 个透明独立道具已登记到 `godot_project/art/30_props/` 和 `night_canteen_manifest.json`。
 - 原始透明图集：`cutout-source.png`；提示词在本目录。
 - 本包只含美术，不含碰撞、导航或场景导出。
+- 砍骨刀比例已针对厨房案板调整：长度约为原稿的 65%、宽度约为 70%；昼景与夜景底图同步。

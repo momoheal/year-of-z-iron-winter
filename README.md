@@ -29,6 +29,19 @@ By day, you play as former freight dispatcher **Aleksei "Alyosha" Morozov**, acc
 
 ---
 
+## 剧情档案与台词审计
+
+[查看剧情档案网页](https://momoheal.github.io/year-of-z-iron-winter/deliverables/story_review/) · [仓库内的 HTML](deliverables/story_review/index.html) · [z (6).html 采纳记录](deliverables/story_review/z6-audit.md)
+
+档案包含剧透。按进度查看游戏幻灯、双语字幕、出场人物、日夜地图、条件余波及五种结局。可搜索角色、地点或台词，并对照文学底稿、战役运行文案与附件的采纳决定。网页版随 GitHub Pages 的 `main` 分支更新。本地克隆后可直接打开 HTML。
+
+维护时在仓库根目录运行以下命令，把 `ABSOLUTE_JSON_PATH` 换成同一个临时文件的绝对路径，再提交生成的 HTML。
+
+```text
+godot --headless --path godot_project -s tools/export_story_archive.gd -- ABSOLUTE_JSON_PATH
+python godot_project/tools/build_story_archive.py ABSOLUTE_JSON_PATH
+```
+
 ## 📂 Repository Structure | 仓库文件目录
 
 ```text
@@ -226,9 +239,9 @@ P4 的第二张新地图，也是战役里危险度 5 的终点图：夜长 120 
 v4.2 七幕结构第四幕的舞台（L07M）：危险度 5 / 夜长 100 分钟（≈240 秒）/ 寒冷 1.2，战役里安娜入队
 （`lana_car3`）后解锁，开发期按 `F5` 直开。46×34 米：矿山岩壁立面（新立面种类 `mine`：斜井坑木门脸 +
 工棚 + 矿仓 + 井架 + 爆破断面）+ 一条运矸专线，装卸台 / 工业广场 / 爆破作业面三带。剧本锚点全部
-落在场景里：**温压爆破炸穿的永冻层断面**（`PRP_SporeFace`，千层糕层理里那条灰黑孢子粉尘层——
-灰鳞病是他们自己炸出来的）、码在断面根上的**铝热剂装药堆**、**起爆器**旁斜靠的爆破台账
-（`PRP_Detonator_Rig`，必出 `intel` = 孢子岩芯与爆破台账，第六幕广播的物证）、**假人哨塔第二座**
+落在场景里：**温压爆破炸穿的永冻层断面**（`PRP_SporeFace`，千层糕层理里有一条灰黑粉尘带，矿工录音记下爆破后的咳嗽；
+成分和病因尚无定论）、码在断面根上的**铝热剂装药堆**、**起爆器**旁斜靠的爆破台账
+（`PRP_Detonator_Rig`，必出 `intel` = 断面岩样与爆破台账，第六幕广播的物证）、**假人哨塔第二座**
 （`PRP_DummyTower_Mannequin`，远看是哨位、近看是塑料模特 + 猪嘴面具——**不装灯**）、留守技术员
 **博伊科**（回退半人 0417，蜷在看守火堆旁；木箱里有给他退烧的阿司匹林）。侧翻矿车与来不及架上的
 坑木是塌方注脚。**本关无探照灯**——黑暗是这张图的第一属性：2 组清杀队换岗、2 只感染掘进工、

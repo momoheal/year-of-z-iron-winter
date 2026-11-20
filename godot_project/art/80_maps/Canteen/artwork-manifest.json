@@ -11,7 +11,7 @@
       941
     ],
     "path": "res://art/80_maps/Canteen/map.png",
-    "sha256": "be7170d5e9bebcafea42c7b655ce35cc9530b0331b54b6d6b7baf254731d926b",
+    "sha256": "b6f96adf19fe3a67a179bc8cba5f83b1564ff9780fac1e4406d915802b48e5c3",
     "art_only": true
   },
   "source_sheet": {
@@ -119,7 +119,7 @@
         941
       ],
       "path": "res://art/80_maps/Canteen/map_night.png",
-      "sha256": "d279ace30e1cb5a419daa4ef6b51d9a6f7b7ec44211b8206b087812c12633156",
+      "sha256": "e02c51e19f53bc9e079729434015565ded5aa3b32a37993819d3904ad214b6e4",
       "art_only": true,
       "tone": "night",
       "prompt": "generation-prompt-night.txt",

@@ -37,6 +37,9 @@ const SovietStarMeter := preload("res://scripts/ui/SovietStarMeter.gd")
 const PauseMenuScript := preload("res://scripts/ui/PauseMenu.gd")
 const NavGridScript := preload("res://scripts/night/NavGrid.gd")
 const NightMiniMapScript := preload("res://scripts/night/NightMiniMap.gd")
+const NightCoachScript := preload("res://scripts/night/NightCoach.gd")
+const StorySlidesScript := preload("res://scripts/ui/StorySlides.gd")
+const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
 
 const MAP_ART_DIRS := {
 	"yard": "Yard", "marshalling": "Marshalling", "manor": "Manor",
@@ -146,7 +149,11 @@ var shake := 0.0               # 创伤量 0..1（实际位移按 shake²）
 var punch := 0.0               # 受伤时的推镜量
 var _shake_t := 0.0
 
-var state := "play"            # play | choice | interaction | modding | frozen | downed | extracted | dawn | abort
+var state := "play"            # play | choice | interaction | modding | cutscene | frozen | downed | extracted | dawn | abort
+var _night_story_kind := ""
+var _vasily_qte_target: Node2D = null
+var _vasily_failed_target: Node2D = null
+var _vasily_qte_attempted := false
 var pack: Array[String] = []
 var warmth := 100.0
 var hp := 100.0
@@ -266,6 +273,10 @@ var _lbl_threat: Label
 var _lbl_landmarks: Label
 var _lbl_weapon: Label
 var _minimap: Control
+var _coach: NightCoachScript
+var mission_marker: Variant = null
+var mission_marker_title := ""
+var mission_marker_optional := false
 var _m_warm
 var _m_hp
 var _lbl_warm_val: Label
@@ -412,26 +423,30 @@ func _ready() -> void:
 	_init_post_defaults()
 	_spawn_follower()
 	_start_coach()
+	_refresh_hud()
 
 
-## 第一次从战役出发夜潜：屏幕上方边走边教（NightCoach）。看完 / 按 X 关掉后记进 sim.seen，
-## 以后的夜里不再出现；F2 独立跑不教。
+## 首次战役夜潜保留实地提示，撤离或主动关闭后写入已有的引导记录。
 func _start_coach() -> void:
 	if not in_campaign or RaidBridge.sim == null:
 		return
 	var seen: Variant = RaidBridge.sim.get("seen")
 	if not (seen is Dictionary) or bool((seen as Dictionary).get("night", false)):
 		return
-	var coach = load("res://scripts/night/NightCoach.gd").new()
-	coach.name = "NightCoach"
-	coach.ctl = self
-	coach.connect("finished", Callable(self, "_on_coach_finished"))
-	add_child(coach)
+	_coach = NightCoachScript.new()
+	_coach.name = "NightCoach"
+	_coach.ctl = self
+	_coach.lang = RaidBridge.sim.lang
+	_coach.finished.connect(_on_coach_finished)
+	hud_root.add_child(_coach)
+	brief_t = 0.0
+	_brief_card.hide()
 
 
 func _on_coach_finished() -> void:
 	if RaidBridge.sim != null and RaidBridge.sim.get("seen") is Dictionary:
 		RaidBridge.sim.seen["night"] = true
+	_coach = null
 
 
 func _spawn_follower() -> void:
@@ -650,6 +665,70 @@ func _process(delta: float) -> void:
 	_update_post()
 	_refresh_hud()
 	$OverlayLayer/Overlay.queue_redraw()
+
+
+func _show_night_story_slides(event_id: String) -> void:
+	var pages: Array = CutsceneData.story_event_slides(event_id, {"ivan_present": mate_id == "ivan"})
+	if pages.is_empty():
+		return
+	_night_story_kind = event_id
+	state = "cutscene"
+	if player != null:
+		player.frozen = true
+	var deck = StorySlidesScript.new()
+	deck.slides = pages
+	deck.lang = RaidBridge.sim.lang if in_campaign and RaidBridge.sim != null else "zh"
+	var heading := "剧情记录"
+	var heading_en := "STORY RECORD"
+	if event_id == "crag_reveal":
+		heading = "鹰嘴崖 · 车厢内"
+		heading_en = "EAGLE'S CRAG · INSIDE THE BOXCAR"
+	elif event_id == "mine_inscriptions":
+		heading = "三号矿坑 · 矿下录音"
+		heading_en = "MINE NO.3 · VOICE ON THE TAPE"
+	elif event_id == "canteen_vasily_qte":
+		heading = "东街食堂 · 卡刀"
+		heading_en = "EAST STREET CANTEEN · THE BLADE JAMS"
+	elif event_id == "redzone_mother":
+		heading = "红区外围 · 退烧的母亲"
+		heading_en = "RED ZONE PERIMETER · HER FEVER BROKE"
+	deck.heading_zh = heading
+	deck.heading_en = heading_en
+	deck.choice_selected.connect(_on_night_story_choice_selected)
+	deck.qte_finished.connect(_on_night_story_qte_finished)
+	deck.finished.connect(_on_night_story_slides_finished)
+	add_child(deck)
+
+
+func _on_night_story_choice_selected(choice_id: String) -> void:
+	if level_id == "eagle_beak_cliff" and in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
+		if choice_id in ["all", "lana"]:
+			RaidBridge.sim.raid.crag_rescue_scope = choice_id
+
+
+func _on_night_story_qte_finished(success: bool) -> void:
+	if _night_story_kind != "canteen_vasily_qte" or not is_instance_valid(_vasily_qte_target):
+		return
+	var target := _vasily_qte_target
+	_vasily_qte_target = null
+	if not target.has_method("is_alive") or not bool(target.call("is_alive")):
+		return
+	if success:
+		_damage_enemy(target, float(target.get("hp")) + 1.0, "player", true)
+	else:
+		_vasily_failed_target = target
+
+
+func _on_night_story_slides_finished() -> void:
+	if state == "cutscene":
+		state = "play"
+		if player != null:
+			player.frozen = false
+	if is_instance_valid(_vasily_failed_target):
+		damage_player(22.0, _vasily_failed_target)
+		spawn_float(player.global_position + Vector2(0, -124), "刀没拔出来。瓦西里的手仍扣在你肩上。", Color("#fca5a5"))
+		_vasily_failed_target = null
+	_night_story_kind = ""
 
 # ============================================================================
 # 天亮（P1.5）：夜长最后 DAWN_WINDOW 里的天色渐变
@@ -1366,6 +1445,14 @@ func _remove_pack_item(slot: int) -> void:
 		return
 	if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
 		var attempt = RaidBridge.sim.raid
+		if slot == attempt.archive_copy_slot:
+			attempt.archive_copy_slot = -1
+		elif slot < attempt.archive_copy_slot:
+			attempt.archive_copy_slot -= 1
+		if slot == attempt.manor_trade_slot:
+			attempt.manor_trade_slot = -1
+		elif slot < attempt.manor_trade_slot:
+			attempt.manor_trade_slot -= 1
 		if slot < attempt.manor_photo_slot:
 			attempt.manor_photo_slot -= 1
 	pack.remove_at(slot)
@@ -1397,6 +1484,16 @@ func _finish_search(c: Node2D) -> void:
 		got.append(String(pool[rng.randi() % pool.size()]))
 	var names: Array[String] = []
 	for id in got:
+		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+		and level_id == "manor" and c.name == &"BatchPallet" and id == "dial" \
+		and bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+			RaidBridge.sim.raid.manor_trade_slot = -2 # Ration slip is carried in the story, not in the pack.
+			continue
+		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+		and level_id == "manor" and c.name == &"IncineratorFeed" and id == "photo" \
+		and (bool(RaidBridge.sim.flags.get("manor_plan_trade", false)) \
+			or bool(RaidBridge.sim.flags.get("manor_plan_release", false))):
+			continue
 		if pack.size() >= bag_max:
 			spawn_float(c.global_position + Vector2(0, -90), "背包满了 · Bag full", Color("#fbbf24"))
 			break
@@ -1404,6 +1501,14 @@ func _finish_search(c: Node2D) -> void:
 			and level_id == "manor" and c.name == &"IncineratorFeed" and id == "photo" \
 			and RaidBridge.sim.raid.manor_photo_slot < 0:
 			RaidBridge.sim.raid.manor_photo_slot = pack.size()
+		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+			and level_id == "manor" and c.name == &"BatchPallet" and id == "dial" \
+			and RaidBridge.sim.raid.manor_trade_slot < 0:
+			RaidBridge.sim.raid.manor_trade_slot = pack.size()
+		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+			and level_id == "archive" and c.name == &"File0420" and id == "intel" \
+			and RaidBridge.sim.raid.archive_copy_slot < 0:
+			RaidBridge.sim.raid.archive_copy_slot = pack.size()
 		pack.append(id)
 		names.append(item_name(id))
 	if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
@@ -1414,10 +1519,31 @@ func _finish_search(c: Node2D) -> void:
 			RaidBridge.sim.raid.story_objective_reached = true
 			var message := "目标已完成：撤离后确认结果"
 			if level_id == "eagle_beak_cliff":
-				message = "车厢已打开。带拉娜一行走检修路撤离。"
+				message = "车厢门已打开。先看清里面的人。"
 			elif level_id == "broadcast_tower_302":
 				message = "传输完毕。沿南门撤离。"
 			spawn_float(c.global_position + Vector2(0, -150), message, SovietUI.OCHRE)
+			if level_id == "eagle_beak_cliff":
+				_show_night_story_slides("crag_reveal")
+		if level_id == "manor":
+			var manor_plan := "evidence"
+			if bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+				manor_plan = "trade"
+			elif bool(RaidBridge.sim.flags.get("manor_plan_release", false)):
+				manor_plan = "release"
+			var manor_goal_reached := false
+			if manor_plan == "evidence":
+				manor_goal_reached = c.name == &"IncineratorFeed" and RaidBridge.sim.raid.manor_photo_slot >= 0
+			elif manor_plan == "trade":
+				manor_goal_reached = c.name == &"BatchPallet" and RaidBridge.sim.raid.manor_trade_slot != -1
+			elif manor_plan == "release" and c.name == &"GateBox":
+				RaidBridge.sim.raid.manor_release_reached = true
+				manor_goal_reached = true
+				spawn_float(c.global_position + Vector2(0, -150), "锁盒里的铁栓弹开了。地下室有人沿墙向外走。", SovietUI.OCHRE)
+			if manor_goal_reached:
+				RaidBridge.sim.raid.story_objective_reached = true
+				var done_note := "地下室的人已放出。现在可以撤离。" if manor_plan == "release" else "目标已完成。现在可以撤离。"
+				spawn_float(c.global_position + Vector2(0, -176), done_note, SovietUI.OCHRE)
 	if not names.is_empty():
 		spawn_float(c.global_position + Vector2(0, -90), "+ " + "、".join(names), Color("#fde68a"))
 	for id in got:
@@ -1894,6 +2020,9 @@ func _bullet_key(col: Object) -> String:
 func on_rabid_killed(r: Node2D, by: String) -> void:
 	_splat(r.global_position, "l")                 # 一百公斤的东西，血摊得最大
 	r.set_meta("corpse_searched", true)
+	if level_id == "canteen" and String(r.name) == "Rabid_Vasily" and by in ["player", "companion"] \
+	and in_campaign and RaidBridge.sim != null:
+		RaidBridge.sim.flags["vasily_killed"] = true
 	var pocket_items := _roll_items(CORPSE_CATS, 2 if mate_id == "zakhar" else 1)
 	for i in pocket_items.size():
 		_spawn_item_drop(pocket_items[i], r.global_position + Vector2(22 + i * 16, 10 + i * 8))
@@ -2015,6 +2144,8 @@ func _return_to_campaign(reason: String) -> void:
 		RaidBridge.clear()
 		get_tree().change_scene_to_file("res://scenes/campaign.tscn")
 		return
+	if reason == "extracted" and is_instance_valid(_coach):
+		_coach.finish()
 	var R = sim.raid
 	R.pack = pack.duplicate()
 	R.player.hp = hp
@@ -2780,6 +2911,14 @@ func melee_swing() -> void:
 			bd = d
 			best = e
 	if best != null:
+		if level_id == "canteen" and in_campaign and String(best.name) == "Rabid_Vasily" \
+		and RaidBridge.sim != null and bool(RaidBridge.sim.flags.get("ptsd", false)) \
+		and not _vasily_qte_attempted:
+			_vasily_qte_attempted = true
+			_vasily_qte_target = best as Node2D
+			_damage_enemy(best, 8.0, "player", true)
+			_show_night_story_slides("canteen_vasily_qte")
+			return
 		_damage_enemy(best, float(w.get("dmg", 34.0)), "player", true)
 		sfx.play_at("crowbar_hit", best.global_position, 0.0)
 		add_shake(0.46)
@@ -3114,6 +3253,10 @@ func _init_beats() -> void:
 ## 关键物资在哪：优先找「必出 prize」的容器，找不到就退回撤离点（HUD 不会指错方向）。
 func _find_objective_point() -> Vector2:
 	if in_campaign and level_id == "manor" and RaidBridge.sim != null and not RaidBridge.sim.flags.get("truth", false):
+		if bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+			return interact_point($World/Props/BatchPallet)
+		if bool(RaidBridge.sim.flags.get("manor_plan_release", false)):
+			return interact_point($World/Props/GateBox)
 		return interact_point($World/Props/IncineratorFeed)
 	for c in containers:
 		if String(c.get_meta("guaranteed", "")) == prize:
@@ -3199,6 +3342,16 @@ func _update_landmarks() -> void:
 			if note != "":
 				spawn_float(player.global_position + Vector2(0, -136), note, SovietUI.BONE_DIM)
 			var story_trigger := String(l.get("story_trigger", ""))
+			if level_id == "mine" and nm == "爆破断面" and in_campaign and RaidBridge.sim != null \
+			and not bool(RaidBridge.sim.flags.get("mine_inscriptions_seen", false)):
+				RaidBridge.sim.flags["mine_inscriptions_seen"] = true
+				_show_night_story_slides("mine_inscriptions")
+				return
+			if story_trigger == "redzone_mother" and level_id == "yard" and in_campaign \
+			and RaidBridge.sim != null and not bool(RaidBridge.sim.flags.get("redzone_mother_seen", false)):
+				RaidBridge.sim.flags["redzone_mother_seen"] = true
+				_show_night_story_slides("redzone_mother")
+				return
 			if story_trigger == "broadcast" and in_campaign:
 				var tree := Engine.get_main_loop() as SceneTree
 				var bridge := tree.root.get_node_or_null("RaidBridge") if tree != null else null
@@ -3434,10 +3587,9 @@ func _build_hud() -> void:
 	# ---- 左上：夜潜工作日志（档案牌） ----
 	var left := PanelContainer.new()
 	left.name = "Dossier"
-	left.add_theme_stylebox_override("panel", SovietUI.plate(SovietUI.IRON, SovietUI.STEEL, 2, 18))
+	left.add_theme_stylebox_override("panel", SovietUI.plate(SovietUI.IRON, SovietUI.STEEL, 1, 12))
 	left.position = Vector2(26, 22)
-	left.scale = Vector2(0.82, 0.82)
-	left.custom_minimum_size = Vector2(572, 0)
+	left.custom_minimum_size.x = 410
 	left.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud_root.add_child(left)
 	var lv := VBoxContainer.new()
@@ -3453,64 +3605,59 @@ func _build_hud() -> void:
 	var sh := HBoxContainer.new()
 	sh.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stamp_row.add_child(sh)
-	var code_lbl := _mono_label(String(beats.get("code", "ДЕЛО № 17")), 11, SovietUI.BONE)
+	var code_lbl := _mono_label("第 %s 夜" % SovietUI.night_zh(day_n), 14, SovietUI.BONE)
 	code_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	sh.add_child(code_lbl)
-	_lbl_clock = _mono_label("", 11, SovietUI.BONE)
+	_lbl_clock = _mono_label("", 14, SovietUI.BONE)
 	sh.add_child(_lbl_clock)
 
-	var title := _label(level_zh, 26, SovietUI.BONE)
+	var title := _label(level_zh, 23, SovietUI.BONE)
 	title.add_theme_font_override("font", SovietUI.display_font())
 	lv.add_child(title)
-	var sub := _mono_label("%s  ·  第 %s 夜" % [level_en.to_upper(), SovietUI.night_zh(day_n)],
-		11, SovietUI.BONE_DIM)
-	lv.add_child(sub)
 	lv.add_child(SovietUI.rule(SovietUI.STEEL, 1))
 
 	# 双星生命仪表：红色生命、钠灯黄体温；每半个星角代表 10%。
 	var stars := HBoxContainer.new()
 	stars.name = "StarVitals"
-	stars.add_theme_constant_override("separation", 24)
+	stars.add_theme_constant_override("separation", 14)
 	stars.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lv.add_child(stars)
-	var warm_row := _meter_row(stars, "体温", "ТЕПЛО", SovietUI.SIGNAL)
+	var warm_row := _meter_row(stars, "体温", SovietUI.SIGNAL)
 	_m_warm = warm_row[0]
 	_lbl_warm_val = warm_row[1]
-	var hp_row := _meter_row(stars, "生命", "ЗДОРОВЬЕ", SovietUI.BLOOD_LIT)
+	var hp_row := _meter_row(stars, "生命", SovietUI.BLOOD_LIT)
 	_m_hp = hp_row[0]
 	_lbl_hp_val = hp_row[1]
 
 	lv.add_child(SovietUI.rule(SovietUI.STEEL, 1))
-	_lbl_status = _mono_label("", 12, SovietUI.BONE)
+	_lbl_status = _label("", 15, SovietUI.BONE)
 	lv.add_child(_lbl_status)
-	_lbl_zone = _mono_label("", 12, SovietUI.BONE_DIM)
+	_lbl_zone = _label("", 14, SovietUI.BONE_DIM)
 	lv.add_child(_lbl_zone)
-	_lbl_weapon = _mono_label("", 12, SovietUI.BONE)
-	_lbl_weapon.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_lbl_weapon.custom_minimum_size = Vector2(520, 0)
+	_lbl_weapon = _label("", 15, SovietUI.BONE)
 	lv.add_child(_lbl_weapon)
-	_lbl_bag = _label("", 12, SovietUI.OCHRE)
-	_lbl_bag.custom_minimum_size = Vector2(520, 0)
-	_lbl_bag.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_lbl_bag = _label("", 14, SovietUI.OCHRE)
 	lv.add_child(_lbl_bag)
 
-	# ---- 右上：任务卡（目标方位 / 撤离方位 / 威胁 / 勘踏） ----
+	# ---- 右上：地图在先，任务与撤离说明紧随其后 ----
+	var navigation := VBoxContainer.new()
+	navigation.name = "Navigation"
+	navigation.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	navigation.offset_left = -406
+	navigation.offset_right = -26
+	navigation.offset_top = 22
+	navigation.offset_bottom = 22
+	navigation.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	navigation.add_theme_constant_override("separation", 8)
+	navigation.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_root.add_child(navigation)
+	_build_minimap(navigation)
+
 	var right := PanelContainer.new()
 	right.name = "Mission"
-	right.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	right.offset_left = -506
-	right.offset_right = -26
-	right.offset_top = 22
-	right.offset_bottom = 22
-	right.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	right.grow_vertical = Control.GROW_DIRECTION_END
-	right.add_theme_stylebox_override("panel", SovietUI.plate(SovietUI.IRON, SovietUI.STEEL, 2, 16))
-	right.custom_minimum_size = Vector2(480, 0)
-	# 缩小面板时以右上角为支点，保持靠边而不遮挡视野。
-	right.pivot_offset = Vector2(480, 0)
-	right.scale = Vector2(0.82, 0.82)
+	right.add_theme_stylebox_override("panel", SovietUI.plate(SovietUI.IRON, SovietUI.STEEL, 1, 12))
 	right.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hud_root.add_child(right)
+	navigation.add_child(right)
 	var rv := VBoxContainer.new()
 	rv.add_theme_constant_override("separation", 5)
 	rv.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -3519,49 +3666,38 @@ func _build_hud() -> void:
 	head.add_theme_stylebox_override("panel", SovietUI.stamp(6))
 	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	rv.add_child(head)
-	var head_lbl := _mono_label("ЦЕЛЬ · 今夜任务", 11, SovietUI.BONE)
+	var head_lbl := _mono_label("今夜任务", 14, SovietUI.BONE)
 	head.add_child(head_lbl)
-	_lbl_target = _label(objective_zh, 13, SovietUI.BONE)
-	_lbl_target.custom_minimum_size = Vector2(430, 0)
+	_lbl_target = _label(objective_zh, 16, SovietUI.BONE)
 	rv.add_child(_lbl_target)
-	_lbl_bearing = _mono_label("", 13, SovietUI.OCHRE)
+	_lbl_bearing = _label("", 14, SovietUI.OCHRE)
 	rv.add_child(_lbl_bearing)
-	_lbl_exit = _mono_label("", 13, SovietUI.CRT)
-	rv.add_child(_lbl_exit)
 	rv.add_child(SovietUI.rule(SovietUI.STEEL, 1))
-	_lbl_threat = _mono_label("", 12, SovietUI.SIGNAL)
+	_lbl_exit = _label("", 15, NightMiniMapScript.EXIT_COLOR)
+	rv.add_child(_lbl_exit)
+	_lbl_threat = _label("", 13, SovietUI.SIGNAL)
 	rv.add_child(_lbl_threat)
-	_lbl_landmarks = _mono_label("", 11, SovietUI.ASH)
+	_lbl_landmarks = _label("", 12, SovietUI.ASH)
 	rv.add_child(_lbl_landmarks)
 
 	# ---- 底部：电传打字机（长按 E 的提示都从这里打出来） ----
+	var action_holder := CenterContainer.new()
+	action_holder.name = "ActionHint"
+	action_holder.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	action_holder.offset_top = -78
+	action_holder.offset_bottom = -26
+	action_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_root.add_child(action_holder)
 	var bar := PanelContainer.new()
 	bar.name = "Teletype"
-	bar.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	bar.offset_left = 26
-	bar.offset_right = -26
-	bar.offset_top = -84
-	bar.offset_bottom = -26
 	bar.add_theme_stylebox_override("panel",
-		SovietUI.plate(Color(0.035, 0.04, 0.042, 0.94), SovietUI.STEEL, 1, 10))
+		SovietUI.plate(Color(0.035, 0.04, 0.042, 0.94), SovietUI.STEEL, 1, 12))
 	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hud_root.add_child(bar)
-	var bh := HBoxContainer.new()
-	bh.add_theme_constant_override("separation", 12)
-	bh.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bar.add_child(bh)
-	var tt := PanelContainer.new()
-	tt.add_theme_stylebox_override("panel", SovietUI.plate(Color("0d1a12"), SovietUI.CRT, 1, 6))
-	tt.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bh.add_child(tt)
-	var tt_lbl := _mono_label("ТЕЛЕТАЙП", 10, SovietUI.CRT)
-	tt.add_child(tt_lbl)
-	_lbl_hint = _label("", 14, SovietUI.BONE)
-	_lbl_hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_lbl_hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	bh.add_child(_lbl_hint)
-	var tail := _mono_label("№ 0420", 10, SovietUI.BONE_DIM)
-	bh.add_child(tail)
+	action_holder.add_child(bar)
+	_lbl_hint = _label("", 16, SovietUI.BONE)
+	_lbl_hint.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_lbl_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	bar.add_child(_lbl_hint)
 
 	# ---- 清杀队短对白：右下角头像，不暂停战斗、不挡住底部操作提示 ----
 	_osk_bark_panel = PanelContainer.new()
@@ -3722,38 +3858,38 @@ func _build_hud() -> void:
 	mv.add_child(_weapon_mod_label)
 
 	_update_brief_text()
-	_build_minimap()
 
 
-func _build_minimap() -> void:
-	if map_art_day == null or map_bounds_px.x <= 0.0:
-		return
+func _build_minimap(parent: Control) -> void:
 	var panel := PanelContainer.new()
 	panel.name = "NightMiniMapPanel"
-	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
-	panel.offset_left = 26.0
-	panel.offset_right = 296.0
-	panel.offset_bottom = -98.0
-	var map_width := 250.0
-	var map_height := map_width * map_bounds_px.y / map_bounds_px.x
-	panel.offset_top = panel.offset_bottom - map_height - 52.0
 	panel.add_theme_stylebox_override("panel",
-		SovietUI.plate(Color(0.025, 0.035, 0.045, 0.96), SovietUI.STEEL, 1, 10))
+		SovietUI.plate(Color(0.025, 0.035, 0.045, 0.96), SovietUI.STEEL, 1, 12))
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hud_root.add_child(panel)
+	parent.add_child(panel)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 4)
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(column)
-	var heading := _mono_label("小地图  ·  你 / 目标 / 撤离", 10, SovietUI.CRT)
-	heading.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	column.add_child(heading)
+	var legend := HBoxContainer.new()
+	legend.add_theme_constant_override("separation", 14)
+	legend.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(legend)
+	legend.add_child(_label("小地图", 14, SovietUI.BONE))
+	legend.add_child(_label("● 你", 13, NightMiniMapScript.PLAYER_COLOR))
+	legend.add_child(_label("◆ 目标 / ◇ 线索" if first_coldstore_visit else "◆ 目标",
+		13, NightMiniMapScript.TARGET_COLOR))
+	legend.add_child(_label("■ 撤离", 13, NightMiniMapScript.EXIT_COLOR))
+	for entry: Label in legend.get_children():
+		entry.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_minimap = NightMiniMapScript.new()
 	_minimap.name = "NightMiniMap"
 	_minimap.controller = self
 	_minimap.source_map = map_art_night if map_art_night != null else map_art_day
+	if _minimap.source_map == null:
+		_minimap.source_map = $Ground.texture
 	_minimap.world_bounds_px = map_bounds_px
-	_minimap.custom_minimum_size = Vector2(map_width, map_height)
+	_minimap.custom_minimum_size.y = 154
 	_minimap.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.add_child(_minimap)
 
@@ -3798,20 +3934,20 @@ func _mono_label(txt: String, size: int, col: Color) -> Label:
 
 
 ## 一枚十格五角星仪表：返回 [仪表, 数值 Label]（体温 / 健康共用一套）
-func _meter_row(parent: Node, zh: String, ru: String, col: Color) -> Array:
+func _meter_row(parent: Node, zh: String, col: Color) -> Array:
 	var row := VBoxContainer.new()
 	row.add_theme_constant_override("separation", 2)
-	row.custom_minimum_size = Vector2(226, 0)
+	row.custom_minimum_size = Vector2(156, 0)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(row)
 	var head := HBoxContainer.new()
 	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(head)
-	var nm := _label("%s  %s" % [zh, ru], 12, SovietUI.BONE_DIM)
+	var nm := _label(zh, 15, SovietUI.BONE_DIM)
 	nm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(nm)
-	var val := _mono_label("100%", 12, col)
+	var val := _mono_label("100%", 14, col)
 	head.add_child(val)
 	var m = SovietStarMeter.new()
 	m.name = "StarMeter_" + zh
@@ -3819,7 +3955,7 @@ func _meter_row(parent: Node, zh: String, ru: String, col: Color) -> Array:
 	m.fill_low = SovietUI.FROST if zh == "体温" else Color("e04432")
 	m.track = SovietUI.INK
 	m.edge = SovietUI.OCHRE_DIM if zh == "体温" else SovietUI.STEEL_LIT
-	m.custom_minimum_size = Vector2(104, 94)
+	m.custom_minimum_size = Vector2(98, 70)
 	m.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	row.add_child(m)
 	return [m, val]
@@ -3890,7 +4026,7 @@ func _refresh_hud() -> void:
 	var stance := "蹲伏" if player.crouching else ("冲刺" if player.sprinting else "步行")
 	var light := "手电开" if player.flashlight_on else "手电关"
 	var lit := "暴露" if player.flashlight_on or is_lit(player.global_position) else "暗处"
-	_lbl_status.text = "%s │ %s %s │ 罐头 %d │ 借刀 %d │ 良知 %+d │ 卌 %s" % [
+	_lbl_status.text = "%s  ·  %s  ·  %s  ·  罐头 %d\n借刀 %d  ·  良知 %+d  ·  卌 %s" % [
 		stance, light, lit, cans, borrowed, int(conscience), SovietUI.tally_glyphs(tally)]
 
 	# --- 当前所在区（白 / 红 / 黑）---
@@ -3933,36 +4069,69 @@ func _refresh_hud() -> void:
 	_lbl_bag.text = "背包 %d/%d：%s" % [pack.size(), bag_max,
 		"、".join(names) if not names.is_empty() else "—"]
 
-	# --- 右上：目标方位 / 撤离方位 / 威胁 / 勘踏 ---
+	# --- 地图、任务与世界标记使用相同的任务状态 ---
 	var has_prize := pack.has(prize)
 	var attempt = RaidBridge.sim.raid if in_campaign and RaidBridge.sim != null else null
+	mission_marker = objective_px if objective_px != exit_px and not has_prize else null
+	mission_marker_title = "目标"
+	mission_marker_optional = false
 	if attempt != null and level_id in ["station_buran_yard", "eagle_beak_cliff", "broadcast_tower_302"]:
+		mission_marker = null if attempt.story_objective_reached else objective_px
 		_lbl_target.text = "目标已完成。沿标记撤离。" if attempt.story_objective_reached else objective_zh
 		if level_id == "broadcast_tower_302" and not attempt.story_objective_reached:
 			_lbl_target.text = "在播音台长按 E，等传输完成"
 			if search_target != null and search_target.name == &"RadioDesk":
 				_lbl_target.text = "正在传输 · %d%%" % int(search_prog * 100)
-		_lbl_bearing.text = "撤离方向见下方" if attempt.story_objective_reached else "目标方位  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		_lbl_bearing.text = "" if attempt.story_objective_reached else "目标方位  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
 		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
 	elif attempt != null and level_id == "manor" and not RaidBridge.sim.flags.get("truth", false):
-		_lbl_target.text = "台账照片已装包，带它回去。" if attempt.manor_photo_slot >= 0 else "在焚化炉进料口拍下台账，保留一格背包"
-		_lbl_bearing.text = "进料口  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		mission_marker = objective_px
+		var manor_plan := "evidence"
+		if bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+			manor_plan = "trade"
+		elif bool(RaidBridge.sim.flags.get("manor_plan_release", false)):
+			manor_plan = "release"
+		if attempt.story_objective_reached:
+			mission_marker = null
+			if manor_plan == "release":
+				_lbl_target.text = "地下室的人已放出。沿标记撤离。"
+			elif manor_plan == "trade":
+				_lbl_target.text = "配给凭条已取。沿标记撤离。"
+			else:
+				_lbl_target.text = "照片已拍。沿标记撤离。"
+			_lbl_bearing.text = ""
+		elif manor_plan == "trade":
+			_lbl_target.text = "去配给托盘取凭条，回去后才算成交。"
+			_lbl_bearing.text = "配给托盘  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		elif manor_plan == "release":
+			_lbl_target.text = "打开门禁锁盒，让地下室的人沿围墙离开。"
+			_lbl_bearing.text = "门禁锁盒  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
+		else:
+			_lbl_target.text = "在焚化炉进料口拍下台账，保留一格背包。"
+			_lbl_bearing.text = "进料口  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
 		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
 	elif first_coldstore_visit:
 		var checked := COLDSTORE_TRACE in landmark_seen
+		var sealed_meds: Node2D = $World/Props/SealedMeds
+		var searched := bool(sealed_meds.get_meta("searched", false))
+		_lbl_bearing.text = "北雨棚已查看 · 转运票残号 04" if checked else ""
+		mission_marker = null
 		if pack.has("dial"):
-			_lbl_target.text = "腹透液已装包。带回 602 给母亲。" if checked else "腹透液已装包。现在撤离，或绕去北雨棚找拉娜的痕迹。"
+			_lbl_target.text = "腹透液已装包。带回 602 给母亲。" if checked else "腹透液已装包。现在撤离，或绕去北雨棚找拉娜的线索。"
+		elif searched:
+			_lbl_target.text = "封存箱已搜过，背包里没有腹透液。"
 		else:
 			_lbl_target.text = "去南库封存箱取母亲的腹透液。背包要留一格。"
-			if bool($World/Props/SealedMeds.get_meta("searched", false)):
-				_lbl_target.text = "封存箱已经搜过。可以撤离了。"
-		_lbl_bearing.text = "北雨棚已查看 · 转运票残号 04" if checked else "可选 · 北雨棚排水窄缝"
-		if not pack.has("dial") and not bool($World/Props/SealedMeds.get_meta("searched", false)):
-			_lbl_bearing.text = "封存箱  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
-		elif not checked:
+			mission_marker = interact_point(sealed_meds)
+			mission_marker_title = "南库封存箱"
+			_lbl_bearing.text = "◆ 封存箱  " + SovietUI.bearing_line(to_m(mission_marker - player.global_position))
+		if not checked and (searched or pack.has("dial")):
 			for landmark in landmarks:
 				if landmark.get("name") == COLDSTORE_TRACE:
-					_lbl_bearing.text += "  " + SovietUI.bearing_line(to_m(_m_px(landmark["pos"]) - player.global_position))
+					mission_marker = _m_px(landmark["pos"])
+					mission_marker_title = "北雨棚"
+					mission_marker_optional = true
+					_lbl_bearing.text = "◇ 可选 · 北雨棚  " + SovietUI.bearing_line(to_m(mission_marker - player.global_position))
 					break
 		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
 	elif has_prize:
@@ -3973,7 +4142,11 @@ func _refresh_hud() -> void:
 		_lbl_target.text = objective_zh
 		_lbl_bearing.text = "目标方位  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
 		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
-	_lbl_exit.text = "撤离方位  " + SovietUI.bearing_line(to_m(exit_px - player.global_position))
+	_lbl_bearing.visible = not _lbl_bearing.text.is_empty()
+	var exit_delta: Vector2 = exit_px - player.global_position
+	var near_exit := dist_m(player.global_position, exit_px) <= REACH
+	_lbl_exit.text = "■ 撤离点  %s\n%s" % [
+		"已抵达" if near_exit else SovietUI.bearing_line(to_m(exit_delta)), extract_zh]
 
 	var chasing := 0
 	for r in rabids:
@@ -4003,7 +4176,8 @@ func _refresh_hud() -> void:
 		threats.append("环境警报：" + ("溜放车皮" if String(beat_events[beat_idx % beat_events.size()].get("kind", "")) == "hump" else "炉口爆燃"))
 	elif beat_phase == "live":
 		threats.append("环境警报：正在进行")
-	_lbl_threat.text = "\n".join(threats) if not threats.is_empty() else "没有异常动静。雪在响。"
+	_lbl_threat.text = "\n".join(threats)
+	_lbl_threat.visible = not threats.is_empty()
 	_lbl_threat.add_theme_color_override("font_color",
 		SovietUI.BLOOD_LIT if (chasing > 0 or (near_s != null and near_s.state == "alert")) else SovietUI.SIGNAL)
 
@@ -4016,12 +4190,16 @@ func _refresh_hud() -> void:
 		lmk += "　·　下次节拍 %ds" % int(ceil(maxf(0.0, beat_timer)))
 	_lbl_landmarks.text = lmk
 
-	# --- 底栏：电传提示 ---
+	# --- 底栏：交互键与当前进度 ---
 	var mech := nearest_mechanism()
 	var near_half = nearest_half()
 	var near_drop := nearest_loot_pickup()
-	if dawn_t > 0.0:
-		_lbl_hint.text = "天要亮了 —— %s（长按 E）" % extract_zh
+	if extract_prog > 0.0 and state == "play":
+		_lbl_hint.text = "持续按住 E · 撤离中 %d%%" % floori(extract_prog * 100.0)
+	elif search_prog > 0.0 and state == "play":
+		_lbl_hint.text = "持续按住 E · %s %d%%" % [
+			"传输中" if level_id == "broadcast_tower_302" and search_target != null and search_target.name == &"RadioDesk" else "搜刮中",
+			floori(search_prog * 100.0)]
 	elif near_half != null:
 		_lbl_hint.text = "E · 半人 %s 在发烧 —— 喂药 / 绕开 / 灭口" % near_half.tag
 	elif not mech.is_empty():
@@ -4032,20 +4210,14 @@ func _refresh_hud() -> void:
 		_lbl_hint.text = "E · 与黑市商人交谈 / 交易"
 	elif nearest_survivor() != null:
 		_lbl_hint.text = "E · 与幸存者交谈"
-	elif has_prize:
-		_lbl_hint.text = "%s到手 —— %s（长按 E）" % [item_name(prize), extract_zh] \
-			+ ("　·　F5 重来　Esc 返回战役" if not in_campaign else "")
-	elif dist_m(player.global_position, exit_px) <= REACH:
-		_lbl_hint.text = "长按 E · " + extract_zh
+	elif nearest_container() != null or nearest_corpse() != null:
+		_lbl_hint.text = "长按 E 搜刮"
+	elif near_exit:
+		_lbl_hint.text = "长按 E 撤离"
+	elif dawn_t > 0.0:
+		_lbl_hint.text = "天快亮了 · 沿右上的蓝色方位前往撤离点"
 	else:
-		var action_hint := objective_zh
-		if in_campaign and level_id == "broadcast_tower_302":
-			action_hint = "到播音台长按 E 12 秒完成广播，再撤离"
-		elif in_campaign and level_id == "manor":
-			action_hint = "在焚化炉进料口拍下台账，留出一格装照片"
-		_lbl_hint.text = action_hint + "　·　左键 攻击　R 装填　1~4 换家伙　Ctrl 蹲　E 搜刮　F 手电　Esc 暂停"
-	if state == "play":
-		_lbl_hint.text += "　·　T 武器改造"
+		_lbl_hint.text = "Ctrl 蹲行    F 手电    E 互动    左键 攻击    R 装填    1–4 换武器    T 改造    Esc 暂停"
 	if state == "play" and mate_id == "yelena":
 		_lbl_hint.text += "　·　C 命令 OSK 停步 8 秒（冷却 %.0f 秒）" % ceilf(_yelena_stop_cooldown)
 	elif state == "play" and mate_id == "zakhar":

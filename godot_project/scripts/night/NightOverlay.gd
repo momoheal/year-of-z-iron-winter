@@ -5,6 +5,7 @@ extends Node2D
 const SQ := 0.62
 const REACH := 1.45
 const Data := preload("res://scripts/CampaignData.gd")
+const MiniMap := preload("res://scripts/night/NightMiniMap.gd")
 ## 声纹可访问性：六类声纹的非颜色冗余（线型 + 中心图标）。纯数据模块，见其内注释。
 const RippleStyle := preload("res://scripts/night/NightRippleStyle.gd")
 const CAN_TEX := preload("res://art/30_props/PRP_TinCan.png")
@@ -61,21 +62,26 @@ func _draw() -> void:
 		for d in [Vector2(-spread, -spread), Vector2(spread, spread), Vector2(-spread, spread), Vector2(spread, -spread)]:
 			draw_line(hp2, hp2 + d, hc, 3.4 if bool(hm.get("kill", false)) else 2.8, true)
 		draw_circle(hp2, 2.4, hc)
-	# 撤离点
+	# 撤离点使用与小地图相同的蓝色方形标记。
 	var ex: Vector2 = ctl.exit_px
 	var pulse := 0.5 + 0.5 * sin(ctl.t * 3.0)
-	var ec := Color(0.35, 0.95, 0.6, 0.25 + 0.35 * pulse if ctl.pack.has("dial") else 0.18)
-	_ellipse(ex, 46.0, 46.0 * SQ, ec, 2.0)
-	if ctl.extract_prog > 0.0:
-		_arc(ex, 58.0, ctl.extract_prog, Color(0.35, 0.95, 0.6, 0.95), 4.0)
-	# 目标物资：走近才点亮，远处不剧透（关键物资 = 本关的 prize）
-	if ctl.state == "play" and not ctl.pack.has(ctl.prize) and ctl.objective_px != Vector2.ZERO:
-		var op: Vector2 = ctl.objective_px
+	if ctl.state == "play" and ctl.dist_m(p, ex) <= 18.0:
+		var ec := Color(MiniMap.EXIT_COLOR, 0.58 + 0.3 * pulse)
+		var reach_px := REACH * 64.0
+		_ellipse(ex, reach_px, reach_px * SQ, ec, 2.5)
+		_text(ex + Vector2(0, -84), "■ 撤离点", MiniMap.EXIT_COLOR, 17)
+		if ctl.extract_prog > 0.0:
+			_ellipse(ex, reach_px, reach_px * SQ, MiniMap.EXIT_COLOR, 4.0, ctl.extract_prog)
+	# 与任务卡、小地图共用当前目标，走近才在场景中标记。
+	if ctl.state == "play" and ctl.mission_marker is Vector2:
+		var op: Vector2 = ctl.mission_marker
 		var od: float = ctl.dist_m(p, op)
 		if od <= 18.0:
 			var k0: float = clampf((18.0 - od) / 8.0, 0.0, 1.0)
 			_ellipse(op, 30.0, 30.0 * SQ, Color(0.85, 0.72, 0.42, 0.22 + 0.3 * k0), 1.5)
-			_text(op + Vector2(0, -78), "ЦЕЛЬ · 目标物资", Color(0.88, 0.76, 0.46, 0.55 + 0.35 * k0), 13)
+			var glyph := "◇ " if ctl.mission_marker_optional else "◆ "
+			_text(op + Vector2(0, -78), glyph + String(ctl.mission_marker_title),
+				Color(MiniMap.TARGET_COLOR, 0.55 + 0.35 * k0), 14)
 	# 近处未搜刮容器显示小菱形；隐藏容器在发现前仍不可见。
 	if ctl.state == "play":
 		for container in ctl.containers:
@@ -115,8 +121,6 @@ func _draw() -> void:
 			_text(p + Vector2(0, -132), "长按 E 搜刮 · " + nm, Color(0.99, 0.9, 0.6, 0.95), 15)
 			if ctl.search_prog > 0.0:
 				_arc(p + Vector2(0, -50), 34.0, ctl.search_prog, Color(0.99, 0.85, 0.4, 0.95), 4.0)
-		elif ctl.dist_m(p, ex) <= REACH:
-			_text(p + Vector2(0, -132), "长按 E 撤离：" + String(ctl.extract_zh), Color(0.6, 1.0, 0.75, 0.95), 15)
 	# 清杀兵头顶读数
 	for s in ctl.soldiers:
 		if not s.is_alive():
@@ -221,10 +225,10 @@ func _text(pos: Vector2, s: String, c: Color, size: int) -> void:
 		Color(0, 0, 0, c.a * 0.8))
 	draw_string(ctl.font, pos - Vector2(w / 2.0, 0), s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, c)
 
-func _ellipse(c: Vector2, rx: float, ry: float, col: Color, w: float) -> void:
+func _ellipse(c: Vector2, rx: float, ry: float, col: Color, w: float, fraction := 1.0) -> void:
 	var pts := PackedVector2Array()
 	for i in 41:
-		var a := TAU * float(i) / 40.0
+		var a := -PI / 2.0 + TAU * fraction * float(i) / 40.0
 		pts.append(c + Vector2(cos(a) * rx, sin(a) * ry))
 	draw_polyline(pts, col, w, true)
 

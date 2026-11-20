@@ -53,11 +53,23 @@ var _command_stop_t := 0.0
 @onready var muzzle: PointLight2D = $Muzzle
 
 func _ready() -> void:
+	_configure_flashlight_occlusion()
 	if route.size() > 0:
 		global_position = route[0]
 		_wp = mini(1, route.size() - 1)
 		var d := route[_wp] - route[0]
 		facing = atan2(d.y / SQ, d.x)
+
+
+func _configure_flashlight_occlusion() -> void:
+	# Keep the visible OSK cone on the same occlusion pass as the ground beam.
+	var objects_light := flash_pivot.get_node_or_null("Objects") as PointLight2D
+	if objects_light == null:
+		return
+	objects_light.shadow_enabled = true
+	objects_light.shadow_filter = 1
+	objects_light.shadow_filter_smooth = 1.5
+	objects_light.shadow_item_cull_mask = 1
 
 func _physics_process(delta: float) -> void:
 	if ctl == null:
