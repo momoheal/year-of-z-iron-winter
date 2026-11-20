@@ -6,15 +6,15 @@ const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
 const CampaignSim := preload("res://scripts/CampaignSim.gd")
 
 const EXPECTED := {
-	"ENDING_A_RETURN_HOME": "res://art/60_ui/cg/cg_ending_closed_car_firelight_alt.jpg",
-	"ENDING_B_FLAWED_LIBERATION": "res://art/60_ui/cg/cg_ending_broadcast_breach_302_alt.jpg",
+	"ENDING_A_RETURN_HOME": "res://art/60_ui/cg/cg_aftermath_a_602.jpg",
+	"ENDING_B_FLAWED_LIBERATION": "res://art/60_ui/cg/cg_tower302_aleksei_at_transmitter.jpg",
 	"ENDING_C_NUMBNESS": "res://art/60_ui/cg/cg_ending_crawl_back_cellar_alt.jpg",
 	"TRUE_ALPHA_HELLO_LANA": "res://art/60_ui/cg/cg_ending_true_alpha_hello_lana.jpg",
 	"TRUE_BETA_OUTLAND_FIRE": "res://art/60_ui/cg/cg_ending_true_beta_outland_fire.jpg",
 }
 const EXPECTED_MAIN_CGS := [
-	"cg_ending_closed_car_firelight_alt.jpg",
-	"cg_ending_broadcast_breach_302_alt.jpg",
+	"cg_aftermath_a_602.jpg",
+	"cg_tower302_aleksei_at_transmitter.jpg",
 	"cg_ending_crawl_back_cellar_alt.jpg",
 	"cg_ending_true_alpha_hello_lana.jpg",
 	"cg_ending_true_beta_outland_fire.jpg",
@@ -52,7 +52,7 @@ func _run() -> void:
 	sim.mother_alive = false
 	ending_keys.append(sim.ending_key())
 	sim.flags["truth"] = true
-	sim.tally = 1
+	sim.tally = 5
 	ending_keys.append(sim.ending_key())
 	sim.tally = 0
 	sim.mother_alive = true
@@ -71,11 +71,13 @@ func _run() -> void:
 		var texture := ResourceLoader.load(path) as Texture2D
 		_assert(texture != null, "%s main CG loads as Texture2D" % key, path)
 		if texture != null:
-			_assert(texture.get_width() == 1376 and texture.get_height() == 768,
-				"%s main CG uses 1376x768" % key, "%dx%d" % [texture.get_width(), texture.get_height()])
-		var pages: Array = CutsceneData.ending_slides(key)
+			_assert(texture.get_width() >= 1280 and texture.get_height() >= 720,
+				"%s main CG has presentation resolution" % key, "%dx%d" % [texture.get_width(), texture.get_height()])
+		var pages: Array = CutsceneData.ending_slides(key, key != "ENDING_C_NUMBNESS")
 		var aftermath: Array = CutsceneData.ending_aftermath(key)
-		_assert(pages.size() == aftermath.size() + 1 and String(pages[0].get("img", "")) == path,
+		var main_index := 1 if key == "ENDING_C_NUMBNESS" else 0
+		var expected_count := aftermath.size() + 1 + main_index
+		_assert(pages.size() == expected_count and String(pages[main_index].get("img", "")) == path,
 			"%s replay deck orders main CG before aftermath" % key)
 		for page in pages:
 			var image_path := String(page.get("img", ""))

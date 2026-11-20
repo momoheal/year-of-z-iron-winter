@@ -101,7 +101,7 @@ func _run_tests() -> void:
 		"6. projection 26 px/m, y-squash 0.62")
 	_assert(Data.BAG == 12 and Data.SIGHT == 12.0 and is_equal_approx(Data.SIGHT_CRACKED, 7.2),
 		"7. bag 12, sight 12m / 7.2m cracked")
-	_assert(Data.ITEMS.size() == 26, "8. 26 item types", str(Data.ITEMS.size()))
+	_assert(Data.ITEMS.size() == 27, "8. 27 item types", str(Data.ITEMS.size()))
 	_assert(Data.WEAPONS.size() == 5 and Data.MATES.size() == 7 and Data.LOCS.size() == 17,
 		"9. 5 weapons / 7 mates / 17 locations")
 	_assert(Data.STORY.size() >= 5, "10. story beats present", str(Data.STORY.size()))
@@ -453,7 +453,9 @@ func _run_tests() -> void:
 	_assert(sim.ending_key() == "TRUE_ALPHA_HELLO_LANA", "77. truth + clean hands → TRUE α")
 	_assert(not String(sim.ending_preview()["zh"]).contains("帕沙"), "77b. preview omits the epilogue before the broadcast")
 	sim.tally = 1
-	_assert(sim.ending_key() == "ENDING_B_FLAWED_LIBERATION", "78. strokes → ending B")
+	_assert(sim.ending_key() == "TRUE_ALPHA_HELLO_LANA", "78. fewer than five strokes keeps the true ending")
+	sim.tally = 5
+	_assert(sim.ending_key() == "ENDING_B_FLAWED_LIBERATION", "78a. five strokes → ending B")
 	sim.mother_alive = false
 	_assert(sim.ending_key() == "ENDING_B_FLAWED_LIBERATION", "79. motherless + strokes still B")
 	_assert(String(sim.ending_preview()["key"]) == "ENDING_B_FLAWED_LIBERATION",

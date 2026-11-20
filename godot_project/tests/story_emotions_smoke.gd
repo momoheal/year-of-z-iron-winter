@@ -2,6 +2,7 @@ extends SceneTree
 ## 剧情逐句推进 + 角色/情绪头像自动化冒烟测试。
 
 const Data := preload("res://scripts/CampaignData.gd")
+const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
 
 var passes := 0
 var failures: Array[String] = []
@@ -128,13 +129,13 @@ func _run() -> void:
 			var text := String(line.get("zh", ""))
 			_assert(not text.contains("关卡代号") and not text.contains("此后若阿列克谢"),
 				"Yard dialogue excludes level and betrayal notes")
-		_assert(yard_lines.size() == 4 and zakhar_lines == 2
-			and yard_lines[2].get("w", "") == "旁白 / 阿列克谢",
+		_assert(yard_lines.size() == 5 and zakhar_lines == 2
+			and yard_lines[3].get("w", "") == "旁白 / 阿列克谢",
 			"The Yard keeps Zakhar's two speeches and labels the intervening narration")
 		_assert(sc.sim.story_lines("broadcast").size() > Data.STORY["broadcast"]["lines"].size(),
 			"Yelena broadcast uses the complete literary scene")
 	var yelena_unlock: Dictionary = Data.MATE_UNLOCKS["yelena"]
-	_assert(String(yelena_unlock.get("trigger", "")) == "landmark:6.66 电台棚"
+	_assert(String(yelena_unlock.get("trigger", "")) == "landmark:旧信号检修室"
 		and String(Data.loc("manor").get("req_flag", "")) == "manor_tip",
 		"Yelena is found at the broadcast landmark and unlocks Pine Manor")
 	var broadcast_sim = load("res://scripts/CampaignSim.gd").new()
@@ -162,12 +163,12 @@ func _run() -> void:
 	route_sim.select_mate("anna")
 	var anna_reaction: Dictionary = route_sim.story_lines("marshalling").back()
 	_assert(anna_reaction.get("w", "") == "安娜"
-		and String(anna_reaction.get("zh", "")).contains("不会再把后背交给你"),
+		and String(anna_reaction.get("zh", "")).contains("这一路的事你自己说"),
 		"ruthless route changes the active Anna's trust")
 	route_sim.select_mate("zakhar")
 	var zakhar_reaction: Dictionary = route_sim.story_lines("marshalling").back()
 	_assert(zakhar_reaction.get("w", "") == "核算员扎哈尔"
-		and String(zakhar_reaction.get("zh", "")).contains("冬季配额"),
+		and String(zakhar_reaction.get("zh", "")).contains("一冬的煤和面粉"),
 		"ruthless route changes the active Zakhar's motive")
 	route_sim.story_id = "marshalling"
 	route_sim.story_open = true
@@ -282,10 +283,18 @@ func _run() -> void:
 	_assert(String(Data.TEXT["zh"]["a3"]).contains("让他安静"), "literary A3 choice")
 	_assert(String(Data.STORY["sanitarium"]["lines"][2]["zh"]).contains("半片阿司匹林"), "Anna suffering testimony")
 	_assert(String(Data.STORY["market"]["choices"][2]["toast_zh"]).contains("灵魂"), "betrayal moral consequence")
-	_assert(String(Data.STORY["canteen"]["choices"][0]["toast_zh"]).contains("耳膜"), "Vasily lasting guilt")
+	var canteen_source: Array = Data.script_scene("2-2")
+	var tinnitus_line := false
+	for line in canteen_source:
+		if String(line.get("zh", "")).contains("干渴耳鸣"):
+			tinnitus_line = true
+	_assert(tinnitus_line, "Vasily leaves lasting auditory trauma")
 	_assert(Data.STORY["manor"]["lines"].size() == 5, "manor adds two Grand Inquisitor lines")
 	_assert(String(Data.STORY["manor"]["lines"][3]["zh"]).contains("下地狱的十字架"), "Zhukov carries the city's sin")
-	_assert(String(Data.STORY["canteen"]["choices"][0]["toast_zh"]).contains("费奥多尔大叔"), "Aleksei returns to confess")
+	var canteen_aftermath: Array = CutsceneData.aftermath("canteen", 0)
+	_assert(canteen_aftermath.size() >= 2
+		and String(canteen_aftermath[1].get("zh", "")).contains("跪在费奥多尔面前"),
+		"Aleksei returns to confess")
 	_assert(Data.PASHA_EPILOGUE_ZH.contains("不能光着身子见上帝"), "Pasha gives his coat to the nameless dead")
 
 	# 工业档案 UI：十格五角星与铆接指令牌必须有真实组件和样式，而非只换文案。
