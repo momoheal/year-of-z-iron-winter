@@ -56,6 +56,13 @@ const VIEW_C := Vector2(960.0, 600.0)  # 世界投影中心（顶栏以下的视
 const MAP_RECT := Rect2(30, 128, 900, 520)
 const MAP_PICK_R := 62.0
 const BREATH_PERIOD := 3.4           # 呼吸白气的周期，和夜潜场景的 Breath.gd 对齐
+const QA_MAP_SCENES := {
+	KEY_F2: "res://scenes/night_explore.tscn",
+	KEY_F3: "res://scenes/night_marshalling.tscn",
+	KEY_F4: "res://scenes/night_manor.tscn",
+	KEY_F5: "res://scenes/night_mine.tscn",
+	KEY_F6: "res://scenes/night_market.tscn",
+}
 
 const COL := {
 	"bg": Color("#05070a"),
@@ -94,9 +101,20 @@ var snow: Array[Vector3] = []      # x, y, speed
 var t: float = 0.0
 var shake := 0.0
 var _save_key := ""
-var backdrop: Node2D                # 标题 / 602 室 / 地图 / 结算的夜景背景（夜潜灰盒时隐藏）                # 上次自动存档时的 phase|day；变了才写盘
+var _save_retry_at := 0
+var _save_retry_delay := 1000
+var _save_attempt_key := ""
+var _save_dirty := false
+var _qa_maps_enabled := false
+var backdrop: Node2D                # 标题 / 602 室 / 地图 / 结算的夜景背景（夜潜灰盒时隐藏）
 
 func _ready() -> void:
+	var args := OS.get_cmdline_user_args()
+	if "--check-export" in args:
+		set_process_unhandled_input(false)
+		preload("res://tools/check_export.gd").run.call_deferred(get_tree())
+		return
+	_qa_maps_enabled = "--qa-maps" in args
 	# P1: 从夜潜场景回来时，RaidBridge 持有原 CampaignSim（含 stash/day/flags），
 	# 取回复用；否则才开新档。
 	if RaidBridge.active:
@@ -164,18 +182,33 @@ func _process(delta: float) -> void:
 	hud.refresh()
 	queue_redraw()
 
-## 自动存档：进入 602 室（新开局 / 睡觉 / 次日）或结算页时写一次。
+## 自动存档：进入安全点或有剧情进度时写入；失败时最多间隔 8 秒重试。
 ## 夜潜中途不存 —— 退出游戏 = 这一夜没发生过，回到出发前的 602 室。
 func _autosave() -> void:
 	var key := "%s|%d" % [sim.phase, sim.day]
-	if key == _save_key:
+	if key != _save_attempt_key:
+		_save_attempt_key = key
+		_save_retry_at = 0
+		_save_retry_delay = 1000
+	if not SaveGame.can_save(sim):
+		_save_key = ""
 		return
-	_save_key = key
-	if SaveGame.can_save(sim):
-		if SaveGame.save(sim):
-			hud.note_saved()
-		elif SaveGame.last_error != "":
-			hud.warn_save(SaveGame.last_error)     # 存档失败要让玩家看见，不能当成存上了
+	if (key == _save_key and not _save_dirty) or Time.get_ticks_msec() < _save_retry_at:
+		return
+	if SaveGame.save(sim):
+		_save_key = key
+		_save_dirty = false
+		_save_retry_at = 0
+		_save_retry_delay = 1000
+		hud.note_saved()
+	else:
+		_save_retry_at = Time.get_ticks_msec() + _save_retry_delay
+		_save_retry_delay = mini(_save_retry_delay * 2, 8000)
+		hud.warn_save(SaveGame.last_error)
+
+func request_autosave() -> void:
+	_save_dirty = true
+	_autosave()
 
 func _drain_sfx() -> void:
 	if sim.raid == null or sfx == null:
@@ -231,24 +264,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if k == KEY_F9:
 			hud.open_save_menu()               # 存档 / 读档面板（夜潜途中不开）
 			return
-		if k == KEY_F2:
-			get_tree().change_scene_to_file("res://scenes/night_explore.tscn")
-			return
-		if k == KEY_F3:
-			# 开发 / QA 直开第二张节点化地图（战役里要等 lana_car3 解锁）
-			get_tree().change_scene_to_file("res://scenes/night_marshalling.tscn")
-			return
-		if k == KEY_F4:
-			# 开发 / QA 直开第三张节点化地图（战役里要等 manor_tip 解锁）
-			get_tree().change_scene_to_file("res://scenes/night_manor.tscn")
-			return
-		if k == KEY_F5:
-			# 开发 / QA 直开第四张节点化地图（战役里要等 lana_car3 解锁）
-			get_tree().change_scene_to_file("res://scenes/night_mine.tscn")
-			return
-		if k == KEY_F6:
-			# 开发 / QA 直开第五张节点化地图（战役里 market 是常驻可去的黑市）
-			get_tree().change_scene_to_file("res://scenes/night_market.tscn")
+		if _qa_maps_enabled and sim.phase == "title" and QA_MAP_SCENES.has(k):
+			get_tree().change_scene_to_file(QA_MAP_SCENES[k])
 			return
 		if k == KEY_M:
 			hud.toggle_sound()         # 顶栏那个「音效：开 (M)」按钮终于对得起自己的提示

@@ -26,7 +26,13 @@ jobs:
       # 孤儿资产、代码引用但文件缺失。纯标准库（re + struct + json + os），
       # 不依赖 Godot，因此放在解析 Godot 之前 —— 资产层面出错时失败得更快。
       - name: Verify asset manifest (IHDR / orphans)
-        run: python godot_project/tools/art_gen/verify_assets.py
+        run: python godot_project/tools/art_gen/verify_assets.py --check
+
+      - name: Verify generated story dialogue
+        run: python godot_project/tools/sync_story_dialogue.py --check
+
+      - name: Test smoke runner arguments
+        run: python -m unittest discover -s godot_project/tools -p test_run_tests.py
 
       # ------------------------------------------------------------------
       # Godot 4.7.2.stable 官方 Linux x86_64 编辑器可执行文件即支持 --headless，

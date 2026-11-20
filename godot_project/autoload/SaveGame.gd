@@ -62,8 +62,15 @@ var last_error := ""
 ## 最近一次 read_raw() 实际读的是哪一份："main" / "backup" / "prev" / "tmp" / ""（没有可用存档）。
 var last_load_source := ""
 
-## 一份存档必须有的字段：缺了就当坏档，不拿它覆盖备份、也不拿来读。
-const REQUIRED_KEYS := ["version", "day", "phase", "stash", "nodes"]
+const OPTIONAL_TYPES := {
+	"saved_at": TYPE_STRING, "mother_alive": TYPE_BOOL, "night_complete": TYPE_BOOL,
+	"sound_on": TYPE_BOOL, "finished_demo": TYPE_BOOL, "mate": TYPE_STRING,
+	"lang": TYPE_STRING, "day_message": TYPE_STRING, "selected_loc": TYPE_STRING,
+	"rng_state": TYPE_STRING, "weapon_mods": TYPE_DICTIONARY, "base_display": TYPE_ARRAY,
+	"mates": TYPE_DICTIONARY, "flags": TYPE_DICTIONARY, "names": TYPE_ARRAY,
+	"story_done": TYPE_DICTIONARY, "log": TYPE_ARRAY, "events_log": TYPE_ARRAY,
+	"load": TYPE_DICTIONARY, "last_report": TYPE_DICTIONARY, "seen": TYPE_DICTIONARY,
+}
 
 
 ## ---------------------------------------------------------------------------
@@ -115,7 +122,7 @@ static func can_save(sim) -> bool:
 ## 写档。只接受 base / report 两个安全点；其余阶段返回 false 不写（不算失败，last_error 为空）。
 ##
 ## 步骤（每一步检查返回值，任何一步失败都至少留下一份可读的旧档）：
-##   1. 写 .tmp，再读回来校验（JSON 能解析、版本对、必需字段齐全）；
+##   1. 写 .tmp，再读回来校验 JSON 和存档结构；
 ##   2. 旧主档本身可读时才复制成 .bak —— 坏主档不会顶掉好备份；
 ##   3. 旧主档先改名成 .prev（原子），再把 .tmp 改名为主档（原子），最后删 .prev；
 ##      Windows 上直接「删 + 改名」会在两步之间留下无主档的窗口，
@@ -184,7 +191,7 @@ func read_raw(slot: int = AUTO_SLOT) -> Dictionary:
 	return {}
 
 
-## 读一份存档文件并校验；不存在 / 损坏 / 版本不认识 / 缺字段 → 空字典。
+## 读一份文件并校验；无法安全还原的存档返回空字典。
 func _parse_file(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
 		return {}
@@ -193,12 +200,66 @@ func _parse_file(path: String) -> Dictionary:
 	if json.parse(FileAccess.get_file_as_string(path)) != OK or not (json.data is Dictionary):
 		return {}
 	var d: Dictionary = json.data
-	if int(d.get("version", 0)) != VERSION:
+	if not _is_integer(d.get("version")) or d["version"] != VERSION:
 		return {}
-	for k in REQUIRED_KEYS:
-		if not d.has(k):
+	if not _is_integer(d.get("day")) or d["day"] < 1 \
+			or not (d.get("phase") is String) or d["phase"] not in ["base", "report", "ending"] \
+			or not _valid_counts(d.get("stash")) or not (d.get("nodes") is Dictionary):
+		return {}
+	for key in OPTIONAL_TYPES:
+		if d.has(key) and typeof(d[key]) != OPTIONAL_TYPES[key]:
+			return {}
+	for key in ["tally", "dial_machine_bags"]:
+		if d.has(key) and not _is_integer(d[key]):
+			return {}
+	for key in ["dial", "conscience"]:
+		if d.has(key) and not _is_number(d[key]):
+			return {}
+	if not _valid_counts(d.get("load", {})):
+		return {}
+	for key in ["mates", "story_done", "seen"]:
+		for value in d.get(key, {}).values():
+			if not (value is bool):
+				return {}
+	for key in ["names", "base_display"]:
+		for value in d.get(key, []):
+			if not (value is String):
+				return {}
+	for state in d["nodes"].values():
+		if not (state is Dictionary) or not _is_integer(state.get("visits", 0)) \
+				or not _is_number(state.get("left", 1.0)) or not _is_integer(state.get("hint", 0)):
+			return {}
+	for key in ["log", "events_log"]:
+		for entry in d.get(key, []):
+			if not (entry is Dictionary) or not _is_integer(entry.get("day", 0)) \
+					or not (entry.get("zh", "") is String) or not (entry.get("en", "") is String):
+				return {}
+	var flags: Dictionary = d.get("flags", {})
+	if not (flags.get("story_slide_seen", {}) is Dictionary) \
+			or not (flags.get("story_slide_queue", []) is Array):
+		return {}
+	for event_id in flags.get("story_slide_queue", []):
+		if not (event_id is String):
 			return {}
 	return d
+
+
+static func _is_number(value: Variant) -> bool:
+	return value is int or (value is float and is_finite(value))
+
+
+static func _is_integer(value: Variant) -> bool:
+	return _is_number(value) and float(value) == floor(float(value)) \
+		and float(value) >= -9223372036854775808.0 and float(value) < 9223372036854775808.0
+
+
+static func _valid_counts(counts: Variant) -> bool:
+	if not (counts is Dictionary):
+		return false
+	for value in counts.values():
+		if not _is_integer(value) or value < 0:
+			return false
+	return true
 
 
 ## 存档位摘要（标题页「继续」按钮、存读档面板的每一行都用它）。空位 / 坏档 → 空字典。
@@ -339,6 +400,8 @@ static func apply(sim, d: Dictionary) -> void:
 		sim.to_base()
 	else:
 		sim.phase = "base"
+	if sim.phase == "base":
+		sim.open_pending_market_refuge()
 	sim._sync_logbook()
 
 

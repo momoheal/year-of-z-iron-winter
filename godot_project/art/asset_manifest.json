@@ -1,6 +1,6 @@
 {
  "_meta": {
-  "asset_count": 879,
+  "asset_count": 894,
   "generated_by": "tools/art_gen/verify_assets.py",
   "manifest_files": [
    "night_archive_manifest.json",
@@ -10793,7 +10793,7 @@
     768
    ],
    "ref": "code",
-   "ref_by": "完整文件名"
+   "ref_by": "完整路径"
   },
   "60_ui/cg/cg_aftermath_b_release.jpg": {
    "bytes": 500558,
@@ -11058,8 +11058,8 @@
     1376,
     768
    ],
-   "ref": "code",
-   "ref_by": "完整文件名"
+   "ref": "none",
+   "ref_by": null
   },
   "60_ui/cg/cg_broadcast_scene.jpg": {
    "bytes": 363130,
@@ -11243,6 +11243,20 @@
    "ref": "none",
    "ref_by": null
   },
+  "60_ui/cg/cg_canteen_pavel_toolbag_v2.jpg": {
+   "bytes": 482226,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_canteen_pavel_toolbag_v2.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
   "60_ui/cg/cg_canteen_scene.jpg": {
    "bytes": 228423,
    "declared_size": null,
@@ -11397,6 +11411,76 @@
    "ref": "none",
    "ref_by": null
   },
+  "60_ui/cg/cg_crag_lana_hand_v2.jpg": {
+   "bytes": 425659,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_crag_lana_hand_v2.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "60_ui/cg/cg_crag_lana_hand_v3.jpg": {
+   "bytes": 393544,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_crag_lana_hand_v3.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "60_ui/cg/cg_crag_lana_hand_v4.png": {
+   "bytes": 2739148,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_crag_lana_hand_v4.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "60_ui/cg/cg_crag_lana_hand_v5.png": {
+   "bytes": 2562580,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_crag_lana_hand_v5.png",
+   "pivot": null,
+   "real_size": [
+    1672,
+    941
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "60_ui/cg/cg_crag_lana_hand_v6.png": {
+   "bytes": 2472321,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_crag_lana_hand_v6.png",
+   "pivot": null,
+   "real_size": [
+    1671,
+    941
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
   "60_ui/cg/cg_crag_lana_only_looks_back.jpg": {
    "bytes": 717685,
    "declared_size": null,
@@ -11422,8 +11506,8 @@
     1672,
     941
    ],
-   "ref": "none",
-   "ref_by": null
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_eaglecliff_004_plaque_recovery_alt.jpg": {
    "bytes": 413723,
@@ -11478,8 +11562,8 @@
     1376,
     768
    ],
-   "ref": "code",
-   "ref_by": "完整文件名"
+   "ref": "none",
+   "ref_by": null
   },
   "60_ui/cg/cg_ending_broadcast_breach_302_alt.jpg": {
    "bytes": 419754,
@@ -11493,7 +11577,7 @@
     768
    ],
    "ref": "code",
-   "ref_by": "完整路径"
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_ending_closed_car_firelight_alt.jpg": {
    "bytes": 348557,
@@ -11506,8 +11590,8 @@
     1376,
     768
    ],
-   "ref": "code",
-   "ref_by": "完整路径"
+   "ref": "none",
+   "ref_by": null
   },
   "60_ui/cg/cg_ending_crawl_back_cellar_alt.jpg": {
    "bytes": 305063,
@@ -11702,6 +11786,34 @@
     1376,
     768
    ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "60_ui/cg/cg_intro_lana_receipt_v2.jpg": {
+   "bytes": 440147,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_intro_lana_receipt_v2.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
+   ],
+   "ref": "none",
+   "ref_by": null
+  },
+  "60_ui/cg/cg_intro_lana_receipt_v3.jpg": {
+   "bytes": 388997,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_intro_lana_receipt_v3.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
+   ],
    "ref": "code",
    "ref_by": "完整文件名"
   },
@@ -11788,6 +11900,62 @@
    ],
    "ref": "none",
    "ref_by": null
+  },
+  "60_ui/cg/cg_manor_confront_challenge_v2.jpg": {
+   "bytes": 444499,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_manor_confront_challenge_v2.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_manor_confront_cup_v2.jpg": {
+   "bytes": 420422,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_manor_confront_cup_v2.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_manor_confront_ledger_v2.jpg": {
+   "bytes": 411455,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_manor_confront_ledger_v2.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
+  },
+  "60_ui/cg/cg_manor_confront_pen_v2.jpg": {
+   "bytes": 344070,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_manor_confront_pen_v2.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
+   ],
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_manor_scene.jpg": {
    "bytes": 339398,
@@ -12206,8 +12374,8 @@
     1672,
     941
    ],
-   "ref": "built-in imagegen",
-   "ref_by": "cg_mine_no3_wall_inscription_v1.png"
+   "ref": "code",
+   "ref_by": "完整文件名"
   },
   "60_ui/cg/cg_mine_no3_wall_inscription_v1.png": {
    "bytes": 3068196,
@@ -12220,8 +12388,8 @@
     1672,
     941
    ],
-   "ref": "code",
-   "ref_by": "完整文件名"
+   "ref": "none",
+   "ref_by": null
   },
   "60_ui/cg/cg_mine_sporeface_scene.jpg": {
    "bytes": 523058,
@@ -12555,6 +12723,20 @@
    "real_size": [
     1672,
     941
+   ],
+   "ref": "code",
+   "ref_by": "完整路径"
+  },
+  "60_ui/cg/cg_tower302_lana_first_name_v2.jpg": {
+   "bytes": 557561,
+   "declared_size": null,
+   "family": "cg",
+   "manifest": null,
+   "path": "res://art/60_ui/cg/cg_tower302_lana_first_name_v2.jpg",
+   "pivot": null,
+   "real_size": [
+    1664,
+    936
    ],
    "ref": "code",
    "ref_by": "完整文件名"

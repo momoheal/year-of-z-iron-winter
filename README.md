@@ -23,11 +23,26 @@ Set in the quarantined rail town of Novorsk-17, the game follows freight dispatc
 
 ## 开始运行
 
-需要 Godot 4.7.2。项目主场景是战役地图。
+需要 Godot 4.7.2。可以在 Godot 编辑器中打开 `godot_project/project.godot`，按 F6 运行当前打开的场景，或按 F5 运行战役。也可以在仓库根目录执行以下命令。若 Godot 未加入 PATH，将 `godot` 换成本机可执行文件的路径。
 
-1. 在 Godot 编辑器中打开 godot_project/project.godot 并运行项目，或在仓库根目录执行：
+```sh
+godot --headless --path godot_project --import
+godot --path godot_project
+```
 
-    godot --path godot_project
+单独测试铁路冷库地图时，从仓库根目录运行：
+
+```sh
+godot --path godot_project res://scenes/night_coldstore.tscn
+```
+
+| 模式 | 常用键位 |
+| --- | --- |
+| 战役的 602 室与地图 | F9 打开存读档面板，L 切换语言，Esc 从地图回到 602 室 |
+| 战役中的夜潜 | WASD 移动，E 互动，R 装填。节点化地图中 Esc 暂停，结算时 Enter 返回战役 |
+| 独立夜潜地图 | R 装填，F5 重开。行动结束后 Enter 或 Esc 也可重开 |
+
+运行 `godot --path godot_project -- --qa-maps` 后，可在标题页用 F2–F6 直开货场、编组站、庄园、矿井和黑市测试地图。
 
 ## 运行冒烟检查
 
@@ -40,7 +55,32 @@ Set in the quarantined rail town of Novorsk-17, the game follows freight dispatc
 
     python godot_project/tools/run_tests.py campaign night_level
 
-GitHub Actions 会在 push 和 pull request 时检查美术资源清单并运行 headless smoke suites。查看 [CI 工作流](.github/workflows/ci.yml)。
+GitHub Actions 会在 push 和 pull request 时检查已提交的美术资源清单、对白和测试参数，并运行 Godot 冒烟测试。查看 [CI 工作流](.github/workflows/ci.yml)。
+
+## 检查 Windows 发布包
+
+安装 Godot 4.7.2 导出模板后，在仓库根目录用 PowerShell 导出到独立目录并运行发布检查：
+
+```powershell
+$releaseDir = Join-Path $env:TEMP ("iron-winter-release-" + [guid]::NewGuid())
+New-Item -ItemType Directory -Path $releaseDir | Out-Null
+$exe = Join-Path $releaseDir "YearOfZ.exe"
+godot --headless --path godot_project --import
+if ($LASTEXITCODE -ne 0) { throw "Godot 资源导入失败" }
+godot --headless --path godot_project --export-release "Windows Desktop" $exe
+if ($LASTEXITCODE -ne 0) { throw "Godot 导出失败" }
+$log = Join-Path $releaseDir "check.log"
+$result = Start-Process -FilePath $exe -WorkingDirectory $releaseDir -ArgumentList @(
+    "--headless", "--quit-after", "300", "--log-file", ('"' + $log + '"'), "--", "--check-export"
+) -WindowStyle Hidden -Wait -PassThru
+Get-Content $log
+if ($result.ExitCode -ne 0 -or -not (Select-String "EXPORT_CHECK_PASS" $log -Quiet) -or
+    (Select-String "SCRIPT ERROR|Parse Error" $log -Quiet)) {
+    throw "Windows 发布包检查失败"
+}
+```
+
+检查会从发布包载入铁路冷库地图和开场对白，确认过程稿目录已排除，并限制 PCK 大小为 600 MiB。
 
 ## 剧情与制作资料
 

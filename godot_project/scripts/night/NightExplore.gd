@@ -2328,7 +2328,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					if slot.has(k):
 						swap_weapon(int(slot[k]))
 			KEY_F5:
-				# 战役模式禁止重来（不能刷物资）；F2 独立跑可重开
+				# 独立地图允许重开，战役通过结算记账。
 				if not in_campaign:
 					get_tree().reload_current_scene()
 			KEY_ESCAPE:
@@ -2336,7 +2336,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					open_pause()
 					get_viewport().set_input_as_handled()
 				elif state != "choice":
-					# 结束画面：战役回写结算，F2 重开
+					# 结束画面：战役回写结算，独立地图重开。
 					if in_campaign:
 						_return_to_campaign(state)
 					else:
@@ -3973,7 +3973,7 @@ func _update_brief_text() -> void:
 	lines.append("")
 	lines.append("危险度 %s　·　夜长 %s　·　撤离：%s" % [
 		SovietUI.danger_pips(int(beats.get("danger", 3))),
-		SovietUI.clock(night_max) if in_campaign else "无限制（F2 独立跑）",
+		SovietUI.clock(night_max) if in_campaign else "无限制（独立地图）",
 		extract_zh])
 	_brief_lbl.text = "\n".join(lines)
 
@@ -4242,7 +4242,7 @@ func _refresh_hud() -> void:
 		_chrome.set_danger(d)
 
 	# --- 中央读数 ---
-	var again_hint := "R / Enter 重来" if not in_campaign else "Enter 回 602 室"
+	var again_hint := "F5 / Enter / Esc 重来" if not in_campaign else "Enter 回 602 室"
 	match state:
 		"play", "choice", "interaction":
 			_lbl_center.text = ""
@@ -4275,7 +4275,7 @@ func _refresh_hud() -> void:
 			var lmk_line := "勘踏 %d/%d · 借刀 ×%d" % [landmark_seen.size(), landmarks.size(), borrowed]
 			_lbl_center.text = "撤离成功 · %d 件物资\n%s\n%s\n%s\n%s\n\n%s" % [
 				pack.size(), "、".join(names2), line, moral, lmk_line,
-				"R / Enter 再来一夜　Esc 返回战役" if not in_campaign else "Enter 回 602 室 · 结算"]
+				"F5 / Enter / Esc 再来一夜" if not in_campaign else "Enter 回 602 室 · 结算"]
 			_lbl_center.add_theme_color_override("font_color", Color("#bbf7d0"))
 	if _btn_end_return != null:
 		_btn_end_return.visible = in_campaign and state not in ["play", "choice", "modding", "interaction"]

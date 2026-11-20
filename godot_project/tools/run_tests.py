@@ -17,6 +17,7 @@
 """
 from __future__ import annotations
 
+import argparse
 import os
 import re
 import subprocess
@@ -54,14 +55,18 @@ def _probe_local_godot() -> list[str]:
     return found
 
 
-def find_godot() -> str:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Import the project and run Godot smoke tests.")
+    parser.add_argument("--godot", metavar="PATH", help="Godot executable path or command")
+    parser.add_argument("filters", nargs="*", metavar="SUITE", help="suite-name substrings")
+    return parser.parse_intermixed_args(argv)
+
+
+def find_godot(override: str | None = None) -> str:
     from shutil import which
     # 1) 命令行 --godot / --godot=
-    for i, a in enumerate(sys.argv):
-        if a == "--godot" and i + 1 < len(sys.argv):
-            return sys.argv[i + 1]
-        if a.startswith("--godot="):
-            return a.split("=", 1)[1]
+    if override is not None:
+        return override
     # 2) 环境变量 GODOT（CI 注入）
     env = os.environ.get("GODOT", "").strip().strip('"')
     if env:
@@ -111,8 +116,9 @@ def count_checks(stdout: str) -> tuple[int, int]:
 
 
 def main() -> int:
-    godot = find_godot()
-    filters = [a for a in sys.argv[1:] if not a.startswith("-") and not a.endswith(".exe")]
+    args = parse_args()
+    godot = find_godot(args.godot)
+    filters = args.filters
     print(f"[godot] {godot}", flush=True)
     print(f"[proj ] {PROJ}", flush=True)
 
