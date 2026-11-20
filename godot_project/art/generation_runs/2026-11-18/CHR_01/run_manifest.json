@@ -1,0 +1,31 @@
+{
+  "schema": "winter-iron.chr01-action-art-run.v1",
+  "date": "2026-11-18",
+  "character": "CHR_01_Aleksei",
+  "art_source": "host_image",
+  "route": "Codex image_gen (host_image)",
+  "references": [
+    "assets/concept_art/Aleksei_user_reference.png",
+    "godot_project/art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png"
+  ],
+  "output": {
+    "file": "godot_project/art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet_Expanded.png",
+    "dimensions": [864, 1008],
+    "grid": [12, 9],
+    "cell": [72, 112],
+    "pivot": [36, 108],
+    "row_order": [
+      "base_S", "base_E", "base_N",
+      "armed_S", "armed_E", "armed_N",
+      "swing_S", "swing_E", "swing_N"
+    ],
+    "composition": "existing base rows + armed rows + crowbar swing rows",
+    "base_rows_pixel_identical": true,
+    "armed_inputs": ["armed_S_raw.png", "armed_E_raw.png", "armed_N_raw.png"],
+    "swing_inputs": ["swing_S_raw.png", "swing_E_raw.png", "swing_N_raw.png"]
+  },
+  "runtime_wiring": {
+    "status": "not_done",
+    "reason": "Runtime scenes declare vframes=3, NightPlayer selects only direction rows, and NightExplore overlays dynamically selected weapons. Using the added baked weapon poses needs a new action-state selector plus overlay handling; the expanded art is separate so the current runtime sheet and gameplay remain unaffected."
+  }
+}

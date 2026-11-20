@@ -581,5 +581,82 @@
    0,
    0
   ]
+ },
+ "MAP_Greenhouse_Overview": {
+  "path": "res://art/80_maps/Greenhouse/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Greenhouse_RyeBed": {
+  "path": "res://art/30_props/PRP_Greenhouse_RyeBed.png",
+  "size": [
+   1050,
+   352
+  ],
+  "pivot": [
+   525.0,
+   352
+  ]
+ },
+ "PRP_Greenhouse_RyeCrate": {
+  "path": "res://art/30_props/PRP_Greenhouse_RyeCrate.png",
+  "size": [
+   349,
+   335
+  ],
+  "pivot": [
+   174.5,
+   335
+  ]
+ },
+ "PRP_Greenhouse_SeedLocker": {
+  "path": "res://art/30_props/PRP_Greenhouse_SeedLocker.png",
+  "size": [
+   321,
+   790
+  ],
+  "pivot": [
+   160.5,
+   790
+  ]
+ },
+ "PRP_Greenhouse_FertilizerSacks": {
+  "path": "res://art/30_props/PRP_Greenhouse_FertilizerSacks.png",
+  "size": [
+   518,
+   358
+  ],
+  "pivot": [
+   259.0,
+   358
+  ]
+ },
+ "PRP_Greenhouse_WaterChest": {
+  "path": "res://art/30_props/PRP_Greenhouse_WaterChest.png",
+  "size": [
+   419,
+   386
+  ],
+  "pivot": [
+   209.5,
+   386
+  ]
+ },
+ "PRP_Greenhouse_Brazier": {
+  "path": "res://art/30_props/PRP_Greenhouse_Brazier.png",
+  "size": [
+   263,
+   379
+  ],
+  "pivot": [
+   131.5,
+   379
+  ]
  }
 }

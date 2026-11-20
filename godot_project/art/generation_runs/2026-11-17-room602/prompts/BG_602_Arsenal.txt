@@ -1,0 +1,11 @@
+Use case: illustration-story
+Asset type: 2D game environment background plate for a clickable room zone
+Primary request: Paint the weapon-maintenance corner of Room 602, a cramped Soviet Khrushchev apartment in deep Siberian winter. Show a scuffed concrete-and-plaster wall, a low workbench edge, a bare lamp socket and a few empty mounting hooks. Keep the central wall and foreground clear for a separate transparent weapon rack and collected weapons.
+Scene/backdrop: a practical apartment corner adapted for cleaning and storing scavenged equipment; modest and improvised, not a military armory.
+Style/medium: realistic hand-painted thick impasto oil painting, visible brushwork, weathered material detail, restrained winter colors matching the game's existing painted facade and prop art.
+Composition/framing: wide 16:9 landscape, eye-level 2D environment plate with mild depth; no extreme perspective; leave a centered safe area for game UI and layered sprites.
+Lighting/mood: cold grey-blue room light with one small warm work-lamp pool, quiet focused mood.
+Color palette: ash grey, desaturated blue, old cream, restrained rust and muted amber.
+Constraints: background only; no weapons, no people, no characters, no text, no insignia, no readable labels, no watermark, no UI. Keep the main foreground open for transparent cutout props.
+
+Input image 1 is the previously approved BG_602_Mother environment plate. Use it only for brushwork, low-saturation palette, plaster wear and winter lighting; depict a different corner.

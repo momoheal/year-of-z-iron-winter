@@ -1,0 +1,9 @@
+Use case: illustration-story
+Asset type: 16:9 Godot narrative cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input images: Images 1 and 2 are the exact Eagle's Crag wreck and Lana-in-Boxcar visual references; Images 3 and 4 are Aleksei's and Lana's identity references.
+Scene/backdrop: Inside the buckled third boxcar at Eagle's Crag. Keep the riveted door frame, brass number plate, rough wooden bench and snow-driven gap consistent with Images 1 and 2.
+Subject: Only siblings Aleksei and Lana. Lana, in her existing pale winter coat, sits near the bench in the dim car and recognizes her brother. She gently grips the sleeve of Aleksei's faded railway padded coat. Aleksei wears round glasses with black tape only at one hinge.
+Style/medium: Realistic thick impasto oil painting, adult natural proportions, restrained cold gray-blue snow, dirty white, rusty iron, and worn military green, matching the game's CGs.
+Composition/framing: Wide landscape 16:9, intimate medium shot, faces and small hand gesture in upper two-thirds, lower edge left calm and uncluttered for subtitles.
+Lighting/mood: Cold wind enters through the half-open door; a weak warm signal lamp catches their faces. A quiet pause after danger.
+Constraints: Show exactly these two people. No Ivan, no third companion, no other survivors, no silhouettes, no rescue queue, no visible injuries, no extra hands, no readable lettering, UI, title, or watermark. Preserve the character identities and clothes from the references.

@@ -1,0 +1,11 @@
+Use case: illustration-story
+Asset type: 2D game environment background plate for a clickable room zone
+Primary request: Paint the storage alcove of Room 602, a cramped Soviet Khrushchev apartment in deep Siberian winter. A shallow recess, rough plaster, exposed pipework and a few bare wall hooks suggest a family storage corner. Leave the center foreground open so separate game sprites of crates and supplies can be layered there.
+Scene/backdrop: a narrow apartment utility nook with worn linoleum, a dark doorway edge and shallow built-in shelf recesses; no visible stored goods.
+Style/medium: realistic hand-painted thick impasto oil painting, visible brushwork, weathered material detail, restrained winter colors matching the game's existing painted facade and prop art.
+Composition/framing: wide 16:9 landscape, eye-level 2D environment plate with mild depth; no extreme perspective; keep architecture inside a centered safe area for crop.
+Lighting/mood: cold steel-blue ambient light, a dim muted amber bounce from the adjoining room, practical and quiet.
+Color palette: ash grey, desaturated blue, old cream, small muted amber.
+Constraints: background only; no characters, no people, no crates, no food, no weapons, no text, no symbols, no readable labels, no watermark, no UI. Keep the foreground open for transparent cutout props.
+
+Input image 1 is the previously approved BG_602_Mother environment plate. Use it only as a painterly-style, brushwork, palette and room-wear reference; do not repeat its layout.

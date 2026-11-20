@@ -1,0 +1,7 @@
+Use case: precise-object-edit
+Asset type: living-state background plate for the 2D game Room 602 mother area, exact 1672x941 landscape.
+Input image 1: edit target, the revised empty Room 602 with the hospital bed already aligned to the story scene.
+Input image 2: story CG reference for Katya's age, face, grey hair, bed pose, clothing and quiet winter mood; ignore the man in this reference.
+Input image 3: identity reference for Katya's face and age only.
+Primary request: add Katya, the elderly mother, lying alive in the iron bed in Image 1. Place her head naturally on the pillow at the right/head end of the bed, with her face turned slightly toward the room, eyes open but tired and gentle. Her thin grey hair, lined face and simple pale night blouse should match the references. Her shoulders and one hand may be visible above the charcoal blanket; keep the rest of her modestly covered. She is resting, not asleep as if dead, and not sitting up. Add a subtle dialysis line leading from under the blanket toward the existing bedside machine without making the tubing dominate the image.
+Constraints: preserve Image 1's exact room composition, bed position and bed design, frosted window, radiator, machine cart, wallpaper, floor, camera, painterly texture, lighting and 1672x941 aspect ratio. Add only the mother and a restrained medical line. No Aleksei, no other person, no new furniture, no text, no labels, no UI, no watermark.

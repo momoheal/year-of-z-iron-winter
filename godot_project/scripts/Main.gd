@@ -322,7 +322,7 @@ func _draw_player() -> void:
 		draw_rect(Rect2(s.x - 22, s.y - 52, 44, 7), Color(0.04, 0.06, 0.08, 0.87))
 		draw_rect(Rect2(s.x - 21, s.y - 51, 42 * sim.extract_prog, 5), COL_ENTRY)
 	if p.drink > 0.0:
-		_text(s + Vector2(-5, -30), "♨", 10, Color("7dd3fc"))
+		_text(s + Vector2(-5, -30), "热", 10, Color("7dd3fc"))
 
 func _draw_ent(e) -> void:
 	var s := _project(e.x, e.y)

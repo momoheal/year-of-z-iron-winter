@@ -1,0 +1,5 @@
+{
+  "identity_reference": "godot_project/art/10_characters/portraits/PRT_Pavel_Calm.png",
+  "style_reference": "godot_project/art/10_characters/portraits/PRT_Aleksei_Calm.png",
+  "route": "Codex image_gen / host_image"
+}

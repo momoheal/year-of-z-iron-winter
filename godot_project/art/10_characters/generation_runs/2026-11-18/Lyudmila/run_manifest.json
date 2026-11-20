@@ -1,0 +1,10 @@
+{
+  "schema": "winter-iron.character-art-run.v1",
+  "date": "2026-11-18",
+  "character": "Lyudmila",
+  "image_route": { "tool": "Codex image_gen", "entrypoint": "image_gen.imagegen", "status": "used" },
+  "workflow": "single-character 2x2 expression atlas with custom state export",
+  "identity_rule": "Existing Lyudmila portraits constrain identity; Aleksei Calm constrains finish only.",
+  "requested_runtime_outputs": ["PRT_Lyudmila_Fear.png", "PRT_Lyudmila_Determined.png", "PRT_Lyudmila_Hurt.png"],
+  "export": "512x512 RGBA PNG per portrait"
+}

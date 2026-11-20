@@ -1,0 +1,9 @@
+Use case: illustration-story
+Asset type: 2D game environment background plate for a clickable room zone
+Primary request: Paint the quiet mother-care corner of Room 602, a cramped Soviet Khrushchev apartment in deep Siberian winter. A small frost-filmed window, radiator pipes, worn grey plaster and a strip of old linoleum define the room. Leave the center foreground mostly open so separate game sprites can be layered there.
+Scene/backdrop: an intimate, humble apartment corner with a narrow alcove and faded wallpaper seams; the space should feel lived-in but now very still.
+Style/medium: realistic hand-painted thick impasto oil painting, visible brushwork, weathered material detail, restrained winter colors matching the game's existing painted facade and prop art.
+Composition/framing: wide 16:9 landscape, eye-level 2D environment plate with mild depth; no extreme perspective; keep key architecture inside a centered safe area for crop.
+Lighting/mood: cold blue-grey light through the window, a faint warm amber reflection from an off-frame lamp, solemn but humane.
+Color palette: ash grey, desaturated blue, old cream, small muted amber.
+Constraints: background only; no bed, no dialysis machine, no people, no characters, no text, no symbols, no readable labels, no watermark, no UI. Keep the foreground open for transparent cutout props.

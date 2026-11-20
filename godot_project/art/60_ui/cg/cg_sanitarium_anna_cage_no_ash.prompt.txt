@@ -1,0 +1,9 @@
+Use case: illustration-story
+Asset type: 16:9 Godot narrative cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input images: Image 1 is the exact sanitarium cage, cold lighting and room reference; Images 2 and 3 identify Anna and Aleksei.
+Scene/backdrop: The old iron cage in the basement sanitarium, with the same bed, frost, pipes and dim cold light as Image 1.
+Subject: Anna, a young adult woman in a worn gray-green shawl, sits beside the bed with clear, recovering eyes and slowly looks up. Aleksei stands outside the bars and gently taps the iron once with a gloved knuckle. He is about 31, in a faded railway padded coat and round nearsighted glasses with black tape only at one hinge.
+Style/medium: Realistic thick impasto oil painting with natural adult proportions, subdued winter colors and restrained, serious expression, consistent with the game's illustrated CGs.
+Composition/framing: Wide landscape 16:9, Anna and Aleksei occupy the middle and upper area, bars frame them, keep the lower strip clear for subtitles.
+Lighting/mood: Weak blue-gray overhead light, quiet and humane, not horror.
+Constraints: Only Anna and Aleksei. Absolutely no dog or animal, no Ash, no restraints digging into skin, wounds, blood or horror closeup. No additional person, extra hands, readable writing, interface, title, or watermark. Match identities to Images 2 and 3.

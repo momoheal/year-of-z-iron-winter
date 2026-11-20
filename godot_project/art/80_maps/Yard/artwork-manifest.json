@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "yard",
+  "name": "夜间广轨货场",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Yard/map.png",
+    "sha256": "84c4c580a4f8fb3b5b62704e25e184ab6eb4645030a4c65db314fe3ccff918dd",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Yard_ApartmentVentFacade",
+      "path": "res://art/30_props/PRP_Yard_ApartmentVentFacade.png",
+      "size": [
+        598,
+        422
+      ],
+      "pivot": [
+        299.0,
+        422
+      ],
+      "label": "apartment facade segment with boiler vent",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Yard_PlaygroundDome",
+      "path": "res://art/30_props/PRP_Yard_PlaygroundDome.png",
+      "size": [
+        296,
+        235
+      ],
+      "pivot": [
+        148.0,
+        235
+      ],
+      "label": "playground dome",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Yard_CarWreck",
+      "path": "res://art/30_props/PRP_Yard_CarWreck.png",
+      "size": [
+        391,
+        306
+      ],
+      "pivot": [
+        195.5,
+        306
+      ],
+      "label": "Moskvich wreck",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Yard_Boxcar03",
+      "path": "res://art/30_props/PRP_Yard_Boxcar03.png",
+      "size": [
+        683,
+        292
+      ],
+      "pivot": [
+        341.5,
+        292
+      ],
+      "label": "green boxcar no. 3",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Yard_SearchlightTower",
+      "path": "res://art/30_props/PRP_Yard_SearchlightTower.png",
+      "size": [
+        289,
+        555
+      ],
+      "pivot": [
+        144.5,
+        555
+      ],
+      "label": "searchlight tower",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Yard_WaterTower",
+      "path": "res://art/30_props/PRP_Yard_WaterTower.png",
+      "size": [
+        284,
+        573
+      ],
+      "pivot": [
+        142.0,
+        573
+      ],
+      "label": "water tower",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Yard_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Yard/map_night.png",
+      "sha256": "51ad14519c7babc4a41e8c397370d7a3785e72cc70e8f1ae2f757dbcd82e312e",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

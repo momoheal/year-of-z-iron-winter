@@ -1,0 +1,21 @@
+{
+  "group": 1,
+  "character": "Lyudmila",
+  "checks": {
+    "expected_files": [
+      "PRT_Lyudmila_Fear.png",
+      "PRT_Lyudmila_Determined.png",
+      "PRT_Lyudmila_Hurt.png"
+    ],
+    "actual_size": [
+      512,
+      512
+    ],
+    "mode": "RGBA",
+    "manifest": "godot_project/art/asset_manifest.json",
+    "manifest_records": "3 present; each reports real_size [512,512] and ref runtime",
+    "visual_review": "same face, silver-gray hair, charcoal-brown scarf and coat, dark background and warm rim light as existing portraits",
+    "existing_portraits_changed": false
+  },
+  "remaining": "Vikina and Katya portrait sets are not yet created."
+}

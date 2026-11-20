@@ -1,0 +1,33 @@
+{
+  "group": 2,
+  "character": "Vikina",
+  "runtime_portraits": [
+    "PRT_Vikina_Calm.png",
+    "PRT_Vikina_Sad.png",
+    "PRT_Vikina_Intense.png",
+    "PRT_Vikina_Wry.png",
+    "PRT_Vikina_Fear.png",
+    "PRT_Vikina_Determined.png",
+    "PRT_Vikina_Hurt.png"
+  ],
+  "checks": {
+    "dimension": "7/7 are 512x512",
+    "mode": "7/7 are RGBA",
+    "naming": "PRT_Vikina_<State>.png; 7 states registered",
+    "manifest": "7 entries present in godot_project/art/asset_manifest.json; runtime template class",
+    "archive": [
+      "identity_master_raw.png",
+      "portrait_atlas_raw.png",
+      "portrait_extra_atlas_raw.png",
+      "identity_master_prompt.txt",
+      "portrait_atlas_prompt.txt",
+      "portrait_extra_atlas_prompt.txt",
+      "references.json",
+      "portrait_tiles/portrait-atlas.json",
+      "portrait_extra_tiles/portrait-atlas.json"
+    ],
+    "visual_review": "Same chestnut-haired woman, plum scarf, slate-blue coat and gray knit collar across the identity master and both atlases.",
+    "dialogue_avatar_mapping_changed": false
+  },
+  "note": "Physical design is a visual interpretation because no existing portrait or fixed physical description was found."
+}

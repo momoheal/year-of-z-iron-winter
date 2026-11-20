@@ -1,0 +1,1009 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/night/NightExplore.gd" id="1_scri"]
+[ext_resource type="Texture2D" path="res://art/20_tileset/TIL_Ground_NightMarshalling_Baked.png" id="2_text"]
+[ext_resource type="Script" path="res://scripts/night/NightZoneField.gd" id="3_scri"]
+[ext_resource type="Texture2D" path="res://art/20_tileset/TIL_Facade_Depot_A.png" id="4_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_BroadcastTower302_Generator.png" id="5_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_BroadcastTower302_RelayAntenna.png" id="6_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_BroadcastTower302_RadioDesk.png" id="7_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_BroadcastTower302_Searchlight.png" id="8_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_BroadcastTower302_CableReel.png" id="9_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_BroadcastTower302_SandbagBunker.png" id="10_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_Brazier_OilDrum.png" id="11_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Fire_Brazier_Sheet.png" id="12_text"]
+[ext_resource type="Script" path="res://scripts/night/NightAnim.gd" id="13_scri"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Ember.png" id="14_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_SupplyCrates_Military.png" id="15_text"]
+[ext_resource type="Texture2D" path="res://art/30_props/PRP_Locker_ElectricCabinet.png" id="16_text"]
+[ext_resource type="Script" path="res://scripts/night/NightPlayer.gd" id="17_scri"]
+[ext_resource type="Texture2D" path="res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png" id="18_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Light_Cone_Flashlight.png" id="19_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Light_Radial_Soft.png" id="20_text"]
+[ext_resource type="Script" path="res://scripts/night/NightSoldier.gd" id="21_scri"]
+[ext_resource type="Texture2D" path="res://art/10_characters/CHR_05_OSK/CHR_05_OSK_Sheet.png" id="22_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Light_Cone_OSK.png" id="23_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Light_Radial.png" id="24_text"]
+[ext_resource type="Script" path="res://scripts/night/NightRabid.gd" id="25_scri"]
+[ext_resource type="Texture2D" path="res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png" id="26_text"]
+[ext_resource type="Script" path="res://scripts/night/NightHalf.gd" id="27_scri"]
+[ext_resource type="Texture2D" path="res://art/10_characters/CHR_04_HalfHuman/CHR_04_HalfHuman_Sheet.png" id="28_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Facade_WindowGlow_Depot.png" id="29_text"]
+[ext_resource type="Script" path="res://scripts/night/NightFlicker.gd" id="30_scri"]
+[ext_resource type="Script" path="res://scripts/night/NightSearchlight.gd" id="31_scri"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Searchlight_Cone.png" id="32_text"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_Snow_Particle.png" id="33_text"]
+[ext_resource type="Shader" path="res://shaders/night_post.gdshader" id="34_shad"]
+[ext_resource type="Texture2D" path="res://art/50_vfx/VFX_FogNoise.png" id="35_text"]
+[ext_resource type="Script" path="res://scripts/night/NightOverlay.gd" id="36_scri"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Wind_Blizzard_Loop.wav" id="37_audi"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Fire_Crackle_Loop.wav" id="38_audi"]
+[ext_resource type="AudioStream" path="res://art/70_audio/AMB_Sodium_Buzz_Loop.wav" id="39_audi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(2688, 300)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
+size = Vector2(163.69, 147.02)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_3"]
+polygon = PackedVector2Array(-81.8, -147, 81.8, -147, 81.8, 0, -81.8, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4"]
+size = Vector2(163.69, 125.4)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5"]
+size = Vector2(150.77, 56.21)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_6"]
+polygon = PackedVector2Array(-75.4, -56.2, 75.4, -56.2, 75.4, 0, -75.4, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7"]
+size = Vector2(32, 15.87)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8"]
+size = Vector2(96, 35.71)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_9"]
+size = Vector2(228.31, 60.54)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_10"]
+polygon = PackedVector2Array(-114.2, -60.5, 114.2, -60.5, 114.2, 0, -114.2, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_11"]
+size = Vector2(57.6, 23.81)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_12"]
+blend_mode = 1
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_13"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 9.0
+direction = Vector3(0, -1, 0)
+spread = 28.0
+initial_velocity_min = 30.0
+initial_velocity_max = 75.0
+gravity = Vector3(10, -25, 0)
+scale_min = 0.6
+scale_max = 1.3
+color = Color(1, 0.78, 0.45, 0.95)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_14"]
+size = Vector2(57.6, 23.81)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_15"]
+blend_mode = 1
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_16"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 9.0
+direction = Vector3(0, -1, 0)
+spread = 28.0
+initial_velocity_min = 30.0
+initial_velocity_max = 75.0
+gravity = Vector3(10, -25, 0)
+scale_min = 0.6
+scale_max = 1.3
+color = Color(1, 0.78, 0.45, 0.95)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_17"]
+size = Vector2(121.6, 35.71)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_18"]
+polygon = PackedVector2Array(-60.8, -35.7, 60.8, -35.7, 60.8, 0, -60.8, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_19"]
+size = Vector2(57.6, 15.87)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_20"]
+polygon = PackedVector2Array(-28.8, -15.9, 28.8, -15.9, 28.8, 0, -28.8, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_21"]
+size = Vector2(758.16, 207.56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_22"]
+size = Vector2(305.84, 211.88)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_23"]
+size = Vector2(193.85, 121.08)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_24"]
+size = Vector2(215.38, 121.08)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_25"]
+size = Vector2(80, 2317.76)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_26"]
+size = Vector2(80, 2317.76)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_27"]
+size = Vector2(2888, 80)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_28"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_29"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_30"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_31"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_32"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_33"]
+radius = 11.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_34"]
+radius = 11.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_35"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1200, 760, 1)
+direction = Vector3(0.3, 1, 0)
+spread = 14.0
+initial_velocity_min = 30.0
+initial_velocity_max = 70.0
+gravity = Vector3(22, 34, 0)
+scale_min = 0.22
+scale_max = 0.85
+color = Color(0.92, 0.96, 1, 0.9)
+turbulence_enabled = true
+turbulence_noise_strength = 2.0
+turbulence_noise_scale = 5.0
+turbulence_influence_min = 0.04
+turbulence_influence_max = 0.12
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_36"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1150, 640, 1)
+direction = Vector3(0.38, 1, 0)
+spread = 8.0
+initial_velocity_min = 220.0
+initial_velocity_max = 340.0
+gravity = Vector3(0, 0, 0)
+scale_min = 1.2
+scale_max = 2.6
+color = Color(0.85, 0.9, 1, 0.3)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_37"]
+shader = ExtResource("34_shad")
+shader_parameter/fog_tex = ExtResource("35_text")
+
+[node name="NightExplore" type="Node2D"]
+texture_filter = 2
+script = ExtResource("1_scri")
+metadata/level_id = "broadcast_tower_302"
+metadata/level_zh = "302 高地广播塔"
+metadata/level_en = "Broadcast Tower 302"
+metadata/objective_zh = "目标：让 302 台发出第三节车厢的真实名单"
+metadata/extract_zh = "守住南侧铁门并撤离"
+metadata/prize = "photo"
+metadata/rail_y = ""
+metadata/zones = "white:0,30.5,42,38.25|red:0,20,42,30.5|black:0,0,42,20"
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.27, 0.32, 0.45, 1)
+
+[node name="Ground" type="Sprite2D" parent="."]
+z_index = -1
+light_mask = 2
+centered = false
+texture = ExtResource("2_text")
+
+[node name="Decals" type="Node2D" parent="."]
+z_index = -1
+
+[node name="World" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="ZoneField" type="Node2D" parent="."]
+z_index = -1
+script = ExtResource("3_scri")
+metadata/zones = "white:0,30.5,42,38.25|red:0,20,42,30.5|black:0,0,42,20"
+
+[node name="Facade" type="StaticBody2D" parent="World"]
+position = Vector2(0, 108.1)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite" type="Sprite2D" parent="World/Facade"]
+texture = ExtResource("4_text")
+centered = false
+offset = Vector2(0, -600)
+visible = false
+
+[node name="Shape" type="CollisionShape2D" parent="World/Facade"]
+position = Vector2(1344, -150)
+shape = SubResource("RectangleShape2D_1")
+
+[node name="Props" type="Node2D" parent="World"]
+y_sort_enabled = true
+
+[node name="Generator" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
+position = Vector2(904.61, 562.13)
+collision_layer = 1
+collision_mask = 0
+metadata/container = "locker"
+metadata/interact_offset = Vector2(0, 25.79)
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/Generator"]
+texture = ExtResource("5_text")
+centered = false
+offset = Vector2(-180, -384)
+visible = false
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/Generator"]
+position = Vector2(0, -73.51)
+shape = SubResource("RectangleShape2D_2")
+
+[node name="Occluder" type="LightOccluder2D" parent="World/Props/Generator"]
+occluder = SubResource("OccluderPolygon2D_3")
+occluder_light_mask = 1
+
+[node name="RelayAntenna" type="StaticBody2D" parent="World/Props"]
+position = Vector2(1356.92, 454.03)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/RelayAntenna"]
+texture = ExtResource("6_text")
+centered = false
+offset = Vector2(-176, -432)
+visible = false
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/RelayAntenna"]
+position = Vector2(0, -62.7)
+shape = SubResource("RectangleShape2D_4")
+
+[node name="RadioDesk" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
+position = Vector2(1311.69, 726.45)
+collision_layer = 1
+collision_mask = 0
+metadata/container = "briefcase"
+metadata/guaranteed = "photo"
+metadata/interact_offset = Vector2(0, 25.79)
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/RadioDesk"]
+texture = ExtResource("7_text")
+centered = false
+offset = Vector2(-186, -354)
+visible = false
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/RadioDesk"]
+position = Vector2(0, -28.11)
+shape = SubResource("RectangleShape2D_5")
+
+[node name="Occluder" type="LightOccluder2D" parent="World/Props/RadioDesk"]
+occluder = SubResource("OccluderPolygon2D_6")
+occluder_light_mask = 1
+
+[node name="Watchtower" type="StaticBody2D" parent="World/Props"]
+position = Vector2(2188.8, 456.32)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/Watchtower"]
+texture = ExtResource("8_text")
+centered = false
+offset = Vector2(-115, -351)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/Watchtower"]
+position = Vector2(0, -7.94)
+shape = SubResource("RectangleShape2D_7")
+
+[node name="CableReel" type="StaticBody2D" parent="World/Props"]
+position = Vector2(1792, 952.32)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/CableReel"]
+texture = ExtResource("9_text")
+centered = false
+offset = Vector2(-174, -326)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/CableReel"]
+position = Vector2(0, -17.86)
+shape = SubResource("RectangleShape2D_8")
+
+[node name="SandbagBunker" type="StaticBody2D" parent="World/Props"]
+position = Vector2(1341.84, 1262.64)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/SandbagBunker"]
+texture = ExtResource("10_text")
+centered = false
+offset = Vector2(-220, -241)
+visible = false
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/SandbagBunker"]
+position = Vector2(0, -30.27)
+shape = SubResource("RectangleShape2D_9")
+
+[node name="Occluder" type="LightOccluder2D" parent="World/Props/SandbagBunker"]
+occluder = SubResource("OccluderPolygon2D_10")
+occluder_light_mask = 2
+
+[node name="BrazierDrumsSouth" type="StaticBody2D" parent="World/Props"]
+position = Vector2(1344, 1230.08)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/BrazierDrumsSouth"]
+texture = ExtResource("11_text")
+centered = false
+offset = Vector2(-34, -86)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/BrazierDrumsSouth"]
+position = Vector2(0, -11.9)
+shape = SubResource("RectangleShape2D_11")
+
+[node name="Flame" type="Sprite2D" parent="World/Props/BrazierDrumsSouth"]
+texture = ExtResource("12_text")
+hframes = 6
+centered = false
+offset = Vector2(-28, -84)
+position = Vector2(0, -56)
+scale = Vector2(0.58, 0.42)
+script = ExtResource("13_scri")
+
+[node name="Embers" type="GPUParticles2D" parent="World/Props/BrazierDrumsSouth"]
+position = Vector2(0, -60)
+amount = 20
+lifetime = 1.3
+preprocess = 2.0
+texture = ExtResource("14_text")
+material = SubResource("CanvasItemMaterial_12")
+visibility_rect = Rect2(-200, -400, 400, 420)
+process_material = SubResource("ParticleProcessMaterial_13")
+
+[node name="BrazierDrumsWest" type="StaticBody2D" parent="World/Props"]
+position = Vector2(544, 1111.04)
+collision_layer = 2
+collision_mask = 0
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/BrazierDrumsWest"]
+texture = ExtResource("11_text")
+centered = false
+offset = Vector2(-34, -86)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/BrazierDrumsWest"]
+position = Vector2(0, -11.9)
+shape = SubResource("RectangleShape2D_14")
+
+[node name="Flame" type="Sprite2D" parent="World/Props/BrazierDrumsWest"]
+texture = ExtResource("12_text")
+hframes = 6
+centered = false
+offset = Vector2(-28, -84)
+position = Vector2(0, -56)
+scale = Vector2(0.58, 0.42)
+script = ExtResource("13_scri")
+
+[node name="Embers" type="GPUParticles2D" parent="World/Props/BrazierDrumsWest"]
+position = Vector2(0, -60)
+amount = 20
+lifetime = 1.3
+preprocess = 2.0
+texture = ExtResource("14_text")
+material = SubResource("CanvasItemMaterial_15")
+visibility_rect = Rect2(-200, -400, 400, 420)
+process_material = SubResource("ParticleProcessMaterial_16")
+
+[node name="RationCrates" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
+position = Vector2(544, 1031.68)
+collision_layer = 1
+collision_mask = 0
+metadata/container = "supply"
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/RationCrates"]
+texture = ExtResource("15_text")
+centered = false
+offset = Vector2(-75, -108)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/RationCrates"]
+position = Vector2(0, -17.86)
+shape = SubResource("RectangleShape2D_17")
+
+[node name="Occluder" type="LightOccluder2D" parent="World/Props/RationCrates"]
+occluder = SubResource("OccluderPolygon2D_18")
+occluder_light_mask = 1
+
+[node name="RelayLocker" type="StaticBody2D" parent="World/Props" groups=["night_container"]]
+position = Vector2(1920, 745.98)
+collision_layer = 1
+collision_mask = 0
+metadata/container = "locker"
+
+[node name="Sprite" type="Sprite2D" parent="World/Props/RelayLocker"]
+texture = ExtResource("16_text")
+centered = false
+offset = Vector2(-42, -138)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Props/RelayLocker"]
+position = Vector2(0, -7.94)
+shape = SubResource("RectangleShape2D_19")
+
+[node name="Occluder" type="LightOccluder2D" parent="World/Props/RelayLocker"]
+occluder = SubResource("OccluderPolygon2D_20")
+occluder_light_mask = 1
+
+[node name="Bounds" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Station" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(1395.69, 527.54)
+shape = SubResource("RectangleShape2D_21")
+
+[node name="EastWing" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(1936.31, 486.46)
+shape = SubResource("RectangleShape2D_22")
+
+[node name="WestBarrack" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(678.46, 968.6)
+shape = SubResource("RectangleShape2D_23")
+
+[node name="EastBarrack" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(2041.85, 942.66)
+shape = SubResource("RectangleShape2D_24")
+
+[node name="Left" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(-40, 758.88)
+shape = SubResource("RectangleShape2D_25")
+
+[node name="Right" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(2728, 758.88)
+shape = SubResource("RectangleShape2D_26")
+
+[node name="Bottom" type="CollisionShape2D" parent="Bounds"]
+position = Vector2(1344, 1557.76)
+shape = SubResource("RectangleShape2D_27")
+
+[node name="Player" type="CharacterBody2D" parent="World"]
+collision_layer = 8
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("17_scri")
+position = Vector2(1335.39, 1370.74)
+
+[node name="Shadow" type="Polygon2D" parent="World/Player"]
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, -0.00, 6.00, -6.12, 5.54, -11.31, 4.24, -14.78, 2.30, -16.00, -0.00, -14.78, -2.30, -11.31, -4.24, -6.12, -5.54, 0.00, -6.00, 6.12, -5.54, 11.31, -4.24, 14.78, -2.30)
+
+[node name="Sprite" type="Sprite2D" parent="World/Player"]
+texture = ExtResource("18_text")
+hframes = 12
+vframes = 3
+offset = Vector2(0, -52)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Player"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_28")
+
+[node name="Flashlight" type="Node2D" parent="World/Player"]
+scale = Vector2(1, 0.62)
+
+[node name="Pivot" type="Node2D" parent="World/Player/Flashlight"]
+
+[node name="Ground" type="PointLight2D" parent="World/Player/Flashlight/Pivot"]
+texture = ExtResource("19_text")
+color = Color(1, 0.95, 0.84, 1)
+texture_scale = 0.7812
+offset = Vector2(399.97, 0)
+energy = 1.25
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 1.5
+shadow_item_cull_mask = 1
+
+[node name="Objects" type="PointLight2D" parent="World/Player/Flashlight/Pivot"]
+texture = ExtResource("19_text")
+color = Color(1, 0.95, 0.84, 1)
+texture_scale = 0.7812
+offset = Vector2(399.97, 0)
+energy = 0.85
+range_item_cull_mask = 1
+
+[node name="Aura" type="PointLight2D" parent="World/Player"]
+texture = ExtResource("20_text")
+texture_scale = 0.42
+color = Color(0.7, 0.8, 1, 1)
+energy = 0.42
+range_item_cull_mask = 3
+
+[node name="OSK_TowerRing" type="CharacterBody2D" parent="World" groups=["night_osk"]]
+collision_layer = 64
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("21_scri")
+position = Vector2(896, 833.28)
+route = PackedVector2Array(896, 833.28, 1792, 833.28, 1792, 1130.88, 896, 1130.88)
+mode = "loop"
+pause_time = 1.7
+
+[node name="Shadow" type="Polygon2D" parent="World/OSK_TowerRing"]
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, -0.00, 6.00, -6.12, 5.54, -11.31, 4.24, -14.78, 2.30, -16.00, -0.00, -14.78, -2.30, -11.31, -4.24, -6.12, -5.54, 0.00, -6.00, 6.12, -5.54, 11.31, -4.24, 14.78, -2.30)
+
+[node name="Sprite" type="Sprite2D" parent="World/OSK_TowerRing"]
+texture = ExtResource("22_text")
+hframes = 12
+vframes = 3
+offset = Vector2(0, -52)
+
+[node name="Shape" type="CollisionShape2D" parent="World/OSK_TowerRing"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_29")
+
+[node name="Flashlight" type="Node2D" parent="World/OSK_TowerRing"]
+scale = Vector2(1, 0.62)
+
+[node name="Pivot" type="Node2D" parent="World/OSK_TowerRing/Flashlight"]
+
+[node name="Ground" type="PointLight2D" parent="World/OSK_TowerRing/Flashlight/Pivot"]
+texture = ExtResource("23_text")
+color = Color(0.78, 0.9, 1, 1)
+texture_scale = 0.875
+offset = Vector2(448, 0)
+energy = 1.35
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 1.5
+shadow_item_cull_mask = 1
+
+[node name="Objects" type="PointLight2D" parent="World/OSK_TowerRing/Flashlight/Pivot"]
+texture = ExtResource("23_text")
+color = Color(0.78, 0.9, 1, 1)
+texture_scale = 0.875
+offset = Vector2(448, 0)
+energy = 0.95
+range_item_cull_mask = 1
+
+[node name="Muzzle" type="PointLight2D" parent="World/OSK_TowerRing"]
+texture = ExtResource("24_text")
+color = Color(1, 0.82, 0.55, 1)
+position = Vector2(0, -6)
+texture_scale = 0.18
+energy = 0.0
+range_item_cull_mask = 3
+
+[node name="OSK_Antenna" type="CharacterBody2D" parent="World" groups=["night_osk"]]
+collision_layer = 64
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("21_scri")
+position = Vector2(1072.23, 406.85)
+route = PackedVector2Array(1072.23, 406.85, 1584.28, 406.85)
+mode = "pingpong"
+pause_time = 1.5
+
+[node name="Shadow" type="Polygon2D" parent="World/OSK_Antenna"]
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, -0.00, 6.00, -6.12, 5.54, -11.31, 4.24, -14.78, 2.30, -16.00, -0.00, -14.78, -2.30, -11.31, -4.24, -6.12, -5.54, 0.00, -6.00, 6.12, -5.54, 11.31, -4.24, 14.78, -2.30)
+
+[node name="Sprite" type="Sprite2D" parent="World/OSK_Antenna"]
+texture = ExtResource("22_text")
+hframes = 12
+vframes = 3
+offset = Vector2(0, -52)
+
+[node name="Shape" type="CollisionShape2D" parent="World/OSK_Antenna"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_30")
+
+[node name="Flashlight" type="Node2D" parent="World/OSK_Antenna"]
+scale = Vector2(1, 0.62)
+
+[node name="Pivot" type="Node2D" parent="World/OSK_Antenna/Flashlight"]
+
+[node name="Ground" type="PointLight2D" parent="World/OSK_Antenna/Flashlight/Pivot"]
+texture = ExtResource("23_text")
+color = Color(0.78, 0.9, 1, 1)
+texture_scale = 0.875
+offset = Vector2(448, 0)
+energy = 1.35
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 1.5
+shadow_item_cull_mask = 1
+
+[node name="Objects" type="PointLight2D" parent="World/OSK_Antenna/Flashlight/Pivot"]
+texture = ExtResource("23_text")
+color = Color(0.78, 0.9, 1, 1)
+texture_scale = 0.875
+offset = Vector2(448, 0)
+energy = 0.95
+range_item_cull_mask = 1
+
+[node name="Muzzle" type="PointLight2D" parent="World/OSK_Antenna"]
+texture = ExtResource("24_text")
+color = Color(1, 0.82, 0.55, 1)
+position = Vector2(0, -6)
+texture_scale = 0.18
+energy = 0.0
+range_item_cull_mask = 3
+
+[node name="Rabid_Generator" type="CharacterBody2D" parent="World" groups=["night_rabid"]]
+collision_layer = 32
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("25_scri")
+position = Vector2(512, 773.76)
+brute = false
+home_radius = 2.4
+
+[node name="Shadow" type="Polygon2D" parent="World/Rabid_Generator"]
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, -0.00, 6.00, -6.12, 5.54, -11.31, 4.24, -14.78, 2.30, -16.00, -0.00, -14.78, -2.30, -11.31, -4.24, -6.12, -5.54, 0.00, -6.00, 6.12, -5.54, 11.31, -4.24, 14.78, -2.30)
+
+[node name="Sprite" type="Sprite2D" parent="World/Rabid_Generator"]
+texture = ExtResource("26_text")
+hframes = 12
+vframes = 3
+offset = Vector2(0, -52)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Rabid_Generator"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_31")
+
+[node name="Rabid_Barricade" type="CharacterBody2D" parent="World" groups=["night_rabid"]]
+collision_layer = 32
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("25_scri")
+position = Vector2(1600, 1190.4)
+brute = true
+home_radius = 2.6
+
+[node name="Shadow" type="Polygon2D" parent="World/Rabid_Barricade"]
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, -0.00, 6.00, -6.12, 5.54, -11.31, 4.24, -14.78, 2.30, -16.00, -0.00, -14.78, -2.30, -11.31, -4.24, -6.12, -5.54, 0.00, -6.00, 6.12, -5.54, 11.31, -4.24, 14.78, -2.30)
+
+[node name="Sprite" type="Sprite2D" parent="World/Rabid_Barricade"]
+texture = ExtResource("26_text")
+hframes = 12
+vframes = 3
+offset = Vector2(0, -52)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Rabid_Barricade"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_32")
+
+[node name="Rabid_Perimeter" type="CharacterBody2D" parent="World" groups=["night_rabid"]]
+collision_layer = 32
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("25_scri")
+position = Vector2(2240, 992)
+brute = false
+home_radius = 2.5
+
+[node name="Shadow" type="Polygon2D" parent="World/Rabid_Perimeter"]
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, -0.00, 6.00, -6.12, 5.54, -11.31, 4.24, -14.78, 2.30, -16.00, -0.00, -14.78, -2.30, -11.31, -4.24, -6.12, -5.54, 0.00, -6.00, 6.12, -5.54, 11.31, -4.24, 14.78, -2.30)
+
+[node name="Sprite" type="Sprite2D" parent="World/Rabid_Perimeter"]
+texture = ExtResource("26_text")
+hframes = 12
+vframes = 3
+offset = Vector2(0, -52)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Rabid_Perimeter"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_33")
+
+[node name="Half_TowerWorker" type="CharacterBody2D" parent="World" groups=["night_half"]]
+collision_layer = 32
+collision_mask = 7
+motion_mode = 1
+script = ExtResource("27_scri")
+position = Vector2(896, 992)
+tag = "302"
+
+[node name="Shadow" type="Polygon2D" parent="World/Half_TowerWorker"]
+color = Color(0, 0, 0, 0.42)
+polygon = PackedVector2Array(16.00, 0.00, 14.78, 2.30, 11.31, 4.24, 6.12, 5.54, -0.00, 6.00, -6.12, 5.54, -11.31, 4.24, -14.78, 2.30, -16.00, -0.00, -14.78, -2.30, -11.31, -4.24, -6.12, -5.54, 0.00, -6.00, 6.12, -5.54, 11.31, -4.24, 14.78, -2.30)
+
+[node name="Sprite" type="Sprite2D" parent="World/Half_TowerWorker"]
+texture = ExtResource("28_text")
+hframes = 12
+vframes = 3
+offset = Vector2(0, -52)
+
+[node name="Shape" type="CollisionShape2D" parent="World/Half_TowerWorker"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_34")
+
+[node name="Lights" type="Node2D" parent="."]
+
+[node name="FacadeGlow" type="PointLight2D" parent="Lights"]
+texture = ExtResource("29_text")
+position = Vector2(1344, -106.9)
+energy = 1.15
+range_item_cull_mask = 3
+
+[node name="LampWest" type="Node2D" parent="Lights"]
+position = Vector2(512, 476.16)
+script = ExtResource("30_scri")
+mode = "sodium"
+flicker_seed = 302
+
+[node name="Ground" type="PointLight2D" parent="Lights/LampWest"]
+texture = ExtResource("24_text")
+color = Color(1, 0.7, 0.4, 1)
+texture_scale = 1.35
+energy = 1.2
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 1.5
+shadow_item_cull_mask = 3
+
+[node name="Objects" type="PointLight2D" parent="Lights/LampWest"]
+texture = ExtResource("24_text")
+color = Color(1, 0.7, 0.4, 1)
+texture_scale = 1.35
+energy = 0.85
+range_item_cull_mask = 1
+
+[node name="Head" type="PointLight2D" parent="Lights/LampWest"]
+position = Vector2(6, -347)
+texture = ExtResource("24_text")
+texture_scale = 0.22
+color = Color(1, 0.784, 0.448, 1)
+energy = 2.2
+range_item_cull_mask = 1
+
+[node name="LampEast" type="Node2D" parent="Lights"]
+position = Vector2(2304, 476.16)
+script = ExtResource("30_scri")
+mode = "sodium"
+flicker_seed = 303
+
+[node name="Ground" type="PointLight2D" parent="Lights/LampEast"]
+texture = ExtResource("24_text")
+color = Color(1, 0.7, 0.4, 1)
+texture_scale = 1.35
+energy = 1.2
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 1.5
+shadow_item_cull_mask = 3
+
+[node name="Objects" type="PointLight2D" parent="Lights/LampEast"]
+texture = ExtResource("24_text")
+color = Color(1, 0.7, 0.4, 1)
+texture_scale = 1.35
+energy = 0.85
+range_item_cull_mask = 1
+
+[node name="Head" type="PointLight2D" parent="Lights/LampEast"]
+position = Vector2(6, -347)
+texture = ExtResource("24_text")
+texture_scale = 0.22
+color = Color(1, 0.784, 0.448, 1)
+energy = 2.2
+range_item_cull_mask = 1
+
+[node name="BrazierSouth" type="Node2D" parent="Lights" groups=["night_warm"]]
+position = Vector2(1344, 1224.08)
+script = ExtResource("30_scri")
+mode = "fire"
+metadata/radius = 2.6
+
+[node name="Ground" type="PointLight2D" parent="Lights/BrazierSouth"]
+texture = ExtResource("24_text")
+color = Color(1, 0.62, 0.32, 1)
+texture_scale = 1.5
+energy = 1.55
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 1.5
+shadow_item_cull_mask = 3
+
+[node name="Objects" type="PointLight2D" parent="Lights/BrazierSouth"]
+texture = ExtResource("24_text")
+color = Color(1, 0.62, 0.32, 1)
+texture_scale = 1.3
+energy = 1.25
+range_item_cull_mask = 1
+
+[node name="BrazierWest" type="Node2D" parent="Lights" groups=["night_warm"]]
+position = Vector2(544, 1105.04)
+script = ExtResource("30_scri")
+mode = "fire"
+metadata/radius = 2.6
+
+[node name="Ground" type="PointLight2D" parent="Lights/BrazierWest"]
+texture = ExtResource("24_text")
+color = Color(1, 0.62, 0.32, 1)
+texture_scale = 1.5
+energy = 1.55
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 1.5
+shadow_item_cull_mask = 3
+
+[node name="Objects" type="PointLight2D" parent="Lights/BrazierWest"]
+texture = ExtResource("24_text")
+color = Color(1, 0.62, 0.32, 1)
+texture_scale = 1.3
+energy = 1.25
+range_item_cull_mask = 1
+
+[node name="Searchlight" type="Node2D" parent="." groups=["night_searchlight"]]
+position = Vector2(2188.8, 456.32)
+script = ExtResource("31_scri")
+sweep_min_deg = 126
+sweep_max_deg = 234
+period = 9.5
+range_m = 32
+half_deg = 10
+
+[node name="Rig" type="Node2D" parent="Searchlight"]
+scale = Vector2(1, 0.62)
+
+[node name="Pivot" type="Node2D" parent="Searchlight/Rig"]
+
+[node name="Ground" type="PointLight2D" parent="Searchlight/Rig/Pivot"]
+texture = ExtResource("32_text")
+color = Color(1, 0.94, 0.74, 1)
+texture_scale = 2
+offset = Vector2(1024, 0)
+energy = 1.9
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 1.5
+shadow_item_cull_mask = 1
+
+[node name="Objects" type="PointLight2D" parent="Searchlight/Rig/Pivot"]
+texture = ExtResource("32_text")
+color = Color(1, 0.94, 0.74, 1)
+texture_scale = 2
+offset = Vector2(1024, 0)
+energy = 1.2
+range_item_cull_mask = 1
+
+[node name="LampHead" type="PointLight2D" parent="Searchlight"]
+position = Vector2(-33, -399)
+texture = ExtResource("24_text")
+texture_scale = 0.25
+color = Color(1, 0.95, 0.8, 1)
+energy = 2.5
+range_item_cull_mask = 1
+
+[node name="Markers" type="Node2D" parent="."]
+
+[node name="Spawn" type="Marker2D" parent="Markers"]
+position = Vector2(1335.39, 1370.74)
+
+[node name="Exit" type="Marker2D" parent="Markers"]
+position = Vector2(1305.23, 1405.33)
+
+[node name="Slush0" type="Marker2D" parent="Markers" groups=["night_slush"]]
+position = Vector2(576, 952.32)
+metadata/rx = 2.8
+metadata/ry = 1
+
+[node name="Slush1" type="Marker2D" parent="Markers" groups=["night_slush"]]
+position = Vector2(2048, 1111.04)
+metadata/rx = 3
+metadata/ry = 1.2
+
+[node name="Slush2" type="Marker2D" parent="Markers" groups=["night_slush"]]
+position = Vector2(1344, 555.52)
+metadata/rx = 2.8
+metadata/ry = 1.1
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(1335.39, 1370.74)
+limit_left = 0
+limit_top = 0
+limit_right = 2688
+limit_bottom = 1517
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+[node name="Snow" type="GPUParticles2D" parent="Camera2D"]
+amount = 900
+lifetime = 8.0
+preprocess = 8.0
+texture = ExtResource("33_text")
+local_coords = false
+visibility_rect = Rect2(-1300, -900, 2600, 1800)
+process_material = SubResource("ParticleProcessMaterial_35")
+
+[node name="FrontSnow" type="CanvasLayer" parent="."]
+layer = 3
+
+[node name="Flakes" type="GPUParticles2D" parent="FrontSnow"]
+position = Vector2(960, 540)
+amount = 110
+lifetime = 3.0
+preprocess = 3.0
+texture = ExtResource("33_text")
+visibility_rect = Rect2(-1200, -800, 2400, 1600)
+process_material = SubResource("ParticleProcessMaterial_36")
+
+[node name="Post" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="Grade" type="ColorRect" parent="Post"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("ShaderMaterial_37")
+
+[node name="OverlayLayer" type="CanvasLayer" parent="."]
+layer = 6
+follow_viewport_enabled = true
+
+[node name="Overlay" type="Node2D" parent="OverlayLayer"]
+texture_filter = 2
+script = ExtResource("36_scri")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Root" type="Control" parent="HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Wind" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("37_audi")
+volume_db = -9.0
+
+[node name="FireAudio" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(1344, 1230.08)
+stream = ExtResource("38_audi")
+max_distance = 900.0
+volume_db = -2.0
+
+[node name="LampBuzz" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(448, 476.16)
+stream = ExtResource("39_audi")
+max_distance = 500.0
+volume_db = -14.0

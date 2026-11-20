@@ -66,6 +66,8 @@ func _physics_process(delta: float) -> void:
 			_moan = 3.5 + _rng.randf() * 2.5
 			ctl.emit_noise(global_position, 2.2, "half")
 	_animate(delta, velocity.length() > 4.0)
+	if ctl != null and ctl.has_method("ai_step"):
+		ctl.ai_step(self, delta)
 
 func hear(pos: Vector2, kind: String) -> void:
 	if state in ["dead", "saved"]:

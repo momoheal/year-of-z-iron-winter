@@ -229,14 +229,15 @@ def check_scene(name: str, spec, man) -> None:
     ok(m is not None, f"{name}: 找不到 Camera2D 边界")
     if m:
         l, t, r, b = (int(x) for x in m.groups())
-        ok((l, t, r, b) == (0, int(base_y - fh), int(spec.W * PPM), int(spec.H * GY)),
-           f"{name}: 镜头边界 {(l, t, r, b)} != 期望 {(0, int(base_y - fh), int(spec.W * PPM), int(spec.H * GY))}")
+        expected = (0, 0 if LY.has("PLATE_CAMERA") else int(base_y - fh), int(spec.W * PPM), int(spec.H * GY))
+        ok((l, t, r, b) == expected, f"{name}: 镜头边界 {(l, t, r, b)} != 期望 {expected}")
     # 地面 / 立面精灵指向本关 manifest 的资产
     gk = gen_env.ground_key()
     fk, gwk = gen_env.facade_keys()
     ok(man.get(gk, {}).get("path", "") in txt, f"{name}: 场景没用本关地面大图 {gk}")
     ok(man.get(fk, {}).get("path", "") in txt, f"{name}: 场景没用本关立面 {fk}")
-    ok(man.get(gwk, {}).get("path", "") in txt, f"{name}: 场景没用本关窗光贴图 {gwk}")
+    if "facade_glow" in spec.LIGHT_RIG:
+        ok(man.get(gwk, {}).get("path", "") in txt, f"{name}: 场景没用本关窗光贴图 {gwk}")
     # 环境音路数
     n_amb = len(re.findall(r'\[node name="(Wind|FireAudio|SteamAudio|LampBuzz)" type="AudioStreamPlayer', txt))
     ok(n_amb == len(spec.AMBIENCE), f"{name}: 环境音 {n_amb} 路 != AMBIENCE {len(spec.AMBIENCE)} 路")

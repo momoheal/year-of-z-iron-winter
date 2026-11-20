@@ -1,0 +1,11 @@
+{
+  "schema": "winter-iron.character-art-run.v1",
+  "date": "2026-11-18",
+  "character": "Vikina",
+  "image_route": { "tool": "Codex image_gen", "entrypoint": "image_gen.imagegen", "status": "used" },
+  "workflow": "identity master first, then standard and optional 2x2 expression atlases",
+  "portrait_states": ["Calm", "Sad", "Intense", "Wry", "Fear", "Determined", "Hurt"],
+  "export": "512x512 RGBA PNG per portrait",
+  "runtime_alias": "No PRT_Vikina.png runtime alias requested; identity master remains in generation_runs.",
+  "dialogue_avatar_mapping": "Not changed by request."
+}

@@ -32,7 +32,7 @@ const TEX_CONTS := {
 	"fridge": preload("res://art/30_props/PRP_ColdStore_Chest.png"),
 	"corpse": preload("res://art/30_props/PRP_Corpse_Tarp.png"),
 }
-# 支线夜潜实体贴图化：主关同款角色 spritesheet（8列×3行 S/E/N，72×112/帧，W=E翻转）
+# 支线夜潜实体贴图化：主关同款角色 spritesheet（12列×3行 S/E/N，72×112/帧，W=E翻转）
 const TEX_CHR := {
 	"player": preload("res://art/10_characters/CHR_01_Aleksei/CHR_01_Aleksei_Sheet.png"),
 	"rabid": preload("res://art/10_characters/CHR_03_Rabid/CHR_03_Rabid_Sheet.png"),
@@ -171,7 +171,7 @@ func _autosave() -> void:
 	if key == _save_key:
 		return
 	_save_key = key
-	if sim.phase == "base" or sim.phase == "report":
+	if SaveGame.can_save(sim):
 		if SaveGame.save(sim):
 			hud.note_saved()
 		elif SaveGame.last_error != "":
@@ -268,9 +268,9 @@ func _unhandled_input(event: InputEvent) -> void:
 					hud.start_new_game()
 			elif sim.phase == "report":
 				sim.to_base()
-				sim.advance_day()
 			elif sim.phase == "base":
-				hud.open_map()
+				if not sim.night_complete:
+					hud.open_map()
 			elif sim.phase == "map" and not (sim.help_open or sim.logbook_open):
 				hud.depart_to(sim.location(sim.selected_loc))
 	if event is InputEventMouseButton:

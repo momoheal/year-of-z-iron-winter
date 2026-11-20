@@ -1,0 +1,68 @@
+{
+  "schema": "winter-iron.cg-aftermath-run.v1",
+  "date": "2026-11-18",
+  "art_source": "host_image",
+  "route": "Codex image_gen (image_gen.imagegen)",
+  "export": {
+    "format": "JPEG",
+    "size": [
+      1376,
+      768
+    ],
+    "quality": 94
+  },
+  "assets": [
+    {
+      "file": "cg_aftermath_a_602.jpg",
+      "prompt": "cg_aftermath_a_602.prompt.txt",
+      "source": "cg_aftermath_a_602_raw.png",
+      "story": "ENDING_A_RETURN_HOME",
+      "references": [
+        "art/60_ui/cg/cg_intro_mother.jpg",
+        "art/60_ui/cg/cg_ending_closed_car_firelight_alt.jpg",
+        "art/60_ui/cg/cg_aftermath_pasha_crag_mercy.jpg"
+      ]
+    },
+    {
+      "file": "cg_aftermath_b_release.jpg",
+      "prompt": "cg_aftermath_b_release.prompt.txt",
+      "source": "cg_aftermath_b_release_raw.png",
+      "story": "ENDING_B_FLAWED_LIBERATION",
+      "references": [
+        "art/60_ui/cg/cg_ending_broadcast_breach_302_alt.jpg",
+        "art/60_ui/cg/cg_aftermath_pasha_crag_mercy.jpg"
+      ]
+    },
+    {
+      "file": "cg_aftermath_c_numb.jpg",
+      "prompt": "cg_aftermath_c_numb.prompt.txt",
+      "source": "cg_aftermath_c_numb_raw.png",
+      "story": "ENDING_C_NUMBNESS",
+      "references": [
+        "art/60_ui/cg/cg_ending_crawl_back_cellar_alt.jpg",
+        "art/60_ui/cg/cg_aftermath_pasha_crag_mercy.jpg"
+      ]
+    },
+    {
+      "file": "cg_aftermath_true_alpha.jpg",
+      "prompt": "cg_aftermath_true_alpha.prompt.txt",
+      "source": "cg_aftermath_true_alpha_raw.png",
+      "story": "TRUE_ALPHA_HELLO_LANA",
+      "references": [
+        "art/60_ui/cg/cg_ending_true_alpha_hello_lana.jpg",
+        "art/60_ui/cg/cg_intro_mother.jpg",
+        "art/60_ui/cg/cg_aftermath_pasha_crag_mercy.jpg"
+      ]
+    },
+    {
+      "file": "cg_aftermath_true_beta.jpg",
+      "prompt": "cg_aftermath_true_beta.prompt.txt",
+      "source": "cg_aftermath_true_beta_raw.png",
+      "story": "TRUE_BETA_OUTLAND_FIRE",
+      "references": [
+        "art/60_ui/cg/cg_ending_true_beta_outland_fire.jpg",
+        "art/60_ui/cg/cg_aftermath_pasha_crag_mercy.jpg"
+      ]
+    }
+  ]
+}

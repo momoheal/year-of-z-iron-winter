@@ -42,9 +42,17 @@ func _scene(path: String) -> Node:
 	root.add_child(s)
 	return s
 
+func _drop(s: Node) -> void:
+	if not is_instance_valid(s):
+		return
+	if s.get_parent() != null:
+		s.get_parent().remove_child(s)
+	s.free()
+
 func _run() -> void:
 	print("== night_level_smoke ==")
 	_registry()
+	_map_plates()
 	_yard()
 	_marshalling()
 	_manor()
@@ -59,6 +67,46 @@ func _run() -> void:
 	# quit() 不终止函数执行 —— 分开写 "if 有失败: quit(1)" 再 quit(0)，
 	# 后者会覆盖前者，退出码永远是 0，CI 的 rc 判断就成了摆设。用单表达式。
 	quit(0 if failures.is_empty() else 1)
+
+# ---------------------------------------------------------------------------
+func _map_plates() -> void:
+	var scenes := [
+		["yard", "res://scenes/night_explore.tscn", "Yard"],
+		["marshalling", "res://scenes/night_marshalling.tscn", "Marshalling"],
+		["manor", "res://scenes/night_manor.tscn", "Manor"],
+		["mine", "res://scenes/night_mine.tscn", "MineNo3"],
+		["market", "res://scenes/night_market.tscn", "Market"],
+		["coldstore", "res://scenes/night_coldstore.tscn", "Coldstore"],
+		["canteen", "res://scenes/night_canteen.tscn", "Canteen"],
+		["sanitarium", "res://scenes/night_sanitarium.tscn", "Sanitarium"],
+		["boiler", "res://scenes/night_boiler.tscn", "Boiler"],
+		["underpass", "res://scenes/night_underpass.tscn", "Underpass"],
+		["greenhouse", "res://scenes/night_greenhouse.tscn", "Greenhouse"],
+		["archive", "res://scenes/night_archive.tscn", "Archive"],
+		["workshop", "res://scenes/night_workshop.tscn", "Workshop"],
+		["birch", "res://scenes/night_birch.tscn", "Birch"],
+		["station_buran_yard", "res://scenes/night_station_buran_yard.tscn", "StationBuranYard"],
+		["eagle_beak_cliff", "res://scenes/night_eagle_beak_cliff.tscn", "EagleBeakCliff"],
+		["broadcast_tower_302", "res://scenes/night_broadcast_tower_302.tscn", "BroadcastTower302"],
+	]
+	for entry in scenes:
+		var scene: Node = _scene(String(entry[1]))
+		var folder := String(entry[2])
+		var expected_path := "res://art/80_maps/%s/map.png" % folder
+		var ground := scene.get_node("Ground") as Sprite2D
+		_assert(scene.level_id == String(entry[0]), "%s retains level id" % entry[0], scene.level_id)
+		_assert(ground.texture != null and ground.texture.resource_path == expected_path,
+			"%s uses its generated art in the live map" % entry[0], ground.texture.resource_path if ground.texture else "missing")
+		_assert(scene.map_art_night != null, "%s loads its night map variant" % entry[0])
+		_assert(scene.get("_minimap") != null, "%s builds a live minimap" % entry[0])
+		var facade_sprite := scene.get_node_or_null("World/Facade/Sprite") as Sprite2D
+		_assert(facade_sprite == null or (facade_sprite.region_enabled
+			and is_equal_approx(facade_sprite.region_rect.size.y, 480.0)),
+			"%s confines old facade art to camera padding" % entry[0])
+		var scaled_bounds: Vector2 = Vector2(ground.texture.get_size()) * ground.scale.abs()
+		_assert(scaled_bounds.distance_to(scene.map_bounds_px) < 0.1,
+			"%s keeps its original playable bounds" % entry[0], str(scaled_bounds))
+		_drop(scene)
 
 # ---------------------------------------------------------------------------
 func _registry() -> void:
@@ -84,7 +132,7 @@ func _yard() -> void:
 	_assert(y.prize == "dial", "yard prize = dial", y.prize)
 	_assert(y.rail_y == [26.0, 33.0], "yard rail_y 元数据", str(y.rail_y))
 	_assert(y.objective_zh.contains("三号车厢"), "yard objective 元数据", y.objective_zh)
-	_assert(String(y.get_node("Ground").texture.resource_path).ends_with("TIL_Ground_NightYard_Baked.png"),
+	_assert(String(y.get_node("Ground").texture.resource_path).ends_with("Yard/map.png"),
 			"yard 地面大图", y.get_node("Ground").texture.resource_path)
 	_assert(String(y.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Khrushchyovka_A.png"), "yard 立面", y.get_node("World/Facade/Sprite").texture.resource_path)
@@ -92,8 +140,8 @@ func _yard() -> void:
 	_assert(y.get_node_or_null("Lights/BoilerVent") != null, "yard 有锅炉房通风口灯")
 	_assert(y.get_node_or_null("Lights/Tower") == null, "yard 没有调度塔灯")
 	_assert(y.warm_lights.size() == 1, "yard 一个回温点", str(y.warm_lights.size()))
-	_assert(y.cam.limit_right == 3072 and y.cam.limit_bottom - y.CAM_PAD_BOTTOM == 1587, "yard 镜头边界",
-			"%d/%d" % [y.cam.limit_right, y.cam.limit_bottom - y.CAM_PAD_BOTTOM])
+	_assert(y.cam.limit_right == 3072 and y.cam.limit_bottom == 1587, "yard 镜头边界",
+			"%d/%d" % [y.cam.limit_right, y.cam.limit_bottom])
 	_shared(y, "yard")
 
 # ---------------------------------------------------------------------------
@@ -120,7 +168,7 @@ func _marshalling() -> void:
 	_assert(m.warm_lights.size() == 2, "marshalling 两个回温点（240s 长夜）", str(m.warm_lights.size()))
 	# 资产指向本关的大图
 	_assert(String(m.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightMarshalling_Baked.png"), "marshalling 地面大图",
+			"Marshalling/map.png"), "marshalling 地面大图",
 			m.get_node("Ground").texture.resource_path)
 	_assert(String(m.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Depot_A.png"), "marshalling 机车库立面",
@@ -151,14 +199,14 @@ func _marshalling() -> void:
 	_assert(not m.is_slush(_m(20.0, 5.6)), "站台便道不是冻雪泥")
 	# 铁丝网：涵洞（x 8~10）是唯一缺口
 	var fl: Node = m.get_node("World/FenceLine")
-	_assert(fl.get_node("West").shape.size.x == 8.0 * PPM, "涵洞以西整段挡路",
+	_assert(absf(fl.get_node("West").shape.size.x - 243.692) < 0.1, "涵洞以西整段挡路",
 			str(fl.get_node("West").shape.size.x))
-	_assert(fl.get_node("East").shape.size.x == 34.0 * PPM, "涵洞以东整段挡路",
+	_assert(absf(fl.get_node("East").shape.size.x - 2391.795) < 0.1, "涵洞以东整段挡路",
 			str(fl.get_node("East").shape.size.x))
 	# 镜头边界 = 本关 W/H
 	_assert(m.cam.limit_right == int(44.0 * PPM), "marshalling limit_right", str(m.cam.limit_right))
-	_assert(m.cam.limit_bottom - m.CAM_PAD_BOTTOM == int(36.0 * GY), "marshalling limit_bottom", str(m.cam.limit_bottom))
-	_assert(m.cam.limit_top == int(3.0 * GY - 600), "marshalling limit_top（立面顶）", str(m.cam.limit_top))
+	_assert(m.cam.limit_bottom == int(36.0 * GY), "marshalling limit_bottom", str(m.cam.limit_bottom))
+	_assert(m.cam.limit_top == 0, "marshalling limit_top（立面顶）", str(m.cam.limit_top))
 	# 环境音四路都在
 	for nm in ["Wind", "SteamAudio", "LampBuzz", "FireAudio"]:
 		_assert(m.get_node_or_null(nm) != null, "marshalling 环境音 " + nm)
@@ -202,7 +250,7 @@ func _manor() -> void:
 	_assert(g.get_node_or_null("Searchlight") != null, "manor 有探照灯（东南岗塔）")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightManor_Baked.png"), "manor 地面大图",
+			"Manor/map.png"), "manor 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Manor_A.png"), "manor 恒温库+焚化车间立面",
@@ -227,14 +275,14 @@ func _manor() -> void:
 	_assert(not g.is_slush(_m(20.5, 20.0)), "中央车道不是冻雪泥")
 	# 电网高墙：剪开的豁口（x 6~8.5）是唯一缺口
 	var fl: Node = g.get_node("World/FenceLine")
-	_assert(fl.get_node("West").shape.size.x == 6.0 * PPM, "豁口以西整段电网挡路",
+	_assert(absf(fl.get_node("West").shape.size.x - 1151.179) < 0.1, "豁口以西整段电网挡路",
 			str(fl.get_node("West").shape.size.x))
-	_assert(fl.get_node("East").shape.size.x == 37.5 * PPM, "豁口以东整段电网挡路",
+	_assert(absf(fl.get_node("East").shape.size.x - 1467.282) < 0.1, "豁口以东整段电网挡路",
 			str(fl.get_node("East").shape.size.x))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(46.0 * PPM), "manor limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(38.0 * GY), "manor limit_bottom", str(g.cam.limit_bottom))
-	_assert(g.cam.limit_top == int(3.0 * GY - 600), "manor limit_top（立面顶）", str(g.cam.limit_top))
+	_assert(g.cam.limit_bottom == int(38.0 * GY), "manor limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == 0, "manor limit_top（立面顶）", str(g.cam.limit_top))
 	# 环境音：高墙里风小、没有蒸汽管 → 只有风/火/钠灯嗡鸣三路
 	for nm in ["Wind", "LampBuzz", "FireAudio"]:
 		_assert(g.get_node_or_null(nm) != null, "manor 环境音 " + nm)
@@ -278,7 +326,7 @@ func _mine() -> void:
 	_assert(g.get_node_or_null("Searchlight") == null, "mine 没有探照灯（假人哨塔是空壳）")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightMine_Baked.png"), "mine 地面大图",
+			"MineNo3/map.png"), "mine 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Mine_A.png"), "mine 矿山岩壁立面",
@@ -301,8 +349,8 @@ func _mine() -> void:
 			g.step_sound(_m(20.0, 8.0), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(46.0 * PPM), "mine limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(34.0 * GY), "mine limit_bottom", str(g.cam.limit_bottom))
-	_assert(g.cam.limit_top == int(3.0 * GY - 600), "mine limit_top（岩壁顶）", str(g.cam.limit_top))
+	_assert(g.cam.limit_bottom == int(34.0 * GY), "mine limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == 0, "mine limit_top（岩壁顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 压风管蒸汽 + 钠灯嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
 		_assert(g.get_node_or_null(nm) != null, "mine 环境音 " + nm)
@@ -351,7 +399,7 @@ func _market() -> void:
 	_assert(mk != null and String(mk.get_meta("zh", "")) != "", "market 摊区元数据在")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightMarket_Baked.png"), "market 地面大图",
+			"Market/map.png"), "market 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Town_A.png"), "market 工人镇立面",
@@ -374,8 +422,8 @@ func _market() -> void:
 			g.step_sound(_m(24.5, 24.4), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(46.0 * PPM), "market limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(34.0 * GY), "market limit_bottom", str(g.cam.limit_bottom))
-	_assert(g.cam.limit_top == int(3.0 * GY - 600), "market limit_top（工人镇屋顶）", str(g.cam.limit_top))
+	_assert(g.cam.limit_bottom == int(34.0 * GY), "market limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == 0, "market limit_top（工人镇屋顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 蒸汽 + 钠灯嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
 		_assert(g.get_node_or_null(nm) != null, "market 环境音 " + nm)
@@ -433,15 +481,15 @@ func _sanitarium() -> void:
 			"sanitarium 安娜（0419）+ 梁诺夫 + 古丽娅在场")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightSanitarium_Baked.png"), "sanitarium 地面大图",
+			"Sanitarium/map.png"), "sanitarium 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Sanitarium_A.png"), "sanitarium 地下室北墙立面（换气铁窗）",
 			g.get_node("World/Facade/Sprite").texture.resource_path)
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(44.0 * PPM), "sanitarium limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(30.0 * GY), "sanitarium limit_bottom", str(g.cam.limit_bottom))
-	_assert(g.cam.limit_top == int(3.0 * GY - 600), "sanitarium limit_top（疗养院楼顶）", str(g.cam.limit_top))
+	_assert(g.cam.limit_bottom == int(30.0 * GY), "sanitarium limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == 0, "sanitarium limit_top（疗养院楼顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
 		_assert(g.get_node_or_null(nm) != null, "sanitarium 环境音 " + nm)
@@ -496,7 +544,7 @@ func _canteen() -> void:
 			"canteen 独眼老炊事员费奥多尔 + 老铁路工在场（十九只碗 = 十九个人）")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightCanteen_Baked.png"), "canteen 地面大图",
+			"Canteen/map.png"), "canteen 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_Canteen_A.png"), "canteen 瓷砖后厨立面",
@@ -508,8 +556,8 @@ func _canteen() -> void:
 			g.step_sound(_m(22.0, 25.0), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(44.0 * PPM), "canteen limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(32.0 * GY), "canteen limit_bottom", str(g.cam.limit_bottom))
-	_assert(g.cam.limit_top == int(3.0 * GY - 600), "canteen limit_top（食堂楼顶）", str(g.cam.limit_top))
+	_assert(g.cam.limit_bottom == int(32.0 * GY), "canteen limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == 0, "canteen limit_top（食堂楼顶）", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
 	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
 		_assert(g.get_node_or_null(nm) != null, "canteen 环境音 " + nm)
@@ -543,7 +591,7 @@ func _coldstore() -> void:
 		for waypoint in guard.route:
 			inside_patrol = inside_patrol and waypoint.x >= min_x * PPM and waypoint.x <= max_x * PPM
 		_assert(inside_patrol, "coldstore %s 巡逻远离西侧通道和撤离豁口" % guard.name)
-	for cover in ["WestDockCover", "WestYardCover", "RailExitCover"]:
+	for cover in ["Rack01", "Rack02", "Rack03"]:
 		var prop := g.get_node_or_null("World/Props/" + cover) as StaticBody2D
 		_assert(prop != null and prop.collision_layer == 1 and prop.has_node("Occluder"),
 				"coldstore %s 能遮挡视线和灯光" % cover)
@@ -575,22 +623,22 @@ func _coldstore() -> void:
 			"coldstore 3 号柱后的母子在场（账面在册 0 人，实际 2 人）")
 	# 资产指向本关的大图
 	_assert(String(g.get_node("Ground").texture.resource_path).ends_with(
-			"TIL_Ground_NightColdstore_Baked.png"), "coldstore 地面大图",
+			"Coldstore/map.png"), "coldstore 地面大图",
 			g.get_node("Ground").texture.resource_path)
 	_assert(String(g.get_node("World/Facade/Sprite").texture.resource_path).ends_with(
 			"TIL_Facade_ColdStore_A.png"), "coldstore 冷库立面",
 			g.get_node("World/Facade/Sprite").texture.resource_path)
 	# 地表 → 脚步材质：专用线是铁轨，南库空地是雪地
-	_assert(g.step_sound(_m(23.0, 27.0), false) == "step_rail", "踩在专用线 = 铁轨脚步",
-			g.step_sound(_m(23.0, 27.0), false))
+	_assert(g.step_sound(_m(17.0, 28.8), false) == "step_rail", "踩在专用线 = 铁轨脚步",
+			g.step_sound(_m(17.0, 28.8), false))
 	_assert(g.step_sound(_m(2.0, 30.0), false) == "step_snow", "南库空地 = 雪地脚步",
 			g.step_sound(_m(2.0, 30.0), false))
 	# 镜头边界 = 本关 W/H + 立面顶
 	_assert(g.cam.limit_right == int(46.0 * PPM), "coldstore limit_right", str(g.cam.limit_right))
-	_assert(g.cam.limit_bottom - g.CAM_PAD_BOTTOM == int(34.0 * GY), "coldstore limit_bottom", str(g.cam.limit_bottom))
-	_assert(g.cam.limit_top == int(3.0 * GY - 600), "coldstore limit_top（冷库主楼顶）", str(g.cam.limit_top))
+	_assert(g.cam.limit_bottom == int(34.0 * GY), "coldstore limit_bottom", str(g.cam.limit_bottom))
+	_assert(g.cam.limit_top == 0, "coldstore 镜头止于底图顶边", str(g.cam.limit_top))
 	# 环境音：风 + 火 + 蒸汽 + 嗡鸣四路
-	for nm in ["Wind", "LampBuzz", "FireAudio", "SteamAudio"]:
+	for nm in ["Wind", "LampBuzz", "FireAudio"]:
 		_assert(g.get_node_or_null(nm) != null, "coldstore 环境音 " + nm)
 	# 天亮窗口同样是最后 20%（coldstore 夜长 80 分钟）
 	g.in_campaign = true
@@ -601,6 +649,17 @@ func _coldstore() -> void:
 	_assert(is_equal_approx(g.dawn_progress(), 0.5), "coldstore 最后 20% 的一半 dawn=0.5",
 			str(g.dawn_progress()))
 	_shared(g, "coldstore")
+	g.first_coldstore_visit = true
+	g.pack.clear()
+	g.bag_max = 2
+	g._finish_search(meds)
+	_assert(g.pack == ["dial", "abx"], "首访封存箱优先装入两件医疗物资")
+	g._refresh_hud()
+	_assert(g._lbl_target.text.contains("北雨棚"), "取液后提示可选绕行")
+	g.player.global_position = g._m_px([33.9, 10.65])
+	g._update_landmarks()
+	g._refresh_hud()
+	_assert(g._lbl_bearing.text.contains("残号 04"), "查看窄缝后确认转运票残号")
 
 # ---------------------------------------------------------------------------
 func _shared(s: Node, tag: String) -> void:

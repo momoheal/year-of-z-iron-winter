@@ -1,0 +1,18 @@
+{
+  "group": 1,
+  "outputs": [
+    "cg_aftermath_a_602.jpg",
+    "cg_aftermath_b_release.jpg",
+    "cg_aftermath_c_numb.jpg",
+    "cg_aftermath_true_alpha.jpg",
+    "cg_aftermath_true_beta.jpg"
+  ],
+  "acceptance": [
+    "5/5 output JPG 1376x768",
+    "5/5 same-name .prompt.txt present in art/60_ui/cg",
+    "5/5 distinct images referenced by the corresponding ENDING_SCENES aftermath",
+    "ENDING_C_NUMBNESS aftermath is non-empty",
+    "old shared cg_aftermath_pasha_crag_mercy.jpg no longer occurs in ENDING_SCENES"
+  ],
+  "route": "Codex image_gen (host_image)"
+}

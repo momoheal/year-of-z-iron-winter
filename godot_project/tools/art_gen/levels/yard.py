@@ -181,3 +181,7 @@ SEARCHLIGHT = dict(pos=(45.2, 24.2), sweep=(146.0, 188.0), period=11.0, range=26
 
 # 主立面上的关键点（x 米）
 FACADE_FEATURES = dict(vent_x=7.0, door_x=22.0, terminal_x=19.6, board_x=26.4)
+
+
+from .plate_registration import register as _register_plate
+_register_plate(globals())

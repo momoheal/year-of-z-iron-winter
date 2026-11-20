@@ -1,0 +1,628 @@
+{
+  "schema": "winter_iron.character_portrait_variants.v1",
+  "date": "2026-11-17",
+  "layout": "2x2; top-left Fear, top-right Determined, bottom-left Hurt, bottom-right calm anchor not exported",
+  "target_size": [
+    512,
+    512
+  ],
+  "characters": [
+    {
+      "name": "Aleksei",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Aleksei/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Aleksei/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Aleksei/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Aleksei_Fear.png",
+          "sha256": "52827b2a51381fa3db2a0b1c42413f27d05c8f79d5173ea3f51c39f84cac5d6d",
+          "bytes": 566349,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Aleksei_Determined.png",
+          "sha256": "2640cd6f0a3c1ca79bbd9a83d36f299ac9e27c13db32c675a017d9c34d778925",
+          "bytes": 571093,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Aleksei_Hurt.png",
+          "sha256": "acc730d4fb86491abe9176dbd67b058c7050f7a627c3d663d842a0e088fda62a",
+          "bytes": 563695,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Anna",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Anna/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Anna/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Anna/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Anna_Fear.png",
+          "sha256": "ae7ed12c181bcac51856c06cc55446ae2927c4b0d9bcb23b62ac1da330739f56",
+          "bytes": 543795,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Anna_Determined.png",
+          "sha256": "83a5862b742134063ca8027b1af0b3abe2bc574404364cf9bda88942056d96e2",
+          "bytes": 542883,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Anna_Hurt.png",
+          "sha256": "f6e90d72ca9d176a4499f8903284dbf11da65134ca0c4eded346b4a71be9a7f9",
+          "bytes": 533469,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Ash",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Ash/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Ash/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Ash/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Ash_Fear.png",
+          "sha256": "b8b46e6f2877863c06fc1ed4abb0924b1c41a58934e8de9915a9063f6b2b2512",
+          "bytes": 562233,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Ash_Determined.png",
+          "sha256": "3dc363ebd74c755b9ab2132ac152278bd22f1dc24c4fe55f18cd1160394b57ad",
+          "bytes": 567220,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Ash_Hurt.png",
+          "sha256": "51db7cb0d9aa7612ec8aa75c0e2368db2fdeab3dd7649283ab39fb5244f92867",
+          "bytes": 563581,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Chernov",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Chernov/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Chernov/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Chernov/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Chernov_Fear.png",
+          "sha256": "c74550b559b6dda6041e44a9c1a7270828d47be63377c34437bf9ab43f10a2f5",
+          "bytes": 503493,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Chernov_Determined.png",
+          "sha256": "1eafc00513a572d7b9ef4eaadb4310f212e6d872dd62a9a9c4d3449222c6a69d",
+          "bytes": 502319,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Chernov_Hurt.png",
+          "sha256": "0314df5bab64368c767aa92dde18d9fef0c94f32f64c5eb17c64fe140f27c224",
+          "bytes": 504382,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Fyodor",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Fyodor/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Fyodor/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Fyodor/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Fyodor_Fear.png",
+          "sha256": "5aec62c4e2d963dda276df43dd5a40174954c997238e97821e821a16989b1343",
+          "bytes": 557883,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Fyodor_Determined.png",
+          "sha256": "2166477deda2538ea4ca1521f44609d19f1e39cbc571feb07ee6d3fa97300fc0",
+          "bytes": 549595,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Fyodor_Hurt.png",
+          "sha256": "a72822a10db5ea01bb014033b1e440f4aacf27bdb001f70719fa411a1768982b",
+          "bytes": 548403,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Gulya",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Gulya/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Gulya/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Gulya/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Gulya_Fear.png",
+          "sha256": "4b9379b04fb3bb50b3060c8f6699d435b9fe7b394e714ffba4cebee4884e1bdf",
+          "bytes": 592222,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Gulya_Determined.png",
+          "sha256": "7ccc889266eb1deaa746b2b82fd6320b0f130e943f7e6c1e7ef786b8036453c2",
+          "bytes": 585557,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Gulya_Hurt.png",
+          "sha256": "4d99d8da5ec3b0a3b92709e59b06ff02451f4497a4d5c76e499f01f60079e569",
+          "bytes": 584777,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Ivan",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Ivan/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Ivan/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Ivan/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Ivan_Fear.png",
+          "sha256": "fbb40c2c969aeb259cd3a7abc62b8c1b336711e8fca088e147386d0a850c23bb",
+          "bytes": 554379,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Ivan_Determined.png",
+          "sha256": "a3f065ef2512fbbe77db4845acafa4778cd529be1b8f2828688302383ba2596d",
+          "bytes": 551747,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Ivan_Hurt.png",
+          "sha256": "eec922793e03717034aa2bed9e821986f50a5a65aae59ff61c7075966bf2e65e",
+          "bytes": 548586,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Lana",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Lana/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Lana/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Lana/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Lana_Fear.png",
+          "sha256": "40b2114e3a3550bfaa2e534ffda05528a17cf7ce3530d583b4907071ef68cdb4",
+          "bytes": 581699,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Lana_Determined.png",
+          "sha256": "a7f7841fbbc1c79b16781746036e12b7a3878429b1e159e7bf0b6e893a006e3f",
+          "bytes": 580189,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Lana_Hurt.png",
+          "sha256": "e6dc39be082b4f2c02feac72d9c4db9d86efc342d67aa95035330a9005db9370",
+          "bytes": 576473,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Leonov",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Leonov/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Leonov/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Leonov/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Leonov_Fear.png",
+          "sha256": "ab834c4ae424dc2c4159be34f0b902f6a0c49fe45bd631b013c051a4316eef50",
+          "bytes": 517759,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Leonov_Determined.png",
+          "sha256": "1869063b23c2ef559c37c456d248cb970d045694befeec0814ce1e964e73a7b6",
+          "bytes": 521284,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Leonov_Hurt.png",
+          "sha256": "febf5df5fb0bac112b6aaf2a3cd257e9b8145d81ecfa7e1be4242bd7ff60885b",
+          "bytes": 512859,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "OSK",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/OSK/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/OSK/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/OSK/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_OSK_Fear.png",
+          "sha256": "00e581c5739b4f88e44d7dbc54a0a290c77d16d46c8d91871aaca9dcb9be8e07",
+          "bytes": 551624,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_OSK_Determined.png",
+          "sha256": "ee40d9a2ccf1eaed19342e625a5f0164cc7fb98a6c39cd23bac57edb8b2a41d6",
+          "bytes": 550210,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_OSK_Hurt.png",
+          "sha256": "9449e83d5e1302dcd4c8dbd9e8c771fb4dff6b3047e9e8ce9e7e95fe78f877b6",
+          "bytes": 552565,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Pasha",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Pasha/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Pasha/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Pasha/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Pasha_Fear.png",
+          "sha256": "b7cfb464d706069ad9d9b966082f7fab46afd23f3852c8781dabdd7b4739293a",
+          "bytes": 563542,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Pasha_Determined.png",
+          "sha256": "7b4c4b278f03738d83a7a707133be0170474de7aaf9fbfa78121b45b1649b637",
+          "bytes": 560394,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Pasha_Hurt.png",
+          "sha256": "b6a1683c006b33d0ce0ea74989cdb92072c35af061bf3034c0d013810a684490",
+          "bytes": 570373,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Pavel",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Pavel/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Pavel/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Pavel/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Pavel_Fear.png",
+          "sha256": "d05a35a5bd0d2a691cae8a4c6cf0098088e8ce3e2d9c1fed80b7f36e24f75af4",
+          "bytes": 594231,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Pavel_Determined.png",
+          "sha256": "4b693f8a37bf8c53928e0238ff9537941d0562f2ae890cb7bac8940f4d11ee49",
+          "bytes": 596353,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Pavel_Hurt.png",
+          "sha256": "c938d396fd86519a843519ba0d9bb39c5b29dee1140874c49091d84f838ca0fe",
+          "bytes": 600680,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Yelena",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Yelena/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Yelena/portrait_variants_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Yelena/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Yelena_Fear.png",
+          "sha256": "93ed4c30580b48e61e00824c32f9ca3ff5c27ab1d8df215cedd4f5028e56a60d",
+          "bytes": 561338,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Yelena_Determined.png",
+          "sha256": "68dea1a30755441b7a80324953654fdb2f8a65a8eae42a668500cb1b45e55d1f",
+          "bytes": 568184,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Yelena_Hurt.png",
+          "sha256": "5e75888e7ee95bfa911cfd41e7eefca7993b88cf7f1a05d8d76e7306158b9aa6",
+          "bytes": 570242,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    },
+    {
+      "name": "Zakhar",
+      "raw_atlas": "godot_project/art/10_characters/generation_runs/2026-11-17/Zakhar/portrait_variants_raw.png",
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Zakhar/portrait_variants_prompt.txt",
+      "edit_prompt_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Zakhar/portrait_variants_edit_prompt.txt",
+      "references_file": "godot_project/art/10_characters/generation_runs/2026-11-17/Zakhar/references.json",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "exports": {
+        "Fear": {
+          "file": "PRT_Zakhar_Fear.png",
+          "sha256": "5ce7a5c3b52a0692b5f01d90661f38c8962a9d726dc7a063314360d30f96617f",
+          "bytes": 436328,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Determined": {
+          "file": "PRT_Zakhar_Determined.png",
+          "sha256": "9646774adb2926552436f74de66bef011ec7b66819064b0e05d9e42831faa6a2",
+          "bytes": 435955,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        },
+        "Hurt": {
+          "file": "PRT_Zakhar_Hurt.png",
+          "sha256": "2967bf1dd41ec00da9315343f885779fda8907af9b56313265da53ad7a2966be",
+          "bytes": 438135,
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA"
+        }
+      }
+    }
+  ]
+}

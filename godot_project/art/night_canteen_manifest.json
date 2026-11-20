@@ -768,5 +768,82 @@
    32,
    20
   ]
+ },
+ "MAP_Canteen_Overview": {
+  "path": "res://art/80_maps/Canteen/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Canteen_StoveSolo": {
+  "path": "res://art/30_props/PRP_Canteen_StoveSolo.png",
+  "size": [
+   372,
+   298
+  ],
+  "pivot": [
+   186.0,
+   298
+  ]
+ },
+ "PRP_Canteen_SteamPipe": {
+  "path": "res://art/30_props/PRP_Canteen_SteamPipe.png",
+  "size": [
+   805,
+   109
+  ],
+  "pivot": [
+   402.5,
+   109
+  ]
+ },
+ "PRP_Canteen_CleaverBoard": {
+  "path": "res://art/30_props/PRP_Canteen_CleaverBoard.png",
+  "size": [
+   415,
+   200
+  ],
+  "pivot": [
+   207.5,
+   200
+  ]
+ },
+ "PRP_Canteen_RyeVat": {
+  "path": "res://art/30_props/PRP_Canteen_RyeVat.png",
+  "size": [
+   341,
+   353
+  ],
+  "pivot": [
+   170.5,
+   353
+  ]
+ },
+ "PRP_Canteen_BowlTable": {
+  "path": "res://art/30_props/PRP_Canteen_BowlTable.png",
+  "size": [
+   873,
+   338
+  ],
+  "pivot": [
+   436.5,
+   338
+  ]
+ },
+ "PRP_Canteen_PantryDoor": {
+  "path": "res://art/30_props/PRP_Canteen_PantryDoor.png",
+  "size": [
+   211,
+   396
+  ],
+  "pivot": [
+   105.5,
+   396
+  ]
  }
 }

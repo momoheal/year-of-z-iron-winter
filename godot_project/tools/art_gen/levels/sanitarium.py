@@ -192,3 +192,7 @@ SURVIVORS = [
 
 # 立面关键点（x 米，供 gen_env._facade_sanitarium 取用；不设 terminal / vent / tower 灯位）
 FACADE_FEATURES = dict(vent_x=22.0, door_x=8.0, pipe_x=36.0)
+
+
+from .plate_registration import register as _register_plate
+_register_plate(globals())

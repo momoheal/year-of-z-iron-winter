@@ -1,0 +1,5 @@
+Use case: precise-object-edit
+Asset type: 16:9 Tower 302 companion-specific cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input image: The existing broadcast repair scene is the edit target.
+Primary request: Remove only the red-scarfed braided woman standing behind Aleksei on the right side. Reconstruct the transmitter room and snowy window naturally behind her. Keep Pavel repairing the switch on the left and Aleksei at the microphone exactly as they are, preserving their faces, poses, clothing, tools, lighting, camera and painterly brushwork.
+Constraints: The final image must contain exactly two people: Pavel and Aleksei. Do not add or move anyone. Preserve every non-target part of the image; no text, interface, title or watermark.

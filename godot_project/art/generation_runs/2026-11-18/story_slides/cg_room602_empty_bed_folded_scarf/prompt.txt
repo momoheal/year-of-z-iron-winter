@@ -1,0 +1,17 @@
+Final targeted edit prompt:
+Use case: precise-object-edit
+Asset type: final 16:9 cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input image: The full image is the edit target. Preserve its composition, Room 602 architecture, frosted window, bed, stopped dialysis machine, empty pulled-back chair, lighting, colors and oil-painted style.
+Primary request: Change only the folded blue patterned fabric at the foot of the bed. Replace it with Katya's narrow, long knitted scarf, folded into two neat compact loops at the bed edge so it clearly reads as a personal scarf rather than a blanket.
+Constraints: Keep every other part of the image unchanged. Do not add people, bodies, medicine bags, furniture or text. No watermark.
+
+Initial image prompt:
+Use case: illustration-story
+Asset type: 16:9 Godot narrative cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input image: Image 1 is the exact Room 602 bedroom, window, radiator, bed and dialysis machine reference.
+Scene/backdrop: The original Room 602 after Katya's death. Preserve the same bed, frosted window, old radiator, and antique dialysis machine from Image 1.
+Subject: The bed is empty and neatly straightened; Katya's familiar scarf is folded at the edge of the bed. The old dialysis machine is switched off, and the chair beside it is pulled slightly away from the bed.
+Style/medium: Realistic thick impasto oil painting, quiet and restrained, cold winter gray-blue and dirty whites with muted old-room browns, matching existing game CGs.
+Composition/framing: Wide landscape 16:9, room feels recognizable from Image 1; bed and folded scarf visible in upper-middle, bottom strip clear for subtitles.
+Lighting/mood: Pale cold morning light at the window; still, quiet grief without melodrama.
+Constraints: No mother, no people, no body, no face, no medicine bag, no new furniture or changed architecture. No blood, no text, interface, title, or watermark. Keep the room arrangement and dialysis machine from Image 1.

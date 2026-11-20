@@ -1,0 +1,10 @@
+Use case: illustration-story
+Asset type: isolated transparent cutout prop for a 2D game
+Primary request: A narrow iron-frame apartment bed with a folded old blue-and-white checked wool bedsheet and a small pillow, shown empty after a long illness. The folded checked sheet should read as an intimate family heirloom and later memorial object.
+Style/medium: realistic hand-painted thick impasto oil painting, visible brushwork and carefully readable edges, matching the game's muted winter prop art.
+Composition/framing: single complete bed and bedding, front three-quarter view, centered, fully inside frame, approximately 75 percent of canvas width.
+Lighting/mood: soft cold winter daylight, quiet and tender.
+Materials/textures: worn iron, coarse wool, patched cotton, old cream pillow.
+Constraints: genuine transparent background, preserve clean alpha; no person, no body, no extra furniture, no room background, no text, no watermark.
+
+Input image 1 is a small painted prop from the current game; use it only as a brushwork and edge-finish reference.

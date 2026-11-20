@@ -702,5 +702,82 @@
    32,
    20
   ]
+ },
+ "MAP_Yard_Overview": {
+  "path": "res://art/80_maps/Yard/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Yard_ApartmentVentFacade": {
+  "path": "res://art/30_props/PRP_Yard_ApartmentVentFacade.png",
+  "size": [
+   598,
+   422
+  ],
+  "pivot": [
+   299.0,
+   422
+  ]
+ },
+ "PRP_Yard_PlaygroundDome": {
+  "path": "res://art/30_props/PRP_Yard_PlaygroundDome.png",
+  "size": [
+   296,
+   235
+  ],
+  "pivot": [
+   148.0,
+   235
+  ]
+ },
+ "PRP_Yard_CarWreck": {
+  "path": "res://art/30_props/PRP_Yard_CarWreck.png",
+  "size": [
+   391,
+   306
+  ],
+  "pivot": [
+   195.5,
+   306
+  ]
+ },
+ "PRP_Yard_Boxcar03": {
+  "path": "res://art/30_props/PRP_Yard_Boxcar03.png",
+  "size": [
+   683,
+   292
+  ],
+  "pivot": [
+   341.5,
+   292
+  ]
+ },
+ "PRP_Yard_SearchlightTower": {
+  "path": "res://art/30_props/PRP_Yard_SearchlightTower.png",
+  "size": [
+   289,
+   555
+  ],
+  "pivot": [
+   144.5,
+   555
+  ]
+ },
+ "PRP_Yard_WaterTower": {
+  "path": "res://art/30_props/PRP_Yard_WaterTower.png",
+  "size": [
+   284,
+   573
+  ],
+  "pivot": [
+   142.0,
+   573
+  ]
  }
 }

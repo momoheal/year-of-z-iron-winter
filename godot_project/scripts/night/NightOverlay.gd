@@ -5,6 +5,7 @@ extends Node2D
 const SQ := 0.62
 const REACH := 1.45
 const Data := preload("res://scripts/CampaignData.gd")
+const MiniMap := preload("res://scripts/night/NightMiniMap.gd")
 ## 声纹可访问性：六类声纹的非颜色冗余（线型 + 中心图标）。纯数据模块，见其内注释。
 const RippleStyle := preload("res://scripts/night/NightRippleStyle.gd")
 const CAN_TEX := preload("res://art/30_props/PRP_TinCan.png")
@@ -13,6 +14,9 @@ const BLOOD_TEX := preload("res://art/50_vfx/VFX_Blood_Mist.png")
 ## 顶部 HUD 面板（左档案卡 / 右任务卡）的下沿，屏幕像素
 const FLOAT_TOP_PX := 225.0
 const CASING_TEX := preload("res://art/50_vfx/VFX_Shell_Casing.png")
+## F3 调试层直接复用 AI 脚本的视锥口径，避免调试图和真实判定各画一套。
+const SoldierScript := preload("res://scripts/night/NightSoldier.gd")
+const DEBUG_PPM := 64.0
 
 @onready var ctl = owner
 
@@ -58,21 +62,26 @@ func _draw() -> void:
 		for d in [Vector2(-spread, -spread), Vector2(spread, spread), Vector2(-spread, spread), Vector2(spread, -spread)]:
 			draw_line(hp2, hp2 + d, hc, 3.4 if bool(hm.get("kill", false)) else 2.8, true)
 		draw_circle(hp2, 2.4, hc)
-	# 撤离点
+	# 撤离点使用与小地图相同的蓝色方形标记。
 	var ex: Vector2 = ctl.exit_px
 	var pulse := 0.5 + 0.5 * sin(ctl.t * 3.0)
-	var ec := Color(0.35, 0.95, 0.6, 0.25 + 0.35 * pulse if ctl.pack.has("dial") else 0.18)
-	_ellipse(ex, 46.0, 46.0 * SQ, ec, 2.0)
-	if ctl.extract_prog > 0.0:
-		_arc(ex, 58.0, ctl.extract_prog, Color(0.35, 0.95, 0.6, 0.95), 4.0)
-	# 目标物资：走近才点亮，远处不剧透（关键物资 = 本关的 prize）
-	if ctl.state == "play" and not ctl.pack.has(ctl.prize) and ctl.objective_px != Vector2.ZERO:
-		var op: Vector2 = ctl.objective_px
+	if ctl.state == "play" and ctl.dist_m(p, ex) <= 18.0:
+		var ec := Color(MiniMap.EXIT_COLOR, 0.58 + 0.3 * pulse)
+		var reach_px := REACH * 64.0
+		_ellipse(ex, reach_px, reach_px * SQ, ec, 2.5)
+		_text(ex + Vector2(0, -84), "■ 撤离点", MiniMap.EXIT_COLOR, 17)
+		if ctl.extract_prog > 0.0:
+			_ellipse(ex, reach_px, reach_px * SQ, MiniMap.EXIT_COLOR, 4.0, ctl.extract_prog)
+	# 与任务卡、小地图共用当前目标，走近才在场景中标记。
+	if ctl.state == "play" and ctl.mission_marker is Vector2:
+		var op: Vector2 = ctl.mission_marker
 		var od: float = ctl.dist_m(p, op)
 		if od <= 18.0:
 			var k0: float = clampf((18.0 - od) / 8.0, 0.0, 1.0)
 			_ellipse(op, 30.0, 30.0 * SQ, Color(0.85, 0.72, 0.42, 0.22 + 0.3 * k0), 1.5)
-			_text(op + Vector2(0, -78), "ЦЕЛЬ · 目标物资", Color(0.88, 0.76, 0.46, 0.55 + 0.35 * k0), 13)
+			var glyph := "◇ " if ctl.mission_marker_optional else "◆ "
+			_text(op + Vector2(0, -78), glyph + String(ctl.mission_marker_title),
+				Color(MiniMap.TARGET_COLOR, 0.55 + 0.35 * k0), 14)
 	# 近处未搜刮容器显示小菱形；隐藏容器在发现前仍不可见。
 	if ctl.state == "play":
 		for container in ctl.containers:
@@ -94,9 +103,17 @@ func _draw() -> void:
 		var c2: Node2D = ctl.nearest_container()
 		var hf = ctl.nearest_half()
 		var mech: Dictionary = ctl.nearest_mechanism()
+		var drop: Node2D = ctl.nearest_loot_pickup()
 		if hf != null:
 			_ellipse(hf.global_position, 34.0, 34.0 * SQ, Color(0.96, 0.62, 0.04, 0.6), 1.5)
 			_text(p + Vector2(0, -132), "按 E · 他在发烧（半人 %s）" % hf.tag, Color("#fcd34d"), 15)
+		elif not mech.is_empty():
+			var mnode: Node2D = mech["node2d"]
+			_ellipse(mnode.global_position, 38.0, 38.0 * SQ, Color(0.78, 0.63, 0.34, 0.55), 1.5)
+			_text(p + Vector2(0, -132), "按 E · " + String(mech.get("prompt", "操作")), Color(0.88, 0.76, 0.46, 0.95), 15)
+		elif drop != null:
+			_ellipse(drop.global_position, 30.0, 30.0 * SQ, Color(0.98, 0.73, 0.3, 0.62), 2.0)
+			_text(p + Vector2(0, -132), "按 E · 拾取 " + String(drop.get_meta("label_zh", "物资")), Color(0.99, 0.83, 0.5, 0.95), 15)
 		elif c2 != null:
 			var ip: Vector2 = ctl.interact_point(c2)
 			_ellipse(ip, 34.0, 34.0 * SQ, Color(0.99, 0.85, 0.45, 0.5), 1.5)
@@ -104,12 +121,6 @@ func _draw() -> void:
 			_text(p + Vector2(0, -132), "长按 E 搜刮 · " + nm, Color(0.99, 0.9, 0.6, 0.95), 15)
 			if ctl.search_prog > 0.0:
 				_arc(p + Vector2(0, -50), 34.0, ctl.search_prog, Color(0.99, 0.85, 0.4, 0.95), 4.0)
-		elif not mech.is_empty():
-			var mnode: Node2D = mech["node2d"]
-			_ellipse(mnode.global_position, 38.0, 38.0 * SQ, Color(0.78, 0.63, 0.34, 0.55), 1.5)
-			_text(p + Vector2(0, -132), "按 E · " + String(mech.get("prompt", "操作")), Color(0.88, 0.76, 0.46, 0.95), 15)
-		elif ctl.dist_m(p, ex) <= REACH:
-			_text(p + Vector2(0, -132), "长按 E 撤离：" + String(ctl.extract_zh), Color(0.6, 1.0, 0.75, 0.95), 15)
 	# 清杀兵头顶读数
 	for s in ctl.soldiers:
 		if not s.is_alive():
@@ -195,6 +206,9 @@ func _draw() -> void:
 		fp.y = maxf(fp.y, min_y)
 		for ri in rows.size():
 			_text(fp + Vector2(0, 22.0 * ri), rows[ri], fc, 17)
+	# F3 调试层最后画，叠在正常读数之上；开关关闭时整段不执行，画面与原来一致。
+	if bool(ctl.get("debug_draw")):
+		_draw_debug(p)
 
 func _cont_name(c: Node) -> String:
 	var k := String(c.get_meta("container", "crate"))
@@ -211,10 +225,10 @@ func _text(pos: Vector2, s: String, c: Color, size: int) -> void:
 		Color(0, 0, 0, c.a * 0.8))
 	draw_string(ctl.font, pos - Vector2(w / 2.0, 0), s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, c)
 
-func _ellipse(c: Vector2, rx: float, ry: float, col: Color, w: float) -> void:
+func _ellipse(c: Vector2, rx: float, ry: float, col: Color, w: float, fraction := 1.0) -> void:
 	var pts := PackedVector2Array()
 	for i in 41:
-		var a := TAU * float(i) / 40.0
+		var a := -PI / 2.0 + TAU * fraction * float(i) / 40.0
 		pts.append(c + Vector2(cos(a) * rx, sin(a) * ry))
 	draw_polyline(pts, col, w, true)
 
@@ -328,3 +342,100 @@ func _glyph(c: Vector2, col: Color, w: float, s: float, glyph: String) -> void:
 
 func _arc(c: Vector2, r: float, frac: float, col: Color, w: float) -> void:
 	draw_arc(c, r, -PI / 2.0, -PI / 2.0 + TAU * clampf(frac, 0.0, 1.0), 40, col, w, true)
+
+
+# ============================================================================
+# F3 调试层 —— 只读玩法数据，不写、不改判定，关掉后画面零影响
+# ============================================================================
+func _draw_debug(p: Vector2) -> void:
+	# 清杀兵：视锥 + suspicion + 状态 + 目标点
+	for s in ctl.soldiers:
+		if not is_instance_valid(s) or not bool(s.call("is_alive")):
+			continue
+		var sp: Vector2 = s.global_position
+		_debug_cone(sp, float(s.facing), SoldierScript.VIEW_RANGE, SoldierScript.VIEW_HALF,
+			Color(0.99, 0.85, 0.25))
+		_text(sp + Vector2(0, -152),
+			"OSK %s sus=%.2f" % [String(s.state), clampf(float(s.suspicion), 0.0, 1.0)],
+			Color("#fde047"), 13)
+		_debug_target(s, Color("#fde047"))
+		_debug_nav(s, Color(0.99, 0.85, 0.25, 0.8))
+	# 狂暴者 / 半人：状态 + 目标点 + 导航路径
+	for r in ctl.rabids:
+		if not is_instance_valid(r) or not bool(r.call("is_alive")):
+			continue
+		_text(r.global_position + Vector2(0, -142),
+			"狂 %s%s" % [String(r.state), " [壮硕]" if bool(r.get("brute")) else ""],
+			Color("#f87171"), 13)
+		_debug_target(r, Color("#f87171"))
+		_debug_nav(r, Color(0.96, 0.45, 0.42, 0.8))
+	for h in ctl.halfs:
+		if not is_instance_valid(h) or not bool(h.call("is_alive")):
+			continue
+		_text(h.global_position + Vector2(0, -136), "半 %s" % String(h.state),
+			Color("#fbbf24"), 13)
+		_debug_target(h, Color("#fbbf24"))
+		_debug_nav(h, Color(0.99, 0.75, 0.24, 0.8))
+	# 伙伴：跟随目标 + 导航路径
+	var mate = ctl.get("follower")
+	if mate != null and is_instance_valid(mate):
+		_text(mate.global_position + Vector2(0, -130),
+			"伴 %s" % String(mate.get("mate_id")), Color("#7dd3fc"), 13)
+		_debug_target(mate, Color("#7dd3fc"))
+		_debug_nav(mate, Color(0.49, 0.83, 0.99, 0.8))
+	# 玩家 / 事件噪声半径：复用 ripples 的 max，画完整的「声明半径」外圈
+	for r in ctl.ripples:
+		var rad: float = float(r["max"]) * DEBUG_PPM
+		var c: Color = r["col"]
+		c.a = 0.22
+		_ellipse(r["pos"], rad, rad * SQ, c, 1.0)
+	# 图例（跟着玩家走，永远在视野里；全部半透明，不遮挡玩法读数）
+	var lx := p.x - 470.0
+	var ly := p.y - 250.0
+	var lc := Color(0.82, 0.86, 0.9, 0.8)
+	_text(Vector2(lx, ly), "F3 调试层 · 视锥=suspicion/状态 · X=目标点 · 连线=导航路径 · 圈=噪声半径", lc, 14)
+	_text(Vector2(lx, ly + 20.0), "黄=清杀兵  红=狂暴者  橙=半人  蓝=伙伴  G=寻路终点  (再按 F3 关闭)", lc, 14)
+
+
+## 地面压缩过的扇形（y 乘 SQ），和 can_see_player / 视锥口径一致。
+func _debug_cone(origin: Vector2, facing: float, range_m: float, half: float, col: Color) -> void:
+	var rx := range_m * DEBUG_PPM
+	var ry := rx * SQ
+	var pts := PackedVector2Array()
+	pts.append(origin)
+	for i in 25:
+		var a := facing - half + 2.0 * half * float(i) / 24.0
+		pts.append(origin + Vector2(cos(a) * rx, sin(a) * ry))
+	pts.append(origin)
+	var fill_col := Color(col.r, col.g, col.b, 0.06)
+	draw_colored_polygon(pts, fill_col)
+	draw_polyline(pts, Color(col.r, col.g, col.b, 0.45), 1.3, true)
+
+
+## 目标点：小方框 + 从实体连过去的细线；goal 在 INF 时不画。
+func _debug_target(node: Node2D, col: Color) -> void:
+	var tv: Variant = node.get("target")
+	if not (tv is Vector2):
+		return
+	var tp: Vector2 = tv
+	if tp == Vector2.INF or tp == Vector2.ZERO:
+		return
+	draw_line(node.global_position, tp, Color(col.r, col.g, col.b, 0.35), 1.0, true)
+	draw_rect(Rect2(tp - Vector2(5, 5), Vector2(10, 10)), Color(col.r, col.g, col.b, 0.8), false, 1.5)
+
+
+## NavGrid.Agent 的 path / goal：有路径就连线，有终点就画 G。
+func _debug_nav(node: Node2D, col: Color) -> void:
+	var agent: Object = node.get("_nav")
+	if agent == null:
+		return
+	var pv: Variant = agent.get("path")
+	if pv is PackedVector2Array and (pv as PackedVector2Array).size() > 0:
+		var pts := PackedVector2Array([node.global_position])
+		pts.append_array(pv as PackedVector2Array)
+		draw_polyline(pts, col, 1.5, true)
+	var gv: Variant = agent.get("goal")
+	if gv is Vector2 and (gv as Vector2) != Vector2.INF:
+		var gp: Vector2 = gv
+		draw_rect(Rect2(gp - Vector2(4, 4), Vector2(8, 8)), col, false, 1.5)
+		_text(gp + Vector2(0, -14), "G", col, 11)

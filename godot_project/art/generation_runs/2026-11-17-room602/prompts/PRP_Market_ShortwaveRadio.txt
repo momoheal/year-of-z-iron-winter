@@ -1,0 +1,10 @@
+Use case: illustration-story
+Asset type: isolated transparent cutout prop for a 2D game
+Primary request: A battered late-Soviet shortwave radio receiver used by railway black-market traders, with a small analog tuning dial, cloth-covered wire and a hand-repaired casing. The dial should suggest a signal being monitored around 6.66 MHz without requiring readable numerals.
+Style/medium: realistic hand-painted thick impasto oil painting, visible brushwork and carefully readable edges, matching the game's muted winter prop art.
+Composition/framing: single complete radio receiver, front three-quarter view, centered, fully inside frame, approximately 70 percent of canvas width.
+Lighting/mood: dim blue-black surroundings with a small muted amber indicator glow.
+Materials/textures: worn Bakelite, scratched metal knobs, cloth wire and dust.
+Constraints: genuine transparent background, preserve clean alpha; no person, no hands, no other objects, no legible numbers or labels, no logos, no watermark.
+
+Input image 1 is a small painted prop from the current game; use it only as a brushwork and edge-finish reference.

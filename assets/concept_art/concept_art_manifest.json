@@ -1,0 +1,91 @@
+{
+  "schema": "year_of_z_concept_art_manifest.v1",
+  "updated": "2026-11-17",
+  "files": [
+    {
+      "id": "CON_04",
+      "title": "帕沙与假人哨塔",
+      "filename": "CON_04_Pasha_DummyTower.png",
+      "prompt_file": "CON_04_Pasha_DummyTower.prompt.txt",
+      "description": "第一幕 1-4；两格构图呈现假人哨塔与帕沙求药",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 3095715,
+      "sha256": "191a1308df873ef358a5186f402dbc6dfbc02dfcebd5c54fcdb16d8dfaf95f0d",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "kind": "concept_art_not_runtime_asset"
+    },
+    {
+      "id": "CON_05",
+      "title": "柳德米拉大火托孤",
+      "filename": "CON_05_Lyudmila_ChildRescue.png",
+      "prompt_file": "CON_05_Lyudmila_ChildRescue.prompt.txt",
+      "description": "第五幕 5-1；托孤、领粮券与狼犬引路",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 2836698,
+      "sha256": "6ed1bb1e9704025abd42043e5f44d87d432f9fb4b713ced4344d8f89abe2d80a",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "kind": "concept_art_not_runtime_asset"
+    },
+    {
+      "id": "CON_06",
+      "title": "004 号黄铜铭牌",
+      "filename": "CON_06_004_BrassPlaque.png",
+      "prompt_file": "CON_06_004_BrassPlaque.prompt.txt",
+      "description": "第零幕 / 第五幕 5-2；黄铜铭牌、签名与撬棍",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 3134301,
+      "sha256": "a4e31b572cfb954a45ed08d056878b258377751639e60e21a5744f1d75144a87",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "kind": "concept_art_not_runtime_asset"
+    },
+    {
+      "id": "CON_07",
+      "title": "6.66 MHz 烙铁烫鳞",
+      "filename": "CON_07_666MHz_BrandingForge.png",
+      "prompt_file": "CON_07_666MHz_BrandingForge.prompt.txt",
+      "description": "第三幕 3-3；无接触伤害的烙铁威胁、短波机与假药",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 3108800,
+      "sha256": "f019f67ed79f6df28d3c32712ecf6195e3682c8b8ee170551c97e58eabd57709",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "kind": "concept_art_not_runtime_asset"
+    },
+    {
+      "id": "CON_08",
+      "title": "3 号矿坑孢子爆破",
+      "filename": "CON_08_MineNo3_SporeBlast.png",
+      "prompt_file": "CON_08_MineNo3_SporeBlast.prompt.txt",
+      "description": "第四幕；冻土孢子层、矿工与铝热剂",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "bytes": 3302788,
+      "sha256": "ffd7512facf0c0a90e5be34a044ca10f18ced5932302f7df2f7f31d7955c4fe0",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "kind": "concept_art_not_runtime_asset"
+    }
+  ]
+}

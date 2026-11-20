@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "marshalling",
+  "name": "西站调车场",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Marshalling/map.png",
+    "sha256": "dadd158e2dd464359079f859a94e6b09ecb1eece40fc6c0846151afb84af8846",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Marshalling_SearchlightTower",
+      "path": "res://art/30_props/PRP_Marshalling_SearchlightTower.png",
+      "size": [
+        453,
+        580
+      ],
+      "pivot": [
+        226.5,
+        580
+      ],
+      "label": "searchlight tower",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Marshalling_DispatchBoard",
+      "path": "res://art/30_props/PRP_Marshalling_DispatchBoard.png",
+      "size": [
+        525,
+        433
+      ],
+      "pivot": [
+        262.5,
+        433
+      ],
+      "label": "dispatch order board",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Marshalling_GuardCar",
+      "path": "res://art/30_props/PRP_Marshalling_GuardCar.png",
+      "size": [
+        639,
+        300
+      ],
+      "pivot": [
+        319.5,
+        300
+      ],
+      "label": "derelict guard car",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Marshalling_SwitchStand",
+      "path": "res://art/30_props/PRP_Marshalling_SwitchStand.png",
+      "size": [
+        267,
+        326
+      ],
+      "pivot": [
+        133.5,
+        326
+      ],
+      "label": "railway switch stand",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Marshalling_CoalWaterTower",
+      "path": "res://art/30_props/PRP_Marshalling_CoalWaterTower.png",
+      "size": [
+        461,
+        612
+      ],
+      "pivot": [
+        230.5,
+        612
+      ],
+      "label": "coal-water tower",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Marshalling_SandbagLine",
+      "path": "res://art/30_props/PRP_Marshalling_SandbagLine.png",
+      "size": [
+        438,
+        255
+      ],
+      "pivot": [
+        219.0,
+        255
+      ],
+      "label": "sandbag line",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Marshalling_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Marshalling/map_night.png",
+      "sha256": "07d95ff335528ad51ef8e4300b47bf4b37880c44d1b76931fa4b2c216e6301d5",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "canteen",
+  "name": "东街工人食堂·后厨",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Canteen/map.png",
+    "sha256": "b6f96adf19fe3a67a179bc8cba5f83b1564ff9780fac1e4406d915802b48e5c3",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1774,
+      887
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Canteen_StoveSolo",
+      "path": "res://art/30_props/PRP_Canteen_StoveSolo.png",
+      "size": [
+        372,
+        298
+      ],
+      "pivot": [
+        186.0,
+        298
+      ],
+      "label": "freestanding cast-iron stove",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Canteen_SteamPipe",
+      "path": "res://art/30_props/PRP_Canteen_SteamPipe.png",
+      "size": [
+        805,
+        109
+      ],
+      "pivot": [
+        402.5,
+        109
+      ],
+      "label": "straight steam pipe",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Canteen_CleaverBoard",
+      "path": "res://art/30_props/PRP_Canteen_CleaverBoard.png",
+      "size": [
+        415,
+        200
+      ],
+      "pivot": [
+        207.5,
+        200
+      ],
+      "label": "cutting board and cleaver",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Canteen_RyeVat",
+      "path": "res://art/30_props/PRP_Canteen_RyeVat.png",
+      "size": [
+        341,
+        353
+      ],
+      "pivot": [
+        170.5,
+        353
+      ],
+      "label": "rye porridge vat",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Canteen_BowlTable",
+      "path": "res://art/30_props/PRP_Canteen_BowlTable.png",
+      "size": [
+        873,
+        338
+      ],
+      "pivot": [
+        436.5,
+        338
+      ],
+      "label": "mess-hall table with bowls",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Canteen_PantryDoor",
+      "path": "res://art/30_props/PRP_Canteen_PantryDoor.png",
+      "size": [
+        211,
+        396
+      ],
+      "pivot": [
+        105.5,
+        396
+      ],
+      "label": "narrow pantry door",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Canteen_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Canteen/map_night.png",
+      "sha256": "e02c51e19f53bc9e079729434015565ded5aa3b32a37993819d3904ad214b6e4",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

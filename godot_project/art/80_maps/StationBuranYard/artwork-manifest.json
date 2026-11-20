@@ -1,0 +1,166 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "station_buran_yard",
+  "name": "布拉风货场 · 西站铁路院",
+  "name_en": "West Station · Buran rail yard",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/StationBuranYard/map.png",
+    "sha256": "e2ddb20de31211eaa8e5f20a279bd709e83e96513cbface117c98716fab80514",
+    "art_source": "existing",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "path": "res://art/80_maps/StationBuranYard/cutout-source.png",
+    "sha256": "6ccd3794b33178a87399680490086e6e32e58900cac0bade2c58a72c125d5d28",
+    "alpha": "RGBA true alpha",
+    "prompt": "cutout-prompt.txt",
+    "art_source": "host_image",
+    "route": "image_gen",
+    "extraction_manifest": "../../generation_runs/2026-11-18/asset_completion/StationBuranYard/prop-pack-final.json"
+  },
+  "props": [
+    {
+      "id": "PRP_StationBuranYard_SignalSwitch",
+      "path": "res://art/30_props/PRP_StationBuranYard_SignalSwitch.png",
+      "size": [
+        332,
+        367
+      ],
+      "pivot": [
+        166,
+        357
+      ],
+      "label": "SignalSwitch",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "dc16bbe547da41be37213bf66db78fd51f0bf60bcbd962be490f199109542318"
+    },
+    {
+      "id": "PRP_StationBuranYard_FreightCrates",
+      "path": "res://art/30_props/PRP_StationBuranYard_FreightCrates.png",
+      "size": [
+        396,
+        353
+      ],
+      "pivot": [
+        188,
+        342
+      ],
+      "label": "FreightCrates",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "b01654f6a824772fd72d452686873c8cbb28f5cd362b4d467695d943d2cb70f7"
+    },
+    {
+      "id": "PRP_StationBuranYard_PlatformSignal",
+      "path": "res://art/30_props/PRP_StationBuranYard_PlatformSignal.png",
+      "size": [
+        231,
+        429
+      ],
+      "pivot": [
+        115,
+        418
+      ],
+      "label": "PlatformSignal",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "1451136f4f4adbc99cd67ef54f800c33a7b9ad0198b4661e424d24e5b257e3ce"
+    },
+    {
+      "id": "PRP_StationBuranYard_BogieBrake",
+      "path": "res://art/30_props/PRP_StationBuranYard_BogieBrake.png",
+      "size": [
+        371,
+        304
+      ],
+      "pivot": [
+        175,
+        294
+      ],
+      "label": "BogieBrake",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "475d047f060261549bcbc0c1e585791b70b5091308d9d18481988ab65e1c7fbf"
+    },
+    {
+      "id": "PRP_StationBuranYard_MaintenanceTrolley",
+      "path": "res://art/30_props/PRP_StationBuranYard_MaintenanceTrolley.png",
+      "size": [
+        423,
+        378
+      ],
+      "pivot": [
+        210,
+        368
+      ],
+      "label": "MaintenanceTrolley",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "4d8c4894ec9265c78b100e60da32e429680b577353f210d0a3d5bd25ada7426a"
+    },
+    {
+      "id": "PRP_StationBuranYard_BrazierDrums",
+      "path": "res://art/30_props/PRP_StationBuranYard_BrazierDrums.png",
+      "size": [
+        360,
+        377
+      ],
+      "pivot": [
+        180,
+        367
+      ],
+      "label": "BrazierDrums",
+      "alpha": "RGBA true alpha",
+      "source_sheet": "cutout-source.png",
+      "art_source": "host_image",
+      "route": "image_gen",
+      "anchor_source": "measured",
+      "sha256": "82d5049a998805dc68d2ce6f2161e614efdd8e899ea6bffb894b24123af2e935"
+    }
+  ],
+  "variants": [
+    {
+      "id": "MAP_StationBuranYard_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/StationBuranYard/map_night.png",
+      "sha256": "aed02aaaa2b96955f827304004cc0b8212c948aeaea3cf6c59f64d52073e9add",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

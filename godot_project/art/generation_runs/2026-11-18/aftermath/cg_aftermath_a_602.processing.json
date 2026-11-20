@@ -1,0 +1,17 @@
+{
+  "source": "cg_aftermath_a_602_raw.png",
+  "source_size": [
+    1672,
+    941
+  ],
+  "output": "cg_aftermath_a_602.jpg",
+  "output_size": [
+    1376,
+    768
+  ],
+  "format": "JPEG",
+  "quality": 94,
+  "source_sha256": "881b56fd0afd52b83332bd9cafa25c443bbe7baad56baf2e985b150983683b1e",
+  "output_sha256": "3a741e0151e1746fcd3451c7edd13e5ca4e90a0fbfd900f266ccb9e89f363c80",
+  "route": "Codex image_gen (host_image)"
+}

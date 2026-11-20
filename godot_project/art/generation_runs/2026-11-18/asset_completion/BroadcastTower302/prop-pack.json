@@ -1,0 +1,662 @@
+{
+  "schema": "generate2dmap.prop_pack.v2",
+  "tool": {
+    "name": "extract_prop_pack",
+    "version": "0.4.0"
+  },
+  "input": "../../../../80_maps/BroadcastTower302/cutout-source.png",
+  "source_size": [
+    1536,
+    1024
+  ],
+  "source_sha256": "a1e43a7598a25c068b638de8bb979a791d0dbd950170881fcf3667168098a55d",
+  "source_mode": "RGBA",
+  "layout_mode": "grid",
+  "boxes_file": null,
+  "labels_file": null,
+  "background_mode": "native_alpha",
+  "art_source": "host_image",
+  "rows": 2,
+  "cols": 3,
+  "threshold": 100,
+  "edge_threshold": 150,
+  "despill_radius": 0,
+  "despill": {
+    "mode": "off",
+    "applied": "off",
+    "radius": 0,
+    "margin": 12,
+    "changed_px": 0
+  },
+  "hygiene": {
+    "mode": "both",
+    "floor": 8,
+    "solid_min": 32,
+    "attach_radius": 2,
+    "connectivity": 8,
+    "floor_px": 44478,
+    "detached_px": 0,
+    "detached_components": 0,
+    "max_removed_alpha": 8
+  },
+  "alpha_floor": 8,
+  "alpha_floor_pixels_removed": 44478,
+  "trim_border": 0,
+  "edge_clean_depth": 0,
+  "component_mode": "all",
+  "component_padding": 10,
+  "min_component_area": "auto",
+  "edge_touch_margin": 0,
+  "geometry": {
+    "connectivity": 8,
+    "alpha_geometry_threshold": 16,
+    "anchor_mode": "stance",
+    "support_band_fraction": 0.25,
+    "anchor_rounding": "whole pixels, half-up",
+    "grid_rounding": "exact",
+    "keep_canvas": false,
+    "world_scale": null
+  },
+  "accepted": [
+    {
+      "index": 0,
+      "label": "generator",
+      "display_name": "Generator",
+      "status": "accepted",
+      "image": "props_extracted/generator/prop.png",
+      "sha256": "d6a9f33b1ccddd60407d1a2c28db0e9963b8c9fb92b896e070f8de4ad8b927da",
+      "output_size": [
+        361,
+        394
+      ],
+      "grid": [
+        0,
+        0
+      ],
+      "cell_box": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "source_box": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "source_rect": [
+        89,
+        80,
+        450,
+        474
+      ],
+      "trim_offset": [
+        89,
+        80
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        180,
+        384
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 100,
+      "trim_applied": 0,
+      "crop_bbox": [
+        99,
+        90,
+        440,
+        464
+      ],
+      "padded_crop_bbox": [
+        89,
+        80,
+        450,
+        474
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 75368,
+      "dropped_components": 1,
+      "dropped_area": 1,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 201,
+        "depth": 100.5,
+        "offset": [
+          -59.5,
+          -50.25
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 1,
+      "label": "relayantenna",
+      "display_name": "RelayAntenna",
+      "status": "accepted",
+      "image": "props_extracted/relayantenna/prop.png",
+      "sha256": "2eb9a48434def5b059d89b2724b5fb08fdc8d463e6671f173b2083135954ffeb",
+      "output_size": [
+        351,
+        442
+      ],
+      "grid": [
+        0,
+        1
+      ],
+      "cell_box": [
+        512,
+        0,
+        1024,
+        512
+      ],
+      "source_box": [
+        512,
+        0,
+        1024,
+        512
+      ],
+      "source_rect": [
+        561,
+        51,
+        912,
+        493
+      ],
+      "trim_offset": [
+        49,
+        51
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        176,
+        432
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 100,
+      "trim_applied": 0,
+      "crop_bbox": [
+        59,
+        61,
+        390,
+        483
+      ],
+      "padded_crop_bbox": [
+        49,
+        51,
+        400,
+        493
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 37323,
+      "dropped_components": 0,
+      "dropped_area": 0,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 42,
+        "depth": 21,
+        "offset": [
+          2,
+          -10.5
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 2,
+      "label": "radiodesk",
+      "display_name": "RadioDesk",
+      "status": "accepted",
+      "image": "props_extracted/radiodesk/prop.png",
+      "sha256": "bd02d0eedb0d0d12ae9b38648df197b01e8309d58c1f04a476a3770383904124",
+      "output_size": [
+        372,
+        364
+      ],
+      "grid": [
+        0,
+        2
+      ],
+      "cell_box": [
+        1024,
+        0,
+        1536,
+        512
+      ],
+      "source_box": [
+        1024,
+        0,
+        1536,
+        512
+      ],
+      "source_rect": [
+        1074,
+        105,
+        1446,
+        469
+      ],
+      "trim_offset": [
+        50,
+        105
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        186,
+        354
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 100,
+      "trim_applied": 0,
+      "crop_bbox": [
+        60,
+        115,
+        412,
+        459
+      ],
+      "padded_crop_bbox": [
+        50,
+        105,
+        422,
+        469
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 88012,
+      "dropped_components": 0,
+      "dropped_area": 0,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 299,
+        "depth": 149.5,
+        "offset": [
+          -22.5,
+          -74.75
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 3,
+      "label": "searchlight",
+      "display_name": "Searchlight",
+      "status": "accepted",
+      "image": "props_extracted/searchlight/prop.png",
+      "sha256": "96847c019f3c3597d4327f9715f2b67eb78114c42a60948a235abe03c63f7477",
+      "output_size": [
+        239,
+        361
+      ],
+      "grid": [
+        1,
+        0
+      ],
+      "cell_box": [
+        0,
+        512,
+        512,
+        1024
+      ],
+      "source_box": [
+        0,
+        512,
+        512,
+        1024
+      ],
+      "source_rect": [
+        148,
+        597,
+        387,
+        958
+      ],
+      "trim_offset": [
+        148,
+        85
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        115,
+        351
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 100,
+      "trim_applied": 0,
+      "crop_bbox": [
+        158,
+        95,
+        377,
+        436
+      ],
+      "padded_crop_bbox": [
+        148,
+        85,
+        387,
+        446
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 46412,
+      "dropped_components": 2,
+      "dropped_area": 2,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 179,
+        "depth": 89.5,
+        "offset": [
+          0.5,
+          -44.75
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 4,
+      "label": "cablereel",
+      "display_name": "CableReel",
+      "status": "accepted",
+      "image": "props_extracted/cablereel/prop.png",
+      "sha256": "bf48181e50d0f0e4f93ec3c6b542d41ad2f357671e57bd53660c248f99cd9df1",
+      "output_size": [
+        347,
+        336
+      ],
+      "grid": [
+        1,
+        1
+      ],
+      "cell_box": [
+        512,
+        512,
+        1024,
+        1024
+      ],
+      "source_box": [
+        512,
+        512,
+        1024,
+        1024
+      ],
+      "source_rect": [
+        564,
+        615,
+        911,
+        951
+      ],
+      "trim_offset": [
+        52,
+        103
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        174,
+        326
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 100,
+      "trim_applied": 0,
+      "crop_bbox": [
+        62,
+        113,
+        389,
+        429
+      ],
+      "padded_crop_bbox": [
+        52,
+        103,
+        399,
+        439
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 71549,
+      "dropped_components": 0,
+      "dropped_area": 0,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 108,
+        "depth": 54,
+        "offset": [
+          49,
+          -27
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    },
+    {
+      "index": 5,
+      "label": "sandbagbunker",
+      "display_name": "SandbagBunker",
+      "status": "accepted",
+      "image": "props_extracted/sandbagbunker/prop.png",
+      "sha256": "23e5111b0c4c5e28389eaf9275e2059d653dae7348b7d7b5b387b0acc0080331",
+      "output_size": [
+        439,
+        252
+      ],
+      "grid": [
+        1,
+        2
+      ],
+      "cell_box": [
+        1024,
+        512,
+        1536,
+        1024
+      ],
+      "source_box": [
+        1024,
+        512,
+        1536,
+        1024
+      ],
+      "source_rect": [
+        1032,
+        655,
+        1471,
+        907
+      ],
+      "trim_offset": [
+        8,
+        143
+      ],
+      "padding": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "anchor_px": [
+        220,
+        241
+      ],
+      "anchor_source": "measured",
+      "component_mode": "all",
+      "component_count": 1,
+      "min_component_area": 100,
+      "trim_applied": 0,
+      "crop_bbox": [
+        18,
+        153,
+        437,
+        385
+      ],
+      "padded_crop_bbox": [
+        8,
+        143,
+        447,
+        395
+      ],
+      "selected_component_area": null,
+      "selected_component_bbox": null,
+      "kept_area": 76268,
+      "dropped_components": 0,
+      "dropped_area": 0,
+      "edge_touch": false,
+      "footprint": {
+        "shape": "ellipse",
+        "width": 390,
+        "depth": 195,
+        "offset": [
+          3,
+          -97.5
+        ],
+        "rotate": 0,
+        "basis": "prop_px",
+        "suggested": true,
+        "method": "columns at least half covered in the bottom 25% of alpha > 16; depth = width x 0.5; front edge on the ground line"
+      }
+    }
+  ],
+  "rejected": [],
+  "edge_touch_props": [],
+  "warnings": [
+    "tall or wide props in a square grid (aspect > 1.6): ['sandbagbunker 419x232']; generate them one by one or in custom cells, or extract with --auto-boxes"
+  ],
+  "qa": {
+    "status": "warn",
+    "method": "native alpha, not keyed; alpha hygiene both; 8-connected components (all); checks measured on the published pixels",
+    "notProven": [
+      "that each label names the art in its cell or box",
+      "that a prop is complete: clipping is detected only where art meets the cell edge",
+      "keyed-edge quality beyond the edge fringe count",
+      "that anchors and suggested footprints match gameplay contact (both are measured from alpha)",
+      "runtime placement, collision or occlusion"
+    ],
+    "checks": [
+      {
+        "id": "accepted",
+        "status": "pass",
+        "value": 6,
+        "threshold": ">= 1"
+      },
+      {
+        "id": "edge_touch",
+        "status": "pass",
+        "value": [],
+        "threshold": 0
+      },
+      {
+        "id": "dropped_area",
+        "status": "pass",
+        "value": {
+          "generator": 0.0,
+          "searchlight": 0.0
+        },
+        "threshold": 0.01
+      },
+      {
+        "id": "strategy_aspect",
+        "status": "warn",
+        "value": [
+          "sandbagbunker 419x232"
+        ],
+        "threshold": 1.6
+      },
+      {
+        "id": "edge_fringe",
+        "status": "skipped",
+        "value": null,
+        "threshold": 0.02
+      }
+    ],
+    "inputs": [
+      {
+        "path": "../../../../80_maps/BroadcastTower302/cutout-source.png",
+        "sha256": "a1e43a7598a25c068b638de8bb979a791d0dbd950170881fcf3667168098a55d",
+        "bytes": 2008392
+      }
+    ],
+    "outputs": [
+      {
+        "path": "props_extracted/generator/prop.png",
+        "sha256": "d6a9f33b1ccddd60407d1a2c28db0e9963b8c9fb92b896e070f8de4ad8b927da",
+        "bytes": 190888
+      },
+      {
+        "path": "props_extracted/relayantenna/prop.png",
+        "sha256": "2eb9a48434def5b059d89b2724b5fb08fdc8d463e6671f173b2083135954ffeb",
+        "bytes": 122388
+      },
+      {
+        "path": "props_extracted/radiodesk/prop.png",
+        "sha256": "bd02d0eedb0d0d12ae9b38648df197b01e8309d58c1f04a476a3770383904124",
+        "bytes": 218451
+      },
+      {
+        "path": "props_extracted/searchlight/prop.png",
+        "sha256": "96847c019f3c3597d4327f9715f2b67eb78114c42a60948a235abe03c63f7477",
+        "bytes": 124713
+      },
+      {
+        "path": "props_extracted/cablereel/prop.png",
+        "sha256": "bf48181e50d0f0e4f93ec3c6b542d41ad2f357671e57bd53660c248f99cd9df1",
+        "bytes": 181657
+      },
+      {
+        "path": "props_extracted/sandbagbunker/prop.png",
+        "sha256": "23e5111b0c4c5e28389eaf9275e2059d653dae7348b7d7b5b387b0acc0080331",
+        "bytes": 186381
+      }
+    ],
+    "tool": {
+      "name": "extract_prop_pack",
+      "version": "0.4.0"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "winter-iron.character-portrait-run.v1",
+  "date": "2026-11-17",
+  "character": "Lyudmila",
+  "route": "Codex image_gen (host_image)",
+  "source_atlas": "portrait_atlas_raw.png",
+  "source_sha256": "5af17f6f01983546df5fde5ebf8472feca867d0f9d1280f7441fbb0b98f3d334",
+  "references": {
+    "identity_references": [
+      "assets/concept_art/CON_05_Lyudmila_ChildRescue.png",
+      "godot_project/art/60_ui/cg/cg_fire_rescue_scene.jpg"
+    ],
+    "style_reference": "godot_project/art/10_characters/portraits/PRT_Anna_Calm.png",
+    "source_image": "exec-d7beadf6-34ff-48bb-8e9f-120798525682.png",
+    "route": "Codex image_gen (host_image)"
+  },
+  "prompt_file": "portrait_atlas_prompt.txt",
+  "layout": "2x2 atlas: Calm, Sad, Intense, Wry",
+  "processor": "godot_project/tools/art_gen/process_portrait_atlas.py",
+  "tile_size": [
+    512,
+    512
+  ],
+  "runtime_copies": [
+    "godot_project/art/10_characters/portraits/PRT_Lyudmila_Calm.png",
+    "godot_project/art/10_characters/portraits/PRT_Lyudmila_Sad.png",
+    "godot_project/art/10_characters/portraits/PRT_Lyudmila_Intense.png",
+    "godot_project/art/10_characters/portraits/PRT_Lyudmila_Wry.png",
+    "godot_project/art/10_characters/portraits/PRT_Lyudmila.png"
+  ],
+  "runtime_mapping": "art-only registration; no dialogue speaker code or runtime mapping added"
+}

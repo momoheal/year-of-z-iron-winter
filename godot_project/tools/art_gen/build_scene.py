@@ -146,7 +146,8 @@ def character(parent, name, sheet_key, script, layer, mask, groups=None, **extra
         f"{16 * __import__('math').cos(a * 0.3927):.2f}, {6 * __import__('math').sin(a * 0.3927):.2f}"
         for a in range(16)) + ")"
     S.node("Shadow", "Polygon2D", n, color=col(0, 0, 0, 0.42), polygon=shadow)
-    S.node("Sprite", "Sprite2D", n, texture=S.tex(sheet_key), hframes="8", vframes="3",
+    S.node("Sprite", "Sprite2D", n, texture=S.tex(sheet_key),
+           hframes=str(MAN[sheet_key].get("hframes", 12)), vframes="3",
            offset=v2((0, -52)))
     S.node("Shape", "CollisionShape2D", n, position=v2((0, -2)),
            shape=S.subres("CircleShape2D", radius="11.0"))
@@ -186,9 +187,10 @@ FAC_KEY, GLOW_KEY = gen_env.facade_keys()
 fac = S.node("Facade", "StaticBody2D", "World", position=v2((0, round(base_y, 2))), collision_layer="1",
              collision_mask="0")
 S.node("Sprite", "Sprite2D", fac, texture=S.tex(FAC_KEY), centered="false",
-       offset=v2((0, -FH)))
-S.node("Shape", "CollisionShape2D", fac, position=v2((LY.W * PPM / 2, -150)),
-       shape=rect_shape(LY.W * PPM, 300))
+       offset=v2((0, -FH)), **({"visible": "false"} if LY.has("PLATE_CAMERA") else {}))
+wall_depth = max(base_y, 300) if LY.has("PLATE_CAMERA") else 300
+S.node("Shape", "CollisionShape2D", fac, position=v2((LY.W * PPM / 2, -wall_depth / 2)),
+       shape=rect_shape(LY.W * PPM, wall_depth))
 
 # ---- 道具 ----
 S.node("Props", "Node2D", "World", y_sort_enabled="true")
@@ -207,7 +209,7 @@ for p in LY.PROPS:
         groups.append("night_fade")
     n = S.node(p["id"], "StaticBody2D", "World/Props", groups=groups or None, position=v2(px(*p["pos"])),
                collision_layer=str(LAYER_BITS[p["layer"]]), collision_mask="0", **meta)
-    sprite(n, p["art"])
+    sprite(n, p["art"], **({"visible": "false"} if p.get("baked") else {}))
     fw, fd = p["fp"][0] * PPM, p["fp"][1] * GY
     if p["layer"]:
         S.node("Shape", "CollisionShape2D", n, position=v2((0, round(-fd / 2, 2))), shape=rect_shape(fw, fd))
@@ -235,7 +237,7 @@ for p in LY.PROPS:
 # ---- 铁丝网（FENCE_Y = None 的室内关跳过整段）----
 if LY.FENCE_Y is not None:
     fence = S.node("Fence", "Node2D", "World", y_sort_enabled="true")
-    for x0, kind in LY.FENCE_SEGMENTS:
+    for x0, kind in ([] if LY.has("PLATE_CAMERA") else LY.FENCE_SEGMENTS):
         key = {"a": "PRP_Fence_ChainLink_A", "b": "PRP_Fence_ChainLink_B", "torn": "PRP_Fence_ChainLink_Torn",
                "torn_l": "PRP_Fence_ChainLink_TornL",
                # manor：带电的高墙（elec_cut = 被剪开垂丝的那一格）
@@ -252,6 +254,10 @@ if LY.FENCE_Y is not None:
 # ---- 场景边界 ----
 bd = S.node("Bounds", "StaticBody2D", ".", collision_layer="1", collision_mask="0")
 W_PX, H_PX = LY.W * PPM, LY.H * GY
+for name, x0, y0, x1, y1 in LY.has("PLATE_WALLS", []):
+    S.node(name, "CollisionShape2D", bd, position=v2(px((x0+x1)/2, (y0+y1)/2)),
+           shape=rect_shape((x1-x0)*PPM, (y1-y0)*GY))
+
 for nm, c, sz in (("Left", (-40, H_PX / 2), (80, H_PX + 800)), ("Right", (W_PX + 40, H_PX / 2), (80, H_PX + 800)),
                   ("Bottom", (W_PX / 2, H_PX + 40), (W_PX + 200, 80))):
     S.node(nm, "CollisionShape2D", bd, position=v2((round(c[0], 2), round(c[1], 2))), shape=rect_shape(*sz))
@@ -494,7 +500,7 @@ for i, (cx, cy, rx, ry) in enumerate(LY.SLUSH):
 
 # ---- 镜头 + 雪 ----
 cam = S.node("Camera2D", "Camera2D", ".", position=v2(px(*LY.SPAWN)), limit_left="0",
-             limit_top=str(int(base_y - FH)), limit_right=str(int(W_PX)), limit_bottom=str(int(H_PX)),
+             limit_top="0" if LY.has("PLATE_CAMERA") else str(int(base_y - FH)), limit_right=str(int(W_PX)), limit_bottom=str(int(H_PX)),
              position_smoothing_enabled="true", position_smoothing_speed="6.0")
 S.node("Snow", "GPUParticles2D", cam, amount="900", lifetime="8.0", preprocess="8.0",
        texture=S.tex("VFX_Snow_Particle"), local_coords="false",

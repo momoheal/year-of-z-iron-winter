@@ -592,5 +592,82 @@
    0,
    0
   ]
+ },
+ "MAP_Workshop_Overview": {
+  "path": "res://art/80_maps/Workshop/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Workshop_Forklift": {
+  "path": "res://art/30_props/PRP_Workshop_Forklift.png",
+  "size": [
+   644,
+   480
+  ],
+  "pivot": [
+   322.0,
+   480
+  ]
+ },
+ "PRP_Workshop_LatheBench": {
+  "path": "res://art/30_props/PRP_Workshop_LatheBench.png",
+  "size": [
+   817,
+   519
+  ],
+  "pivot": [
+   408.5,
+   519
+  ]
+ },
+ "PRP_Workshop_ToolLocker": {
+  "path": "res://art/30_props/PRP_Workshop_ToolLocker.png",
+  "size": [
+   438,
+   474
+  ],
+  "pivot": [
+   219.0,
+   474
+  ]
+ },
+ "PRP_Workshop_IncomingCrates": {
+  "path": "res://art/30_props/PRP_Workshop_IncomingCrates.png",
+  "size": [
+   500,
+   460
+  ],
+  "pivot": [
+   250.0,
+   460
+  ]
+ },
+ "PRP_Workshop_ScrapDumpster": {
+  "path": "res://art/30_props/PRP_Workshop_ScrapDumpster.png",
+  "size": [
+   477,
+   471
+  ],
+  "pivot": [
+   238.5,
+   471
+  ]
+ },
+ "PRP_Workshop_HeaterDrum": {
+  "path": "res://art/30_props/PRP_Workshop_HeaterDrum.png",
+  "size": [
+   217,
+   568
+  ],
+  "pivot": [
+   108.5,
+   568
+  ]
  }
 }

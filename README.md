@@ -12,7 +12,8 @@
 > - **构建版本 `4.0.0`**：唯一真源是 `godot_project/project.godot` 的 `config/version="4.0.0"`。对外发布、商店页与补丁说明一律以此为准。
 > - **内容规格 `v4.2`**：指 `docs/` 下策划案、总剧本、美术风格参考等**文档与原型的内容规格版本**（历史称 Definitive Master）。它不是构建版本号，也不代表已发布的可执行版本；本轮保留该标签，取舍见 `CHANGELOG.md`，最终定位**待用户拍板**。
 > - **历史规格标签 `v4.0`**：`index.html` 与原型沙盘标题里的「v4.0 诺沃斯克-17 设定」，以及 `project.godot` 的 `config/name` 中的 `(v4.0 Novorsk-17)`，均为早期内容规格 / 命名遗留，**不是构建版本**。
-> - 测试结论不再写死；现行口径见下方「最近一次本地实跑基线」与 `godot_project/tests/logs/`。当前仓库无 CI、无 git tag、无 LICENSE。
+> - 测试结论不再写死；现行口径见下方「最近一次本地实跑基线」与 `godot_project/tests/logs/`。CI 已接入（`.github/workflows/ci.yml`，自动下载并校验 Godot 4.7.2 headless）；仍无 git tag；许可证采用 Apache License 2.0（见根目录 `LICENSE`）。
+> - Windows 试玩包：本机导出到 `build/win64/YearOfZ.exe` + `YearOfZ.pck`（约 857 MB，`build/` 不入库）。当前 `all_resources` 导出模式尚未裁掉出图过程稿，体积优化留待下一轮。
 
 > **"In Novorsk-17, when the teletype terminal lights up green, everyone is fed; when a file number is crossed out, the person is zeroed."**
 >
@@ -27,6 +28,19 @@
 By day, you play as former freight dispatcher **Aleksei "Alyosha" Morozov**, accepting an indelible violet-blue observation stamp on your frostbitten hand to haul supplies for the District Rationing Committee in exchange for peritoneal dialysis fluid to keep your uremic mother (**Mama Katya**) alive in Khrushchyovka Apartment 602. By night, after welders seal the building gates, you pry open the boiler-room vent and stalk the broad-gauge tracks searching for your 22-year-old sister **Lana (`File 0420`)**, who was swept into **Carriage No. 3** of the heavy armored train *"Buran"* (`Бронепоезд «Буран»` / "The Iron Shell").
 
 ---
+
+## 剧情档案与台词审计
+
+[查看剧情档案网页](https://momoheal.github.io/year-of-z-iron-winter/deliverables/story_review/) · [仓库内的 HTML](deliverables/story_review/index.html) · [z (6).html 采纳记录](deliverables/story_review/z6-audit.md)
+
+档案包含剧透。按进度查看游戏幻灯、双语字幕、出场人物、日夜地图、条件余波及五种结局。可搜索角色、地点或台词，并对照文学底稿、战役运行文案与附件的采纳决定。网页版随 GitHub Pages 的 `main` 分支更新。本地克隆后可直接打开 HTML。
+
+维护时在仓库根目录运行以下命令，把 `ABSOLUTE_JSON_PATH` 换成同一个临时文件的绝对路径，再提交生成的 HTML。
+
+```text
+godot --headless --path godot_project -s tools/export_story_archive.gd -- ABSOLUTE_JSON_PATH
+python godot_project/tools/build_story_archive.py ABSOLUTE_JSON_PATH
+```
 
 ## 📂 Repository Structure | 仓库文件目录
 
@@ -225,9 +239,9 @@ P4 的第二张新地图，也是战役里危险度 5 的终点图：夜长 120 
 v4.2 七幕结构第四幕的舞台（L07M）：危险度 5 / 夜长 100 分钟（≈240 秒）/ 寒冷 1.2，战役里安娜入队
 （`lana_car3`）后解锁，开发期按 `F5` 直开。46×34 米：矿山岩壁立面（新立面种类 `mine`：斜井坑木门脸 +
 工棚 + 矿仓 + 井架 + 爆破断面）+ 一条运矸专线，装卸台 / 工业广场 / 爆破作业面三带。剧本锚点全部
-落在场景里：**温压爆破炸穿的永冻层断面**（`PRP_SporeFace`，千层糕层理里那条灰黑孢子粉尘层——
-灰鳞病是他们自己炸出来的）、码在断面根上的**铝热剂装药堆**、**起爆器**旁斜靠的爆破台账
-（`PRP_Detonator_Rig`，必出 `intel` = 孢子岩芯与爆破台账，第六幕广播的物证）、**假人哨塔第二座**
+落在场景里：**温压爆破炸穿的永冻层断面**（`PRP_SporeFace`，千层糕层理里有一条灰黑粉尘带，矿工录音记下爆破后的咳嗽；
+成分和病因尚无定论）、码在断面根上的**铝热剂装药堆**、**起爆器**旁斜靠的爆破台账
+（`PRP_Detonator_Rig`，必出 `intel` = 断面岩样与爆破台账，第六幕广播的物证）、**假人哨塔第二座**
 （`PRP_DummyTower_Mannequin`，远看是哨位、近看是塑料模特 + 猪嘴面具——**不装灯**）、留守技术员
 **博伊科**（回退半人 0417，蜷在看守火堆旁；木箱里有给他退烧的阿司匹林）。侧翻矿车与来不及架上的
 坑木是塌方注脚。**本关无探照灯**——黑暗是这张图的第一属性：2 组清杀队换岗、2 只感染掘进工、
@@ -299,8 +313,7 @@ v4.2 七幕结构第三幕 3-3 前半的舞台（L07）：危险度 2 / 夜长 8
 | **威胁读数** | 右栏实时给「被 N 只狂暴者盯上 / 最近清杀兵 12m 西南 / 脚下冻雪泥（噪声 ×2）/ 环境警报」；屏幕边缘随紧张度渗红 |
 
 测试：`tests/night_beats_smoke.gd`（界面工具 / 三关档案数据 / 关键物资点 / 地标在图内 / 节拍状态机 / 扳道岔 / 叉车一次性）。
-**尚未在装 Godot 的机器上首跑**：本轮改动已通过 gdtoolkit GDScript 解析校验，但需要在本机跑一次
-`night_beats_smoke.gd` 与既有 `night_level_smoke.gd` / `night_explore_smoke.gd` 完成首次验收（含肉眼核对 HUD 排版）。
+已在装 Godot 4.7.2 的机器上跑过 `night_beats_smoke.gd` 与既有 `night_level_smoke.gd` / `night_explore_smoke.gd`；基线数字见下方「最近一次本地实跑基线」，HUD 排版仍建议肉眼核对。
 
 ## 🔧 武器与战斗切片 · 撬棍 / 枪械 + 灰盒美术扩展（`scripts/night/Arsenal.gd`）
 
@@ -350,8 +363,7 @@ v4.2 七幕结构第三幕 3-3 前半的舞台（L07）：危险度 2 / 夜长 8
 三棍放倒狂暴者 / 开枪扣弹+曳光+惊动巡逻 / 冷却与空仓 / 清杀兵掉血与死亡 / 弹药上限）。
 详细说明见 `docs/zh/Z年纪事_武器与战斗切片.md` 与 `docs/en/Year_of_Z_Iron_Winter_Weapons_and_Combat_EN.md`。
 
-> ⚠️ 沙箱里没有 Godot 引擎：本切片**尚未在装引擎的机器上首跑**，首次运行请按文档的「验收」清单
-> 肉眼核对枪口位置 / 沙袋挡视线不挡子弹 / 同僚反应 / 三张图的弹药箱。
+> ✅ 已在装 Godot 4.7.2 的机器上跑过本切片；首次运行仍建议按文档的「验收」清单肉眼核对枪口位置 / 沙袋挡视线不挡子弹 / 同僚反应 / 三张图的弹药箱。基线数字见下方。
 
 **验收图（无需引擎）** / Acceptance sheets, no engine needed：`docs/ui/verify/` 下 25 张 PNG ——
 `yard|marshalling|manor|mine|market|coldstore|canteen|sanitarium` 八关各一张中性光 + 一张夜色整关图（16 张），
@@ -505,7 +517,7 @@ Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/room_a_smoke.
 > **灰盒场历史移植记录**：`docs/zh/Z年纪事_Godot灰盒5合1移植对照表.md` · `docs/en/Year_of_Z_Iron_Winter_Godot_Greybox_Gym_Port_EN.md`
 > **后续节点化架构规范**：`docs/zh/Z年纪事_Godot4引擎迁移技术规范与架构指南.md` · `docs/en/Year_of_Z_Iron_Winter_Godot4_Migration_Guide_EN.md`
 >
-> ✅ **最近一次本地实跑基线（非 CI，非永久结论）**：基线提交 `63709eb`（分支 `feat/nav-and-save-recovery`）· 执行日期 **2026-11-12** · 命令 `python godot_project/tools/run_tests.py` · 结果 **14 套 / 1683 通过 / 0 失败 / 0 脚本错误**。该数字只是**该基线在该日期的一次本地记录**，不保证对后续任何提交成立；每次发布前须重跑，并以 `godot_project/tests/logs/` 或 CI 产物为准（**当前仓库尚无 CI**）。依据：`docs/zh/项目架构评估与下一阶段实施计划_2026-11-11.md` §8.3「自动测试结果记录基线提交与执行日期，避免永久写死『全部通过』的结论」。
+> ✅ **最近一次本地实跑基线**：提交 `fbc646c`（分支 `feat/nav-and-save-recovery`）· 执行日期 **2026-11-18** · 命令 `python godot_project/tools/run_tests.py` · 结果 **21 套 / 3850 通过 / 0 失败 / 0 脚本错误**。该数字只是**该基线在该日期的一次本地记录**，不保证对后续任何提交成立；每次发布前须重跑，并以 `godot_project/tests/logs/` 或 CI 产物为准。依据：`docs/zh/项目架构评估与下一阶段实施计划_2026-11-11.md` §8.3「自动测试结果记录基线提交与执行日期，避免永久写死『全部通过』的结论」。
 >
 > 🚀 **一键跑通（推荐）**：新克隆直接双击仓库根的 **`run_tests.bat`**（或 `python godot_project/tools/run_tests.py`）。它会**先自动 `--import` 导入资产**（新克隆没有 `.godot/` 缓存，headless 直接 `-s` 会在 preload 阶段大面积失败），再枚举全部 `tests/*_smoke.gd` 逐个执行并扫 stderr。Godot 路径用环境变量 `GODOT` 或 `--godot` 指定；只跑部分套件用 `run_tests.bat campaign night_level`。
 >

@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>背景故事分叉流程 · 铁冬校对档案</title>
+  <style>
+    :root {
+      --paper: #e9e4d7;
+      --paper-light: #f5f1e7;
+      --paper-deep: #d9d1c0;
+      --ink: #252b29;
+      --ink-soft: #555b55;
+      --line: #b8b19f;
+      --line-dark: #827d70;
+      --red: #963d32;
+      --red-wash: #f0dfd9;
+      --green: #416b56;
+      --green-wash: #e0e9dd;
+      --gold: #9a7131;
+      --gold-wash: #eee5cf;
+      --blue: #426272;
+      --blue-wash: #dfe8e8;
+      --shadow: 0 14px 34px rgb(34 38 34 / 9%);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--paper); scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Segoe UI", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+      background:
+        linear-gradient(90deg, transparent 0 31px, rgb(150 61 50 / 9%) 31px 32px, transparent 32px),
+        repeating-linear-gradient(0deg, rgb(90 79 56 / 2%) 0 1px, transparent 1px 5px),
+        var(--paper);
+    }
+    button, a { font: inherit; }
+    button { color: inherit; }
+    .page { max-width: 1760px; margin: 0 auto; padding: 34px clamp(18px, 4vw, 68px) 64px; }
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: end;
+      padding: 0 0 26px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .eyebrow, .micro, .code-ref, .node-code, .stamp, .source-label {
+      font-family: Consolas, "Courier New", monospace;
+      text-transform: uppercase;
+      letter-spacing: .11em;
+    }
+    .eyebrow { color: var(--red); font-size: 12px; font-weight: 700; }
+    h1 {
+      margin: 11px 0 10px;
+      max-width: 900px;
+      font-family: Georgia, "Songti SC", "SimSun", serif;
+      font-size: clamp(36px, 5.1vw, 66px);
+      font-weight: 600;
+      letter-spacing: -.045em;
+      line-height: .98;
+    }
+    .dek { max-width: 820px; margin: 0; color: var(--ink-soft); line-height: 1.7; font-size: 15px; }
+    .stamp {
+      align-self: center;
+      border: 2px solid var(--red);
+      color: var(--red);
+      padding: 10px 14px 9px;
+      transform: rotate(-3deg);
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.55;
+      white-space: nowrap;
+    }
+    .top-meta { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+    .meta-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border: 1px solid var(--line); background: rgb(245 241 231 / 65%);
+      color: var(--ink-soft); font-size: 12px;
+    }
+    .meta-chip b { color: var(--ink); font-family: Consolas, monospace; font-size: 13px; }
+    .toolbar {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px;
+      margin: 22px 0 14px; padding: 12px 0; border-bottom: 1px solid var(--line);
+    }
+    .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+    .filter-label { margin-right: 4px; color: var(--ink-soft); font-size: 12px; }
+    .filter {
+      border: 1px solid var(--line-dark); background: transparent; padding: 7px 11px;
+      font-size: 12px; cursor: pointer; transition: background .16s, color .16s, border-color .16s;
+    }
+    .filter:hover, .filter[aria-pressed="true"] { background: var(--ink); color: var(--paper-light); border-color: var(--ink); }
+    .toolbar-actions { display: flex; gap: 8px; }
+    .plain-action {
+      border: 0; background: transparent; text-decoration: underline; text-underline-offset: 3px;
+      color: var(--ink-soft); font-size: 12px; cursor: pointer; padding: 7px 4px;
+    }
+    .legend { display: flex; flex-wrap: wrap; gap: 14px; color: var(--ink-soft); font-size: 11px; }
+    .legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .legend i { display: inline-block; width: 25px; border-top: 2px solid var(--ink); }
+    .legend .dashed { border-top-style: dashed; border-color: var(--gold); }
+    .legend .dotted { border-top-style: dotted; border-color: var(--blue); }
+    .legend .risk { border-color: var(--red); }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; align-items: start; }
+    .graph-shell, .inspector, .review-card, .endings-panel, .source-panel {
+      background: var(--paper-light); border: 1px solid var(--line); box-shadow: var(--shadow);
+    }
+    .graph-head {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 15px;
+      padding: 13px 17px; border-bottom: 1px solid var(--line); background: #e2dccd;
+    }
+    .graph-head h2, .section-head h2 { margin: 0; font-family: Georgia, "Songti SC", serif; font-size: 18px; font-weight: 600; }
+    .graph-head p { margin: 0; color: var(--ink-soft); font-size: 11px; }
+    .board-scroll { overflow: auto; overscroll-behavior-inline: contain; }
+    .board {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(184px, 1fr));
+      grid-template-rows: repeat(3, minmax(185px, auto));
+      align-items: start;
+      gap: 28px 22px;
+      min-width: 1450px;
+      padding: 27px 25px 34px;
+      isolation: isolate;
+      background-image: linear-gradient(rgb(66 98 114 / 3%) 1px, transparent 1px),
+        linear-gradient(90deg, rgb(66 98 114 / 3%) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    #connections { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 0; pointer-events: none; }
+    .edge { fill: none; stroke-width: 2; opacity: .82; vector-effect: non-scaling-stroke; }
+    .edge-main { stroke: var(--ink); marker-end: url(#arrow-main); }
+    .edge-conditional { stroke: var(--gold); stroke-dasharray: 8 6; marker-end: url(#arrow-conditional); }
+    .edge-side { stroke: var(--blue); stroke-dasharray: 2 7; stroke-linecap: round; marker-end: url(#arrow-side); }
+    .edge-risk { stroke: var(--red); stroke-dasharray: 8 6; marker-end: url(#arrow-risk); }
+    .flow-node {
+      position: relative; z-index: 1; display: block; width: 100%; min-height: 164px; padding: 13px 14px 14px;
+      border: 1px solid var(--line-dark); border-left: 4px solid var(--ink); background: rgb(245 241 231 / 96%);
+      text-align: left; cursor: pointer; box-shadow: 3px 4px 0 rgb(56 54 46 / 10%);
+      transition: transform .14s, box-shadow .14s, opacity .16s, border-color .14s;
+    }
+    .flow-node:hover, .flow-node[aria-pressed="true"] { transform: translateY(-2px); box-shadow: 4px 7px 0 rgb(56 54 46 / 13%); border-color: var(--red); }
+    .flow-node:focus-visible, .filter:focus-visible, .plain-action:focus-visible { outline: 3px solid #ad7f39; outline-offset: 2px; }
+    .flow-node[data-tone="gold"] { border-left-color: var(--gold); }
+    .flow-node[data-tone="blue"] { border-left-color: var(--blue); }
+    .flow-node[data-tone="red"] { border-left-color: var(--red); }
+    .flow-node[data-tone="green"] { border-left-color: var(--green); }
+    .flow-node.is-dimmed, .edge.is-dimmed { opacity: .16; }
+    .node-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .node-code { color: var(--ink-soft); font-size: 9px; }
+    .node-mark { color: var(--red); font-size: 10px; font-weight: 700; }
+    .flow-node h3 { margin: 0 0 7px; font-family: Georgia, "Songti SC", serif; font-size: 17px; line-height: 1.2; }
+    .flow-node p { margin: 0; color: var(--ink-soft); font-size: 12px; line-height: 1.55; }
+    .node-foot { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 11px; }
+    .tag { display: inline-block; padding: 3px 6px; background: var(--paper-deep); color: #4d5049; font-size: 9px; letter-spacing: .02em; }
+    .tag.red { background: var(--red-wash); color: #79372f; }
+    .tag.gold { background: var(--gold-wash); color: #705521; }
+    .tag.blue { background: var(--blue-wash); color: #365466; }
+    .tag.green { background: var(--green-wash); color: #355c48; }
+    .at-1-1 { grid-column: 1; grid-row: 1; }
+    .at-2-1 { grid-column: 2; grid-row: 1; }
+    .at-3-1 { grid-column: 3; grid-row: 1; }
+    .at-4-1 { grid-column: 4; grid-row: 1; }
+    .at-5-1 { grid-column: 5; grid-row: 1; }
+    .at-6-1 { grid-column: 6; grid-row: 1; }
+    .at-2-3 { grid-column: 2; grid-row: 3; }
+    .at-3-3 { grid-column: 3; grid-row: 3; }
+    .at-5-3 { grid-column: 5; grid-row: 3; }
+    .at-1-2 { grid-column: 1; grid-row: 2; }
+    .at-2-2 { grid-column: 2; grid-row: 2; }
+    .at-3-2 { grid-column: 3; grid-row: 2; }
+    .at-4-2 { grid-column: 4; grid-row: 2; }
+    .at-5-2 { grid-column: 5; grid-row: 2; }
+    .at-6-2 { grid-column: 6; grid-row: 2; }
+    .at-1-3 { grid-column: 1; grid-row: 3; }
+    .at-4-3 { grid-column: 4; grid-row: 3; }
+    .at-6-3 { grid-column: 6; grid-row: 3; }
+    .inspector { position: sticky; top: 16px; padding: 17px 17px 20px; }
+    .inspect-label { color: var(--red); font: 700 10px Consolas, monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .inspector h2 { margin: 9px 0 6px; font-family: Georgia, "Songti SC", serif; font-size: 22px; line-height: 1.18; }
+    .inspector .inspect-sub { margin: 0 0 14px; color: var(--ink-soft); font-size: 12px; line-height: 1.6; }
+    .detail-section { padding: 12px 0; border-top: 1px solid var(--line); }
+    .detail-section h3 { margin: 0 0 7px; color: var(--ink-soft); font: 700 10px Consolas, monospace; letter-spacing: .09em; text-transform: uppercase; }
+    .detail-section ul { margin: 0; padding-left: 17px; }
+    .detail-section li { margin: 5px 0; font-size: 12px; line-height: 1.55; }
+    .detail-sources { margin-top: 8px; color: var(--ink-soft); font: 10px/1.5 Consolas, monospace; overflow-wrap: anywhere; }
+    .howto { margin: 13px 0 0; padding: 10px; background: var(--blue-wash); color: #3c5358; font-size: 11px; line-height: 1.5; }
+    .section { margin-top: 27px; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 11px; }
+    .section-head p { max-width: 700px; margin: 0; color: var(--ink-soft); font-size: 12px; line-height: 1.6; }
+    .review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 11px; }
+    .review-card { padding: 16px 17px; box-shadow: none; }
+    .review-card[data-tone="red"] { border-top: 3px solid var(--red); }
+    .review-card[data-tone="gold"] { border-top: 3px solid var(--gold); }
+    .review-card[data-tone="blue"] { border-top: 3px solid var(--blue); }
+    .review-card .review-no { color: var(--ink-soft); font: 11px Consolas, monospace; }
+    .review-card h3 { margin: 7px 0 8px; font-family: Georgia, "Songti SC", serif; font-size: 17px; }
+    .review-card p { margin: 0; color: var(--ink-soft); font-size: 12px; line-height: 1.65; }
+    .review-card .code-ref { display: block; margin-top: 12px; color: var(--red); font-size: 9px; line-height: 1.6; letter-spacing: .06em; }
+    .endings-panel { padding: 17px; box-shadow: none; }
+    .ending-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
+    .ending { min-height: 128px; padding: 13px; border: 1px solid var(--line); background: #f7f3e9; }
+    .ending strong { display: block; font: 700 10px Consolas, monospace; letter-spacing: .08em; }
+    .ending h3 { margin: 7px 0 6px; font-family: Georgia, "Songti SC", serif; font-size: 16px; }
+    .ending p { margin: 0; color: var(--ink-soft); font-size: 11px; line-height: 1.55; }
+    .ending.alpha { border-top: 3px solid var(--green); }
+    .ending.beta { border-top: 3px solid var(--blue); }
+    .ending.b { border-top: 3px solid var(--gold); }
+    .ending.c { border-top: 3px solid var(--red); }
+    .source-panel { padding: 14px 17px; box-shadow: none; }
+    .source-panel p { margin: 5px 0; color: var(--ink-soft); font-size: 11px; line-height: 1.6; }
+    .source-panel code { color: var(--ink); font: 11px Consolas, monospace; }
+    .footer { margin-top: 19px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 10px; line-height: 1.6; }
+    @media (max-width: 1050px) {
+      .workspace { grid-template-columns: 1fr; }
+      .inspector { position: static; grid-row: 1; }
+      .review-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      .page { padding: 22px 14px 40px; }
+      .masthead { grid-template-columns: 1fr; }
+      .stamp { justify-self: start; transform: rotate(-2deg); }
+      .toolbar { align-items: start; }
+      .toolbar-actions { margin-left: auto; }
+      .legend { gap: 9px; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 6px; }
+      .ending-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media print {
+      @page { size: landscape; margin: 12mm; }
+      body { background: white; }
+      .page { max-width: none; padding: 0; }
+      .toolbar-actions, .filters, .inspector, .footer { display: none !important; }
+      .workspace { display: block; }
+      .board-scroll { overflow: visible; }
+      .board { min-width: 0; grid-template-columns: repeat(6, 1fr); gap: 12px; padding: 12px; }
+      .flow-node { box-shadow: none; break-inside: avoid; }
+      .graph-shell, .review-card, .endings-panel, .source-panel { box-shadow: none; }
+      .review-grid { grid-template-columns: repeat(3, 1fr); }
+      .flow-node.is-dimmed, .edge.is-dimmed { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <div>
+        <div class="eyebrow">НОВОРСК-17 / STORY ROUTE REVIEW</div>
+        <h1>背景故事的分叉流程</h1>
+        <p class="dek">按游戏当前剧情数据、关卡解锁和状态判定整理。这里把「角色选择」与「资源耗尽、地图触发、结局旗标」分开，方便检查故事是否讲得通。</p>
+        <div class="top-meta">
+          <span class="meta-chip"><b>09</b> 剧情节点</span>
+          <span class="meta-chip"><b>03</b> 黑市选择</span>
+          <span class="meta-chip"><b>04</b> 结局判定</span>
+          <span class="meta-chip">单页离线文件 · 不加载外部资源</span>
+        </div>
+      </div>
+      <div class="stamp">供作者复核<br>依据当前实现<br>故事走向草图</div>
+    </header>
+
+    <div class="toolbar">
+      <div class="filters" role="group" aria-label="高亮故事分支">
+        <span class="filter-label">高亮：</span>
+        <button class="filter" data-filter="all" aria-pressed="true">全流程</button>
+        <button class="filter" data-filter="main" aria-pressed="false">主线</button>
+        <button class="filter" data-filter="mother" aria-pressed="false">母亲生死</button>
+        <button class="filter" data-filter="companions" aria-pressed="false">伙伴选择</button>
+        <button class="filter" data-filter="market" aria-pressed="false">黑市与广播</button>
+        <button class="filter" data-filter="ending" aria-pressed="false">结局判定</button>
+      </div>
+      <div class="toolbar-actions">
+        <button class="plain-action" id="reset-view">重置选择</button>
+        <button class="plain-action" id="print-page">打印 / 保存 PDF</button>
+      </div>
+    </div>
+    <div class="legend" aria-label="连线说明">
+      <span><i></i>主目标顺序</span>
+      <span><i class="dashed"></i>条件门槛 / 目标提示</span>
+      <span><i class="dotted"></i>可选支线</span>
+      <span><i class="dashed risk"></i>母亲命运 / 结局风险</span>
+    </div>
+
+    <main class="workspace section">
+      <section class="graph-shell" aria-labelledby="route-title">
+        <div class="graph-head">
+          <h2 id="route-title">从 602 室到鹰嘴崖 · 当前实现路线</h2>
+          <p>点任一节点，查看触发条件与具体后果</p>
+        </div>
+        <div class="board-scroll">
+          <div class="board" id="board">
+            <svg id="connections" aria-hidden="true" preserveAspectRatio="none">
+              <defs>
+                <marker id="arrow-main" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#252b29"></path></marker>
+                <marker id="arrow-conditional" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#9a7131"></path></marker>
+                <marker id="arrow-side" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#426272"></path></marker>
+                <marker id="arrow-risk" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#963d32"></path></marker>
+              </defs>
+              <g id="edge-layer"></g>
+            </svg>
+
+            <button class="flow-node at-1-1" data-id="prologue" data-tags="main" data-tone="blue" aria-pressed="true">
+              <div class="node-top"><span class="node-code">入口 / 0-1</span><span class="node-mark">序章</span></div>
+              <h3>封楼后的夜潜</h3>
+              <p>阿列克谢要先拿到母亲的透析液，再追查被送走的拉娜。</p>
+              <div class="node-foot"><span class="tag blue">夜间出发</span><span class="tag">首关受限</span></div>
+            </button>
+            <button class="flow-node at-2-1" data-id="coldstore" data-tags="main companions mother" data-tone="red">
+              <div class="node-top"><span class="node-code">FIRST ACT / 1-2</span><span class="node-mark">必经</span></div>
+              <h3>四号铁路冷库</h3>
+              <p>遇见被台账注销的谢尔盖父女和颈上缠着铁丝的灰犬。</p>
+              <div class="node-foot"><span class="tag green">救人：灰烬入队</span><span class="tag red">放弃：无人获救</span></div>
+            </button>
+            <button class="flow-node at-3-1" data-id="vikina" data-tags="main" data-tone="gold">
+              <div class="node-top"><span class="node-code">RETURN / ROOM 602</span><span class="node-mark">线索</span></div>
+              <h3>维京娜的无心之语</h3>
+              <p>冷库剧情结算后回 602 听她说完：档案馆留有 0420 号电报底单。</p>
+              <div class="node-foot"><span class="tag gold">写入 archive_lead</span></div>
+            </button>
+            <button class="flow-node at-4-1" data-id="archive" data-tags="main" data-tone="blue">
+              <div class="node-top"><span class="node-code">EVIDENCE / OPTIONAL VISIT</span><span class="node-mark">查证</span></div>
+              <h3>档案馆电报局</h3>
+              <p>目标提示去找底单；实际解锁依赖维京娜线索，进入疗养院还需情报与医疗物资。</p>
+              <div class="node-foot"><span class="tag blue">情报 ×2</span><span class="tag">医疗 ×1</span></div>
+            </button>
+            <button class="flow-node at-5-1" data-id="sanitarium" data-tags="main companions" data-tone="green">
+              <div class="node-top"><span class="node-code">RESCUE / 2-4</span><span class="node-mark">证实</span></div>
+              <h3>疗养院地下室</h3>
+              <p>救出安娜（0419）与古丽娅。安娜确认拉娜在铁壳号第三节车厢。</p>
+              <div class="node-foot"><span class="tag green">Anna + Gulya</span><span class="tag gold">lana_car3</span></div>
+            </button>
+            <button class="flow-node at-6-1" data-id="marshalling" data-tags="main companions ending" data-tone="gold">
+              <div class="node-top"><span class="node-code">23:00 / DISPATCH</span><span class="node-mark">终局线索</span></div>
+              <h3>西站调车场</h3>
+              <p>抄下铁壳号发车令与鹰嘴崖时刻，确定第三节车厢的去向。</p>
+              <div class="node-foot"><span class="tag gold">endgame_known</span><span class="tag">情报 +1</span></div>
+            </button>
+
+            <button class="flow-node at-1-2" data-id="sidegate" data-tags="main companions market" data-tone="blue">
+              <div class="node-top"><span class="node-code">AFTER ACT I</span><span class="node-mark">并行内容</span></div>
+              <h3>可选地点开放</h3>
+              <p>冷库剧情完成后，可先去货场、食堂或黑市；这些首访剧情可早于目标提示发生。</p>
+              <div class="node-foot"><span class="tag blue">顺序可变</span></div>
+            </button>
+            <button class="flow-node at-2-2" data-id="yard" data-tags="companions ending" data-tone="gold">
+              <div class="node-top"><span class="node-code">OPTIONAL / YARD</span><span class="node-mark">扎哈尔</span></div>
+              <h3>货场编组单</h3>
+              <p>编组单把 0420 放进第三节车厢；扎哈尔加入，情报 +1。</p>
+              <div class="node-foot"><span class="tag gold">随队者后续可能背叛</span></div>
+            </button>
+            <button class="flow-node at-3-2" data-id="canteen" data-tags="companions" data-tone="red">
+              <div class="node-top"><span class="node-code">OPTIONAL / KITCHEN</span><span class="node-mark">费奥多尔</span></div>
+              <h3>食堂后厨</h3>
+              <p>瓦西里冲出杂物间；现有选项是一刀自卫，留下 PTSD 与罪疚，帕维尔随后入队。</p>
+              <div class="node-foot"><span class="tag red">良知 −4</span><span class="tag">砍骨刀</span></div>
+            </button>
+            <button class="flow-node at-4-2" data-id="market" data-tags="market ending companions" data-tone="red">
+              <div class="node-top"><span class="node-code">OPTIONAL / BLACK MARKET</span><span class="node-mark">三种选择</span></div>
+              <h3>铁路黑市 · 老轨伊万</h3>
+              <p>公平交易、分药救人或背叛伊万。三条选择都会留下 6.66 MHz 广播信号。</p>
+              <div class="node-foot"><span class="tag green">救助：伊万入队</span><span class="tag red">背叛：划痕 +1</span></div>
+            </button>
+            <button class="flow-node at-5-2" data-id="broadcast" data-tags="market companions ending" data-tone="blue">
+              <div class="node-top"><span class="node-code">LANDMARK / 6.66 MHz</span><span class="node-mark">广播支线</span></div>
+              <h3>叶莲娜的信号室</h3>
+              <p>在市场触发电台地标并成功撤离或撑到天亮后，才出现这段剧情。</p>
+              <div class="node-foot"><span class="tag blue">带走叶莲娜 / 留下她</span><span class="tag gold">两者都解锁庄园</span></div>
+            </button>
+            <button class="flow-node at-6-2" data-id="manor" data-tags="market ending" data-tone="green">
+              <div class="node-top"><span class="node-code">TRUTH / DEPOT 02</span><span class="node-mark">真相</span></div>
+              <h3>松林庄园恒温库</h3>
+              <p>拍下焚毁台账，带回 409 批腹透液；写入 truth，透析液 +2。</p>
+              <div class="node-foot"><span class="tag green">良知 +5</span><span class="tag">照片 +1</span></div>
+            </button>
+
+            <button class="flow-node at-1-3" data-id="mother" data-tags="mother ending" data-tone="red">
+              <div class="node-top"><span class="node-code">RESOURCE STATE / DAILY</span><span class="node-mark">非对白选择</span></div>
+              <h3>母亲生死线</h3>
+              <p>睡到次日时若没有预放的透析液，库存值下降；降至 0 后母亲离世，良知 −10。</p>
+              <div class="node-foot"><span class="tag green">备好透析液：存活</span><span class="tag red">耗尽：失去母亲</span></div>
+            </button>
+            <button class="flow-node at-4-3" data-id="refuge" data-tags="mother market" data-tone="red">
+              <div class="node-top"><span class="node-code">MOTHER LOST / MARKET</span><span class="node-mark">栖身处</span></div>
+              <h3>黑市废信号室</h3>
+              <p>母亲离世后，市场任务成功撤离或撑到天亮，才发现临时栖身处；倒地或中止不触发。</p>
+              <div class="node-foot"><span class="tag red">602 留作纪念与物资据点</span></div>
+            </button>
+<button class="flow-node at-2-3" data-id="station" data-tags="main ending" data-tone="gold"><h3>布拉风货场</h3><p>搜查检修柜，抄回交接底单后，开放鹰嘴崖。</p></button>
+<button class="flow-node at-3-3" data-id="crag" data-tags="main ending" data-tone="gold"><h3>鹰嘴崖</h3><p>打开第三节车厢，带拉娜一行从检修路撤离。</p></button>
+<button class="flow-node at-5-3" data-id="tower" data-tags="main ending" data-tone="gold"><h3>302 高地广播塔</h3><p>守住播音台，传输完成后返回，开启正式结局。</p></button>
+            <button class="flow-node at-6-3" data-id="endings" data-tags="ending mother market" data-tone="red">
+              <div class="node-top"><span class="node-code">ENDING KEY / FLAGS</span><span class="node-mark">结局</span></div>
+              <h3>真相、划痕与归来</h3>
+              <p>结局由 truth、母亲状态、划痕和 betrayal 共同判定；不是由最后一个对白选项单独决定。</p>
+              <div class="node-foot"><span class="tag red">点此查看五种条件</span></div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="inspector" aria-live="polite" aria-labelledby="detail-title">
+        <div class="inspect-label">节点记录 / DETAIL</div>
+        <h2 id="detail-title">冷库：第一幕</h2>
+        <p class="inspect-sub" id="detail-sub">选中流程图里的任一节点，这里会展开触发条件、选项后果和对应代码位置。</p>
+        <div class="detail-section">
+          <h3>触发与前置</h3>
+          <ul id="detail-trigger"><li>新开局时，第一幕只允许前往四号铁路冷库。</li></ul>
+        </div>
+        <div class="detail-section">
+          <h3>选择与结果</h3>
+          <ul id="detail-effects"><li>救人并喂灰犬：谢尔盖、玛丽亚记入姓名；良知 +8、废钢 +1、灰烬入队。</li><li>离开：废钢 +2；父女未获救，灰烬不入队。</li></ul>
+        </div>
+        <div class="detail-section">
+          <h3>接续节点</h3>
+          <ul id="detail-next"><li>剧情处理后设置维京娜线索待触发；回 602 听她说完，开放档案馆线索。</li></ul>
+        </div>
+        <div class="detail-sources" id="detail-source">来源：CampaignData.gd · STORY[coldstore]；CampaignSim.gd · resolve_story()</div>
+        <p class="howto">提示：虚线代表当前代码里的条件或目标提示；虚线不保证地点一定已解锁。页面不改写游戏逻辑，只把规则摊开给你核对。</p>
+      </aside>
+    </main>
+
+    <section class="section" aria-labelledby="review-title">
+      <div class="section-head">
+        <h2 id="review-title">本轮校对后采用的规则</h2>
+        <p>以下规则与游戏中的目标提示和结算条件同步。</p>
+      </div>
+      <div class="review-grid">
+        <article class="review-card"><h3>庄园入口</h3><p>在铁路黑市接触伊万，勘踏 6.66 MHz 电台棚并返回。本次夜潜的频率发现才有效。</p></article>
+        <article class="review-card"><h3>疗养院救援物资</h3><p>选项显示并扣除一件绷带、阿司匹林或抗生素。腹透液可留给母亲。</p></article>
+        <article class="review-card"><h3>线索顺序</h3><p>北雨棚的残号 04 是可选线索。维京娜指出底单去向，货场编组单提供纸面旁证，安娜亲眼见过拉娜，鹰嘴崖才见到本人。</p></article>
+        <article class="review-card"><h3>结局 β 字幕</h3><p>母亲在世但队伍遭背叛时，沿用 β 的判定，以对应字幕说明母亲仍在。</p></article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="endings-title">
+      <div class="section-head">
+        <h2 id="endings-title">结局判定表</h2>
+        <p>规则按 <code>CampaignSim.ending_key()</code> 的判断顺序排列；先匹配到的条件优先。</p>
+      </div>
+      <p>完成 302 广播后返回即可进入正式结局。尚无罪证时，完成鹰嘴崖救援或找到市场栖身处后，也可在 602 选择结束追查，按母亲生死进入 A 或 C。结局预览仍可查看当前条件。</p>
+      <div class="endings-panel">
+        <div class="ending-grid">
+          <article class="ending alpha">
+            <strong>TRUE ALPHA</strong><h3>你好，拉娜</h3>
+            <p>母亲仍在、truth 已有、划痕少于 5、没有 betrayed 标记；划痕为 0 时另有奖励对白与分镜。</p>
+          </article>
+          <article class="ending beta">
+            <strong>TRUE BETA</strong><h3>荒原之火</h3>
+            <p>truth 已有、划痕少于 5，但不满足 α；文案和字幕随母亲生死变化。划痕为 0 时另有奖励对白与分镜。</p>
+          </article>
+          <article class="ending b">
+            <strong>ENDING B</strong><h3>荒诞解放</h3>
+            <p>truth 已有且划痕不少于 5；日志上的划痕改变拉娜对阿列克谢的反应。</p>
+          </article>
+          <article class="ending"><strong>ENDING A</strong><h3>留在 602</h3><p>未取得真相，母亲存活。</p></article>
+          <article class="ending c">
+            <strong>ENDING C</strong><h3>麻木</h3>
+            <p>未取得真相，母亲离世。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="source-title">
+      <div class="section-head">
+        <h2 id="source-title">核对口径</h2>
+        <p>这份图表达游戏当前实现，便于指出故事线的跳跃、重复或动机不足。</p>
+      </div>
+      <div class="source-panel">
+        <p><span class="source-label">剧情节点：</span><code>godot_project/scripts/CampaignData.gd</code> 中的 <code>STORY</code> 与 <code>LOCS</code>。</p>
+        <p><span class="source-label">条件与触发：</span><code>godot_project/scripts/CampaignSim.gd</code> 中的 <code>objective()</code>、<code>loc_unlocked()</code>、<code>resolve_story()</code>、<code>advance_day()</code>、<code>finish_raid()</code> 与 <code>ending_key()</code>。</p>
+        <p><span class="source-label">广播触发：</span><code>godot_project/scripts/night/LevelBeats.gd</code> 的 6.66 MHz 地标，以及 <code>NightExplore.gd</code> 的撤离后触发。</p>
+        <p><span class="source-label">余波幻灯：</span><code>godot_project/scripts/data/CutsceneData.gd</code> 中对应的选择后片段。</p>
+      </div>
+    </section>
+
+    <footer class="footer">实线表示连续推进，虚线表示条件入口。地图行动成功后才结算关键成果。</footer>
+  </div>
+
+  <script>
+    const details = {
+      prologue: {
+        title: "序章：封楼后的夜潜", sub: "开局设定与第一幕入口。",
+        trigger: ["新开局后，CampaignSim.first_act_pending() 限制出发地点。", "第一幕完成前，其他地点会显示为锁定。"],
+        effects: ["阿列克谢夜间离开封楼，白天仍要回 602。", "母亲的透析液与寻找拉娜并行，后续会形成资源压力。"],
+        next: ["前往四号铁路冷库。", "主线后续仍需回 602，并可进入可选地点。"],
+        source: "CampaignSim.gd · first_act_pending(), loc_unlocked()"
+      },
+      coldstore: {
+        title: "冷库：第一幕", sub: "首次进入四号铁路冷库时触发。",
+        trigger: ["新开局时，第一幕只允许前往四号铁路冷库。", "选择处理后设置 story_done[coldstore]；尚无 archive_lead 时会排入维京娜线索。"],
+        effects: ["救人并喂灰犬：谢尔盖、玛丽亚记入姓名；良知 +8、废钢 +1、灰烬入队。", "离开：废钢 +2；父女未获救，灰烬不入队。"],
+        next: ["回 602 听维京娜的线索。", "货场、食堂、黑市的首访剧情在第一幕后可按玩家选择先后触发。"],
+        source: "CampaignData.gd · STORY[coldstore]；CampaignSim.gd · resolve_story()"
+      },
+      vikina: {
+        title: "602：维京娜的无心之语", sub: "在冷库剧情结算后回据点接续。",
+        trigger: ["coldstore 故事解决后，CampaignSim 设置 vikina_clue_pending。", "在 602 点击“听维京娜说话”后，receive_vikina_lead() 写入 archive_lead。"],
+        effects: ["维京娜提到 0420 号电报底单被退回档案馆。", "阿列克谢由此决定去查底单，档案馆地点开放。"],
+        next: ["目标指向档案馆并凑情报 ×2、医疗 ×1。", "若在此之前已有 lana_car3，疗养院的线索前置可绕过 archive_lead。"],
+        source: "CampaignHUD.gd · _hear_vikina()；CampaignSim.gd · receive_vikina_lead()"
+      },
+      archive: {
+        title: "档案馆电报局", sub: "由维京娜线索打开的证据地点。",
+        trigger: ["archive_lead 解锁档案馆。", "疗养院另外要求情报 ×2 与医疗物资 ×1。"],
+        effects: ["目标文案要求到档案馆找调度底单；档案馆地点目前没有单独 STORY 节点。", "sanitarium 的准入检查的是 archive_lead 或 lana_car3 与物资数量，并不检查是否实际访问过档案馆。"],
+        next: ["持有足够情报与医疗物资后，目标转向疗养院。", "货场编组单是纸面证据，安娜的亲眼目击才证实拉娜在车厢内。"],
+        source: "CampaignData.gd · LOCS[archive], LOCS[sanitarium]；CampaignSim.gd · objective(), loc_unlocked()"
+      },
+      sanitarium: {
+        title: "疗养院：救出安娜与古丽娅", sub: "主线证实拉娜所在车厢，并开放西站调车场。",
+        trigger: ["第一幕结束后，需先有 archive_lead 或 lana_car3。", "还需情报 ×2、医疗物资 ×1。"],
+        effects: ["唯一选项救出安娜（0419）与古丽娅，良知 +6。", "设置 lana_car3，开放调车场；确认救援时实际扣除一件救援药品。"],
+        next: ["主目标转向西站调车场，抄下铁壳号 23:00 发车令。", "扣除顺序为绷带、阿司匹林、抗生素。按钮显示本次实际扣除的道具。"],
+        source: "CampaignData.gd · STORY[sanitarium]；CampaignSim.gd · loc_unlocked(), objective(), resolve_story()"
+      },
+      marshalling: {
+        title: "西站调车场：终局时刻", sub: "lana_car3 是调车场的解锁旗标。",
+        trigger: ["安娜确认拉娜在第三节车厢后，调车场开放。", "首次进入时播放调度令剧情。"],
+        effects: ["抄下发车时刻：情报 +1，设置 endgame_known。", "若扎哈尔仍在队且路线达到 ruthless（划痕 ≥2 或良知 ≤25），他会被安排在之后的结算中背叛并离队。"],
+        next: ["主目标指向布拉风货场。", "庄园由黑市电台的叶莲娜线索开放，可提前探索。"],
+        source: "CampaignData.gd · STORY[marshalling]；CampaignSim.gd · objective(), resolve_story(), finish_raid()"
+      },
+      sidegate: {
+        title: "第一幕后的可选地点", sub: "主目标之外的首次访问剧情。",
+        trigger: ["第一幕完成后，地点选择可前往多个地图；故事顺序并非完全固定。", "当前 objective() 不会把 Yard 或 Canteen 强制列为下一步。"],
+        effects: ["货场先揭示 0420 属于第三节车厢，但不设置 lana_car3。", "食堂提供一段自卫后的罪疚剧情；市场提供伊万与 6.66 MHz 线索。"],
+        next: ["点右侧节点查看每段支线具体代价。", "如果希望有单一线性叙事顺序，需要决定这些信息是否允许提前出现。"],
+        source: "CampaignData.gd · LOCS / STORY；CampaignSim.gd · depart(), objective()"
+      },
+      yard: {
+        title: "货场：编组单", sub: "第一幕后可选的首次剧情地点。",
+        trigger: ["yard 没有额外 req_flag；完成第一幕后可出发。", "剧情对话已提到 0420 在第三节闷罐车厢。"],
+        effects: ["收好编组单：情报 +1，扎哈尔入队。", "这段剧情没有写 lana_car3；该旗标仍等到疗养院救援。"],
+        next: ["扎哈尔后续是否背叛取决于 ruthlessness 阈值以及他是否仍在队。", "剧情提前告知车厢位置、系统稍后才确认，属于可供复核的节奏点。"],
+        source: "CampaignData.gd · STORY[yard]；CampaignSim.gd · resolve_story(), _route_is_ruthless()"
+      },
+      canteen: {
+        title: "食堂：瓦西里的死亡", sub: "可选支线；现有剧情只提供一个结果选项。",
+        trigger: ["首次进入食堂后厨触发。", "瓦西里在高烧中冲出杂物间。"],
+        effects: ["用砍骨刀自卫：设置 ptsd、vasily，获得砍骨刀，良知 −4。", "帕维尔随后入队；余波幻灯写明阿列克谢之后回去向费奥多尔忏悔。"],
+        next: ["不改变 0420 主线解锁条件。", "这是“被迫自卫”而非明确可选的饶恕/致死分支。"],
+        source: "CampaignData.gd · STORY[canteen]；CutsceneData.gd · AFTERMATH[canteen:0]"
+      },
+      market: {
+        title: "黑市：伊万的三种交易", sub: "三种选择都写入 broadcast_signal。",
+        trigger: ["首次访问市场时触发；市场在第一幕后可进入。", "若母亲已经离世，objective() 会优先要求去市场找栖身处。"],
+        effects: ["公平交易：废钢 −2、情报 +1。", "分药救人：抗生素 −1、良知 +10、伊万入队。", "背叛伊万：药品 +2、废钢 +3、透析液 +1、划痕 +1、良知 −14，并写入 betrayed。"],
+        next: ["无论哪种选择，都得到 broadcast_signal。", "进入市场后还要实际触发 6.66 MHz 地标；离开时成功撤离或撑到天亮才会展开广播剧情。"],
+        source: "CampaignData.gd · STORY[market]；NightExplore.gd · landmark trigger；CampaignSim.gd · finish_raid()"
+      },
+      broadcast: {
+        title: "广播：叶莲娜的抉择", sub: "先要有市场信号，再在地图中触发地标。",
+        trigger: ["市场选择设置 broadcast_signal。", "在市场夜潜接触“6.66 电台棚”后设置 broadcast_pending；成功撤离或 dawn 才打开广播剧情。"],
+        effects: ["带叶莲娜同行：叶莲娜入队并设置 manor_tip。", "只记路线：叶莲娜留下，但同样设置 manor_tip。"],
+        next: ["两种选择都开放松林庄园。", "如果没有触发这个地标，当前实现没有其他写入 manor_tip 的途径。"],
+        source: "LevelBeats.gd · market.landmarks；NightExplore.gd · broadcast trigger；CampaignData.gd · STORY[broadcast]"
+      },
+      manor: {
+        title: "庄园：留下真相", sub: "manor_tip 是现有关卡的明确解锁旗标。",
+        trigger: ["地图准入要求 manor_tip。当前 flag 由广播剧情的两个分支写入。", "若追查到庄园阶段时尚未取得线索，主目标先指向铁路黑市和电台棚。"],
+        effects: ["在进料口搜查拍照，照片结算时保留即可获得 truth；腹透液从托盘另取。"],
+        next: ["truth 使真相相关结局可达。", "最终判定仍看母亲状态、划痕与 betrayed，而非只看这次选择。"],
+        source: "CampaignData.gd · LOCS[manor], STORY[manor]；CampaignSim.gd · objective(), ending_key()"
+      },
+      mother: {
+        title: "母亲的生死：资源分支", sub: "这不是对白菜单里的选择，而是每日结算状态。",
+        trigger: ["初始 mother_alive 为 true。", "把透析液交给母亲会放到机器旁；每日 advance_day() 优先消耗已交付的袋数。"],
+        effects: ["有袋数：消耗一袋并恢复 dial。", "没有袋数：dial −1；降到 0 后 mother_alive=false、设置 mother_lost、良知 −10。"],
+        next: ["失去母亲后，目标转为前往铁路黑市找栖身处。", "在市场成功撤离或撑到天亮才会记录栖身处；倒地或中止不会触发。"],
+        source: "CampaignSim.gd · hand_dial_to_mother(), advance_day(), objective(), finish_raid()"
+      },
+      refuge: {
+        title: "母亲离世后：黑市栖身处", sub: "市场撤离条件满足后出现的一次性接续故事。",
+        trigger: ["mother_alive=false、尚未找到 market_refuge，且在 market 任务 extracted 或 dawn。", "若当时已有其他剧情在播，market_refuge_story_pending 会延后到该剧情处理后。"],
+        effects: ["找到废信号室；唯一选项是锁好门，在短波声里休息，并设置 market_refuge_seen。", "对白保留“回 602 看母亲遗物并继续追拉娜”的方向。"],
+        next: ["602 室转为纪念地与物资据点。", "地图上的栖身处是黑市支线场景，不会替代后续找拉娜的主线。"],
+        source: "CampaignSim.gd · objective(), finish_raid(), resolve_story()；CampaignData.gd · STORY[market_refuge]"
+      },
+      station: {"title": "布拉风货场", "sub": "搜查检修柜，抄回交接底单后，开放鹰嘴崖。", "trigger": ["西站发车令已抄录。"], "effects": ["搜查检修柜并成功返回，确认鹰嘴崖检修路。"], "next": [], "source": "CampaignSim.gd · _settle_story_objective()"},
+      crag: {"title": "鹰嘴崖", "sub": "打开第三节车厢，带拉娜一行从检修路撤离。", "trigger": ["交接底单已经抄回。出发前选择救援范围。"], "effects": ["亲自从撤离点离开才完成救援。全救会增加良知，只救拉娜则留下一道划痕。"], "next": [], "source": "CampaignSim.gd · _settle_story_objective()"},
+      tower: {"title": "302 高地广播塔", "sub": "守住播音台，传输完成后返回，开启正式结局。", "trigger": ["鹰嘴崖救援完成，而且持有庄园罪证。"], "effects": ["长按 E 12 秒传输。返回时根据选择记下完整播报名单或仅播罪证。"], "next": [], "source": "CampaignSim.gd · _settle_story_objective()"},
+      endings: {
+        title: "五种结局：按条件顺序判定", sub: "点击下方结局卡可用来比较故事判定条件。",
+        trigger: ["ending_key() 依次检查 alpha、缺 truth、划痕是否达到 5，再落到 beta。", "alpha 需要母亲存活、truth、划痕少于 5 且无 betrayed。划痕为 0 时额外追加奖励对白与分镜。"],
+        effects: ["无真相时，由母亲生死决定 A 或 C。", "truth 存在且划痕 ≥5 则 Ending B；truth 存在、划痕 <5 但不满足 alpha 则 True Beta。划痕为 0 的 β 也有专属奖励对白与分镜。"],
+        next: ["完整条件见本页下方判定表。", "五类结局描述来自 CampaignSim.ending_preview()。"],
+        source: "CampaignSim.gd · ending_key(), ending_preview()"
+      }
+    };
+
+    const edgeDefs = [
+      { from: "prologue", to: "coldstore", kind: "main", tags: "main" },
+      { from: "coldstore", to: "vikina", kind: "main", tags: "main" },
+      { from: "vikina", to: "archive", kind: "main", tags: "main" },
+      { from: "archive", to: "sanitarium", kind: "conditional", tags: "main" },
+      { from: "sanitarium", to: "marshalling", kind: "main", tags: "main ending" },
+      { from: "marshalling", to: "station", kind: "main", tags: "main" },
+      { from: "station", to: "crag", kind: "main", tags: "main" },
+      { from: "crag", to: "tower", kind: "conditional", tags: "main ending" },
+      { from: "manor", to: "tower", kind: "conditional", tags: "main ending" },
+      { from: "tower", to: "endings", kind: "main", tags: "main ending" },
+      { from: "crag", to: "endings", kind: "risk", tags: "ending" },
+      { from: "refuge", to: "endings", kind: "risk", tags: "ending mother" },
+      { from: "coldstore", to: "sidegate", kind: "side", tags: "companions market" },
+      { from: "sidegate", to: "yard", kind: "side", tags: "companions" },
+      { from: "sidegate", to: "canteen", kind: "side", tags: "companions" },
+      { from: "sidegate", to: "market", kind: "side", tags: "market" },
+      { from: "market", to: "broadcast", kind: "conditional", tags: "market" },
+      { from: "broadcast", to: "manor", kind: "main", tags: "market" },
+      { from: "coldstore", to: "mother", kind: "risk", tags: "mother" },
+      { from: "mother", to: "refuge", kind: "risk", tags: "mother" },
+      { from: "market", to: "refuge", kind: "risk", tags: "mother market" },
+    ];
+
+    const board = document.getElementById("board");
+    const edgeLayer = document.getElementById("edge-layer");
+    const ns = "http://www.w3.org/2000/svg";
+    let activeFilter = "all";
+
+    function hasTag(element, tag) {
+      return (element.dataset.tags || "").split(/\s+/).includes(tag);
+    }
+    function applyFilter(filter) {
+      activeFilter = filter;
+      document.querySelectorAll(".filter").forEach(function (button) {
+        button.setAttribute("aria-pressed", String(button.dataset.filter === filter));
+      });
+      document.querySelectorAll(".flow-node").forEach(function (node) {
+        const show = filter === "all" || hasTag(node, filter);
+        node.classList.toggle("is-dimmed", !show);
+      });
+      edgeLayer.querySelectorAll(".edge").forEach(function (edge) {
+        const show = filter === "all" || (edge.dataset.tags || "").split(/\s+/).includes(filter);
+        edge.classList.toggle("is-dimmed", !show);
+      });
+    }
+    function drawEdges() {
+      const bounds = board.getBoundingClientRect();
+      const width = board.scrollWidth;
+      const height = board.scrollHeight;
+      const svg = document.getElementById("connections");
+      svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+      svg.setAttribute("width", width);
+      svg.setAttribute("height", height);
+      edgeLayer.replaceChildren();
+      edgeDefs.forEach(function (edgeDef) {
+        const from = document.querySelector('.flow-node[data-id="' + edgeDef.from + '"]');
+        const to = document.querySelector('.flow-node[data-id="' + edgeDef.to + '"]');
+        if (!from || !to) return;
+        const a = from.getBoundingClientRect();
+        const b = to.getBoundingClientRect();
+        const ax = a.left + a.width / 2 - bounds.left;
+        const ay = a.top + a.height / 2 - bounds.top;
+        const bx = b.left + b.width / 2 - bounds.left;
+        const by = b.top + b.height / 2 - bounds.top;
+        const dx = bx - ax;
+        const dy = by - ay;
+        let sx, sy, ex, ey, c1x, c1y, c2x, c2y;
+        if (Math.abs(dx) >= Math.abs(dy)) {
+          const direction = dx >= 0 ? 1 : -1;
+          sx = (direction > 0 ? a.right : a.left) - bounds.left;
+          sy = ay;
+          ex = (direction > 0 ? b.left : b.right) - bounds.left;
+          ey = by;
+          const pull = Math.max(32, Math.min(115, Math.abs(ex - sx) * .45));
+          c1x = sx + direction * pull; c1y = sy;
+          c2x = ex - direction * pull; c2y = ey;
+        } else {
+          const direction = dy >= 0 ? 1 : -1;
+          sx = ax; sy = (direction > 0 ? a.bottom : a.top) - bounds.top;
+          ex = bx; ey = (direction > 0 ? b.top : b.bottom) - bounds.top;
+          const pull = Math.max(28, Math.min(105, Math.abs(ey - sy) * .4));
+          c1x = sx; c1y = sy + direction * pull;
+          c2x = ex; c2y = ey - direction * pull;
+        }
+        const path = document.createElementNS(ns, "path");
+        path.setAttribute("d", "M " + sx + " " + sy + " C " + c1x + " " + c1y + ", " + c2x + " " + c2y + ", " + ex + " " + ey);
+        path.setAttribute("class", "edge edge-" + edgeDef.kind + (activeFilter !== "all" && !edgeDef.tags.split(/\s+/).includes(activeFilter) ? " is-dimmed" : ""));
+        path.dataset.tags = edgeDef.tags;
+        edgeLayer.appendChild(path);
+      });
+    }
+    function writeList(id, items) {
+      const list = document.getElementById(id);
+      list.replaceChildren();
+      items.forEach(function (item) {
+        const li = document.createElement("li");
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+    function inspect(id) {
+      const record = details[id];
+      if (!record) return;
+      document.querySelectorAll(".flow-node").forEach(function (node) {
+        const selected = node.dataset.id === id;
+        node.setAttribute("aria-pressed", String(selected));
+      });
+      document.getElementById("detail-title").textContent = record.title;
+      document.getElementById("detail-sub").textContent = record.sub;
+      writeList("detail-trigger", record.trigger);
+      writeList("detail-effects", record.effects);
+      writeList("detail-next", record.next);
+      document.getElementById("detail-source").textContent = "来源：" + record.source;
+    }
+
+    document.querySelectorAll(".filter").forEach(function (button) {
+      button.addEventListener("click", function () { applyFilter(button.dataset.filter); });
+    });
+    document.querySelectorAll(".flow-node").forEach(function (node) {
+      node.addEventListener("click", function () { inspect(node.dataset.id); });
+    });
+    document.getElementById("reset-view").addEventListener("click", function () {
+      applyFilter("all");
+      inspect("coldstore");
+    });
+    document.getElementById("print-page").addEventListener("click", function () { window.print(); });
+    window.addEventListener("resize", function () { requestAnimationFrame(drawEdges); });
+    if ("ResizeObserver" in window) new ResizeObserver(drawEdges).observe(board);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawEdges);
+    inspect("coldstore");
+    requestAnimationFrame(drawEdges);
+  </script>
+</body>
+</html>

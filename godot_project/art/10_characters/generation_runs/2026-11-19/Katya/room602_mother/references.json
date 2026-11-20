@@ -1,0 +1,17 @@
+{
+  "character": "Katya / Mother",
+  "identity_reference": {
+    "path": "res://art/10_characters/generation_runs/2026-11-18/Katya/identity_master_raw.png",
+    "role": "Katya identity and age"
+  },
+  "story_scene_reference": {
+    "path": "res://art/60_ui/cg/cg_intro_mother.jpg",
+    "source_deck": "presentations/Z年纪事_剧情触发过场分镜_审阅稿.pptx",
+    "source_slide": 3,
+    "role": "bed style and position, mother's resting pose"
+  },
+  "empty_room_target": {
+    "path": "res://art/40_interiors/BG_602_Mother_Integrated.png",
+    "role": "original mother-area room composition"
+  }
+}

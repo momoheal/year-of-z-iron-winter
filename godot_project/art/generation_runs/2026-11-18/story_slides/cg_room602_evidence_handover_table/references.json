@@ -1,0 +1,11 @@
+{
+  "references": [
+    "art/40_interiors/BG_602_Mother_Integrated.png",
+    "art/60_ui/cg/cg_manor_c0b.jpg",
+    "art/60_ui/cg/cg_marshalling_c0.jpg",
+    "art/60_ui/cg/cg_station_buran_scene.jpg",
+    "art/10_characters/portraits/PRT_Aleksei_Calm.png"
+  ],
+  "generated_output": "generated_output.png",
+  "final_file": "art/60_ui/cg/cg_room602_evidence_handover_table.jpg"
+}

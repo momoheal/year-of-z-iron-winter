@@ -1,0 +1,66 @@
+{
+  "character": "Dialogue avatars",
+  "export": "512x512 PNG",
+  "workflow": "one generated calm portrait per dialogue identity; resized from raw square output to 512x512 for game assets",
+  "dialogue_avatar_mapping": "CampaignHUD.gd maps the eight previously blank speakers to these portraits; calm portrait is used as fallback for ungenerated moods.",
+  "assets": [
+    {
+      "prompt": "PRT_Dispatcher_Calm.prompt.txt",
+      "raw": "PRT_Dispatcher_Calm_raw.png",
+      "file": "PRT_Dispatcher_Calm.png",
+      "dimensions": "512x512"
+    },
+    {
+      "prompt": "PRT_Sergei_Calm.prompt.txt",
+      "raw": "PRT_Sergei_Calm_raw.png",
+      "file": "PRT_Sergei_Calm.png",
+      "dimensions": "512x512"
+    },
+    {
+      "prompt": "PRT_Accountant_Calm.prompt.txt",
+      "raw": "PRT_Accountant_Calm_raw.png",
+      "file": "PRT_Accountant_Calm.png",
+      "dimensions": "512x512"
+    },
+    {
+      "prompt": "PRT_Vasily_Calm.prompt.txt",
+      "raw": "PRT_Vasily_Calm_raw.png",
+      "file": "PRT_Vasily_Calm.png",
+      "dimensions": "512x512"
+    },
+    {
+      "prompt": "PRT_Zhukov_Calm.prompt.txt",
+      "raw": "PRT_Zhukov_Calm_raw.png",
+      "file": "PRT_Zhukov_Calm.png",
+      "dimensions": "512x512"
+    },
+    {
+      "prompt": "PRT_MedicineSeller_Calm.prompt.txt",
+      "raw": "PRT_MedicineSeller_Calm_raw.png",
+      "file": "PRT_MedicineSeller_Calm.png",
+      "dimensions": "512x512"
+    },
+    {
+      "prompt": "PRT_Boyko_Calm.prompt.txt",
+      "raw": "PRT_Boyko_Calm_raw.png",
+      "file": "PRT_Boyko_Calm.png",
+      "dimensions": "512x512"
+    },
+    {
+      "prompt": "PRT_Jana_Calm.prompt.txt",
+      "raw": "PRT_Jana_Calm_raw.png",
+      "file": "PRT_Jana_Calm.png",
+      "dimensions": "512x512"
+    }
+  ],
+  "date": "2026-11-19",
+  "image_route": {
+    "entrypoint": "image_gen.imagegen",
+    "tool": "Codex image_gen",
+    "status": "used"
+  },
+  "schema": "winter-iron.character-art-run.v1",
+  "portrait_states": [
+    "Calm"
+  ]
+}

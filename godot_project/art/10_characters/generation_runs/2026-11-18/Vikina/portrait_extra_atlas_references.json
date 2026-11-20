@@ -1,0 +1,7 @@
+{
+  "identity_reference": "generation_runs/2026-11-18/Vikina/identity_master_raw.png",
+  "continuity_reference": "generation_runs/2026-11-18/Vikina/portrait_atlas_raw.png",
+  "style_reference": "godot_project/art/10_characters/portraits/PRT_Aleksei_Calm.png",
+  "route": "Codex image_gen (host_image)",
+  "states": { "top_left": "Fear", "top_right": "Determined", "bottom_left": "Hurt", "bottom_right": "Calm filler; no export" }
+}

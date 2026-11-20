@@ -16,6 +16,7 @@ extends SceneTree
 const Data := preload("res://scripts/CampaignData.gd")
 const SimScript := preload("res://scripts/CampaignSim.gd")
 const Gen := preload("res://scripts/RaidGen.gd")
+const SaveGameScript := preload("res://autoload/SaveGame.gd")
 
 const FRAME := 1.0 / 60.0
 
@@ -100,9 +101,9 @@ func _run_tests() -> void:
 		"6. projection 26 px/m, y-squash 0.62")
 	_assert(Data.BAG == 12 and Data.SIGHT == 12.0 and is_equal_approx(Data.SIGHT_CRACKED, 7.2),
 		"7. bag 12, sight 12m / 7.2m cracked")
-	_assert(Data.ITEMS.size() == 24, "8. 24 item types", str(Data.ITEMS.size()))
-	_assert(Data.WEAPONS.size() == 5 and Data.MATES.size() == 7 and Data.LOCS.size() == 14,
-		"9. 5 weapons / 7 mates / 14 locations")
+	_assert(Data.ITEMS.size() == 26, "8. 26 item types", str(Data.ITEMS.size()))
+	_assert(Data.WEAPONS.size() == 5 and Data.MATES.size() == 7 and Data.LOCS.size() == 17,
+		"9. 5 weapons / 7 mates / 17 locations")
 	_assert(Data.STORY.size() >= 5, "10. story beats present", str(Data.STORY.size()))
 	_assert(Data.weapon("cleaver")["dmg"] == 46.0 and Data.weapon("shotgun")["dmg"] == 95.0 \
 		and Data.weapon("mosin")["dmg"] == 150.0, "11. weapon damage 46 / 95 / 150")
@@ -122,10 +123,26 @@ func _run_tests() -> void:
 		"14. new game: conscience 50, no strokes, no names")
 	_assert(int(sim.stash.get("rye", 0)) == 3 and int(sim.stash.get("band", 0)) == 1,
 		"15. starting stash rye 3 / bandage 1")
-	_assert(sim.nodes.size() == 14, "16. 14 node states")
+	_assert(sim.nodes.size() == 17, "16. 17 node states")
+	var scene_paths := {}
+	var scene_files_ok := true
+	for loc in Data.LOCS:
+		var scene_path := String(loc.get("scene", ""))
+		if scene_path == "" or scene_paths.has(scene_path) or not FileAccess.file_exists(scene_path):
+			scene_files_ok = false
+		scene_paths[scene_path] = true
+	_assert(scene_files_ok and scene_paths.size() == Data.LOCS.size(),
+		"16a. each campaign location has a distinct playable scene file")
+	for plate_id in ["boiler", "archive", "underpass"]:
+		var level = load(Data.loc(plate_id).scene).instantiate()
+		var facade = level.get_node("World/Facade/Sprite")
+		_assert(not facade.visible, "%s uses the painted facade" % plate_id)
+		level.free()
 	_assert(sim.unlocked_count() == 1 and sim.selected_loc == "coldstore"
 		and not sim.can_depart(Data.loc("yard")), "17. first act starts at Cold Storage only",
 		str(sim.unlocked_count()))
+	_assert(not sim.night_complete and sim.base_display.is_empty() and sim.dial_machine_bags == 0,
+		"17a. new game initializes Room 602 display and dialysis handoff state")
 	_assert(not sim.mates.get("ash", false), "17b. Ash joins through the first act")
 	sim.flags.erase("first_act_pending")
 
@@ -133,13 +150,17 @@ func _run_tests() -> void:
 	var sanitarium: Dictionary = Data.loc("sanitarium")
 	_assert(not sim.loc_unlocked(sanitarium), "18. sanatorium gated at start")
 	sim.add_item("intel", 2)
-	_assert(sim.loc_unlocked(sanitarium), "19. sanatorium unlocks with 2 intel + 1 med")
+	_assert(not sim.loc_unlocked(sanitarium), "19a. the yard consist precedes the sanatorium")
+	sim.flags["story_yard"] = true
+	_assert(sim.loc_unlocked(sanitarium), "19. sanatorium unlocks with the consist, 2 intel and medicine")
 	_assert(not sim.loc_unlocked(Data.loc("manor")), "20. manor gated behind the pine-manor flag")
 	sim.flags["manor_tip"] = true
 	_assert(sim.loc_unlocked(Data.loc("manor")), "21. manor unlocks with manor_tip")
 	_assert(not sim.loc_unlocked(Data.loc("marshalling")), "22. marshalling gated behind lana_car3")
 	sim.flags["lana_car3"] = true
-	_assert(sim.loc_unlocked(Data.loc("marshalling")), "23. marshalling unlocks with lana_car3")
+	_assert(not sim.loc_unlocked(Data.loc("marshalling")), "23a. West Station requires Ivan’s destination lead")
+	sim.flags["story_market"] = true
+	_assert(sim.loc_unlocked(Data.loc("marshalling")), "23. West Station unlocks after Anna and Ivan")
 
 	# --- 5. 队伍 / 携带物 ---------------------------------------------------
 	sim.select_mate("ash")
@@ -156,9 +177,12 @@ func _run_tests() -> void:
 	# --- 6. 出发 → 夜潜 -----------------------------------------------------
 	sim.add_item("can", 2)
 	sim.load = {"can": 1, "water": 1, "asp": 1, "band": 1}
+	sim.weapon_mods = {"rifle": ["suppressor", "scope"]}
 	var before_water := int(sim.stash.get("water", 0))
 	_fresh_raid(sim, "coldstore")
 	_assert(sim.phase == "raid" and sim.raid != null, "28. depart enters the raid phase")
+	_assert(root.get_node("RaidBridge").cfg.get("weapon_mods", {}) == sim.weapon_mods,
+		"28a. installed weapon mods travel through RaidBridge into night exploration")
 	var R0 = sim.raid
 	R0.spawn_float(R0.player.x, R0.player.y,
 		"他眼底的紫黑血翳一点点退去，瞳孔重新聚起了人的光彩，他还记得一个能帮你的人。",
@@ -283,6 +307,8 @@ func _run_tests() -> void:
 	_assert(sim.phase == "report", "48. extraction lands on the report screen")
 	var R2: Dictionary = sim.last_report
 	_assert(String(R2["reason"]) == "extracted", "49. report reason is extracted")
+	_assert(sim.night_complete and not sim.can_depart(Data.loc("boiler")),
+		"49a. settled raid blocks another departure until the player sleeps")
 	_assert(int(sim.stash.get("scrap", 0)) == stash_before + 5, "50. haul is added to the stash")
 	_assert(int(R2["gained"]["scrap"]) == 5, "51. report lists 5 scrap")
 	_assert(int(sim.stash.get("band", 0)) >= band_before, "52. unused loadout is returned")
@@ -291,6 +317,12 @@ func _run_tests() -> void:
 	var left_after: float = float(sim.node_state("coldstore")["left"])
 	_assert(left_after <= 0.5 and left_after >= 0.05,
 		"55. node containers drop after a visit", "%.2f" % left_after)
+	sim.to_base()
+	_assert(sim.phase == "base" and sim.night_complete,
+		"55a. returning from report reaches Room 602 without advancing day")
+	sim.advance_day()
+	_assert(not sim.night_complete and sim.can_depart(Data.loc("boiler")),
+		"55b. sleeping reopens the next night's departure")
 
 	# --- 11. 天亮了：只带一半物 -------------------------------------------------
 	sim.phase = "base"
@@ -306,6 +338,8 @@ func _run_tests() -> void:
 	_assert(int(sim.last_report["gained"].get("wire", 0)) == 3,
 		"56. dawn keeps every other item (3 of 5)", str(sim.last_report["gained"]))
 	_assert(int(sim.last_report["hp"]) == 78, "57. dawn costs 22 HP", str(sim.last_report["hp"]))
+	sim.to_base()
+	sim.advance_day()
 
 	# --- 12. 倒地 / 放弃：什么都带不回 ------------------------------------------
 	sim.phase = "base"
@@ -317,6 +351,8 @@ func _run_tests() -> void:
 	sim.finish_raid("downed")
 	_assert(int(sim.stash.get("vodka", 0)) == vodka0, "58. downed keeps nothing")
 	_assert(int(sim.last_report["gained"].size()) == 0, "59. downed report is empty")
+	sim.to_base()
+	sim.advance_day()
 
 	sim.phase = "base"
 	_fresh_raid(sim, "boiler")
@@ -328,9 +364,11 @@ func _run_tests() -> void:
 	# --- 13. 次日：透析与母亲死亡 ---------------------------------------------
 	sim.new_game()
 	sim.add_item("dial", 1)
+	_assert(sim.hand_dial_to_mother() and sim.dial_machine_bags == 1,
+		"61a. dialysis fluid must be handed over beside the machine before sleep")
 	sim.advance_day()
 	_assert(sim.day == 2 and is_equal_approx(sim.dial, 3.0), "61. a bag of fluid refills dial to 3")
-	_assert(int(sim.stash.get("dial", 0)) == 0, "62. the bag is consumed")
+	_assert(int(sim.stash.get("dial", 0)) == 0 and sim.dial_machine_bags == 0, "62. prepared bag is consumed")
 	sim.advance_day()
 	_assert(is_equal_approx(sim.dial, 2.0), "63. without fluid dial drops by 1")
 	sim.advance_day()
@@ -338,6 +376,45 @@ func _run_tests() -> void:
 	_assert(not sim.mother_alive, "64. mother dies when dial runs out")
 	_assert(bool(sim.flags.get("mother_lost", false)), "65. mother_lost flag set")
 	_assert(int(sim.conscience) == 40, "66. losing mother costs 10 conscience", str(sim.conscience))
+
+	# --- 13a. 失母线黑市栖身处 -----------------------------------------------
+	sim.story_done[SimScript.FIRST_ACT_LOC] = true
+	sim.flags["first_act_pending"] = false
+	_assert(sim.objective()["zh"].find("铁路黑市") >= 0,
+		"66a. motherless route points to the rail black market")
+	sim.story_done["market"] = true
+	sim.flags["mother_lost"] = true
+	sim.phase = "base"
+	var motherless_market: Dictionary = Data.loc("market")
+	sim.depart(motherless_market)
+	if sim.raid != null:
+		sim.raid.pack.clear()
+	sim.finish_raid("downed")
+	_assert(not bool(sim.flags.get("market_refuge_found", false)),
+		"66b. downed at the market does not unlock the refuge")
+	_assert(sim.objective()["zh"].find("铁路黑市") >= 0,
+		"66c. failed market trip keeps the refuge objective active")
+	sim.to_base()
+	sim.advance_day()
+	sim.depart(motherless_market)
+	if sim.raid != null:
+		sim.raid.pack.clear()
+	sim.finish_raid("extracted")
+	_assert(bool(sim.flags.get("market_refuge_found", false))
+		and bool(sim.last_report.get("market_refuge_found", false)),
+		"66d. successful market extraction secures the refuge and marks the report")
+	_assert(sim.story_open and sim.story_id == "market_refuge",
+		"66e. refuge arrival opens its illustrated story beat")
+	var refuge_result: Dictionary = sim.resolve_story(0)
+	_assert(not refuge_result.is_empty() and bool(sim.story_done.get("market_refuge", false)),
+		"66f. refuge story resolves and is not replayed")
+	sim.toggle_base_display("item:rye")
+	var refuge_save: Dictionary = SaveGameScript.to_dict(sim)
+	var restored_refuge := SimScript.new()
+	SaveGameScript.apply(restored_refuge, refuge_save)
+	_assert(bool(restored_refuge.flags.get("market_refuge_found", false))
+		and restored_refuge.base_display.has("item:rye"),
+		"66g. refuge flag and room display survive save/load application")
 
 	# --- 14. 剧情节拍 ops -----------------------------------------------------
 	sim.new_game()
@@ -348,15 +425,23 @@ func _run_tests() -> void:
 	_assert(sim.names.size() == 1, "68. choice A1 writes one real name")
 	_assert(int(sim.conscience) == 58, "69. A1 grants +8 conscience", str(sim.conscience))
 	_assert(bool(sim.mates.get("ash", false)), "70. A1 grants Ash via after_mate")
-	_assert(sim.mate == "ash" and sim.unlocked_count() == 10, "70b. Act I selects Ash and opens the rest of the city")
+	_assert(sim.mate == "ash" and sim.unlocked_count() == 10, "70b. Act I selects Ash and opens the city")
 	_assert(bool(sim.story_done.get("coldstore", false)), "71. the beat is marked done")
-	_assert(sim.objective()["zh"].find("疗养院") >= 0, "72. objective advances after a name is written")
+	_assert(bool(sim.flags.get("vikina_clue_pending", false)) and sim.objective()["zh"].find("维京娜") >= 0,
+		"72. objective returns to Room 602 for Vikina's offhand clue")
+	_assert(sim.receive_vikina_lead() and bool(sim.flags.get("archive_lead", false))
+		and sim.loc_unlocked(Data.loc("archive")), "72a. Vikina's lead points to the archive")
+	sim.add_item("intel", 2)
+	sim.flags["story_yard"] = true
+	_assert(sim.loc_unlocked(Data.loc("sanitarium")), "72b. archive lead, yard consist and supplies unlock the sanatorium")
 	var res2: Dictionary = sim.resolve_story(1)
 	_assert(res2.is_empty(), "73. replaying a finished beat is a no-op")
 
 	# --- 15. 结局判定 ---------------------------------------------------------
 	sim.new_game()
-	_assert(sim.ending_key() == "ENDING_C_NUMBNESS", "74. no truth → ending C")
+	_assert(sim.ending_key() == "ENDING_A_RETURN_HOME", "74. no truth while Mother lives → ending A")
+	sim.mother_alive = false
+	_assert(sim.ending_key() == "ENDING_C_NUMBNESS", "74a. no truth and Mother lost → ending C")
 	_assert(not String(sim.ending_preview()["zh"]).contains("帕沙"), "74b. no Eagle's Crag epilogue without truth")
 	sim.flags["truth"] = true
 	sim.mother_alive = false
@@ -366,7 +451,7 @@ func _run_tests() -> void:
 	sim.flags.erase("betrayed")
 	sim.mother_alive = true
 	_assert(sim.ending_key() == "TRUE_ALPHA_HELLO_LANA", "77. truth + clean hands → TRUE α")
-	_assert(String(sim.ending_preview()["zh"]).contains("帕沙"), "77b. Pasha epilogue follows the breakout")
+	_assert(not String(sim.ending_preview()["zh"]).contains("帕沙"), "77b. preview omits the epilogue before the broadcast")
 	sim.tally = 1
 	_assert(sim.ending_key() == "ENDING_B_FLAWED_LIBERATION", "78. strokes → ending B")
 	sim.mother_alive = false
@@ -375,6 +460,23 @@ func _run_tests() -> void:
 		"80. ending preview matches the key")
 
 	# --- 16. 武器拼装 / 战利品尺寸 ----------------------------------------------
+	sim.new_game()
+	_assert(sim.toggle_base_display("item:rye") and int(sim.stash.get("rye", 0)) == 3,
+		"80b. displaying an item does not consume stash")
+	sim.toggle_base_display("item:can")
+	sim.toggle_base_display("item:water")
+	sim.toggle_base_display("item:band")
+	_assert(sim.base_display.size() == 4 and not sim.toggle_base_display("item:scrap"),
+		"80c. Room 602 display has four slots")
+	sim.take_item("rye", 3)
+	_assert(not sim.base_display.has("item:rye"), "80d. consumed item is removed from display")
+	var mosin: Dictionary = Data.weapon("mosin")
+	sim.phase = "report"
+	sim.last_report = {"new_weapons": []}
+	sim.register_salvaged_weapon("mosin")
+	_assert(sim.weapon_owned(mosin) and String(sim.best_weapon()["id"]) == "mosin"
+		and sim.last_report["new_weapons"].has("mosin"),
+		"80a. recovered OSK rifle persists in campaign and appears in the report")
 	sim.new_game()
 	var cleaver: Dictionary = Data.weapon("cleaver")
 	_assert(not sim.weapon_owned(cleaver), "81. cleaver locked without its blade")
@@ -401,9 +503,58 @@ func _run_tests() -> void:
 	# --- 17. HUD 各界面重建 ----------------------------------------------------
 	sim.new_game()
 	sim.phase = "base"
+	sim.add_item("dial", 1)
 	hud.refresh()
 	await _frames(2)
 	_assert(hud.body.get_child_count() > 0, "87. base screen builds")
+	var base_buttons: Array = hud.body.find_children("*", "Button", true, false)
+	var room_buttons: Array[String] = []
+	for button in base_buttons:
+		room_buttons.append((button as Button).text)
+	_assert(room_buttons.count("和妈妈说话") == 1 and room_buttons.count("交透析液 ×1") == 1
+		and not room_buttons.has("陈列"), "87a. mother actions appear once, inside the mother tab")
+	var art := hud.body.find_child("RoomZoneBackground", true, false) as TextureRect
+	var actions := hud.body.find_child("RoomZoneActions", true, false) as ScrollContainer
+	_assert(art != null and actions != null and not art.get_global_rect().intersects(actions.get_global_rect()),
+		"87c. room art and controls occupy distinct areas")
+	_assert(room_buttons.has("母亲区域") and room_buttons.has("储物区") and room_buttons.has("武器与队伍"),
+		"87d. room tabs are available directly on the base screen")
+	hud.call("_select_room_zone", "storage")
+	hud.refresh()
+	await _frames(2)
+	var storage_buttons := []
+	for button in hud.body.find_children("*", "Button", true, false):
+		storage_buttons.append(button.text)
+	_assert(storage_buttons.has("陈列") and not storage_buttons.has("和妈妈说话"),
+		"87e. storage exposes display controls only")
+	sim.flags["market_refuge_found"] = true
+	hud.call("_select_room_zone", "refuge")
+	hud.refresh()
+	await _frames(2)
+	var refuge_background := hud.body.find_child("RoomZoneBackground", true, false) as TextureRect
+	_assert(refuge_background != null and refuge_background.texture != null
+		and refuge_background.texture.resource_path.ends_with("BG_Market_Hideout.png"),
+		"87f. unlocked refuge tab displays its generated background")
+	sim.flags.erase("market_refuge_found")
+	hud.refresh()
+	await _frames(2)
+	sim.phase = "report"
+	sim.night_complete = true
+	sim.last_report = {"reason": "extracted", "loc": Data.loc("coldstore"), "day": sim.day,
+		"gained": {}, "gained_order": [], "looted": 0, "total": 0, "killed": 0, "half_saved": 0,
+		"hp": 100, "warmth": 100, "new_weapons": [], "events": []}
+	hud.refresh()
+	await _frames(2)
+	var report_buttons: Array = hud.body.find_children("*", "Button", true, false)
+	var has_return_home := false
+	var has_sleep_next := false
+	for button in report_buttons:
+		var button_text := String((button as Button).text)
+		has_return_home = has_return_home or button_text == "回到 602 室（不推进日期）"
+		has_sleep_next = has_sleep_next or button_text == "睡到明天"
+	_assert(has_return_home and has_sleep_next, "87b. report offers separate return-home and sleep actions")
+	sim.phase = "base"
+	sim.night_complete = false
 	sim.selected_loc = "coldstore"
 	sim.phase = "map"
 	hud.refresh()
@@ -417,6 +568,13 @@ func _run_tests() -> void:
 	hud.refresh()
 	await _frames(2)
 	_assert(hud.body.get_child_count() > 0, "90. ending screen builds")
+	var ending_art: TextureRect = hud.body.get_node_or_null("EndingScreen/EndingCG") as TextureRect
+	_assert(ending_art != null and ending_art.texture != null,
+		"90a. ending screen displays the mapped CG", ending_art.texture.resource_path if ending_art and ending_art.texture else "missing")
+	var ending_replay := false
+	for button in hud.body.find_children("*", "Button", true, false):
+		ending_replay = ending_replay or String((button as Button).text) == "回看结局与余波"
+	_assert(ending_replay, "90b. ending screen exposes the CG and aftermath replay")
 	sim.logbook_open = true
 	hud.refresh()
 	await _frames(2)

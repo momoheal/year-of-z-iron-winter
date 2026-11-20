@@ -581,5 +581,82 @@
    0,
    0
   ]
+ },
+ "MAP_Underpass_Overview": {
+  "path": "res://art/80_maps/Underpass/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Underpass_ConcretePier": {
+  "path": "res://art/30_props/PRP_Underpass_ConcretePier.png",
+  "size": [
+   274,
+   464
+  ],
+  "pivot": [
+   137.0,
+   464
+  ]
+ },
+ "PRP_Underpass_SteamPipe": {
+  "path": "res://art/30_props/PRP_Underpass_SteamPipe.png",
+  "size": [
+   1242,
+   330
+  ],
+  "pivot": [
+   621.0,
+   330
+  ]
+ },
+ "PRP_Underpass_SandbagLine": {
+  "path": "res://art/30_props/PRP_Underpass_SandbagLine.png",
+  "size": [
+   483,
+   203
+  ],
+  "pivot": [
+   241.5,
+   203
+  ]
+ },
+ "PRP_Underpass_DispatchLocker": {
+  "path": "res://art/30_props/PRP_Underpass_DispatchLocker.png",
+  "size": [
+   270,
+   303
+  ],
+  "pivot": [
+   135.0,
+   303
+  ]
+ },
+ "PRP_Underpass_SupplyCrates": {
+  "path": "res://art/30_props/PRP_Underpass_SupplyCrates.png",
+  "size": [
+   328,
+   246
+  ],
+  "pivot": [
+   164.0,
+   246
+  ]
+ },
+ "PRP_Underpass_HeaterDrum": {
+  "path": "res://art/30_props/PRP_Underpass_HeaterDrum.png",
+  "size": [
+   188,
+   410
+  ],
+  "pivot": [
+   94.0,
+   410
+  ]
  }
 }

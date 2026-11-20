@@ -1,0 +1,9 @@
+{
+  "identity_references": [
+    "assets/concept_art/CON_05_Lyudmila_ChildRescue.png",
+    "godot_project/art/60_ui/cg/cg_fire_rescue_scene.jpg"
+  ],
+  "style_reference": "godot_project/art/10_characters/portraits/PRT_Anna_Calm.png",
+  "source_image": "exec-d7beadf6-34ff-48bb-8e9f-120798525682.png",
+  "route": "Codex image_gen (host_image)"
+}

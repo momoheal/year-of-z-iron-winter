@@ -1,0 +1,8 @@
+Use case: precise-object-edit
+Asset type: Room 602 mother-area background plate for a 2D game, exact 1672x941 landscape.
+Input image 1: edit target, the current empty mother-room background.
+Input image 2: visual reference for the iron hospital bed's shape, angle, scale, bedding and the established story-scene lighting.
+Input image 3: identity reference for Katya only; do not put a person in this empty version.
+Primary request: replace the small narrow cot and blue plaid folded throw in Image 1 with a more substantial worn dark iron-frame hospital bed matching Image 2: curved dark iron headboard toward the right/window side, footboard toward the left foreground, mattress aligned to the room's floor plane. Use a plain charcoal-grey wool cover and a pale worn pillow like the story scene, with believable folds. Keep the bed empty and leave the bedding laid naturally, so this is the post-loss/empty-room version.
+Preserve the established room architecture and exact composition of Image 1: faded floral wallpaper at left, cracked plaster, frosted two-pane window, radiator and pipes, tiled floor, cold blue winter light and restrained warm lamp light, dialysis machine cart to the right of the bed. Keep the cart grounded and clearly readable. Make the hospital bed large enough to feel like the bed seen in the story CG, without blocking the window or radiator.
+Constraints: change only the bed and its bedding; keep all other objects, layout, camera, crop, painterly oil-brush style and lighting consistent with Image 1. No people in this empty version. No additional beds, furniture, text, labels, UI, weapons, or watermark.

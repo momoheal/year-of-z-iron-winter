@@ -1,0 +1,193 @@
+{
+  "run_id": "2026-11-17-room602",
+  "route": "host_image",
+  "notes": "All backgrounds and transparent props visually reviewed; transparency checked over checkerboard contact sheet. Original generated images preserved in raw/.",
+  "assets": [
+    {
+      "name": "BG_602_Mother",
+      "kind": "background",
+      "runtime_path": "godot_project/art/40_interiors/BG_602_Mother.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_602_Mother.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-17-room602/prompts/BG_602_Mother.txt",
+      "generator": "Codex image_gen.imagegen / host_image",
+      "generation_id": "exec-308c4e1b-bd5c-45b4-9365-686fe03157d7.png",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "sha256": "1865eab186f640a1eef40e0141cd7cdb3a540e0236f0914b178b4469f6d8fd60",
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "opaque_pixels": 1573352,
+      "partially_transparent_pixels": 0
+    },
+    {
+      "name": "BG_602_Storage",
+      "kind": "background",
+      "runtime_path": "godot_project/art/40_interiors/BG_602_Storage.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_602_Storage.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-17-room602/prompts/BG_602_Storage.txt",
+      "generator": "Codex image_gen.imagegen / host_image",
+      "generation_id": "exec-0bc060cf-dc9c-45e2-bb2f-02766c594aec.png",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "sha256": "5c11282d9599310e352bc3405977bd8ea4b31ccefbd751e9593bf43934e9dc82",
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "opaque_pixels": 1573352,
+      "partially_transparent_pixels": 0
+    },
+    {
+      "name": "BG_602_Arsenal",
+      "kind": "background",
+      "runtime_path": "godot_project/art/40_interiors/BG_602_Arsenal.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_602_Arsenal.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-17-room602/prompts/BG_602_Arsenal.txt",
+      "generator": "Codex image_gen.imagegen / host_image",
+      "generation_id": "exec-090c3d36-4e89-47d9-8c23-de0f0d01cac0.png",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "sha256": "b3b755dcf11febdab765927659cd99facbcc031dd6210c0dca02ed7be6ee2cc6",
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "opaque_pixels": 1573352,
+      "partially_transparent_pixels": 0
+    },
+    {
+      "name": "BG_Market_Hideout",
+      "kind": "background",
+      "runtime_path": "godot_project/art/40_interiors/BG_Market_Hideout.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_Market_Hideout.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-17-room602/prompts/BG_Market_Hideout.txt",
+      "generator": "Codex image_gen.imagegen / host_image",
+      "generation_id": "exec-d61f5e7a-7e7f-4c30-84f0-e8dcc031cc80.png",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "sha256": "15294a8fbda1986f589691d23071e8b8893308b4fa35ef3624db0a1020d65267",
+      "alpha_min": 255,
+      "alpha_max": 255,
+      "transparent_pixels": 0,
+      "opaque_pixels": 1573352,
+      "partially_transparent_pixels": 0
+    },
+    {
+      "name": "PRP_602_Bed_Heirloom",
+      "kind": "transparent_prop",
+      "runtime_path": "godot_project/art/30_props/PRP_602_Bed_Heirloom.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_Bed_Heirloom.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-17-room602/prompts/PRP_602_Bed_Heirloom.txt",
+      "generator": "Codex image_gen.imagegen / host_image",
+      "generation_id": "exec-0ae37e02-49ab-4783-b81e-4f7e03819b99.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "86664651957a659df9fc4155aea6beecb687fab8aba0bc7c68fb30917fe74e53",
+      "alpha_min": 0,
+      "alpha_max": 254,
+      "transparent_pixels": 973619,
+      "opaque_pixels": 0,
+      "partially_transparent_pixels": 599245
+    },
+    {
+      "name": "PRP_602_DialysisMachine",
+      "kind": "transparent_prop",
+      "runtime_path": "godot_project/art/30_props/PRP_602_DialysisMachine.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_DialysisMachine.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-17-room602/prompts/PRP_602_DialysisMachine.txt",
+      "generator": "Codex image_gen.imagegen / host_image",
+      "generation_id": "exec-bc4c5182-7f3c-462e-97fe-bfaff39444cf.png",
+      "size": [
+        1086,
+        1448
+      ],
+      "mode": "RGBA",
+      "sha256": "6ef155aad311e52dbf55b49f79cb25083c5a7c68f1b4bc29324605aa76fb5a4a",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_pixels": 1026575,
+      "opaque_pixels": 1370,
+      "partially_transparent_pixels": 544583
+    },
+    {
+      "name": "PRP_602_StorageCrates",
+      "kind": "transparent_prop",
+      "runtime_path": "godot_project/art/30_props/PRP_602_StorageCrates.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_StorageCrates.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-17-room602/prompts/PRP_602_StorageCrates.txt",
+      "generator": "Codex image_gen.imagegen / host_image",
+      "generation_id": "exec-d9f08141-5d13-4b9a-8466-1a4ae5fbd80b.png",
+      "size": [
+        1436,
+        1095
+      ],
+      "mode": "RGBA",
+      "sha256": "6111ac37ab06b3535c7d490b14a72e7c86c6efae33a7a7e1d2a81aae17f838b0",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_pixels": 661774,
+      "opaque_pixels": 59,
+      "partially_transparent_pixels": 910587
+    },
+    {
+      "name": "PRP_602_WeaponRack",
+      "kind": "transparent_prop",
+      "runtime_path": "godot_project/art/30_props/PRP_602_WeaponRack.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_WeaponRack.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-17-room602/prompts/PRP_602_WeaponRack.txt",
+      "generator": "Codex image_gen.imagegen / host_image",
+      "generation_id": "exec-91a1263a-6f34-418d-8aa1-3279da79ca23.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "30f6a27bba4dca3eac17601c8d2e399b2aad8dc0d30efb124a4018e893ddd0c6",
+      "alpha_min": 0,
+      "alpha_max": 254,
+      "transparent_pixels": 831299,
+      "opaque_pixels": 0,
+      "partially_transparent_pixels": 741565
+    },
+    {
+      "name": "PRP_Market_ShortwaveRadio",
+      "kind": "transparent_prop",
+      "runtime_path": "godot_project/art/30_props/PRP_Market_ShortwaveRadio.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_Market_ShortwaveRadio.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-17-room602/prompts/PRP_Market_ShortwaveRadio.txt",
+      "generator": "Codex image_gen.imagegen / host_image",
+      "generation_id": "exec-a88b2910-0806-4ce8-a353-39244a60b25c.png",
+      "size": [
+        1437,
+        1095
+      ],
+      "mode": "RGBA",
+      "sha256": "06a23c4f80a5dff1a8990c0bd9fc3e31c767ae55f66cbcc365e81f4670bb7b3e",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_pixels": 597626,
+      "opaque_pixels": 828,
+      "partially_transparent_pixels": 975061
+    }
+  ],
+  "factual_review": {
+    "subject": "Late-Soviet peritoneal dialysis cycler cutout",
+    "finding": "Automated peritoneal cyclers existed and evolved during the 1980s; the reviewed history does not establish that this generic model was a typical Soviet home device.",
+    "decision": "No obvious factual contradiction in the aged analog cycler art. Keep it as a scarce, patient-specific appliance in the fictional setting; it has no modern screen or readable branding.",
+    "reference": "https://doi.org/10.1159/000496302"
+  }
+}

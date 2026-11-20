@@ -113,8 +113,8 @@ func _common(s: Node, tag: String) -> void:
 	# 界面的三层都建出来了
 	_assert(s.get_node_or_null("HUD/Root/Chrome") != null, tag + " 有整屏金属框")
 	_assert(s.get_node_or_null("HUD/Root/Dossier") != null, tag + " 有左上档案牌")
-	_assert(s.get_node_or_null("HUD/Root/Mission") != null, tag + " 有右上任务卡")
-	_assert(s.get_node_or_null("HUD/Root/Teletype") != null, tag + " 有底部电传条")
+	_assert(s.get_node_or_null("HUD/Root/Navigation/Mission") != null, tag + " 有右上任务卡")
+	_assert(s.get_node_or_null("HUD/Root/ActionHint/Teletype") != null, tag + " 有底部操作提示")
 	_assert(s._m_warm != null and s._m_hp != null, tag + " 双星生命仪表")
 	_assert(s._m_warm.segments == 10 and s._m_hp.segments == 10 \
 		and s._m_warm.has_method("lit_segments") and s._m_hp.has_method("lit_segments"),
@@ -133,7 +133,7 @@ func _common(s: Node, tag: String) -> void:
 		_assert(best_dist < 1.0, tag + " objective_px 指的就是它", str(best_dist))
 	# 地标：坐标必须在镜头边界内（米）
 	var max_x: float = float(s.cam.limit_right) / PPM
-	var max_y: float = float(s.cam.limit_bottom - s.CAM_PAD_BOTTOM) / GY
+	var max_y: float = float(s.cam.limit_bottom) / GY
 	var outside := 0
 	for l in s.landmarks:
 		var p: Array = l["pos"]

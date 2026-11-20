@@ -1,0 +1,75 @@
+{
+  "schema": "winter-iron.extra-portrait-atlas.v1",
+  "source": "portrait_extra_atlas_raw.png",
+  "source_sha256": "1bafbef7065dd3f2e41eee76c053f7af12915511e2ab68b00558bb7c1e184712",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "grid": [
+    2,
+    2
+  ],
+  "used_quadrants": {
+    "top_left": "Fear",
+    "top_right": "Determined",
+    "bottom_left": "Hurt",
+    "bottom_right": "Calm (not exported)"
+  },
+  "seam_exclusion_px": 3,
+  "tile_size": [
+    512,
+    512
+  ],
+  "files": {
+    "Fear": {
+      "path": "godot_project/art/10_characters/portraits/PRT_Katya_Fear.png",
+      "sha256": "33839edd2c7c2978efb381d96f9081469136e2808a57c47c6d230328a673f9e1",
+      "bytes": 508616,
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "crop_box": [
+        0,
+        0,
+        624,
+        624
+      ]
+    },
+    "Determined": {
+      "path": "godot_project/art/10_characters/portraits/PRT_Katya_Determined.png",
+      "sha256": "9f65eb557c7353eb97154655a705cbe4b7de9eb5b536272c80c40516cff39c80",
+      "bytes": 503772,
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "crop_box": [
+        630,
+        0,
+        1254,
+        624
+      ]
+    },
+    "Hurt": {
+      "path": "godot_project/art/10_characters/portraits/PRT_Katya_Hurt.png",
+      "sha256": "4212fe7fc1fa08576c42584d1e402d86abcfde261e1f1cac7f6bc052f7cc83b8",
+      "bytes": 504810,
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "crop_box": [
+        0,
+        630,
+        624,
+        1254
+      ]
+    }
+  },
+  "processing": "Pillow RGBA crop excluding center grid seams and Lanczos resize"
+}

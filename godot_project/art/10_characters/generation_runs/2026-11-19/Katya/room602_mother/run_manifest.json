@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-19",
+  "tool_route": "Codex built-in image_gen",
+  "task": "Align Room 602 bed with the story CG and provide state-specific mother-area backgrounds.",
+  "outputs": [
+    {
+      "path": "res://art/40_interiors/BG_602_Mother_Integrated.png",
+      "state": "empty bed / mother lost",
+      "size": [
+        1672,
+        941
+      ],
+      "raw": "raw/BG_602_Mother_Integrated_empty_raw.png",
+      "prompt": "prompts/BG_602_Mother_Integrated_empty.prompt.txt"
+    },
+    {
+      "path": "res://art/40_interiors/BG_602_Mother_Alive_Integrated.png",
+      "state": "Katya alive in bed",
+      "size": [
+        1672,
+        941
+      ],
+      "raw": "raw/BG_602_Mother_Alive_Integrated_raw.png",
+      "prompt": "prompts/BG_602_Mother_Alive_Integrated.prompt.txt"
+    }
+  ],
+  "runtime_selection": "CampaignHUD._room_zone_background(\"mother\") selects the living image when sim.mother_alive is true and the empty image otherwise."
+}

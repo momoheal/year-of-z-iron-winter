@@ -1,0 +1,8 @@
+{
+  "references": [
+    "art/40_interiors/BG_602_Mother_Integrated.png",
+    "generated:initial_empty_bed"
+  ],
+  "generated_output": "generated_output.png",
+  "final_file": "art/60_ui/cg/cg_room602_empty_bed_folded_scarf.jpg"
+}

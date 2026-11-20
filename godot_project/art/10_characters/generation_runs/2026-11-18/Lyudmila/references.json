@@ -1,0 +1,13 @@
+{
+  "character": "Lyudmila",
+  "date": "2026-11-18",
+  "identity_references": [
+    "godot_project/art/10_characters/portraits/PRT_Lyudmila_Calm.png",
+    "godot_project/art/10_characters/portraits/PRT_Lyudmila_Intense.png",
+    "godot_project/art/10_characters/portraits/PRT_Lyudmila_Sad.png",
+    "godot_project/art/10_characters/portraits/PRT_Lyudmila_Wry.png"
+  ],
+  "style_reference": "godot_project/art/10_characters/portraits/PRT_Aleksei_Calm.png",
+  "route": "Codex image_gen (host_image)",
+  "purpose": "Add missing Fear, Determined, Hurt portraits; existing portraits remain unchanged."
+}

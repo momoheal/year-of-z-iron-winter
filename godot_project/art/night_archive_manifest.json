@@ -570,5 +570,82 @@
    0,
    0
   ]
+ },
+ "MAP_Archive_Overview": {
+  "path": "res://art/80_maps/Archive/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Archive_FileCabinet": {
+  "path": "res://art/30_props/PRP_Archive_FileCabinet.png",
+  "size": [
+   216,
+   400
+  ],
+  "pivot": [
+   108.0,
+   400
+  ]
+ },
+ "PRP_Archive_TelegraphDesk": {
+  "path": "res://art/30_props/PRP_Archive_TelegraphDesk.png",
+  "size": [
+   542,
+   419
+  ],
+  "pivot": [
+   271.0,
+   419
+  ]
+ },
+ "PRP_Archive_RecordShelf": {
+  "path": "res://art/30_props/PRP_Archive_RecordShelf.png",
+  "size": [
+   778,
+   263
+  ],
+  "pivot": [
+   389.0,
+   263
+  ]
+ },
+ "PRP_Archive_DocumentSafe": {
+  "path": "res://art/30_props/PRP_Archive_DocumentSafe.png",
+  "size": [
+   294,
+   396
+  ],
+  "pivot": [
+   147.0,
+   396
+  ]
+ },
+ "PRP_Archive_RecordCrates": {
+  "path": "res://art/30_props/PRP_Archive_RecordCrates.png",
+  "size": [
+   421,
+   346
+  ],
+  "pivot": [
+   210.5,
+   346
+  ]
+ },
+ "PRP_Archive_HeaterDrum": {
+  "path": "res://art/30_props/PRP_Archive_HeaterDrum.png",
+  "size": [
+   274,
+   411
+  ],
+  "pivot": [
+   137.0,
+   411
+  ]
  }
 }

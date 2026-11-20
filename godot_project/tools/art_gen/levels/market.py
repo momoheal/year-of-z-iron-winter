@@ -6,10 +6,11 @@
 `docs/zh/Z年纪事_铁路黑市场景美术设计.md`）：
 
     抉择 C 的发生地——老谢苗守在药棚铁门外（C1 公平合作 / C2 锁门背叛抢盘尼西林与
-    门禁磁卡 / C3 倾囊相助）；黑市最深的棚子上架着钉死在 6.66 MHz 的短波收音机，
+    门禁磁卡 / C3 倾囊相助）；黑市最深的棚子上架着钉死在 6.66 MHz 的商贩短波收音机，
     棚后巷的炭炉在做「烙铁烫鳞」；掺防冻液的假药和真药摆在同一个摊区里（辨药三分法）。
 
-所以场景里必须有：**6.66 电台棚**（guaranteed `intel` = 专列调度记录）、**药棚铁门**
+所以场景里必须有：**6.66 商贩电台棚**（guaranteed `intel` = 专列调度记录）、市场东侧棚户巷
+中的**旧信号检修室**（叶莲娜固定发射点，4.17 MHz）、**药棚铁门**
 （C2 的锁点 + 盘尼西林冷柜）、**真药 / 假药对照摆位**、**烫鳞炭炉**（只有工具和痕迹，
 不画行刑现场）、**老谢苗与拾荒老妇**（MARKET survivors 列表扩到 4 人）。
 
@@ -20,7 +21,7 @@
     3 │ ▤板房▤ 烟囱  ▤板房▤   板房  ▤板房▤ 烟囱 ▤板房▤   │  工人镇立面
     5 │ 壁灯 规矩牌   破损供暖管▬▬▬▬▬▬▬▬▬▬▬▬▬▬  街灯      │  镇口街（白区）↑出生
    10 │   电柜                         木箱        垃圾箱    │
-   13 │   板房01        板房02           板房03              │  棚户巷（红区）
+    13 │   板房01        板房02           旧信号检修室        │  棚户巷（红区）
    21 │                                                      │
    23 │ 药棚▣铁门  老谢苗 拾荒老妇 ▣假药摊  摊区▣(Market)    │  市集（黑区）
    25 │ 炭炉🔥(烫鳞)  真药箱       篝火🔥  6.66棚(天线)▤ 冻尸│
@@ -75,7 +76,7 @@ PROPS = [
          ao="pipe"),                                # 破损供暖管（steam 声源）
     dict(id="Locker", art="PRP_Locker_ElectricCabinet", pos=(5.0, 7.8), fp=(0.9, 0.4),
          layer=1, cont="locker"),
-    # --- 棚户巷（红区，y 11~21）：各派系互不信任的地盘 ---
+    # --- 棚户巷（红区，y 11~21）：东端 Shanty03 是叶莲娜的固定发射点 ---
     dict(id="Shanty01", art="PRP_Shanty_Shed", pos=(10.0, 15.5), fp=(3.6, 1.6), layer=1,
          fade=True),
     dict(id="Shanty02", art="PRP_Shanty_Shed", pos=(22.0, 17.0), fp=(3.6, 1.6), layer=1,
@@ -204,3 +205,7 @@ SEARCHLIGHT = None
 
 # 立面关键点（x 米，供 gen_env._facade_town 取用；不设 terminal / vent / tower 灯位）
 FACADE_FEATURES = dict(lamp_x=4.5, window_x=22.0, stove_x=36.0)
+
+
+from .plate_registration import register as _register_plate
+_register_plate(globals())

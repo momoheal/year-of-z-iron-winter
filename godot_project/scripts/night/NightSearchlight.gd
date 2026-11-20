@@ -55,8 +55,6 @@ func _physics_process(delta: float) -> void:
 		if lock > 0.55 and not tracking:
 			tracking = true
 			ctl.raise_alarm(ctl.player.global_position, self)
-		if tracking and lock > 2.6:
-			ctl.caught(self)
 	else:
 		lock = maxf(0.0, lock - delta * 0.6)
 		if tracking and lock <= 0.0:

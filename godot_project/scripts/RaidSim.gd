@@ -109,6 +109,13 @@ var thrown_cans: Array[ThrownCan] = []
 
 var cam: Vector2 = Vector2.ZERO
 var pack: Array[String] = []
+var market_signal_found := false
+var story_objective_reached := false
+var manor_photo_slot := -1
+var manor_trade_slot := -1
+var manor_release_reached := false
+var crag_rescue_scope := "" # all | lana; chosen only after Boxcar Three opens, committed on successful extraction
+var archive_copy_slot := -1
 var pack_max: int = Data.BAG
 var load: Dictionary = {}
 var weapon: Dictionary = Data.weapon("crowbar")

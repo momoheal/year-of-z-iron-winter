@@ -1,0 +1,36 @@
+{
+  "group": 3,
+  "character": "Katya",
+  "runtime_portraits": [
+    "PRT_Katya_Calm.png",
+    "PRT_Katya_Sad.png",
+    "PRT_Katya_Intense.png",
+    "PRT_Katya_Wry.png"
+  ],
+  "checks": {
+    "dimension": "4/4 are 512x512",
+    "mode": "4/4 are RGBA",
+    "naming": "PRT_Katya_<State>.png",
+    "manifest": "4 entries present in godot_project/art/asset_manifest.json; each reports real_size [512,512] and ref runtime",
+    "archive": [
+      "identity_master_raw.png",
+      "identity_master_prompt.txt",
+      "portrait_atlas_raw.png",
+      "portrait_atlas_prompt.txt",
+      "portrait_atlas_references.json",
+      "portrait_tiles/portrait-atlas.json"
+    ],
+    "visual_review": "same silver-gray-haired mature woman, beige shawl and gray-brown house dress across all states; thick impasto finish matches project portraits"
+  },
+  "additional_portrait_checks": {
+    "states": [
+      "PRT_Katya_Fear.png",
+      "PRT_Katya_Determined.png",
+      "PRT_Katya_Hurt.png"
+    ],
+    "dimensions": "3/3 are 512x512",
+    "mode": "3/3 are RGBA",
+    "visual_review": "same silver-gray-haired mature woman, beige shawl, gray-brown dress, dark oil-painted background; fearful / resolved / hurt expressions are distinct and no visible atlas seams remain",
+    "manifest": "3 entries added to godot_project/art/asset_manifest.json"
+  }
+}

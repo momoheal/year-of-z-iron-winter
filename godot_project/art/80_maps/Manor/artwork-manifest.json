@@ -1,0 +1,130 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "manor",
+  "name": "松林庄园 · 二号恒温库",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Manor/map.png",
+    "sha256": "58d017c52320f288adee7caccb6c791daaccd4ad550ce87d533eb6bed37779e1",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": "RGBA"
+  },
+  "props": [
+    {
+      "id": "PRP_Manor_VaultDoor",
+      "path": "res://art/30_props/PRP_Manor_VaultDoor.png",
+      "size": [
+        470,
+        424
+      ],
+      "pivot": [
+        235.0,
+        424
+      ],
+      "label": "cold-vault blast door",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Manor_MedPallet",
+      "path": "res://art/30_props/PRP_Manor_MedPallet.png",
+      "size": [
+        419,
+        319
+      ],
+      "pivot": [
+        209.5,
+        319
+      ],
+      "label": "sealed medical pallet",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Manor_Forklift",
+      "path": "res://art/30_props/PRP_Manor_Forklift.png",
+      "size": [
+        450,
+        408
+      ],
+      "pivot": [
+        225.0,
+        408
+      ],
+      "label": "parked forklift cover",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Manor_Incinerator",
+      "path": "res://art/30_props/PRP_Manor_Incinerator.png",
+      "size": [
+        484,
+        461
+      ],
+      "pivot": [
+        242.0,
+        461
+      ],
+      "label": "incinerator and ash hopper",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Manor_SteelPipeRack",
+      "path": "res://art/30_props/PRP_Manor_SteelPipeRack.png",
+      "size": [
+        512,
+        381
+      ],
+      "pivot": [
+        256.0,
+        381
+      ],
+      "label": "steel pipe rack",
+      "alpha": "RGBA"
+    },
+    {
+      "id": "PRP_Manor_FrozenPond",
+      "path": "res://art/30_props/PRP_Manor_FrozenPond.png",
+      "size": [
+        496,
+        456
+      ],
+      "pivot": [
+        248.0,
+        456
+      ],
+      "label": "frozen ornamental pond",
+      "alpha": "RGBA"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "cutout_prompt": "cutout-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Manor_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Manor/map_night.png",
+      "sha256": "eb7d1e90e3aa83a41179ea183c1ac3d40eb2d1eb6e7fc071acd4c974b8acd2fd",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

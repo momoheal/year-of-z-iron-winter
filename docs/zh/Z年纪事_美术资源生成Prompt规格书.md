@@ -522,9 +522,17 @@ pen nib, paper fibre tearing, extreme close-up, transparent background
 色彩与衰减参考（三个 Shader 的需求见《灰盒规格书》第三章）。
 ```
 
-### 7.7 v4.2 待补图（5 张，2026-11 新增 · 对应《美术风格参考 v4.2》§五）
+### 7.7 v4.2 剧情概念图（5 张，2026-11 新增；首批已生成）
 
-> 以下 5 张是 v4.2 新增剧情（第零幕 / 第一幕 1-4 / 第三幕 3-3 / 第四幕 / 第五幕 5-1、5-2）的专属概念图，此前仅在《美术风格参考 v4.2》列为待补。出图后存入 `assets/concept_art/`，编号顺延 CON_04 起。**每张都是「设定图 / 剧照式概念图」而非游戏资产**（与 01–11 号图同性质），构图允许人物与文字并存，但**文字一律出无字底图 + 矢量补写**（见 §10.4）。
+> 以下 5 张是 v4.2 新增剧情的专属概念图，首批 PNG 与提示词已写入 `assets/concept_art/`，编号为 CON_04–CON_08。**每张都是「设定图 / 剧照式概念图」而非游戏资产**（与 01–11 号图同性质）；画面中的可读文字仍应采用无字底图 + 矢量补写（见 §10.4）。清单、尺寸和哈希见 `assets/concept_art/concept_art_manifest.json`。
+
+| 编号 | 文件 |
+|---|---|
+| CON_04 | `assets/concept_art/CON_04_Pasha_DummyTower.png` |
+| CON_05 | `assets/concept_art/CON_05_Lyudmila_ChildRescue.png` |
+| CON_06 | `assets/concept_art/CON_06_004_BrassPlaque.png` |
+| CON_07 | `assets/concept_art/CON_07_666MHz_BrandingForge.png` |
+| CON_08 | `assets/concept_art/CON_08_MineNo3_SporeBlast.png` |
 
 #### `CON_04` 帕沙与假人哨塔 　★P1（第一幕 1-4 · 红区隐喻）
 ```

@@ -768,5 +768,82 @@
    32,
    20
   ]
+ },
+ "MAP_Manor_Overview": {
+  "path": "res://art/80_maps/Manor/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Manor_VaultDoor": {
+  "path": "res://art/30_props/PRP_Manor_VaultDoor.png",
+  "size": [
+   470,
+   424
+  ],
+  "pivot": [
+   235.0,
+   424
+  ]
+ },
+ "PRP_Manor_MedPallet": {
+  "path": "res://art/30_props/PRP_Manor_MedPallet.png",
+  "size": [
+   419,
+   319
+  ],
+  "pivot": [
+   209.5,
+   319
+  ]
+ },
+ "PRP_Manor_Forklift": {
+  "path": "res://art/30_props/PRP_Manor_Forklift.png",
+  "size": [
+   450,
+   408
+  ],
+  "pivot": [
+   225.0,
+   408
+  ]
+ },
+ "PRP_Manor_Incinerator": {
+  "path": "res://art/30_props/PRP_Manor_Incinerator.png",
+  "size": [
+   484,
+   461
+  ],
+  "pivot": [
+   242.0,
+   461
+  ]
+ },
+ "PRP_Manor_SteelPipeRack": {
+  "path": "res://art/30_props/PRP_Manor_SteelPipeRack.png",
+  "size": [
+   512,
+   381
+  ],
+  "pivot": [
+   256.0,
+   381
+  ]
+ },
+ "PRP_Manor_FrozenPond": {
+  "path": "res://art/30_props/PRP_Manor_FrozenPond.png",
+  "size": [
+   496,
+   456
+  ],
+  "pivot": [
+   248.0,
+   456
+  ]
  }
 }

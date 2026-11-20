@@ -1,0 +1,9 @@
+Use case: illustration-story
+Asset type: 16:9 narrative game cutscene illustration for the Godot game 《Z年纪事：凛冬铁轨》
+Input images: Image 1 is the exact Room 602 interior reference; Images 2–4 are evidence-paper, railway-object, and cold-weather lighting references; Image 5 is Aleksei's face and identity reference.
+Scene/backdrop: Original Room 602, same frosted window, old radiator, and cold winter daylight as Image 1. A rough wooden table sits beside the window.
+Subject: Tight, slightly elevated oblique view of three separate pieces of evidence arranged side by side: an old West Yard dispatch order, an unclosed train handover copy with no closure stamp, and a photograph of a furnace destruction ledger. Aleksei is present only as a sleeve and one gloved hand; one finger traces the matching details across the papers.
+Style/medium: Realistic thick impasto oil painting, adult natural proportions, restrained winter palette of cold gray-blue, dirty snow white, rust, and worn military green, consistent with the game's existing CGs.
+Composition/framing: Landscape 16:9. Close tabletop composition, evidence fills the middle and upper frame; leave the bottom area uncluttered for game subtitles. Papers show folds, worn edges, and stamp marks but no legible text.
+Lighting/mood: Cold window light with a faint warm tungsten edge from the room.
+Constraints: Only the table, evidence, and Aleksei's single hand/sleeve. No Mother, bed, companions, medicine bags, readable text, labels, interface, title, watermark, or extra hands. Keep the Room 602 architecture and props consistent with Image 1.

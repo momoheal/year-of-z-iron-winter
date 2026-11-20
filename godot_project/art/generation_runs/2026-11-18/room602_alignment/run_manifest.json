@@ -1,0 +1,65 @@
+{
+  "run_id": "2026-11-18/room602_alignment",
+  "purpose": "Integrate Room 602 props with their painted room plates and ensure the weapon rack starts empty.",
+  "generator": "Codex built-in image_gen",
+  "assets": [
+    {
+      "name": "BG_602_Mother_Integrated",
+      "kind": "integrated_room_background",
+      "runtime_path": "godot_project/art/40_interiors/BG_602_Mother_Integrated.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-18/room602_alignment/raw/BG_602_Mother_Integrated.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-18/room602_alignment/prompts/BG_602_Mother_Integrated.txt",
+      "source_assets": [
+        "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_602_Mother.png",
+        "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_Bed_Heirloom.png",
+        "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_DialysisMachine.png"
+      ],
+      "generator": "Codex built-in image_gen",
+      "route": "host_image",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "sha256": "c4265e8b97e2b9bcd78a9b7c6de854f3a86b2026bf72efc8ff61a216eeea9d9f"
+    },
+    {
+      "name": "BG_602_Storage_Integrated",
+      "kind": "integrated_room_background",
+      "runtime_path": "godot_project/art/40_interiors/BG_602_Storage_Integrated.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-18/room602_alignment/raw/BG_602_Storage_Integrated.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-18/room602_alignment/prompts/BG_602_Storage_Integrated.txt",
+      "source_assets": [
+        "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_602_Storage.png",
+        "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_StorageCrates.png"
+      ],
+      "generator": "Codex built-in image_gen",
+      "route": "host_image",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "sha256": "462fdee37c1dbf957dc34b1be0ff7918e46a39e439681ee3097ccd6579ce1a0a"
+    },
+    {
+      "name": "BG_602_Arsenal_Empty",
+      "kind": "integrated_room_background",
+      "runtime_path": "godot_project/art/40_interiors/BG_602_Arsenal_Empty.png",
+      "raw_path": "godot_project/art/generation_runs/2026-11-18/room602_alignment/raw/BG_602_Arsenal_Empty.png",
+      "prompt_path": "godot_project/art/generation_runs/2026-11-18/room602_alignment/prompts/BG_602_Arsenal_Empty.txt",
+      "source_assets": [
+        "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_602_Arsenal.png",
+        "godot_project\\art\\generation_runs\\2026-11-18\\room602_alignment\\raw\\PRP_602_WeaponRack_Empty_Reference.png"
+      ],
+      "generator": "Codex built-in image_gen",
+      "route": "host_image",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "RGB",
+      "sha256": "3a2aa9c6b11378a9ebe1cc1cd981e68737b2be3ee3463f4ce5c4cdc0d8904396"
+    }
+  ]
+}

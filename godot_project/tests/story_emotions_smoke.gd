@@ -70,11 +70,16 @@ func _run() -> void:
 	var speakers: Dictionary = sc.hud.STORY_SPEAKERS
 
 	# 新概念头像可以高于原来的 512px，但必须是可用的方形图。
-	for role in ["aleksei", "chernov", "fyodor", "ivan", "anna", "pasha", "gulya", "lana", "pavel", "ash", "leonov"]:
+	for role in ["aleksei", "chernov", "fyodor", "ivan", "anna", "pasha", "gulya", "lana", "pavel", "ash", "leonov",
+		"katya", "lyudmila", "vikina"]:
 		for mood in ["calm", "sad", "intense"]:
 			var tex: Texture2D = portraits[role][mood]
 			_assert(tex != null and tex.get_width() >= 512 and tex.get_width() == tex.get_height(),
 				"asset %s/%s" % [role, mood])
+	var placeholder: Texture2D = sc.hud.STORY_PORTRAIT_PLACEHOLDER
+	_assert(placeholder != null and placeholder.get_width() >= 512
+		and placeholder.get_width() == placeholder.get_height(),
+		"neutral archive placeholder is a usable square portrait")
 
 	# 设定文档角色的常用说话者别名必须落到同一身份。
 	var aliases := {
@@ -94,11 +99,11 @@ func _run() -> void:
 	if scripted is Dictionary:
 		var scenes: Dictionary = scripted.get("scenes", {})
 		var expected_scene_ids := ["0-1", "1-1", "1-2", "1-3", "1-4", "1-4A", "2-1", "2-2", "2-3", "2-4",
-			"3-1", "3-2", "3-2A", "3-3", "4-1", "4-2", "5-1", "5-2", "6-1", "6-2"]
+			"3-1", "3-2", "3-2A", "3-3", "4-0", "4-1", "4-2", "5-1", "5-2", "6-1", "6-2"]
 		var actual_scene_ids: Array = scenes.keys()
 		actual_scene_ids.sort()
 		expected_scene_ids.sort()
-		_assert(actual_scene_ids == expected_scene_ids, "all 20 canonical scene IDs are present")
+		_assert(actual_scene_ids == expected_scene_ids, "all 21 canonical scene IDs are present")
 		for sid in scenes:
 			var source_lines: Array = scenes[sid].get("lines", [])
 			_assert(not source_lines.is_empty(), "source scene %s has dialogue" % String(sid))
@@ -115,6 +120,17 @@ func _run() -> void:
 				"playable story %s references an existing canonical scene" % String(story_id))
 		_assert(sc.sim.story_lines("coldstore").size() > Data.STORY["coldstore"]["lines"].size(),
 			"Cold Storage uses the complete literary scene")
+		var yard_lines: Array = sc.sim.story_lines("yard")
+		var zakhar_lines := 0
+		for line in yard_lines:
+			if line.get("w", "") == "核算员扎哈尔":
+				zakhar_lines += 1
+			var text := String(line.get("zh", ""))
+			_assert(not text.contains("关卡代号") and not text.contains("此后若阿列克谢"),
+				"Yard dialogue excludes level and betrayal notes")
+		_assert(yard_lines.size() == 4 and zakhar_lines == 2
+			and yard_lines[2].get("w", "") == "旁白 / 阿列克谢",
+			"The Yard keeps Zakhar's two speeches and labels the intervening narration")
 		_assert(sc.sim.story_lines("broadcast").size() > Data.STORY["broadcast"]["lines"].size(),
 			"Yelena broadcast uses the complete literary scene")
 	var yelena_unlock: Dictionary = Data.MATE_UNLOCKS["yelena"]
@@ -125,9 +141,9 @@ func _run() -> void:
 	broadcast_sim.phase = "map"
 	broadcast_sim.flags["first_act_pending"] = false
 	broadcast_sim.flags["broadcast_signal"] = true
-	broadcast_sim.flags["broadcast_pending"] = true
 	broadcast_sim.story_done["market"] = true
 	_assert(broadcast_sim.depart(Data.loc("market")), "market raid can carry the broadcast discovery home")
+	broadcast_sim.raid.market_signal_found = true
 	broadcast_sim.finish_raid("extracted")
 	_assert(broadcast_sim.story_open and broadcast_sim.story_id == "broadcast"
 		and not bool(broadcast_sim.flags.get("broadcast_pending", false)),
@@ -138,21 +154,21 @@ func _run() -> void:
 	route_sim.phase = "map"
 	route_sim.flags["first_act_pending"] = false
 	route_sim.flags["lana_car3"] = true
+	route_sim.flags["story_market"] = true
 	route_sim.mates["anna"] = true
 	route_sim.mates["zakhar"] = true
-	route_sim.select_mate("zakhar")
 	route_sim.tally = 2
 	route_sim.conscience = 20.0
-	var route_lines: Array = route_sim.story_lines("marshalling")
-	var anna_reacts := false
-	var zakhar_threatens := false
-	for reaction in route_lines:
-		var reaction_line: Dictionary = reaction
-		if String(reaction_line.get("w", "")) == "安娜":
-			anna_reacts = String(reaction_line.get("zh", "")).contains("不会再把后背交给你")
-		if String(reaction_line.get("w", "")) == "核算员扎哈尔":
-			zakhar_threatens = String(reaction_line.get("zh", "")).contains("冬季配额")
-	_assert(anna_reacts and zakhar_threatens, "ruthless route changes Anna's trust and Zakhar's motive")
+	route_sim.select_mate("anna")
+	var anna_reaction: Dictionary = route_sim.story_lines("marshalling").back()
+	_assert(anna_reaction.get("w", "") == "安娜"
+		and String(anna_reaction.get("zh", "")).contains("不会再把后背交给你"),
+		"ruthless route changes the active Anna's trust")
+	route_sim.select_mate("zakhar")
+	var zakhar_reaction: Dictionary = route_sim.story_lines("marshalling").back()
+	_assert(zakhar_reaction.get("w", "") == "核算员扎哈尔"
+		and String(zakhar_reaction.get("zh", "")).contains("冬季配额"),
+		"ruthless route changes the active Zakhar's motive")
 	route_sim.story_id = "marshalling"
 	route_sim.story_open = true
 	route_sim.resolve_story(0)
@@ -166,6 +182,9 @@ func _run() -> void:
 	for sid in Data.STORY:
 		var beat: Dictionary = Data.STORY[sid]
 		var lines: Array = sc.sim.story_lines(String(sid))
+		sc.sim.add_item("band", 1)
+		if sid == "pasha_watchtower":
+			sc.sim.add_item("asp", 1)
 		sc.sim.story_id = sid
 		sc.sim.story_open = true
 		sc.hud._story_beat = ""
@@ -182,10 +201,14 @@ func _run() -> void:
 			var mood := String(line.get("mood", "calm"))
 			var tex: Texture2D = sc.hud._story_texture(line)
 			_assert(mood in ["calm", "sad", "intense"], "%s line %d uses supported mood" % [sid, i + 1])
-			if role == "":
-				_assert(tex == null, "%s line %d does not borrow another character portrait" % [sid, i + 1])
+			# 校验解析后的肖像实际可用：具名角色用专属图，其余统一走中性档案占位。
+			_assert(tex != null, "%s line %d resolves a usable portrait" % [sid, i + 1])
+			if not portraits.has(role):
+				_assert(tex == placeholder, "%s line %d uses the neutral archive placeholder" % [sid, i + 1])
 			else:
-				_assert(tex == portraits[role][mood], "%s line %d portrait %s/%s" % [sid, i + 1, role, mood])
+				var states: Dictionary = portraits[role]
+				_assert(tex == states.get(mood, states.get("calm", placeholder)),
+					"%s line %d portrait %s/%s" % [sid, i + 1, role, mood])
 			_assert(_has_label(sc.hud.modal, String(line["zh"])), "%s line %d full text visible" % [sid, i + 1])
 			if i > 0:
 				_assert(not _has_label(sc.hud.modal, String(lines[i - 1]["zh"])), "%s line %d previous text cleared" % [sid, i + 1])
@@ -195,6 +218,8 @@ func _run() -> void:
 				"viewport=%s panel=%s" % [str(panel.get_viewport_rect()) if panel != null else "null", str(panel.get_global_rect()) if panel != null else "null"])
 			var choice: Dictionary = beat["choices"][0]
 			var choice_text := String(choice["zh"])
+			if sid == "sanitarium":
+				choice_text = "撬开铁笼，带她们走（交出 %s ×1）" % sc.sim.item_name("band")
 			if i < lines.size() - 1:
 				_assert(not _has_button(sc.hud.modal, choice_text), "%s line %d choices hidden" % [sid, i + 1])
 			else:
@@ -205,6 +230,25 @@ func _run() -> void:
 		sc.hud._sig = ""
 		await _frames(3)
 		_assert(sc.hud._story_line == 0 and sc.hud._story_beat == "", "%s close resets cursor" % sid)
+
+	# The active companion changes what the player sees and hears.
+	var variant_sim = load("res://scripts/CampaignSim.gd").new()
+	var solo_market := str(variant_sim.story_lines("market"))
+	_assert("敲响铁皮桶" in solo_market and "灰烬从他靴边" not in solo_market
+		and "23:00" not in solo_market, "solo market keeps the destination and withholds departure time")
+	variant_sim.mates["ash"] = true
+	variant_sim.select_mate("ash")
+	var ash_market := str(variant_sim.story_lines("market"))
+	_assert("灰烬从他靴边" in ash_market and "敲响铁皮桶" not in ash_market, "Ash enters only his market branch")
+	var tower: Array = variant_sim.story_lines("broadcast_tower_302")
+	_assert(tower[2]["w"] == "拉娜" and tower[3]["w"] == "阿列克谢", "Lana asks about the tower door in a solo run")
+	variant_sim.mates["yelena"] = true
+	variant_sim.select_mate("yelena")
+	var manor: Array = variant_sim.story_lines("manor")
+	_assert(str(manor[-4]["zh"]).contains("通行证") and str(manor[-1]["zh"]).contains("趁现在"),
+		"four illustrated manor lines end before the player chooses")
+	variant_sim.select_mate("none")
+	_assert("阿列克谢，趁现在" not in str(variant_sim.story_lines("manor")), "Yelena's confrontation requires her presence")
 
 	# 键盘空格 / 回车与按钮共用推进逻辑。
 	sc.sim.story_id = "sanitarium"
@@ -229,7 +273,7 @@ func _run() -> void:
 		_press_key(KEY_SPACE)
 		await process_frame
 	await _frames(3)
-	_assert(_has_button(sc.hud.modal, String(Data.STORY["sanitarium"]["choices"][0]["zh"])),
+	_assert(_has_button(sc.hud.modal, "撬开铁笼，带她们走（交出 %s ×1）" % sc.sim.item_name("band")),
 		"keyboard final choices visible")
 
 	# 文学重塑的关键锚点：背景原罪链、受难者控诉与道德抉择语气。
@@ -256,7 +300,7 @@ func _run() -> void:
 	star.set_value(0.0)
 	_assert(star.lit_segments() == 0, "star meter empty at zero")
 	star.queue_free()
-	var choice_button := _find_button(sc.hud.modal, String(Data.STORY["sanitarium"]["choices"][0]["zh"]))
+	var choice_button := _find_button(sc.hud.modal, "撬开铁笼，带她们走（交出 %s ×1）" % sc.sim.item_name("band"))
 	_assert(choice_button != null, "art audit finds story choice button")
 	if choice_button != null:
 		var normal := choice_button.get_theme_stylebox("normal") as StyleBoxFlat

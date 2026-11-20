@@ -1,0 +1,38 @@
+{
+  "room": "Room 602",
+  "input_sources": [
+    {
+      "path": "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_602_Mother.png",
+      "role": "edit target or prop appearance reference"
+    },
+    {
+      "path": "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_Bed_Heirloom.png",
+      "role": "edit target or prop appearance reference"
+    },
+    {
+      "path": "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_DialysisMachine.png",
+      "role": "edit target or prop appearance reference"
+    },
+    {
+      "path": "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_602_Storage.png",
+      "role": "edit target or prop appearance reference"
+    },
+    {
+      "path": "godot_project/art/generation_runs/2026-11-17-room602/raw/PRP_602_StorageCrates.png",
+      "role": "edit target or prop appearance reference"
+    },
+    {
+      "path": "godot_project/art/generation_runs/2026-11-17-room602/raw/BG_602_Arsenal.png",
+      "role": "edit target or prop appearance reference"
+    },
+    {
+      "path": "godot_project\\art\\generation_runs\\2026-11-18\\room602_alignment\\raw\\PRP_602_WeaponRack_Empty_Reference.png",
+      "role": "edit target or prop appearance reference"
+    }
+  ],
+  "outputs": [
+    "godot_project/art/40_interiors/BG_602_Mother_Integrated.png",
+    "godot_project/art/40_interiors/BG_602_Storage_Integrated.png",
+    "godot_project/art/40_interiors/BG_602_Arsenal_Empty.png"
+  ]
+}

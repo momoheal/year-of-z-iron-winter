@@ -1,0 +1,9 @@
+Use case: illustration-story. Asset type: 16:9 in-game story CG for a Godot winter survival game.
+Input image 1: residential stairwell fire rescue composition and painterly color reference; input image 2: Ash's exact identity reference.
+Primary request: show Ash, the large gray wolf-dog, gently gripping Jana's loose coat hem and guiding her toward the safe open doorway while residents help one another out of a smoky stairwell.
+Scene/backdrop: Soviet-era apartment stairwell at night, smoke and restrained orange firelight inside, snow-lit street visible through the open door.
+Subject: Jana is a small child in a padded winter coat; Ash matches the gray fur pattern and face in the identity reference, calm and purposeful; Aleksei and a few residents remain in the background.
+Composition/framing: wide 16:9 story illustration; make the dog-and-coat interaction readable in the foreground; no one is falling or injured.
+Style/medium: textured oil-painted realism matching the reference.
+Lighting/mood: urgent but humane, cold blue snow light balanced by restrained warm firelight.
+Constraints: Ash appears only in the companion-specific branch. He pulls fabric gently without biting Jana; no gore, no flames touching people, no weapons, no text, no logos, no watermark.

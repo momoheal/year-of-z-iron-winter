@@ -1,0 +1,9 @@
+Use case: illustration-story
+Asset type: 16:9 Godot narrative cutscene illustration for 《Z年纪事：凛冬铁轨》
+Input images: Image 1 is the Archive & Telegraph Office desk, filing cabinets, lamp, winter light and painterly texture reference; Image 2 is Aleksei's identity reference.
+Scene/backdrop: Close view of the old archive telegraph desk at night. Keep the cold cabinets, telegram equipment, stacked ledgers and old desk lamp consistent with Image 1.
+Subject: Only Aleksei's gloved hands, one coat sleeve and a slight edge of his round glasses near the top of frame. He carefully lays a folded dispatch copy marked only by a blank space for game-rendered “0420” beside his work log. Old paper has a crease and pressure mark from a return stamp, but the page contains no legible writing.
+Style/medium: Realistic thick impasto oil painting, restrained winter gray-blue, rust, worn paper and muted tungsten lamp light, consistent with existing game CGs.
+Composition/framing: Landscape 16:9 tabletop closeup. Papers, gloved hands and lamp occupy the upper and middle areas; keep bottom strip clear for subtitles. Leave one clean blank paper area for the game to overlay 0420.
+Lighting/mood: Small warm desk lamp against cold archive shadows; discovery is quiet and uncertain.
+Constraints: No full face, no clerk, no old man, no Vikina, no Lana, no companions, no visible rescue evidence, no extra hands, no readable letters, numbers, fake text, interface, title or watermark. Use Image 1 only for room and painterly style; show only Aleksei's hands and sleeve.

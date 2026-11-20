@@ -735,5 +735,82 @@
    32,
    20
   ]
+ },
+ "MAP_Marshalling_Overview": {
+  "path": "res://art/80_maps/Marshalling/map.png",
+  "size": [
+   1672,
+   941
+  ],
+  "pivot": [
+   0,
+   0
+  ]
+ },
+ "PRP_Marshalling_SearchlightTower": {
+  "path": "res://art/30_props/PRP_Marshalling_SearchlightTower.png",
+  "size": [
+   453,
+   580
+  ],
+  "pivot": [
+   226.5,
+   580
+  ]
+ },
+ "PRP_Marshalling_DispatchBoard": {
+  "path": "res://art/30_props/PRP_Marshalling_DispatchBoard.png",
+  "size": [
+   525,
+   433
+  ],
+  "pivot": [
+   262.5,
+   433
+  ]
+ },
+ "PRP_Marshalling_GuardCar": {
+  "path": "res://art/30_props/PRP_Marshalling_GuardCar.png",
+  "size": [
+   639,
+   300
+  ],
+  "pivot": [
+   319.5,
+   300
+  ]
+ },
+ "PRP_Marshalling_SwitchStand": {
+  "path": "res://art/30_props/PRP_Marshalling_SwitchStand.png",
+  "size": [
+   267,
+   326
+  ],
+  "pivot": [
+   133.5,
+   326
+  ]
+ },
+ "PRP_Marshalling_CoalWaterTower": {
+  "path": "res://art/30_props/PRP_Marshalling_CoalWaterTower.png",
+  "size": [
+   461,
+   612
+  ],
+  "pivot": [
+   230.5,
+   612
+  ]
+ },
+ "PRP_Marshalling_SandbagLine": {
+  "path": "res://art/30_props/PRP_Marshalling_SandbagLine.png",
+  "size": [
+   438,
+   255
+  ],
+  "pivot": [
+   219.0,
+   255
+  ]
  }
 }

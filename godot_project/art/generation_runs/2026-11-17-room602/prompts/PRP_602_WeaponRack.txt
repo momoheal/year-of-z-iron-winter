@@ -1,0 +1,10 @@
+Use case: illustration-story
+Asset type: isolated transparent cutout prop for a 2D game
+Primary request: A compact improvised wall-mounted iron weapon rack for one small apartment, holding one old bolt-action rifle, a crowbar and two simple canvas ammunition pouches. The weapons are stored safely and visibly as collected survival gear, not held by a person.
+Style/medium: realistic hand-painted thick impasto oil painting, visible brushwork and carefully readable edges, matching the game's muted winter prop art.
+Composition/framing: single complete rack viewed front-on with slight three-quarter depth, centered, fully inside frame, approximately 75 percent of canvas width.
+Lighting/mood: cold grey-blue room light with a restrained warm work-lamp highlight.
+Materials/textures: worn iron rack, oiled dark wood, scratched steel, faded canvas.
+Constraints: genuine transparent background, preserve clean alpha; no person, no hands, no ammunition pile, no room background, no insignia, no text, no watermark.
+
+Input image 1 is a small painted prop from the current game; use it only as a brushwork and edge-finish reference.

@@ -1,0 +1,16 @@
+{
+  "stem": "cg_intro_lana_receipt_v3",
+  "date": "2026-11-20",
+  "references": [
+    "godot_project/art/60_ui/cg/cg_intro_lana_receipt_v2.jpg"
+  ],
+  "prompt_status": "Exact image_gen tool prompt",
+  "generator": "Codex built-in image_gen",
+  "original": "generated_output.png",
+  "export": "godot_project/art/60_ui/cg/cg_intro_lana_receipt_v3.jpg",
+  "export_size": [
+    1664,
+    936
+  ],
+  "prompt_file": "prompt.txt"
+}

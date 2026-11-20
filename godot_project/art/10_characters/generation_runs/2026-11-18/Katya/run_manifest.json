@@ -1,0 +1,38 @@
+{
+  "schema": "winter-iron.character-art-run.v1",
+  "date": "2026-11-18",
+  "character": "Katya",
+  "image_route": {
+    "tool": "Codex image_gen",
+    "entrypoint": "image_gen.imagegen",
+    "status": "used"
+  },
+  "workflow": "identity master first, then single-character 2x2 Calm/Sad/Intense/Wry atlas",
+  "portrait_states": [
+    "Calm",
+    "Sad",
+    "Intense",
+    "Wry"
+  ],
+  "export": "512x512 RGBA PNG per portrait",
+  "runtime_alias": "Identity master remains in generation_runs; no base alias added to runtime portraits.",
+  "additional_atlas": {
+    "source": "portrait_extra_atlas_raw.png",
+    "prompt_file": "portrait_extra_atlas_prompt.txt",
+    "image_route": {
+      "tool": "Codex image_gen",
+      "entrypoint": "image_gen.imagegen",
+      "status": "used"
+    },
+    "reference_file": "portrait_extra_atlas_references.json",
+    "reference_sha256": "d07067a66d9968f6cb8da0ac107bb53edba39247678b8f9d573075c09e86cd1c",
+    "raw_sha256": "1bafbef7065dd3f2e41eee76c053f7af12915511e2ab68b00558bb7c1e184712",
+    "states": [
+      "Fear",
+      "Determined",
+      "Hurt"
+    ],
+    "export": "512x512 RGBA PNG per portrait",
+    "crop_record": "portrait-extra-atlas.json"
+  }
+}

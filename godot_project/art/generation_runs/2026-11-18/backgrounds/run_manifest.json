@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-18",
+  "group": 3,
+  "generator": "Codex image_gen (host_image)",
+  "purpose": "art-only UI background plates; no scene hookup",
+  "target_size": [
+    1920,
+    1080
+  ],
+  "assets": [
+    {
+      "asset": "BG_Title_602_Stairwell_Night",
+      "raw_source": "godot_project/art/generation_runs/2026-11-18/backgrounds/BG_Title_602_Stairwell_Night_raw.png",
+      "raw_size": [
+        1672,
+        941
+      ],
+      "output": "godot_project/art/60_ui/backgrounds/BG_Title_602_Stairwell_Night.jpg",
+      "output_size": [
+        1920,
+        1080
+      ],
+      "prompt": "godot_project/art/60_ui/backgrounds/BG_Title_602_Stairwell_Night.prompt.txt",
+      "resampling": "Pillow ImageOps.fit, Lanczos, centered, RGB JPEG quality 94",
+      "raw_sha256": "39b8883fad4f6a93c93e323c6ab3efd38f139d44ba510e6ce8d8afe864103898",
+      "output_sha256": "490a1b9b7cfbcfe383a565d1b13289e04c0ce4eedb2c53bee48c414daf6bb381"
+    },
+    {
+      "asset": "BG_Event_Telegraph_Desk",
+      "raw_source": "godot_project/art/generation_runs/2026-11-18/backgrounds/BG_Event_Telegraph_Desk_raw.png",
+      "raw_size": [
+        1672,
+        941
+      ],
+      "output": "godot_project/art/60_ui/backgrounds/BG_Event_Telegraph_Desk.jpg",
+      "output_size": [
+        1920,
+        1080
+      ],
+      "prompt": "godot_project/art/60_ui/backgrounds/BG_Event_Telegraph_Desk.prompt.txt",
+      "resampling": "Pillow ImageOps.fit, Lanczos, centered, RGB JPEG quality 94",
+      "raw_sha256": "5d0667d1c1a3b3846d6a5a2de6553486a50b65339eab23e11e833910eed9913b",
+      "output_sha256": "d50ab627ff36a190e11ad08c0121e887daf1d97e986eb8631f842d54d7489591"
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "market",
+  "name": "铁路黑市（废弃工人镇）",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/Market/map.png",
+    "sha256": "9ec3dd1e7556f65da5180d8bacea8489a13615bf036541632633fe6a2f9365e0",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": "RGBA true alpha"
+  },
+  "props": [
+    {
+      "id": "PRP_Market_TraderStall",
+      "path": "res://art/30_props/PRP_Market_TraderStall.png",
+      "size": [
+        458,
+        362
+      ],
+      "pivot": [
+        229.0,
+        362
+      ],
+      "label": "western trader stall",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Market_MedShed",
+      "path": "res://art/30_props/PRP_Market_MedShed.png",
+      "size": [
+        489,
+        428
+      ],
+      "pivot": [
+        244.5,
+        428
+      ],
+      "label": "locked medical shed",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Market_MedicineTable",
+      "path": "res://art/30_props/PRP_Market_MedicineTable.png",
+      "size": [
+        400,
+        299
+      ],
+      "pivot": [
+        200.0,
+        299
+      ],
+      "label": "medicine comparison table",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Market_RadioHut",
+      "path": "res://art/30_props/PRP_Market_RadioHut.png",
+      "size": [
+        451,
+        476
+      ],
+      "pivot": [
+        225.5,
+        476
+      ],
+      "label": "6.66 radio hut",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Market_Radio666",
+      "path": "res://art/30_props/PRP_Market_Radio666.png",
+      "size": [
+        363,
+        309
+      ],
+      "pivot": [
+        181.5,
+        309
+      ],
+      "label": "shortwave radio",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_Market_QuackForge",
+      "path": "res://art/30_props/PRP_Market_QuackForge.png",
+      "size": [
+        322,
+        441
+      ],
+      "pivot": [
+        161.0,
+        441
+      ],
+      "label": "oil drum brazier and tools",
+      "alpha": "RGBA true alpha"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_Market_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/Market/map_night.png",
+      "sha256": "45706097bb2c8f7252cdfd2f7da12ef2fdaff5af26a8e3d5c08de0f1025a56af",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

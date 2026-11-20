@@ -1,0 +1,17 @@
+{
+  "stem": "cg_crag_lana_hand_v6",
+  "date": "2026-11-20",
+  "references": [
+    "godot_project/art/60_ui/cg/cg_crag_lana_hand_v5.png",
+    "conversation-attached black-and-white mask (white area marked for reconstruction)"
+  ],
+  "prompt_status": "Exact image_gen tool prompt",
+  "generator": "Codex built-in image_gen",
+  "original": "generated_output.png",
+  "export": "godot_project/art/60_ui/cg/cg_crag_lana_hand_v6.png",
+  "export_size": [
+    1680,
+    936
+  ],
+  "prompt_file": "prompt.txt"
+}

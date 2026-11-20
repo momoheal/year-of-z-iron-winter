@@ -1,0 +1,129 @@
+{
+  "schema": "generate2dmap.artwork_manifest.v1",
+  "id": "mine_no3",
+  "name": "3号矿坑",
+  "art_source": "host_image",
+  "route": "image_gen",
+  "map": {
+    "file": "map.png",
+    "size": [
+      1672,
+      941
+    ],
+    "path": "res://art/80_maps/MineNo3/map.png",
+    "sha256": "1570a4d7ec6c77346b4d4cc331b2e91d73b70d84bb1279999771397fc48b599a",
+    "art_only": true
+  },
+  "source_sheet": {
+    "file": "cutout-source.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": "RGBA true alpha"
+  },
+  "props": [
+    {
+      "id": "PRP_MineNo3_Headframe",
+      "path": "res://art/30_props/PRP_MineNo3_Headframe.png",
+      "size": [
+        457,
+        492
+      ],
+      "pivot": [
+        228.5,
+        492
+      ],
+      "label": "mine headframe",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_MineNo3_DummyTower",
+      "path": "res://art/30_props/PRP_MineNo3_DummyTower.png",
+      "size": [
+        247,
+        469
+      ],
+      "pivot": [
+        123.5,
+        469
+      ],
+      "label": "dummy sentry tower",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_MineNo3_OreCart",
+      "path": "res://art/30_props/PRP_MineNo3_OreCart.png",
+      "size": [
+        338,
+        261
+      ],
+      "pivot": [
+        169.0,
+        261
+      ],
+      "label": "rusty ore cart",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_MineNo3_TimberSupport",
+      "path": "res://art/30_props/PRP_MineNo3_TimberSupport.png",
+      "size": [
+        459,
+        277
+      ],
+      "pivot": [
+        229.5,
+        277
+      ],
+      "label": "timber support",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_MineNo3_DetonatorRig",
+      "path": "res://art/30_props/PRP_MineNo3_DetonatorRig.png",
+      "size": [
+        506,
+        368
+      ],
+      "pivot": [
+        253.0,
+        368
+      ],
+      "label": "detonator rig",
+      "alpha": "RGBA true alpha"
+    },
+    {
+      "id": "PRP_MineNo3_SporeFace",
+      "path": "res://art/30_props/PRP_MineNo3_SporeFace.png",
+      "size": [
+        502,
+        293
+      ],
+      "pivot": [
+        251.0,
+        293
+      ],
+      "label": "frozen spore face",
+      "alpha": "RGBA true alpha"
+    }
+  ],
+  "generation_prompt": "generation-prompt.txt",
+  "variants": [
+    {
+      "id": "MAP_MineNo3_Night",
+      "file": "map_night.png",
+      "size": [
+        1672,
+        941
+      ],
+      "path": "res://art/80_maps/MineNo3/map_night.png",
+      "sha256": "7db417a47565f7fa044f29cab9a154b4331f9204c75e996068c1ea96564e42b7",
+      "art_only": true,
+      "tone": "night",
+      "prompt": "generation-prompt-night.txt",
+      "art_source": "host_image",
+      "route": "image_gen"
+    }
+  ]
+}

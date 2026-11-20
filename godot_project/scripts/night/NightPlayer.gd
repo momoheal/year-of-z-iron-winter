@@ -2,7 +2,7 @@ extends CharacterBody2D
 ## NightPlayer.gd — 阿列克谢：移动 / 姿态 / 朝向 / 手电 / 脚步噪声 / 精灵表动画。
 ##
 ## 世界单位：屏幕像素；地面 1 米 = (64, 39.68) px。速度与噪声半径都按「逻辑米」给出。
-## 精灵表 CHR_01_Aleksei_Sheet：8 列 × 3 行（S / E / N），W = E 水平翻转。
+## 精灵表 CHR_01_Aleksei_Sheet：12 列 × 3 行（S / E / N），W = E 水平翻转。
 
 const PPM := 64.0
 const SQ := 0.62
@@ -28,6 +28,22 @@ var _step := 0.0
 @onready var sprite: Sprite2D = $Sprite
 @onready var flash_pivot: Node2D = $Flashlight/Pivot
 @onready var flashlight: Node2D = $Flashlight
+
+func _ready() -> void:
+	_configure_flashlight_occlusion()
+
+
+func _configure_flashlight_occlusion() -> void:
+	# The Objects pass lights characters and props; it must use the same wall
+	# occluders as the ground pass or the visible cone leaks through walls.
+	var objects_light := flash_pivot.get_node_or_null("Objects") as PointLight2D
+	if objects_light == null:
+		return
+	objects_light.shadow_enabled = true
+	objects_light.shadow_filter = 1
+	objects_light.shadow_filter_smooth = 1.5
+	objects_light.shadow_item_cull_mask = 1
+
 
 func _physics_process(delta: float) -> void:
 	if ctl == null:

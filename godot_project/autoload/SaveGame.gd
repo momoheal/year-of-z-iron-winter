@@ -6,7 +6,7 @@ extends Node
 ## 真名 / 剧情 / 地点余量 / 日志 / 随机数状态）。不存夜潜进行中的状态 —— 存档点只有两个：
 ##   · 回到 602 室（phase = base）：新开局、睡觉、结算后进入次日；
 ##   · 结算页（phase = report）：夜潜的收获已经入账但还没过夜。
-##     读这种档时会补走一次 to_base + advance_day，等价于玩家在结算页按了「回 602 室」。
+##     读这种档时回到 602 室，但不自动推进日期；玩家仍可先整理物品、照顾母亲。
 ## 自动存档由 Campaign._process 在 (phase, day) 变化时触发，CampaignSim 本身不碰磁盘。
 ##
 ## 格式：JSON（不用 str_to_var / ConfigFile 存战役 —— 那两种能反序列化出 Object）。
@@ -59,7 +59,7 @@ func _settings_file() -> String:
 # ============================================================================
 ## 最近一次 save() 失败的原因（空串 = 成功或没尝试）。界面用它告诉玩家「这次没存上」。
 var last_error := ""
-## 最近一次 read_raw() 实际读的是哪一份："main" / "backup" / "tmp" / ""（没有可用存档）。
+## 最近一次 read_raw() 实际读的是哪一份："main" / "backup" / "prev" / "tmp" / ""（没有可用存档）。
 var last_load_source := ""
 
 ## 一份存档必须有的字段：缺了就当坏档，不拿它覆盖备份、也不拿来读。
@@ -101,14 +101,15 @@ func has_any_save() -> bool:
 
 func delete_save(slot: int = AUTO_SLOT) -> void:
 	var p := slot_file(slot)
-	for f in [p, p + ".bak", p + ".tmp"]:
+	for f in [p, p + ".bak", p + ".tmp", p + ".prev"]:
 		if FileAccess.file_exists(f):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(f))
 
 
 ## 现在能不能存：只有 602 室（base）和结算页（report）是安全点。
 static func can_save(sim) -> bool:
-	return sim != null and (String(sim.phase) in ["base", "report"])
+	return sim != null and (String(sim.phase) in ["base", "report"] \
+		or (sim.phase == "ending" and sim.flags.has("final_ending")))
 
 
 ## 写档。只接受 base / report 两个安全点；其余阶段返回 false 不写（不算失败，last_error 为空）。
@@ -116,8 +117,9 @@ static func can_save(sim) -> bool:
 ## 步骤（每一步检查返回值，任何一步失败都至少留下一份可读的旧档）：
 ##   1. 写 .tmp，再读回来校验（JSON 能解析、版本对、必需字段齐全）；
 ##   2. 旧主档本身可读时才复制成 .bak —— 坏主档不会顶掉好备份；
-##   3. 删旧主档 → .tmp 改名为主档；改名失败就用 .bak 把主档补回来。
-## Windows 上「删 + 改名」不是原子操作；第 2 步的备份就是为这两步之间崩溃准备的。
+##   3. 旧主档先改名成 .prev（原子），再把 .tmp 改名为主档（原子），最后删 .prev；
+##      Windows 上直接「删 + 改名」会在两步之间留下无主档的窗口，
+##      现在任一步崩溃都能从 .bak 或 .prev 读回上一份完整存档。
 func save(sim, slot: int = AUTO_SLOT) -> bool:
 	last_error = ""
 	if not can_save(sim):
@@ -127,6 +129,7 @@ func save(sim, slot: int = AUTO_SLOT) -> bool:
 	var p := slot_file(slot)
 	var tmp := p + ".tmp"
 	var bak := p + ".bak"
+	var prev := p + ".prev"
 	var f := FileAccess.open(tmp, FileAccess.WRITE)
 	if f == null:
 		return _fail("无法写入临时存档（%s）" % error_string(FileAccess.get_open_error()))
@@ -142,14 +145,20 @@ func save(sim, slot: int = AUTO_SLOT) -> bool:
 			# 备份不了就不动主档：旧档还在，只是这次没存上
 			return _fail("无法备份上一份存档（%s）" % error_string(e))
 	if FileAccess.file_exists(p) or DirAccess.dir_exists_absolute(abs_p):
-		var e2 := DirAccess.remove_absolute(abs_p)
+		if DirAccess.dir_exists_absolute(abs_p):
+			return _fail("存档路径被目录占用（%s）" % p)
+		var e2 := DirAccess.rename_absolute(abs_p, ProjectSettings.globalize_path(prev))
 		if e2 != OK:
-			return _fail("无法替换旧存档（%s）" % error_string(e2))
+			return _fail("无法挪开旧存档（%s）" % error_string(e2))
 	var e3 := DirAccess.rename_absolute(ProjectSettings.globalize_path(tmp), abs_p)
 	if e3 != OK:
-		if FileAccess.file_exists(bak):
+		if FileAccess.file_exists(prev):
+			DirAccess.rename_absolute(ProjectSettings.globalize_path(prev), abs_p)
+		elif FileAccess.file_exists(bak):
 			DirAccess.copy_absolute(ProjectSettings.globalize_path(bak), abs_p)
-		return _fail("存档改名失败（%s），已从备份恢复上一份" % error_string(e3))
+		return _fail("存档改名失败（%s），已恢复上一份" % error_string(e3))
+	if FileAccess.file_exists(prev):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(prev))
 	return true
 
 
@@ -166,7 +175,7 @@ func read_raw(slot: int = AUTO_SLOT) -> Dictionary:
 		last_load_source = ""
 		return {}
 	var p := slot_file(slot)
-	for pair in [[p, "main"], [p + ".bak", "backup"], [p + ".tmp", "tmp"]]:
+	for pair in [[p, "main"], [p + ".bak", "backup"], [p + ".prev", "prev"], [p + ".tmp", "tmp"]]:
 		var d := _parse_file(String(pair[0]))
 		if not d.is_empty():
 			last_load_source = String(pair[1])
@@ -240,6 +249,10 @@ static func to_dict(sim) -> Dictionary:
 		"conscience": float(sim.conscience),
 		"tally": int(sim.tally),
 		"stash": sim.stash.duplicate(true),
+		"weapon_mods": sim.weapon_mods.duplicate(true),
+		"base_display": Array(sim.base_display),
+		"dial_machine_bags": int(sim.dial_machine_bags),
+		"night_complete": bool(sim.night_complete),
 		"mates": sim.mates.duplicate(true),
 		"flags": sim.flags.duplicate(true),
 		"names": Array(sim.names),
@@ -269,10 +282,23 @@ static func apply(sim, d: Dictionary) -> void:
 	sim.conscience = float(d.get("conscience", 50.0))
 	sim.tally = int(d.get("tally", 0))
 	sim.stash = _int_values(d.get("stash", {}))
+	sim.weapon_mods = _dict(d.get("weapon_mods", {}))
+	sim.base_display.clear()
+	for ref in d.get("base_display", []):
+		if ref is String and sim.base_display.size() < 4:
+			var display_ref := String(ref)
+			if display_ref == "weapon:fist":
+				continue
+			sim.base_display.append(display_ref)
+	sim.dial_machine_bags = clampi(int(d.get("dial_machine_bags", 0)), 0, 3)
+	sim.night_complete = bool(d.get("night_complete", String(d.get("phase", "base")) == "report"))
 	sim.load = _int_values(d.get("load", {}))
 	sim.mates = _bool_values(d.get("mates", sim.mates))
 	sim.flags = _dict(d.get("flags", {}))
 	sim.story_done = _dict(d.get("story_done", {}))
+	if bool(sim.story_done.get("coldstore", false)) and not bool(sim.flags.get("archive_lead", false)) \
+			and not bool(sim.flags.get("lana_car3", false)):
+		sim.flags["vikina_clue_pending"] = true
 	var nodes: Dictionary = sim.nodes
 	var saved_nodes := _dict(d.get("nodes", {}))
 	for id in saved_nodes:
@@ -306,10 +332,11 @@ static func apply(sim, d: Dictionary) -> void:
 	var rs := String(d.get("rng_state", ""))
 	if rs.is_valid_int():
 		sim.rng.state = rs.to_int()
-	if String(d.get("phase", "base")) == "report":
-		# 结算页存的档：收获已入账，补走「回 602 室 → 过夜」
+	if sim.flags.has("final_ending"):
+		sim.phase = "ending"
+	elif String(d.get("phase", "base")) == "report":
+		# 结算页的收获已入账；进入 602 后由玩家单独选择是否睡到明天。
 		sim.to_base()
-		sim.advance_day()
 	else:
 		sim.phase = "base"
 	sim._sync_logbook()

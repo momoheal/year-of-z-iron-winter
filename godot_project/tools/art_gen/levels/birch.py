@@ -99,3 +99,7 @@ ZONES = [{'id': 'black', 'rects': [(16, 18, 36, 32)]},
  {'id': 'white', 'rects': [(0, 0, 36.0, 32.0)]}]
 
 SLAB_BAND = (3.0, 6.0)
+
+
+from .plate_registration import register as _register_plate
+_register_plate(globals())
