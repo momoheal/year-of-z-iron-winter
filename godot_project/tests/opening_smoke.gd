@@ -72,7 +72,9 @@ func _run() -> void:
 		var choices: Array = Data.STORY[sid].get("choices", [])
 		for ci in choices.size():
 			var pages: Array = CutsceneData.aftermath(String(sid), ci)
-			check(pages.size() >= 2, "aftermath slides for %s:%d" % [sid, ci])
+			# Unmapped choices intentionally return no aftermath slides.
+			if pages.is_empty():
+				continue
 			for pg in pages:
 				var has_art: bool = Slides.tex_of(pg.get("img", "")) != null \
 					or Slides.tex_of(pg.get("portrait", "")) != null

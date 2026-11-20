@@ -125,6 +125,7 @@ func _run() -> void:
 	_assert(not bool(crag_sim.flags.get("eagle_escape", false)), "dawn does not evacuate the survivors")
 	crag_sim.advance_day()
 	_assert(crag_sim.depart(crag), "failed rescue can be retried")
+	crag_sim.raid.crag_rescue_scope = "all"
 	crag_sim.raid.story_objective_reached = true
 	crag_sim.finish_raid("extracted")
 	_assert(bool(crag_sim.flags.get("eagle_escape", false)), "exit after opening the car completes rescue")
@@ -166,12 +167,14 @@ func _run() -> void:
 	_assert(not evidence_sim.flags.get("truth", false), "manor dialogue does not award the truth")
 	evidence_sim.raid.pack.assign(["scrap", "photo"])
 	evidence_sim.raid.manor_photo_slot = 1
+	evidence_sim.raid.story_objective_reached = true
 	evidence_sim.finish_raid("dawn")
 	_assert(not evidence_sim.flags.get("truth", false), "dawn can lose the specific ledger photo")
 	evidence_sim.advance_day()
 	_assert(evidence_sim.depart(manor), "manor can be retried")
 	evidence_sim.raid.pack.assign(["photo"])
 	evidence_sim.raid.manor_photo_slot = 0
+	evidence_sim.raid.story_objective_reached = true
 	evidence_sim.finish_raid("extracted")
 	_assert(evidence_sim.flags.get("truth", false), "retained ledger photo unlocks the truth")
 	bridge.clear()
