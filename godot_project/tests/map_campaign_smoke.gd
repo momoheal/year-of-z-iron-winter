@@ -154,6 +154,10 @@ func _run() -> void:
 	finish_sim.raid.story_objective_reached = true
 	finish_sim.finish_raid("extracted")
 	finish_sim.to_base()
+	finish_sim.prepare_base_story_events()
+	while finish_sim.has_pending_story_slides():
+		finish_sim.take_story_slide()
+	finish_sim.prepare_base_story_events()
 	_assert(bool(finish_sim.flags.get("broadcast_complete", false)) and finish_sim.finished_demo,
 		"successful tower extraction completes the campaign finale")
 	bridge.clear()
