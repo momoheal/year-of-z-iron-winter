@@ -825,11 +825,16 @@ func resolve_story(choice_index: int) -> Dictionary:
 		"toast": String(ch.get("toast_zh" if lang == "zh" else "toast_en", "")),
 	}
 	_sync_logbook()
-	if story_id != "market_refuge" and bool(flags.get("market_refuge_story_pending", false)):
-		flags.erase("market_refuge_story_pending")
+	if phase in ["base", "report"]:
+		open_pending_market_refuge()
+	return story_result
+
+## 已发现且未作答就是待处理。旧档也能用这两个持久字段恢复。
+func open_pending_market_refuge() -> void:
+	if not story_open and bool(flags.get("market_refuge_found", false)) \
+			and not bool(story_done.get("market_refuge", false)):
 		story_id = "market_refuge"
 		story_open = true
-	return story_result
 
 func close_story() -> void:
 	story_open = false
@@ -972,12 +977,7 @@ func finish_raid(reason: String) -> Dictionary:
 		queue_story_slide("market_refuge")
 		add_log("你在黑市废信号室找到一处临时栖身处。清杀队仍在搜查，天亮前不能久留。",
 			"You find a temporary refuge in the market's abandoned signal room. OSK is still searching; you cannot stay long after dawn.")
-		if not bool(story_done.get("market_refuge", false)):
-			if story_open:
-				flags["market_refuge_story_pending"] = true
-			else:
-				story_id = "market_refuge"
-				story_open = true
+		open_pending_market_refuge()
 	if loc_id == "marshalling" and returned and not bool(story_done.get("pasha_watchtower", false)):
 		flags["pasha_scene_pending"] = true
 	# 天亮了/倒地后次日结算由「回到 602 室」触发
@@ -1111,6 +1111,7 @@ func has_pending_story_slides() -> bool:
 func prepare_base_story_events() -> void:
 	if phase != "base":
 		return
+	open_pending_market_refuge()
 	# Reconstruct one-time beats for older saves from durable story outcomes.
 	if bool(flags.get("archive_copy_found", false)):
 		queue_story_slide("archive_copy")

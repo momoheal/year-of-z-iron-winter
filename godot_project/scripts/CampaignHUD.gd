@@ -580,7 +580,11 @@ func _advance_campaign_story_slides() -> void:
 
 
 func _persist_story_cutscene_state() -> void:
-	if SaveGame.can_save(sim) and not SaveGame.save(sim) and SaveGame.last_error != "":
+	if not SaveGame.can_save(sim):
+		return
+	if game != null and game.has_method("request_autosave"):
+		game.request_autosave()
+	elif not SaveGame.save(sim) and SaveGame.last_error != "":
 		warn_save(SaveGame.last_error)
 
 func _refresh(force: bool) -> void:
@@ -985,6 +989,7 @@ func _on_save_loaded(_slot: int) -> void:
 
 ## 自动存档成功：顶栏副标题显示 3 秒「已自动存档」（Campaign._autosave 调用）。
 func note_saved() -> void:
+	_save_warn = ""
 	_save_note_until = Time.get_ticks_msec() + 3000
 
 
@@ -2254,7 +2259,7 @@ func _resolve_story(idx: int) -> void:
 	if not res.is_empty():
 		ui_sfx.emit("beep")
 		var companion_pages := _companion_join_pages(previous_mates)
-		if sid == "pasha_watchtower":
+		if sid in ["market_refuge", "pasha_watchtower"]:
 			_persist_story_cutscene_state()
 		if sid == "manor":
 			sim.flags["manor_outcome_mate"] = sim.mate if bool(sim.mates.get(sim.mate, false)) else ""

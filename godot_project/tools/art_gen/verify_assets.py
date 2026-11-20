@@ -2,6 +2,7 @@
 """verify_assets — 资产体检与总清单（纯标准库，零第三方依赖）。
 
     python verify_assets.py              # 校验 + 写出 art/asset_manifest.json
+    python verify_assets.py --check      # 校验 + 比较现有清单（只读）
     python verify_assets.py --no-write   # 只校验，不落盘
     python verify_assets.py --quiet      # 只输出问题
 
@@ -276,7 +277,8 @@ def load_manifests():
 # 4. 主流程
 # ---------------------------------------------------------------------------
 def main(argv) -> int:
-    write = "--no-write" not in argv
+    check = "--check" in argv
+    write = not check and "--no-write" not in argv
     quiet = "--quiet" in argv
 
     assets = scan_assets()
@@ -393,6 +395,15 @@ def main(argv) -> int:
     if write:
         with open(OUT, "w", encoding="utf-8") as f:
             json.dump(manifest, f, ensure_ascii=False, indent=1, sort_keys=True)
+    elif check:
+        try:
+            with open(OUT, encoding="utf-8") as f:
+                existing = json.load(f)
+        except (OSError, ValueError) as exc:
+            fail(f"无法读取已生成的资产清单：{exc}")
+        else:
+            if existing != manifest:
+                fail("资产清单已过期，请运行 python godot_project/tools/art_gen/verify_assets.py 并提交更新")
 
     # 报告 ------------------------------------------------------------------
     if not quiet:

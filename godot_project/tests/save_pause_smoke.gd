@@ -12,6 +12,7 @@ extends SceneTree
 ## 成功输出：SAVE_PAUSE_SMOKE_PASS
 
 const SimScript := preload("res://scripts/CampaignSim.gd")
+const Data := preload("res://scripts/CampaignData.gd")
 
 var passes: int = 0
 var failures: Array[String] = []
@@ -163,6 +164,18 @@ func _run() -> void:
 	hud.start_new_game()
 	await _frames(2)
 	_assert(SG.has_save() and int(SG.summary().get("day", 0)) == 1, "24. starting a new game autosaves day 1")
+	hud.cutscene.queue_free()
+	var quick_map := InputEventKey.new()
+	quick_map.keycode = KEY_F2
+	quick_map.pressed = true
+	sim.stash["rye"] = 19
+	_assert(not hud.overlay_active(), "24a. the hotkey test starts without an input-blocking overlay")
+	camp._unhandled_input(quick_map)
+	camp.set("_qa_maps_enabled", true)
+	camp._unhandled_input(quick_map)
+	await _frames(2)
+	_assert(is_instance_valid(camp) and camp.get("sim") == sim and sim.stash["rye"] == 19,
+		"24b. QA map hotkeys leave a live campaign and its inventory intact, even with QA enabled")
 	sim.sleep()
 	await _frames(2)
 	_assert(int(SG.summary().get("day", 0)) == 2, "25. sleeping autosaves the next day",
@@ -227,6 +240,16 @@ func _run() -> void:
 	_assert(SG.save(bk), "B6. saving over a corrupt main still succeeds")
 	_assert(int(SG._parse_file(bak_p).get("day", 0)) == 3,
 		"B7. a corrupt main is NOT copied over the good backup", str(SG._parse_file(bak_p).get("day", -1)))
+	var malformed: Dictionary = SG.to_dict(bk)
+	malformed["stash"] = []
+	fb = FileAccess.open(main_p, FileAccess.WRITE)
+	fb.store_string(JSON.stringify(malformed))
+	fb.close()
+	var recovered = SimScript.new()
+	_assert(SG.load_into(recovered) and SG.last_load_source == "backup" and recovered.day == 3 \
+		and not recovered.stash.is_empty(), "B7a. valid JSON with a mistyped stash recovers inventory from backup")
+	_assert(SG.save(bk) and int(SG._parse_file(bak_p).get("day", 0)) == 3,
+		"B7b. the mistyped main cannot replace the backup")
 	SG.delete_save()
 	_assert(not FileAccess.file_exists(main_p) and not FileAccess.file_exists(bak_p)
 		and not FileAccess.file_exists(tmp_p) and not FileAccess.file_exists(prev_p),
@@ -263,6 +286,48 @@ func _run() -> void:
 		SG.last_error)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(main_p.path_join("lock.txt")))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(main_p))
+	SG.delete_save()
+
+	# 结算页停在选择时退出，重启读档并在同一天作答。
+	DirAccess.make_dir_absolute(ProjectSettings.globalize_path(tmp_p))
+	camp = (load("res://scenes/campaign.tscn") as PackedScene).instantiate()
+	root.add_child(camp)
+	sim = camp.get("sim")
+	sim.new_game()
+	sim.story_done[SimScript.FIRST_ACT_LOC] = true
+	sim.story_done["market"] = true
+	sim.mother_alive = false
+	sim.depart(Data.loc("market"))
+	sim.finish_raid("extracted")
+	await _frames(2)
+	_assert(sim.phase == "report" and sim.story_open and not SG.has_save() and SG.last_error != "",
+		"R1. report autosave fails visibly with an unresolved refuge choice")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(tmp_p))
+	await create_timer(1.2).timeout
+	_assert(SG.has_save() and SG.summary().get("day") == sim.day and SG.last_error == "",
+		"R2. autosave retries successfully at the same report without advancing the day")
+	camp.queue_free()
+	await _frames(2)
+	camp = (load("res://scenes/campaign.tscn") as PackedScene).instantiate()
+	root.add_child(camp)
+	sim = camp.get("sim")
+	hud = camp.get("hud")
+	hud.continue_game()
+	await _frames(2)
+	_assert(sim.phase == "base" and sim.story_open and sim.story_id == "market_refuge",
+		"R3. Continue reopens the pending refuge choice at Room 602")
+	hud._resolve_story(0)
+	var after_restart = SimScript.new()
+	_assert(SG.load_into(after_restart) and bool(after_restart.flags.get("market_refuge_seen", false))
+		and bool(after_restart.story_done.get("market_refuge", false)) and not after_restart.story_open,
+		"R4. answering the restored choice immediately saves its outcome")
+	var log_size: int = after_restart.log.size()
+	after_restart.story_id = "market_refuge"
+	_assert(after_restart.resolve_story(0).is_empty() and after_restart.log.size() == log_size,
+		"R5. the committed choice cannot apply again after reloading")
+	camp.queue_free()
+	root.get_node("RaidBridge").clear()
+	await _frames(2)
 	SG.delete_save()
 
 	# --- 6c. 手动存档位 / 存读档面板 / 新手引导进度 --------------------------
