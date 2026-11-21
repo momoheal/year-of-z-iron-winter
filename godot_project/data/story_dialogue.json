@@ -85,7 +85,8 @@
           "role": "dispatcher",
           "mood": "calm",
           "zh": "内务部要把 004 号闷罐编进铁壳号，走固定循环。送完一批，空车拉回来接下一批。底单在电传机里。你签个字，本周指标算咱们超额。你妈那一箱药，明早头一班吉斯卡车送进你们楼。",
-          "stage": "（把印泥盒推过来，铁盒盖在桌面上蹭出一道白印）"
+          "stage": "（把印泥盒推过来，铁盒盖在桌面上蹭出一道白印）",
+          "en": "Interior wants Car 004 on the Buran roster. It'll run the same route, come back empty, and load the next group. The office copy is in the teletype. Sign here and we beat this week's quota. The first ZiS truck tomorrow will bring that case of medicine to your building."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -99,17 +100,17 @@
           "w": "阿列克谢",
           "role": "aleksei",
           "mood": "calm",
-          "zh": "品名……疫区留观人员及陪护，一百七十六名。\n……调度长，一百七十六个活人，怎么能按‘零号散货’走账？",
+          "zh": "品名……疫区留观人员及陪护。人数按每趟编组单另填。\n……调度长，这一车活人，怎么能按‘零号散货’走账？",
           "stage": "（钢笔尖悬在纸上，离纸面不到半寸）",
-          "en": "Description... persons under observation from the infected zone and their attendants, one hundred and seventy-six.\n...Dispatcher, one hundred and seventy-six living people — how can they be booked as 'zero-grade bulk freight'?"
+          "en": "Description... people under observation from the infected zone, and their attendants. Head count to be entered on each run's consist sheet.\nDispatcher... how can you book a carload of living people as 'zero-grade bulk freight'?"
         },
         {
           "w": "调度长",
           "role": "dispatcher",
           "mood": "calm",
-          "zh": "莫罗佐夫，电传机认代码，不认人。你签了，他们是一百七十六个转运编号；你不签，全楼供暖明晚掐掉两截，你妈连明天中午都熬不过去。你自己掂量。",
+          "zh": "莫罗佐夫，电传机认代码，不认人。你签的是车皮入编。以后每一趟装了谁，自有押运的人填单子。你不签，全楼供暖明晚掐掉两截，你妈连明天中午都熬不过去。你自己掂量。",
           "stage": "（眼皮都没抬一下）",
-          "en": "Morozov, the teletype reads codes, not people. You sign, and they become one hundred and seventy-six transfer numbers. You don't, and two heating lines get cut off for the whole building tomorrow night — your mother won't last till noon. Weigh it yourself."
+          "en": "Morozov, the teletype reads codes, not people. You're signing the car into rotation. The escort fills in who's aboard on each run. Refuse, and they cut two heating lines to this building tomorrow night. Your mother won't even make it to noon. Think it over."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -124,7 +125,8 @@
           "role": "ivan",
           "mood": "calm",
           "zh": "这节车皮还会回来。你要是签了，名字就跟着随车联一起铆在门上。",
-          "stage": "（从阿列克谢背后走过，看都没看桌上的单子）"
+          "stage": "（从阿列克谢背后走过，看都没看桌上的单子）",
+          "en": "This car will come back. Put your name on that sheet and they'll rivet it to the door with the car copy."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -135,7 +137,7 @@
           "en": "Ivan lifted the curtain and went out; the draught turned up one corner of the carbon paper on the desk."
         }
       ],
-      "choices_markdown": "**【抉择 E0 · 签字时刻】**\n- **E0-1（低头签字）**：阿列克谢闭了闭眼，钢笔在第三联末尾划下“阿·莫罗佐夫”。复写纸背面洇出紫黑色的笔迹。电传终端绿灯亮起，打印针咔嗒作响：`【004 号车皮入编调拨单已受理 · 随车联留存】`。\n- **E0-2（迟疑核对）**：阿列克谢核对了三个名字，直到调度长伸手去抽那张透析液批条。他一把按住批条，在签发栏签下名字。\n- **E0-3（试图划掉陪护栏）**：调度长夺过钢笔，直接在上面盖上公章：“别犯蠢，少一个数字，全车皮都走不了。”阿列克谢最终默许了公章落下，在签发栏补上了自己的名字。\n\n工人提着铆钉枪走过站台。随车联被锁进一块厚黄铜夹板，四枚铆钉结结实实打进 004 号闷罐车厢的铁门框上，随后刷上了一层防冻清漆。在风雪里，黄铜铭牌上阿列克谢的签名透着冰冷的反光。\n\n汽笛拉响，铁轨在脚底下震颤。阿列克谢把那张透析液批条塞进大衣内袋，贴着胸口。隔着粗呢子布，纸片像冰块一样硌着肋骨。\n\n接下来的十天里，铁壳号办了六趟特别运输。每送走一批，空车就回场等下一批。十天后，妹妹拉娜在红区外围筛查时被带走。第二天，一张红码转运回执送到 602 室：档案编号 0420，去向栏被黑章整个盖住了。",
+      "choices_markdown": "**【抉择 E0 · 签字时刻】**\n- **E0-1（低头签字）**：阿列克谢闭了闭眼，钢笔在第三联末尾划下“阿·莫罗佐夫”。复写纸背面洇出紫黑色的笔迹。电传终端绿灯亮起，打印针咔嗒作响：`【004 号车皮入编调拨单已受理 · 随车联留存】`。\n- **E0-2（迟疑核对）**：阿列克谢把入编单从头看了一遍，直到调度长伸手去抽那张透析液批条。他一把按住批条，在签发栏签下名字。\n- **E0-3（试图划掉陪护栏）**：调度长夺过钢笔，直接在上面盖上公章：“别犯蠢。少了这一栏，就得退回去重开单子。”阿列克谢看着公章落下，在签发栏补上了自己的名字。\n\n工人提着铆钉枪走过站台。随车联被锁进一块厚黄铜夹板，四枚铆钉结结实实打进 004 号闷罐车厢的铁门框上，随后刷上了一层防冻清漆。在风雪里，黄铜铭牌上阿列克谢的签名透着冰冷的反光。\n\n汽笛拉响，铁轨在脚底下震颤。阿列克谢把那张透析液批条塞进大衣内袋，贴着胸口。隔着粗呢子布，纸片像冰块一样硌着肋骨。\n\n签字次日清晨，那箱 409 批透析液送到了 602 室。此后 004 号车皮随铁壳号跑了六趟，送完一批，空车就回场。签字十天后，妹妹拉娜在红区外围筛查时被带走。隔天，602 室收到她的红码转运回执：档案编号 0420，去向栏被黑章整个盖住了。",
       "title_en": "Green Lights, Boxcars, and a Signature"
     },
     "1-1": {
@@ -483,7 +485,8 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢退进煤堆的阴影里，手按住颤抖的膝盖。灰烬若同行，就伏在他靴边，一声未吭。",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei backs into the shadow of the coal pile and presses a hand to his shaking knee. If Ash is with him, the dog lies by his boot without a sound."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -514,7 +517,8 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢摸到口袋里那张红码回执。也许拉娜的烧也能退。",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei feels the red-code receipt in his pocket. Maybe Lana's fever can break too."
         }
       ],
       "choices_markdown": "",
@@ -648,9 +652,9 @@
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
-          "zh": "货场换岗时，阿列克谢从煤水塔后绕过一排待报废的配给箱。调度箱背面贴着一张受潮的编组单：「铁壳号 · 第 7 次特别运输 · 第三节闷罐 · 档案 0401—0576」。0420 在这个区间里。终到栏只印了「乌拉尔山线 · 销账点」。一个戴蓝袖章的核算员正把没收来的手套、滤芯和烟草重新分堆，手里那本账簿没有一页写着失主的名字。",
+          "zh": "货场换岗时，阿列克谢从煤水塔后绕过一排待报废的配给箱。调度箱背面贴着一张受潮的编组单：「铁壳号 · 第 7 次特别运输 · 第三节闷罐 · 档案 0401—0576」。这一趟押了一百七十六人。阿列克谢从 0401 数到 0420，手指停住了。终到栏只印了「乌拉尔山线 · 销账点」。一个戴蓝袖章的核算员正把没收来的手套、滤芯和烟草重新分堆，手里那本账簿没有一页写着失主的名字。",
           "stage": "",
-          "en": "During shift change, Aleksei skirts the scrap crates. A damp consist sheet lists Buran, Special Run 7, Boxcar Three, Files 0401–0576. That includes 0420. Destination: Urals Line · Closure Point. Nearby a blue-armband accountant sorts confiscated gloves, filters and tobacco. His ledger has no names."
+          "en": "At shift change, Aleksei skirts a row of old ration crates behind the coaling tower. A damp consist sheet is stuck to the back of the dispatch box: Buran, Special Run 7, Boxcar Three, Files 0401–0576. One hundred and seventy-six people on this run. His finger follows the numbers from 0401 and stops at 0420. The destination field reads Urals Line · Closure Point. Nearby, an accountant with a blue armband sorts confiscated gloves, filters, and tobacco. His ledger carries none of their owners' names."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -1185,14 +1189,16 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢翻开工作日志，在背面一笔一划地写下瓦西里的全名。灶台后响了两下钉锤。一个提着帆布工具包的老人直起身，把没用完的钉子拢进口袋。他一直在帮费奥多尔钉瓦西里的木箱。",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei opens the logbook and writes Vasily's full name on the back page, letter by letter. A hammer taps twice behind the stove. An old man with a canvas tool bag straightens up and sweeps the spare nails into his pocket. He has been helping Fyodor nail together Vasily's coffin."
         },
         {
           "w": "帕维尔老爹",
           "role": "pavel",
           "mood": "sad",
           "zh": "我叫帕维尔，在机务段修了一辈子车门。费奥多尔把儿子的坎肩给了你，我看见了。下回碰上焊死的门，叫上我。你那根撬棍，得留着接人。",
-          "stage": ""
+          "stage": "",
+          "en": "I'm Pavel. I spent my working life fixing car doors at the depot. I saw Fyodor give you his son's vest. Next time you come up against a welded door, call me. Save that crowbar of yours for getting people out."
         }
       ],
       "choices_markdown": "",
@@ -1671,7 +1677,8 @@
           "role": "yelena",
           "mood": "calm",
           "zh": "刚才那车透析液推进炉子时，你闻见了吗？外头有人为半勺麦糊告密。你把救命的药烧了，让我在这二十六度的屋子里喝茶。",
-          "stage": ""
+          "stage": "",
+          "en": "Did you smell the dialysis fluid when they pushed that cart into the furnace? Outside, people inform on each other for half a spoonful of barley mash. You burned medicine that keeps people alive so I could drink tea in this room at twenty-six degrees."
         },
         {
           "w": "茹科夫专员",
@@ -1718,31 +1725,36 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "西站调度室外，一枚没干透的红章把发车令的纸角洇得卷了起来。",
-          "stage": ""
+          "stage": "",
+          "en": "Outside the West Station dispatch room, a red stamp is still wet enough to curl the corner of the departure order."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "「第 7 次特别运输 · 发车 23:00 · 实毁数须与账面数闭合。」",
-          "stage": ""
+          "stage": "",
+          "en": "Special Run 7 · Departure 23:00 · The number destroyed must match the number on the books."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "南侧编组线的交接底单留着一个空白盖章栏。阿列克谢把底单收进大衣内袋，在图上圈出通往鹰嘴崖的检修路。现在他知道车什么时候走，也知道去哪里截它。",
-          "stage": ""
+          "stage": "",
+          "en": "The handover copy on the south marshalling track has a blank space for a stamp. Aleksei slips it into his coat and circles the service route to Eagle's Crag. Now he knows when the train leaves and where to intercept it."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "报废守车的工具箱里躺着一支拆开的旧莫辛纳甘。枪托裂了一道，枪机和弹簧各自裹在油布里。阿列克谢把枪重新装好，拉栓试了两次，又把三发子弹收进口袋，背上肩。木枪托隔着大衣抵住肩胛，冷得透进布料。",
-          "stage": ""
+          "stage": "",
+          "en": "In the toolbox of a derelict brake van lies an old Mosin–Nagant in pieces. The stock is cracked, the bolt and spring wrapped separately in oilcloth. Aleksei puts the rifle back together, works the bolt twice, pockets three rounds, and slings it over his shoulder. The cold comes through his coat where the wooden stock rests against his shoulder blade."
         }
       ],
-      "choices_markdown": ""
+      "choices_markdown": "",
+      "title_en": "West Station and the Handover Copy"
     },
     "4-1": {
       "id": "4-1",
@@ -1769,7 +1781,8 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢走进粉尘，面罩内侧全是自己粗重的呼吸声。若灰烬同行，它走到第一道岩缝前便夹紧尾巴，低低呜咽。",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei steps into the dust, his breathing loud inside the mask. If Ash is with him, the dog tucks his tail and whines at the first crack in the rock."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -1784,7 +1797,8 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "断面如同被切开的千层糕：上面是黑色的煤系地层，中间是冻结了数万年的淡蓝永冻冰层，而在永冻层最深处，一道宽达数米的暗红色脉络被炸得粉碎，灰白色的丝状物从岩缝中渗出。",
-          "stage": ""
+          "stage": "",
+          "en": "The exposed rock looks like a slice through a layer cake: black coal-bearing strata above, pale blue ice frozen for tens of thousands of years below. Deepest of all, a dark red seam several yards wide has been blown apart, with grey-white threads seeping from the cracks."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -1799,21 +1813,24 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "贯通作业面的岩壁旁，一只矿测员的铁皮工具箱被冲击波掀翻了。里面的便携磁带记录器摔裂了外壳，磁带停在最后几分钟。它原本用来口述记录地层和爆破进度。",
-          "stage": ""
+          "stage": "",
+          "en": "By the breakthrough face, the blast has overturned a mine surveyor's tin toolbox. The casing of the portable tape recorder inside is cracked. The tape stopped in the final minutes. They used it to dictate notes on the strata and the blasting work."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢按下回放键。钻机声沉闷地震着，碎石滚过铁轨。接着，一个男人在咳嗽间喊：",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei presses play. A drill throbs, muffled. Loose rock rattles across the rails. Then a man shouts between coughs:"
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "“瓦尼亚，别管我，带你弟跑！”\n“打穿了。山里冒灰烟了。”\n“不是煤粉……吸进去，胸口就烧。”",
-          "stage": ""
+          "stage": "",
+          "en": "“Vanya, leave me. Get your brother out!”\n“We broke through. Grey smoke's coming out of the mountain.”\n“That's not coal dust... Breathe it in and your chest burns.”"
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -1828,7 +1845,8 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢用手套捻起一点粉末，没能认出它是什么。录音里的咳嗽、断面上的灰尘、台账上的爆破日期，都挨在一起。它们足以证明爆破后矿井出了事，却不足以说明粉尘是什么、病又是怎么来的。",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei rubs a little powder between his gloved fingers. He can't tell what it is. The coughing on the tape, the dust on the rock face, and the blast date in the ledger all line up. They can show that something happened in the mine after the blast. They can't tell him what the dust is or where the illness came from."
         }
       ],
       "choices_markdown": "",
@@ -1867,7 +1885,8 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "看见背着莫辛纳甘的阿列克谢，博伊科没有去摸手枪，只是疲倦地把额头抵在冰冷的铁桌面上。",
-          "stage": ""
+          "stage": "",
+          "en": "Boyko sees the Mosin on Aleksei's back and leaves his pistol where it is. He rests his forehead wearily on the cold steel desk."
         },
         {
           "w": "博伊科",
@@ -1890,7 +1909,8 @@
           "role": "boyko",
           "mood": "sad",
           "zh": "上面说……只要炸塌这条巷道，把爆破面彻底封死，矿上就没事了，外面的人也不用天天查体温了。任务代号叫‘净账’……多好听的名词啊。只要山一塌，把里面的一百七十六个人一起埋在里头，账面上的人数和实存人数就彻底‘闭合’了。可我儿子就在里头的掘进二队……他才十九岁，昨天他的高烧刚退下去，他还隔着铁门管我要烟抽……阿廖沙……我按不下去这颗雷管，可我也拆不掉它。巡逻队还有十五分钟交班，我要是没按，他们进来就会把我和我儿子一起当成感染者用喷火器烧死……",
-          "stage": "（惨笑了一声，声音虚弱嘶哑）"
+          "stage": "（惨笑了一声，声音虚弱嘶哑）",
+          "en": "They said if we bring this tunnel down and seal off the blast face, the mine will be fine and the people outside can stop having their temperature taken every day. They call it Clean Ledger. A fine name for it. Drop the mountain on those hundred and seventy-six people and the books will balance against who's left. But my boy is down there with Heading Crew Two. He's nineteen. His fever broke yesterday. He was asking me for a smoke through the iron door. Alyosha... I can't set the charge off, and I can't take it apart. The patrol changes in fifteen minutes. If I haven't done it by then, they'll come in and burn us both out as infected."
         }
       ],
       "choices_markdown": "**【抉择 E · 矿坑的证物与起爆线】**\n- **E1（带走断面岩样与台账）**：阿列克谢用地质锤取下一块灰白丝状物附近的岩样，翻拍并装走爆破工程台账。录音、样本和作业日期能证明官方隐瞒了矿井事故，却不能替病因下结论。（**获得【矿坑核心证物】**）。\n- **E2（破坏起爆电路，救助博伊科）**：阿列克谢切断了总起爆电缆，将抗生素分给博伊科，背着他从通风天井转移。清杀队未能按计划炸山，被迫在第五幕改用常规步枪和燃烧弹在谷底强攻。（**良知▲**，改变第五幕战场形态）。\n- **E3（只取炸药，不救博伊科）**：阿列克谢没有把抗生素递过去，也没替博伊科剪断引线。他盯着那只接过起爆电缆的手：“内务部的狗。你替他们接线时，车厢里的人也在发烧。我不原谅你。”他把抗生素收回口袋，只装走能带的炸药，转身离开。（不承担证物负重。）",
@@ -1961,7 +1981,8 @@
           "role": "lyudmila",
           "mood": "sad",
           "zh": "阿廖沙……带佳娜走！我吸进太多烟，腿已经使不上劲了，走不出去。这张券你替我留着，等她长大了告诉她：我没想害人，那时候只想让孩子吃上一口东西。快带她走！",
-          "stage": "（把佳娜的棉袄领子死死系紧，身子缩在烟火里，喘不上气）"
+          "stage": "（把佳娜的棉袄领子死死系紧，身子缩在烟火里，喘不上气）",
+          "en": "Alyosha... take Jana! I've breathed in too much smoke. My legs won't carry me out. Keep this ration slip. When she's old enough, tell her I never meant to hurt anyone. I just wanted the child to have something to eat. Take her. Go!"
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -1984,14 +2005,16 @@
           "role": "jana",
           "mood": "calm",
           "zh": "姥姥说把门焊上就不漏风了……可楼道里都是烟。叔叔，门还能打开吗？",
-          "stage": ""
+          "stage": "",
+          "en": "Grandma said if they welded the door shut, it would keep the wind out... but the stairs are full of smoke. Can you still open it, mister?"
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢把佳娜护在胸前，另一只手拔下墙边的消防斧，劈开堵在楼梯上的燃烧木板，冲向底楼。",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei holds Jana tight against his chest, yanks the fire axe off the wall with his free hand, and chops through the burning boards across the stairs. Then he runs for the ground floor."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -2022,28 +2045,32 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "没人欢呼。有人把伤者扶到背风处，有人一遍遍叫邻居的名字，确认没人留在楼里。其余人抬头看着赫鲁晓夫楼烧起来。那是他们住了多年的地方；火沿楼道一层层往上爬，熟悉的窗子先亮，接着黑下去。一个女人认出了自家的窗，往前走了半步，又停住。阿列克谢手里攥着那张熏黑的领粮券，纸边被汗和雪揉成了灰。没人说话，只有孩子的咳嗽和玻璃在火里炸裂的声音。",
-          "stage": ""
+          "stage": "",
+          "en": "Nobody cheers. Some carry the injured out of the wind. Others call their neighbors' names over and over, making sure no one is still inside. The rest look up at the apartment block where they have lived for years. Fire climbs the stairwell. Windows they know by heart light up, then go dark. A woman recognizes her own window and takes half a step toward it before stopping. Aleksei is still clutching the scorched ration slip; sweat and snow have rubbed its edges to ash. Nobody speaks. A child coughs. Glass cracks in the fire."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "有人从门房抱出一台旧电台，旋钮刚转过内务部频段，喇叭里便炸出一串急促的呼叫：布拉风号在鹰嘴崖脱轨，押运目标未清点。附近肃清小队立即集合，封锁检修线；发现幸存者，就地清除。",
-          "stage": ""
+          "stage": "",
+          "en": "Someone brings an old radio out of the gatehouse. The dial crosses the Interior Ministry band and the speaker bursts into urgent calls: the Buran has derailed at Eagle's Crag. The prisoners are not accounted for. All nearby OSK units are to assemble, seal the service line, and eliminate any survivors they find."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢把莫辛纳甘的背带收紧，检查了一遍枪机。伤员被安置在门房，愿意跟去的人从废墟边捡起手电和铁管。等最后一个孩子被交到邻居怀里，他们才沿着铁路灯影朝鹰嘴崖出发。",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei tightens the Mosin's sling and checks the bolt. They put the injured in the gatehouse. Those willing to go pick up torches and lengths of pipe from the rubble. Only when the last child is in a neighbor's arms do they set out for Eagle's Crag, following the lights along the railway."
         },
         {
           "w": "帕维尔老爹",
           "role": "pavel",
           "mood": "calm",
           "zh": "电台说他们要封检修线，押运的人还没清点。阿列克谢，我跟你去。能走的都跟上，别落在后头。",
-          "stage": ""
+          "stage": "",
+          "en": "The radio says they're sealing the service line. They don't have a count yet. Aleksei, I'm coming. If you can walk, keep up. Don't fall behind."
         }
       ],
       "choices_markdown": "",
@@ -2074,21 +2101,24 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "莫辛纳甘斜背在肩后，阿列克谢滑下雪坡，踩着齐膝深的积雪走向侧翻的第三节闷罐车厢。",
-          "stage": ""
+          "stage": "",
+          "en": "With the Mosin slung across his back, Aleksei slides down the slope and wades through knee-deep snow toward the overturned third boxcar."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "sad",
           "zh": "车厢铁门被撞得严重扭曲变形。阿列克谢没有放下肩上的莫辛纳甘。他招呼几名还站得住的人，在翻倒的转向架旁找到一截折断的制动拉杆，楔进门缝。众人一齐压下去，锈死的门闩终于崩开。",
-          "stage": ""
+          "stage": "",
+          "en": "The impact has twisted the iron door. Aleksei keeps the Mosin on his shoulder and calls over the few people still on their feet. Beside the overturned bogie they find a broken brake rod and wedge it into the gap. They lean on it together until the rusted latch gives."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "门开的前一刻，他对着铁皮里面喊了两声：“拉娜！”",
-          "stage": ""
+          "stage": "",
+          "en": "Just before the door opens, he calls through the steel twice: “Lana!”"
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -2103,7 +2133,8 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "透明工业清漆底下，压着一张发脆的复写纸调拨单，上面是他再熟悉不过的签名：\n【004 号车皮入编调拨单 · 转运单位：内务部疫区人员转运计划 · 调拨签发：货运中心三级调度员 阿·莫罗佐夫】",
-          "stage": ""
+          "stage": "",
+          "en": "Under the clear industrial varnish lies a brittle carbon copy of the assignment slip. He knows the signature by heart:\n[Car 004 Assignment to Rotation · Interior Ministry Quarantine Transfer Program · Authorized by A. Morozov, Grade Three Dispatcher, Freight Center]"
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -2117,30 +2148,33 @@
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
-          "zh": "莫辛纳甘的背带勒进肩头。阿列克谢盯着那道熟悉的签名，手停在半空，片刻后才把门框上松动的黄铜铭牌取下来。",
-          "stage": ""
+          "zh": "莫辛纳甘的背带勒进肩头。阿列克谢盯着那道熟悉的签名，伸出去的手停在半空。",
+          "stage": "",
+          "en": "The Mosin's sling digs into his shoulder. Aleksei stares at the familiar signature. His hand hangs in the air."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
-          "mood": "sad",
-          "zh": "原来没有别的刽子手。从那天在调度室里为了母亲低头签字的那一刻起，亲手把妹妹送上这趟死车、亲手给这扇门钉上铁锁的人，就是他自己。",
+          "mood": "calm",
+          "zh": "拉娜被带走前十天，他签的是让这节闷罐一趟趟跑下去的入编单。如今是第七趟。门里喊得应他的那个人，是拉娜。",
           "stage": "",
-          "en": "There had been no other executioner. From the moment he had bowed his head and signed in the dispatch office ten days ago for his mother's sake, the man who had sent his sister aboard that death train with his own hands and nailed the lock onto that door had been Aleksei himself."
+          "en": "Ten days before they took Lana, he had signed the order that kept this car running one trip after another. This was the seventh. The person who could answer him from behind that door was Lana."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "如果灰烬同行，它用鼻尖碰了碰阿列克谢垂下的手。他听见门里有个孩子在数数，数到三就停住。",
-          "stage": ""
+          "stage": "",
+          "en": "If Ash is with him, the dog noses Aleksei's lowered hand. Inside the car, a child counts to three and stops."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "sad",
           "zh": "三秒钟的死寂。车门撞歪时，铭牌一侧的铆钉已经崩开。阿列克谢伸手掰下那片摇摇欲坠的黄铜，塞进胸口内袋，贴着妹妹的一寸黑白登记照。",
-          "stage": ""
+          "stage": "",
+          "en": "Three seconds of silence. When the door buckled, the rivets on one side of the plate tore loose. Aleksei breaks off the hanging piece of brass and slips it inside his coat, against his sister's little black-and-white ID photograph."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -2187,7 +2221,8 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "她先看见吊在大衣外的铁路工牌。那根挂绳还是她缝过的。她从车厢里探出双手，扣住他的手腕，朝自己身后的黑暗用力一拉。灰鳞掉净的手背冻得通红。",
-          "stage": ""
+          "stage": "",
+          "en": "She sees the railway badge hanging outside his coat first. She mended that lanyard herself. She reaches out of the car with both hands, grips his wrist, and pulls him toward the dark behind her. The scales are gone from the backs of her hands. The cold has turned them red."
         },
         {
           "w": "拉娜",
@@ -2210,7 +2245,8 @@
           "role": "lana",
           "mood": "calm",
           "zh": "我听见你在门外喊我，还以为是梦。门边的几个能走。哥，里头还有人在喘气。",
-          "stage": ""
+          "stage": "",
+          "en": "I heard you calling outside the door. I thought I was dreaming. A few by the door can walk. Alyosha, there are people still breathing farther in."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -2225,7 +2261,8 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢把莫辛纳甘举到肩上，准星停在崖顶的督察身上。他没有开枪。",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei shoulders the Mosin and settles the sights on the inspector at the top of the ridge. He holds his fire."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -2240,7 +2277,8 @@
           "role": "osk",
           "mood": "calm",
           "zh": "莫罗佐夫，认得 004 上的签名吗？放下枪，把底单交出来。我可以把你那笔调拨改成戴罪立功，给你和拉娜两张过卡证，让你们活着离开这条线。你不肯？那就和车里的人一起算：你会被登记成盗枪、劫车的叛乱者；这 176 个已经销账的人，天亮前一个也不会剩下。各肃清小队就位！核对第三节车厢档案号 0401 至 0576！准备投掷铝热剂燃烧弹，就地清除！",
-          "stage": ""
+          "stage": "",
+          "en": "Morozov, recognize the signature on 004? Put the rifle down and hand over the copy. I can put that assignment down as service in atonement and get you and Lana two checkpoint passes. You both walk away alive. Refuse, and you go on the books with the rest: a rebel who stole a rifle and hijacked a train. Those 176 are already struck off. By dawn there won't be one left. All clearance teams, take your positions. Verify Boxcar Three, files 0401 to 0576. Stand by with thermite grenades. Clear them where they stand."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -2251,7 +2289,7 @@
           "en": "On the cliff above, the heavy machine gun's bolt clicked back."
         }
       ],
-      "choices_markdown": "**【终局闸 D（Endgame Gate D）· 灵魂的最终决断】**\n\n- **👉 D1【砸锁抢人，杀上 302 高地广播塔】**\n  阿列克谢一把将拉娜拉进怀里，背在背上。切尔诺夫中士扯下内务部白袖标；阿列克谢抬起莫辛纳甘，一枪击碎主探照灯。崖顶陷入黑暗，车厢里的人趁机冲出。突围队伍沿检修线直扑 302 广播高地。（进入第六幕，通往隐藏真结局或结局 B。）\n\n- **👉 D2【顺从挂锁，闭合账面】**\n  在极度的崩溃与恐惧下，阿列克谢放下莫辛纳甘，松开妹妹的手。他听从督察专员的命令退后三步，亲手替车厢拉上粗铁栓。铝热剂燃烧弹在车厢内炸开，火光将雪谷照得通红。（直接进入**结局 A · 击毙仁慈**。）\n\n- **👉 D3【独自逃离，隐入极夜】**\n  面对重机枪的火网，阿列克谢丧失了所有勇气。他把莫辛纳甘丢进雪里，松开拉娜，顺着排污涵洞独自爬回城市地窖。（直接进入**结局 C · 荒诞麻木**。）",
+      "choices_markdown": "**【抉择 D · 鹰嘴崖撤离】**\n\n- **带拉娜和能走的幸存者撤离**。拉娜先下车，给撑得住的人搭了把手。能走的幸存者分批沿检修线退到背风的旧道班房，有人留下照看伤员。阿列克谢带着底单撤离。\n\n- **只带拉娜和底单撤离**。检修道上只留下兄妹两行脚印。拉娜停下来朝车门看了一眼。其余人还在车厢里，没等到阿列克谢再回来。",
       "title_en": "The Derailed Buran and the Nameplate of Original Sin, 004"
     },
     "6-1": {
@@ -2367,35 +2405,40 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "> 只播档案号　拉娜把手放在名单上。阿列克谢播出档案号和罪证。窗边的听众听见自己等了一整夜的数字，铅笔仍悬在纸上。",
-          "stage": ""
+          "stage": "",
+          "en": "> File numbers only. Lana lays her hand on the list. Aleksei reads the file numbers and the evidence over the air. At a window, someone hears the numbers they've been waiting for all night. The pencil is still poised above the page."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "> 播出姓名　发射机先吐出一阵电流声，吞掉了拉娜姓氏的头一个音。她扶住麦克风，等那阵噪声过去，从头念了一遍。",
-          "stage": ""
+          "stage": "",
+          "en": "> Read the names. Static from the transmitter swallows the first sound of Lana's surname. She steadies the microphone, waits for the noise to pass, and starts again."
         },
         {
           "w": "拉娜",
           "role": "lana",
           "mood": "calm",
           "zh": "拉娜·莫罗佐娃。档案号 0420。有人在等我的话……我在这儿。",
-          "stage": ""
+          "stage": "",
+          "en": "Lana Morozova. File 0420. Someone's waiting to hear me... I'm here."
         },
         {
           "w": "安娜",
           "role": "anna",
           "mood": "calm",
           "zh": "我是安娜。档案号 0419。我见过他们退烧。有人被带走的时候还能走，还有人得扶着。表上找不到的事，我记得。",
-          "stage": ""
+          "stage": "",
+          "en": "I'm Anna. File 0419. I saw their fevers break. Some could walk when they came for them. Others had to be helped. I remember the things you won't find on the forms."
         },
         {
           "w": "旁白 / 阿列克谢",
           "role": "aleksei",
           "mood": "calm",
           "zh": "突击队的撞门木撞裂了机房木门。阿列克谢跃出掩体，莫辛纳甘的枪托砸偏了冲锋枪的枪口，左肩中弹。他单膝跪在发射台前，一把扯过麦克风。",
-          "stage": ""
+          "stage": "",
+          "en": "The assault team's ram splits the wooden door. Aleksei lunges out of cover and knocks a submachine gun aside with the butt of the Mosin. A round hits his left shoulder. He drops to one knee in front of the console and grabs the microphone."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -2411,7 +2454,7 @@
           "mood": "calm",
           "zh": "……我是货运站调度员阿列克谢。我怀里揣着一块铜铭牌……第 004 号车皮调拨单……拉娜失踪前十天，为了给我妈换一箱透析液，我亲手签的字……",
           "stage": "（喘着粗气，声音嘶哑而坚决）",
-          "en": "…I'm Aleksei, a dispatcher at the freight station. I've got a brass nameplate here in my coat… Dispatch Slip No. 004… Ten days ago I signed it myself, to buy Mama Katya a crate of dialysis fluid…"
+          "en": "...I'm Aleksei, a freight dispatcher. I've got a brass plate inside my coat... the order putting Car 004 into rotation. I signed it ten days before they took Lana. It bought my mother a case of dialysis fluid..."
         },
         {
           "w": "旁白 / 阿列克谢",
@@ -2450,14 +2493,16 @@
           "role": "aleksei",
           "mood": "calm",
           "zh": "阿列克谢把断面岩样举到电台信号灯下。样本上沾着灰黑粉末，没人能说清它是什么。",
-          "stage": ""
+          "stage": "",
+          "en": "Aleksei lifts the rock sample into the light of the transmitter lamp. Grey-black powder clings to it. Nobody can say what it is."
         },
         {
           "w": "阿列克谢",
           "role": "aleksei",
           "mood": "sad",
           "zh": "还有——你们说矿工发病是外面带进来的，可工程台账上写着：事故那天，3 号矿坑用了温压炸药，炸穿了冻土。录音里的人紧接着咳起来，喊那不是煤粉。是谁下的命令，谁就该出来解释。内务部却把一百七十六个人写成销账数字，还要用铝热剂把矿坑封死。他们想把人和记录一块埋了。灰粉是什么，我不知道；我只知道他们明明有记录，却要把人和记录一起烧掉。",
-          "stage": ""
+          "stage": "",
+          "en": "One more thing. You said the miners brought the sickness in from outside. The works ledger says they used thermobaric charges at Pit No. 3 on the day of the accident. They blasted through the permafrost. On the tape, a man starts coughing right after and shouts that it isn't coal dust. Whoever gave that order has some explaining to do. Interior struck a hundred and seventy-six people off the books, then planned to seal the pit with thermite. Bury the people and the records together. I don't know what the grey dust is. I know they kept records, and I know they meant to burn them with the people."
         },
         {
           "w": "旁白 / 阿列克谢",

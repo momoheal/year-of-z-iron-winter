@@ -81,11 +81,11 @@ const PROLOGUE := [
 		"zh": "你是阿列克谢·莫罗佐夫，货运调度员。602 室里，母亲卡佳靠腹膜透析活着。\n透析液由区配给委员会发放——每一袋，都要拿「听话」去换。",
 		"en": "You are Aleksei Morozov, a freight dispatcher. In Room 602 your mother Katya lives on peritoneal dialysis.\nThe fluid is issued by the District Rationing Committee. Every bag is paid for with obedience."},
 	{"img": "res://art/60_ui/opening_dispatch.png", "focus": Vector2(0.38, 0.72),
-		"zh": "十天前，你在 004 号车皮的入编调拨单上签了字。随车联铆在门框上。这节闷罐送完一批就空车回场。\n第二天，母亲领到了下一批腹透液。",
-		"en": "Ten days ago you signed Car 004 into permanent rotation. The signed copy was riveted to the door frame. The car would return empty after each run.\nThe next morning Mother received her next batch of fluid."},
+		"zh": "拉娜被带走前十天，你签了 004 号车皮的入编单。随车联铆在门框上。这节闷罐送完一批就空车回场。\n签字次日清晨，母亲领到了那箱 409 批透析液。",
+		"en": "Ten days before Lana was taken, you signed Car 004 into rotation. The signed copy was riveted to the door frame. The car came back empty after each run.\nThe morning after you signed, Mother received the case of Batch 409 dialysis fluid."},
 	{"img": CG + "cg_intro_lana_receipt_v3.jpg", "focus": Vector2(0.55, 0.43),
-		"zh": "筛查那天，妹妹拉娜被带走了。留给你的只有一张红码转运回执。\n档案编号 0420，去向栏被黑章整个盖住了。",
-		"en": "Lana was taken at screening. They left you a red-code transfer receipt.\nFile 0420. A black stamp covers the destination field."},
+		"zh": "铁壳号已经跑过六趟。拉娜在筛查时被带走，隔天才送来她的红码转运回执。\n档案编号 0420，去向栏被黑章整个盖住了。",
+		"en": "The Buran had already made six runs. Lana was taken at screening. Her red-code transfer receipt came the following day.\nFile 0420. A black stamp covers the destination field."},
 	{"img": CG + "cg_intro_mother.jpg", "focus": Vector2(0.6, 0.55),
 		"zh": "卡佳：阿廖沙……拉娜还没回电报吗？\n你把转运单折好，塞进大衣内袋。\n阿列克谢：妈，铁路医院派她去外地支援医疗了。等忙完这阵，她就回来。",
 		"en": "Katya: Alyosha... still no telegram from Lana?\nYou fold the transfer notice and slip it into your inside coat pocket.\nAleksei: Mama, the railway hospital sent her out of town to help a medical team. She'll be home when the work is done."},
@@ -256,8 +256,8 @@ const AFTERMATH := {
 	],
 	"eagle_beak_cliff:1": [
 		{"img": CG + "cg_eaglecliff_derailment_scene.jpg", "focus": Vector2(0.62, 0.5),
-			"zh": "你只带走了拉娜和底单。车门在身后重新合拢，车厢里的人没有等到你第二次回来。",
-			"en": "You leave with only Lana and the copy. The door closes again behind you; the people in the car never see you return."},
+			"zh": "你只带走了拉娜和底单。车门在风里还开着，车厢里的人没有等到你第二次回来。",
+			"en": "You leave with only Lana and the copy. The door is still open in the wind. The people in the car never see you return."},
 		{"img": CG + "cg_eaglecliff_004_plaque_recovery_alt.jpg", "focus": Vector2(0.5, 0.55), "zoom": Vector2(1.08, 1.16),
 			"zh": "底单上的 0420 还在，多出来的姓名却被你留在了崖下。《工作日志》的背面又添了一道划痕。",
 			"en": "0420 is still on the copy, but the names you left behind stay under the cliff. One more stroke marks the back of the logbook."},
@@ -669,8 +669,8 @@ static func story_event_slides(event_id: String, context: Dictionary = {}) -> Ar
 			elif rescue_scope == "all":
 				pages.append({
 					"img": CG + "cg_eaglecliff_derailment_scene.jpg", "focus": Vector2(0.63, 0.52),
-					"zh": "能走的幸存者分批沿检修线离开。身后的车厢还在风里晃，崖顶的灯光没有停。",
-					"en": "The survivors who can walk leave in groups along the service line. The car still rocks in the wind; the ridge light keeps moving.",
+					"zh": "能走的幸存者分批沿检修线退到背风的旧道班房。有人留下照看伤员，崖顶的灯光没有停。",
+					"en": "The survivors who can walk follow the service line in groups to the old track hut, out of the wind. Some stay to tend the wounded. The ridge lights keep sweeping.",
 				})
 			else:
 				pages[0]["zh"] = "拉娜跟着你走上检修道，身后的车门还在风里响。"

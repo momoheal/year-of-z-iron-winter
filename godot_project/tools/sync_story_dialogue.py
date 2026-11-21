@@ -369,7 +369,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--sync", action="store_true", help="regenerate the Godot JSON and Markdown transcript")
-    mode.add_argument("--check", action="store_true", help="verify IDs, speaker mappings, and mood tags")
+    mode.add_argument("--check", action="store_true", help="verify scene metadata and complete English dialogue")
     args = parser.parse_args()
     source = SOURCE.read_text(encoding="utf-8")
     scenes = parse_scenes(source)
@@ -387,12 +387,17 @@ def main() -> int:
         print("FAIL: full dialogue script is out of sync; run --sync", file=sys.stderr)
         return 1
     errors = validate(scenes, json_text, transcript_text)
+    if args.check:
+        for scene in scenes:
+            for index, line in enumerate(scene["lines"], 1):
+                if not line.get("en", "").strip():
+                    errors.append(f"{scene['id']} line {index}: missing English dialogue")
     if errors:
         for error in errors:
             print("FAIL:", error, file=sys.stderr)
         return 1
     if args.check:
-        print(f"PASS: {len(scenes)} scene IDs; all {sum(len(s['lines']) for s in scenes)} lines have mapped speakers and valid moods.")
+        print(f"PASS: {len(scenes)} scene IDs; all {sum(len(s['lines']) for s in scenes)} lines have mapped speakers, valid moods, and English dialogue.")
     return 0
 
 

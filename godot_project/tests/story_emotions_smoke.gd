@@ -248,8 +248,14 @@ func _run() -> void:
 	var manor: Array = variant_sim.story_lines("manor")
 	_assert(str(manor[-4]["zh"]).contains("通行证") and str(manor[-1]["zh"]).contains("趁现在"),
 		"four illustrated manor lines end before the player chooses")
+	variant_sim.lang = "en"
+	var manor_en: Array = variant_sim.story_lines("manor")
+	_assert(manor_en.size() == manor.size() and manor_en[0]["en"] == Data.script_scene("3-3")[0]["en"],
+		"English Pine Manor plays the literary source without falling back")
+	_assert(String(manor_en[-4]["en"]).contains("dialysis fluid") and "Aleksei. Now." in manor_en[-1]["en"],
+		"English Pine Manor plays Yelena's illustrated confrontation")
 	variant_sim.select_mate("none")
-	_assert("阿列克谢，趁现在" not in str(variant_sim.story_lines("manor")), "Yelena's confrontation requires her presence")
+	_assert("Aleksei. Now." not in str(variant_sim.story_lines("manor")), "Yelena's confrontation requires her presence")
 
 	# 键盘空格 / 回车与按钮共用推进逻辑。
 	sc.sim.story_id = "sanitarium"
