@@ -28,3 +28,7 @@ docs/ui/acceptance_standalone.html
 .codex-build/
 # Office 打开时生成的临时锁文件。
 ~$*.pptx
+
+# 本地归档：历史版本 PPT、Codex 构建缓存、Godot 自动生成的 .import。
+# 不入库（510 MB，可随时重出）；源 PNG 与其正式 .import 已在版本管理中。
+_archive/
