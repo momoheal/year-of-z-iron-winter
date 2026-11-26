@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test for the "dossier layer" (界面苏联化 + 关卡节拍).
 ## Run:  Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_beats_smoke.gd
 ##
@@ -11,8 +11,6 @@ extends SceneTree
 ##
 ## 这个套件只读数据 + 直接调用方法，不依赖真实帧循环，所以 headless 里是确定的。
 
-var passes: int = 0
-var failures: Array[String] = []
 
 const PPM := 64.0
 const GY := 39.68
@@ -24,15 +22,6 @@ const Data := preload("res://scripts/CampaignData.gd")
 
 func _init() -> void:
 	_run.call_deferred()
-
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 
 func _scene(path: String) -> Node:

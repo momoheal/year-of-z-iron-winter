@@ -6,6 +6,7 @@ extends CharacterBody2D
 ## 警戒状态下持续看到玩家 0.9s 后开火；枪击造成伤害，归零才会击倒玩家。
 ## 借刀杀人：光锥里（或 2.5m 内）出现狂暴者 → 停步瞄准 0.5s → 点射击毙；枪声 10m 会引来别的狂暴者。
 
+const NightLighting := preload("res://scripts/night/NightLighting.gd")
 const PPM := 64.0
 const SQ := 0.62
 const VIEW_RANGE := 11.0
@@ -63,13 +64,7 @@ func _ready() -> void:
 
 func _configure_flashlight_occlusion() -> void:
 	# Keep the visible OSK cone on the same occlusion pass as the ground beam.
-	var objects_light := flash_pivot.get_node_or_null("Objects") as PointLight2D
-	if objects_light == null:
-		return
-	objects_light.shadow_enabled = true
-	objects_light.shadow_filter = 1
-	objects_light.shadow_filter_smooth = 1.5
-	objects_light.shadow_item_cull_mask = 1
+	NightLighting.configure_objects_occlusion(flash_pivot)
 
 func _physics_process(delta: float) -> void:
 	if ctl == null:

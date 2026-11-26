@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test — 战役存档（SaveGame autoload）+ 夜潜暂停菜单（PauseMenu）
 ##
 ## Run:
@@ -14,21 +14,10 @@ extends SceneTree
 const SimScript := preload("res://scripts/CampaignSim.gd")
 const Data := preload("res://scripts/CampaignData.gd")
 
-var passes: int = 0
-var failures: Array[String] = []
 
 
 func _init() -> void:
 	_run.call_deferred()
-
-
-func _assert(cond: bool, name: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", name)
-	else:
-		failures.append(name + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", name, "  ", detail)
 
 
 func _frames(n: int) -> void:

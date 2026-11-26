@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test — 音频可闻半径契约（FIX-P0-6 防回归）。
 ## Run: Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_sfx_radius_smoke.gd
 ##
@@ -13,22 +13,11 @@ extends SceneTree
 const Arsenal := preload("res://scripts/night/Arsenal.gd")
 const NightSfx := preload("res://scripts/night/NightSfx.gd")
 
-var passes: int = 0
-var failures: Array[String] = []
 var _sfx: Node = null
 
 
 func _init() -> void:
 	_run.call_deferred()
-
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 
 func _run() -> void:

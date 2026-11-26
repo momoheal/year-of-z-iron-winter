@@ -13,6 +13,9 @@ const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
 
 const Data := preload("res://scripts/CampaignData.gd")
 const RaidSimScript := preload("res://scripts/RaidSim.gd")
+const RaidConfigScript := preload("res://scripts/raid/RaidConfig.gd")
+const RaidResultScript := preload("res://scripts/raid/RaidResult.gd")
+const RaidAttemptScript := preload("res://scripts/raid/RaidAttempt.gd")
 const FIRST_ACT_LOC := "coldstore"
 
 # ---------------- 战役状态 ----------------
@@ -45,6 +48,26 @@ var phase: String = "title"      # title | base | map | raid | report | ending
 var selected_loc: String = ""
 var raid = null                  # RaidSim 实例（仅 raid 阶段非空）
 var pending_scene: String = ""   # depart 后待切到的节点化场景（空=灰盒 raid 原地跑）
+# 夜潜契约（M1 / T03）：只存在内存里，不写存档（夜潜中途本来就不存档）
+var current_raid_id: String = ""         # 当前未结算的一局；"" = 没有可结算的夜潜
+## 节点化地点也构建完整灰盒 RaidSim（只给要驱动灰盒机制的测试 / 工具用；正式流程为 false，T04）
+var force_greybox := false
+## 战役 ↔ 夜潜的数据桥。流程层（Campaign）注入 autoload；没注入时（测试 / 工具）退回到场景树里找。
+var raid_bridge: Node = null
+
+func _raid_bridge() -> Node:
+	if raid_bridge != null and is_instance_valid(raid_bridge):
+		return raid_bridge
+	var loop := Engine.get_main_loop()
+	if loop is SceneTree and (loop as SceneTree).root != null:
+		return (loop as SceneTree).root.get_node_or_null("RaidBridge")
+	return null
+
+var current_raid_config = null           # 当前局的 RaidConfig
+var last_settled_raid_id: String = ""
+static var _raid_seq: int = 0            # 进程内全局递增：不同 sim 实例 / 读档后也不会撞号
+var _settling = null                     # 结算进行中的 RaidResult（剧情判定读它）
+var _settle_events: Array[Dictionary] = []
 var story_open := false
 var story_id: String = ""
 var story_result: Dictionary = {}
@@ -84,6 +107,8 @@ func new_game() -> void:
 	finished_demo = false
 	raid = null
 	pending_scene = ""
+	_close_raid("")
+	last_settled_raid_id = ""
 	story_open = false
 	story_id = ""
 	story_result = {}
@@ -520,7 +545,8 @@ func depart(L: Dictionary) -> bool:
 				n = int(load[k])
 			take_item(String(k), n)
 	var st: Dictionary = node_state(String(L["id"]))
-	var cfg := {
+	var cfg_in := {
+		"raid_id": _next_raid_id(String(L["id"])),
 		"loc": L,
 		"day": day,
 		"seed": int(L["seed"]) + day * 7,
@@ -537,7 +563,15 @@ func depart(L: Dictionary) -> bool:
 		"night": maxf(90.0, travel_minutes(L) * 2.4),
 		"sound_on": sound_on,        # P2.5：战役里关过音效，节点化场景也别突然响起来
 	}
-	raid = RaidSimScript.new(self, cfg)
+	# T02/T03：类型化配置，to_dict() 与旧 cfg 键值一致（只多 raid_id）
+	var config = RaidConfigScript.from_dict(cfg_in)
+	var cfg: Dictionary = config.to_dict()
+	_open_raid(config)
+	# T04：节点化地点只放轻量当局容器，不再生成整张灰盒地图；灰盒地点照旧跑 RaidSim
+	if String(L.get("scene", "")) != "" and not force_greybox:
+		raid = RaidAttemptScript.new(cfg)
+	else:
+		raid = RaidSimScript.new(self, cfg)
 	phase = "raid"
 	story_result = {}
 	# 首次进入主线地点 → 播剧情
@@ -551,8 +585,8 @@ func depart(L: Dictionary) -> bool:
 	var sc: String = String(L.get("scene", ""))
 	if sc != "":
 		# RefCounted 脚本不直接解析 autoload 全局名，动态取节点。
-		var bridge := (Engine.get_main_loop() as SceneTree).root.get_node_or_null("RaidBridge")
-		if bridge:
+		var bridge = _raid_bridge()
+		if bridge != null:
 			bridge.begin(self, cfg)
 		pending_scene = sc
 	return true
@@ -563,6 +597,7 @@ func cancel_departure() -> void:
 	for id in raid.load:
 		add_item(String(id), int(raid.load[id]))
 	raid = null
+	_close_raid("")
 	pending_scene = ""
 	story_open = false
 	phase = "map"
@@ -749,7 +784,7 @@ func resolve_story(choice_index: int) -> Dictionary:
 			return {}
 		if not take_item(medicine, 1):
 			raid.load[medicine] = int(raid.load[medicine]) - 1
-			var bridge := (Engine.get_main_loop() as SceneTree).root.get_node_or_null("RaidBridge")
+			var bridge = _raid_bridge()
 			if bridge != null and bridge.sim == self:
 				bridge.cfg["load"][medicine] = raid.load[medicine]
 		applied.append("−1 " + item_name(medicine))
@@ -793,7 +828,7 @@ func resolve_story(choice_index: int) -> Dictionary:
 		applied.append("+" + String(Data.mate(after_mate).get("zh" if lang == "zh" else "en", after_mate)))
 	if story_id == FIRST_ACT_LOC and after_mate == "ash":
 		select_mate("ash")
-		var bridge := (Engine.get_main_loop() as SceneTree).root.get_node_or_null("RaidBridge")
+		var bridge = _raid_bridge()
 		if bridge != null and bridge.sim == self:
 			bridge.cfg["mate"] = mate
 	if story_id == "marshalling" and mate == "zakhar" and _route_is_ruthless() and bool(mates.get("zakhar", false)):
@@ -860,18 +895,107 @@ func add_tally(n: int, reason_zh: String, reason_en: String) -> void:
 # ============================================================================
 # 结算
 # ============================================================================
+# ============================================================================
+# 夜潜契约（M1 / T03）：局标识 + 唯一结算入口
+# ============================================================================
+func _next_raid_id(loc_id: String) -> String:
+	_raid_seq += 1
+	return "d%d-%s-%d" % [day, loc_id, _raid_seq]
+
+func _open_raid(config) -> void:
+	current_raid_id = String(config.raid_id)
+	current_raid_config = config
+
+func _close_raid(settled_id: String) -> void:
+	if settled_id != "":
+		last_settled_raid_id = settled_id
+	current_raid_id = ""
+	current_raid_config = null
+
+func has_open_raid() -> bool:
+	return current_raid_id != ""
+
+## 只有在战役场景里原地跑的灰盒夜潜才返回 RaidSim；节点化夜潜的当局容器返回 null。
+func greybox_raid():
+	if raid == null or raid.get("is_attempt") == true:
+		return null
+	return raid
+
+## 为什么拒收这份结果（"" = 可以结算）。拒收不改任何状态。
+func raid_rejection(res) -> String:
+	if res == null:
+		return "no_result"
+	var rid := String(res.raid_id)
+	if rid == "":
+		return "no_raid_id"
+	if current_raid_id == "":
+		return "already_settled" if rid == last_settled_raid_id else "no_open_raid"
+	if rid != current_raid_id:
+		return "wrong_raid"
+	if not RaidResultScript.is_valid_reason(String(res.reason)):
+		return "bad_reason"
+	var open_loc := String(current_raid_config.loc_id) if current_raid_config != null else ""
+	if open_loc != "" and String(res.loc_id) != "" and String(res.loc_id) != open_loc:
+		return "wrong_loc"
+	return ""
+
+var last_rejection: String = ""
+
 func finish_raid(reason: String) -> Dictionary:
+	## 旧入口（灰盒 RaidSim、HUD 放弃、旧测试）：把当局 RaidSim 适配成 RaidResult，走唯一结算入口。
 	if raid == null:
 		return {}
-	var r = raid
-	var loc_id := String(r.loc["id"])
+	if String(raid.raid_id) == "":
+		# 绕过 depart() 直接挂上的 RaidSim（截图工具等）：补开一局，保持旧行为
+		raid.raid_id = _next_raid_id(String(raid.loc.get("id", "")))
+	if current_raid_id == "":
+		current_raid_id = String(raid.raid_id)
+	return submit_raid_result(RaidResultScript.from_raid_sim(raid, reason))
+
+func submit_raid_result(res) -> Dictionary:
+	## 唯一结算入口：只接受当前未结算那一局的结果；同一结果第二次提交返回 {} 且不改任何状态。
+	var why := raid_rejection(res)
+	last_rejection = why
+	if why != "":
+		return {}
+	var loc: Dictionary = {}
+	if current_raid_config != null and not (current_raid_config.loc as Dictionary).is_empty():
+		loc = current_raid_config.loc
+	elif raid != null:
+		loc = raid.loc
+	else:
+		loc = location(String(res.loc_id))
+	var reason := String(res.reason)
+	_settling = res
+	_settle_events = []
+	for e in res.events:
+		_settle_events.append((e as Dictionary).duplicate())
+	# 节点化夜潜的本地道德账 / 偏好 / 武器改造：一次性入账（顺序与改造前一致）
+	if float(res.conscience_delta) != 0.0:
+		raid_add_conscience(float(res.conscience_delta))
+	if int(res.tally_delta) > 0:
+		raid_add_tally(int(res.tally_delta), String(res.tally_reason_zh), String(res.tally_reason_en))
+	if res.sound_on != null:
+		sound_on = bool(res.sound_on)
+	if res.weapon_mods is Dictionary:
+		weapon_mods = (res.weapon_mods as Dictionary).duplicate(true)
+	# T04：夜里攒下的战役改动（灰盒逐笔良知 / 卌、永久旗标、新手引导、搜刮带走的节点余量）在这里一次性入账
+	for c in res.conscience_steps:
+		raid_add_conscience(float(c))
+	for m in res.tally_marks:
+		raid_add_tally(int(m.get("n", 1)), String(m.get("zh", "")), String(m.get("en", "")))
+	for f in res.flags_set:
+		raid_set_flag(String(f))
+	for k in res.seen_set:
+		seen[String(k)] = true
+	var loc_id := String(loc["id"])
 	var returned := reason in ["extracted", "dawn"]
 	var previous_station_route := bool(flags.get("station_route", false))
 	var previous_eagle_escape := bool(flags.get("eagle_escape", false))
 	var previous_truth := bool(flags.get("truth", false))
 	var previous_broadcast_complete := bool(flags.get("broadcast_complete", false))
 	flags.erase("broadcast_pending") # 旧存档里的待播标记不跨夜使用
-	if loc_id == "market" and returned and r.market_signal_found \
+	if loc_id == "market" and returned and bool(res.market_signal_found) \
 		and bool(flags.get("broadcast_signal", false)) and not bool(story_done.get("broadcast", false)):
 		story_id = "broadcast"
 		story_open = true
@@ -886,19 +1010,31 @@ func finish_raid(reason: String) -> Dictionary:
 		"downed", "abort":
 			kept = []
 		"dawn":
-			for i in r.pack.size():
+			# 天亮：按背包下标隔项保留（0, 2, 4…）——锁定现有规则，不改成随机
+			for i in res.pack.size():
 				if i % 2 == 0:
-					kept.append(r.pack[i])
+					kept.append(res.pack[i])
 		_:
-			kept = r.pack.duplicate()
-	var archive_copy_returned: bool = loc_id == "archive" and r.archive_copy_slot >= 0 \
-		and (reason == "extracted" or (reason == "dawn" and r.archive_copy_slot % 2 == 0))
-	var p = r.player
+			kept = Array(res.pack).duplicate()
+	# 没带回来的（天亮隔项 / 倒下 / 放弃）：只记进报告做反馈，不改任何规则
+	var lost: Dictionary = {}
+	var lost_order: Array[String] = []
+	for i in res.pack.size():
+		var dropped: bool = reason in ["downed", "abort"] or (reason == "dawn" and i % 2 == 1)
+		if dropped:
+			var lid := String(res.pack[i])
+			if not lost.has(lid):
+				lost[lid] = 0
+				lost_order.append(lid)
+			lost[lid] = int(lost[lid]) + 1
+	var archive_copy_returned: bool = loc_id == "archive" and int(res.archive_copy_slot) >= 0 \
+		and (reason == "extracted" or (reason == "dawn" and int(res.archive_copy_slot) % 2 == 0))
+	var hp_after := float(res.hp)
 	if reason == "dawn":
-		p.hp = maxf(6.0, p.hp - 22.0)
-	# 归还未消耗的携带物
-	for k in r.load.keys():
-		var n := int(r.load[k])
+		hp_after = maxf(6.0, hp_after - 22.0)
+	# 归还未并入背包、也没消耗的携带物（灰盒口径；节点化场景恒为空）
+	for k in res.refund_load.keys():
+		var n := int(res.refund_load[k])
 		if n > 0:
 			add_item(String(k), n)
 	var before := weapon_owned_ids()
@@ -916,8 +1052,6 @@ func finish_raid(reason: String) -> Dictionary:
 	for w in after:
 		if not before.has(w):
 			new_w.append(w)
-	# 节点状态：每次踏足余量 -50%，余量下限 5%
-	var loc: Dictionary = r.loc
 	night_complete = true
 	if returned:
 		_settle_story_objective(loc_id, reason)
@@ -929,13 +1063,16 @@ func finish_raid(reason: String) -> Dictionary:
 		and bool(flags.get("truth", false)) and bool(flags.get("eagle_escape", false)):
 			queue_story_slide("evidence_handover")
 		if not previous_broadcast_complete and bool(flags.get("broadcast_complete", false)):
-			var broadcast_mate := String(r.mate_id)
+			var broadcast_mate := String(res.mate_id)
 			flags["broadcast_slide_mate"] = broadcast_mate if bool(mates.get(broadcast_mate, false)) else ""
 			queue_story_slide("broadcast_complete")
 	if archive_copy_returned and not bool(flags.get("archive_copy_found", false)):
 		flags["archive_copy_found"] = true
 		queue_story_slide("archive_copy")
-	var st: Dictionary = node_state(String(loc["id"]))
+	# 节点状态：每次踏足余量 -50%，余量下限 5%
+	var st: Dictionary = node_state(loc_id)
+	if float(res.node_left_delta) > 0.0:
+		st["left"] = maxf(0.0, float(st["left"]) - float(res.node_left_delta))
 	st["visits"] = int(st["visits"]) + 1
 	st["left"] = clampf(float(st["left"]) - 0.5, 0.05, 1.0)
 	if bool(flags.get("zakhar_betrayal_pending", false)) and bool(mates.get("zakhar", false)):
@@ -954,16 +1091,18 @@ func finish_raid(reason: String) -> Dictionary:
 		"loc": loc,
 		"gained": gained,
 		"gained_order": gained_order,
-		"events": r.events.duplicate(),
-		"killed": r.killed,
-		"half_saved": r.half_saved,
-		"looted": r.looted,
-		"total": r.total_cont,
-		"hp": int(round(p.hp)),
-		"warmth": int(round(p.warmth)),
+		"lost": lost,
+		"lost_order": lost_order,
+		"events": _settle_events.duplicate(),
+		"killed": int(res.killed),
+		"half_saved": int(res.half_saved),
+		"looted": int(res.looted),
+		"total": int(res.total_cont),
+		"hp": int(round(hp_after)),
+		"warmth": int(round(float(res.warmth))),
 		"new_weapons": new_w,
-		"mate": String(r.mate_id),
-		"mate_present": bool(mates.get(String(r.mate_id), false)),
+		"mate": String(res.mate_id),
+		"mate_present": bool(mates.get(String(res.mate_id), false)),
 		"day": day,
 		"pack": kept.size(),
 		"story": story_result.duplicate(),
@@ -980,22 +1119,34 @@ func finish_raid(reason: String) -> Dictionary:
 		open_pending_market_refuge()
 	if loc_id == "marshalling" and returned and not bool(story_done.get("pasha_watchtower", false)):
 		flags["pasha_scene_pending"] = true
-	# 天亮了/倒地后次日结算由「回到 602 室」触发
+	# 天亮了/倒地后次日结算由「回到 602 室」触发；日期不在这里推进
 	raid = null
 	phase = "report"
 	story_result = {}
+	_close_raid(String(res.raid_id))
 	_sync_logbook()
+	# 节点化夜潜的收尾：首访冷库北雨棚线索、缴获的武器
+	if res.coldstore_trace != null:
+		last_report["checked_north_awning"] = bool(res.coldstore_trace)
+		if bool(res.coldstore_trace):
+			add_log("四号冷库北雨棚：转运票残号 04，姓名栏缺失。",
+				"North awning, Cold Storage No.4: torn transfer slip, digits 04. Name missing.")
+	if returned:
+		for w in res.salvaged_weapons:
+			register_salvaged_weapon(String(w))
+	_settling = null
+	_settle_events = []
 	return last_report
 
 func _settle_story_objective(loc_id: String, reason: String) -> void:
 	match loc_id:
 		"station_buran_yard":
-			if raid.story_objective_reached and not bool(flags.get("station_route", false)):
+			if _settling.story_objective_reached and not bool(flags.get("station_route", false)):
 				flags["station_route"] = true
 				_report_story_success("交接底单已抄回，鹰嘴崖检修路开放。", "The copied handover opens the Eagle's Crag maintenance route.")
 		"eagle_beak_cliff":
-			var rescue_scope := String(raid.crag_rescue_scope)
-			if reason == "extracted" and raid.story_objective_reached \
+			var rescue_scope := String(_settling.crag_rescue_scope)
+			if reason == "extracted" and _settling.story_objective_reached \
 			and rescue_scope in ["all", "lana"] and not bool(flags.get("eagle_escape", false)):
 				flags.erase("crag_rescue_all")
 				flags.erase("crag_rescue_lana")
@@ -1009,7 +1160,7 @@ func _settle_story_objective(loc_id: String, reason: String) -> void:
 					conscience = minf(100.0, conscience + 5.0)
 					_report_story_success("拉娜和能走的幸存者已撤离。", "Lana and the survivors able to walk are safe.")
 		"manor":
-			if reason in ["extracted", "dawn"] and raid.story_objective_reached:
+			if reason in ["extracted", "dawn"] and _settling.story_objective_reached:
 				var manor_plan := "evidence"
 				if bool(flags.get("manor_plan_trade", false)):
 					manor_plan = "trade"
@@ -1017,7 +1168,7 @@ func _settle_story_objective(loc_id: String, reason: String) -> void:
 					manor_plan = "release"
 				var completed := false
 				if manor_plan == "evidence":
-					var photo_slot: int = raid.manor_photo_slot
+					var photo_slot: int = _settling.manor_photo_slot
 					if photo_slot >= 0 and (reason == "extracted" or photo_slot % 2 == 0) \
 					and not bool(flags.get("truth", false)):
 						flags["truth"] = true
@@ -1025,7 +1176,7 @@ func _settle_story_objective(loc_id: String, reason: String) -> void:
 						_report_story_success("带回了焚化台账的照片。", "The photograph of the furnace ledger made it back.")
 						completed = true
 				elif manor_plan == "trade":
-					var trade_slot: int = raid.manor_trade_slot
+					var trade_slot: int = _settling.manor_trade_slot
 					if trade_slot == -2 or (trade_slot >= 0 and (reason == "extracted" or trade_slot % 2 == 0)):
 						flags["manor_sold_semyon"] = true
 						if trade_slot == -2:
@@ -1033,7 +1184,7 @@ func _settle_story_objective(loc_id: String, reason: String) -> void:
 						add_tally(1, "用老谢苗换取配给", "Traded old Semyon for a ration allocation")
 						_report_story_success("你带着配给离开，老谢苗的位置进了茹科夫的账。", "You leave with the ration; old Semyon's location is now in Zhukov's ledger.")
 						completed = true
-				elif manor_plan == "release" and raid.manor_release_reached:
+				elif manor_plan == "release" and _settling.manor_release_reached:
 					flags["manor_workers_freed"] = true
 					conscience = minf(100.0, conscience + 5.0)
 					_report_story_success("地下室的工人沿围墙离开了庄园。", "The cellar workers escaped along the manor wall.")
@@ -1042,9 +1193,9 @@ func _settle_story_objective(loc_id: String, reason: String) -> void:
 					flags["manor_outcome_plan"] = manor_plan
 					queue_story_slide("manor_outcome")
 		"broadcast_tower_302":
-			if raid.story_objective_reached and not bool(flags.get("broadcast_complete", false)):
+			if _settling.story_objective_reached and not bool(flags.get("broadcast_complete", false)):
 				flags["broadcast_complete"] = true
-				var broadcast_mate := String(raid.mate_id)
+				var broadcast_mate := String(_settling.mate_id)
 				flags["broadcast_slide_mate"] = broadcast_mate if bool(mates.get(broadcast_mate, false)) else ""
 				if not bool(flags.get("broadcast_omit_names", false)):
 					if bool(flags.get("broadcast_names", false)):
@@ -1055,7 +1206,7 @@ func _settle_story_objective(loc_id: String, reason: String) -> void:
 					_report_story_success("302 台播出了罪证，省略了幸存者姓名。", "Tower 302 aired the evidence and omitted the survivors' names.")
 
 func _report_story_success(zh: String, en: String) -> void:
-	raid.add_event("good", zh, en)
+	_settle_events.append({"t": "good", "zh": zh, "en": en})
 	add_log(zh, en)
 
 func report_meta(reason: String) -> Dictionary:

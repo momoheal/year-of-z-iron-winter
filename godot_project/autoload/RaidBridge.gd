@@ -4,10 +4,11 @@ extends Node
 ## 战役层 CampaignSim 是 RefCounted，挂在 campaign.tscn 节点下；一旦
 ## change_scene_to_file 切到 night_explore.tscn，campaign.tscn 被 free，sim 随之销毁。
 ## 本 autoload 常驻，出发去「带 scene 字段」的地点（如 yard）时：
-##   1. CampaignSim.depart() 扣物、建 RaidSim 数据容器、组装 cfg 后，调 begin(self, cfg)；
+##   1. CampaignSim.depart() 扣物、建轻量当局容器 RaidAttempt（T04，不再生成灰盒地图）、组装 cfg 后，调 begin(self, cfg)；
 ##   2. Campaign._process 检测 pending_scene，切到 night_explore.tscn；
 ##   3. night 场景 _ready 读 cfg 初始化背包 / 体温 / 天亮倒计时；
-##   4. night 结束时把结果填进 RaidBridge.sim.raid 的字段，调 sim.finish_raid(reason)；
+##   4. night 结束时把结果收成 RaidResult（带 cfg.raid_id），调 sim.submit_raid_result(res)
+##      —— 战役只接受当前未结算那一局，重复提交不改任何状态（M1 / T03）；
 ##   5. change_scene_to_file 回 campaign.tscn；
 ##   6. Campaign._ready 检测 active，调 take_sim() 取回原 sim（不 new 新档），
 ##      phase 已是 "report"，HUD 直接渲染结算。
@@ -27,6 +28,11 @@ func begin(p_sim, p_cfg: Dictionary) -> void:
 	sim = p_sim
 	cfg = p_cfg.duplicate(true)
 	active = true
+
+
+func raid_id() -> String:
+	## 正在携带的这一局的标识（RaidConfig.raid_id）；"" = 没有。
+	return String(cfg.get("raid_id", ""))
 
 
 func take_sim():

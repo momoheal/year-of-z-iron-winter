@@ -18,6 +18,7 @@ var left: float = 1.0                  # 节点剩余物资 0..1
 var mate_id: String = ""               # "" = 没带伙伴
 var pack_max: int = Data.BAG           # 背包格数
 var weapon_id: String = "crowbar"
+var weapon_mods: Dictionary = {}       # 军械库武器 id -> 已装改造件 id 列表
 var load: Dictionary = {}              # 携带物 id -> 件数（出发时已从仓库扣除）
 var cold: float = 1.0                  # 体温下降倍率
 var danger: int = 1
@@ -41,6 +42,8 @@ static func from_dict(d: Dictionary):
 	c.mate_id = String(d.get("mate", ""))
 	c.pack_max = int(d.get("pack_max", Data.BAG))
 	c.weapon_id = weapon_id_of(d.get("weapon", "crowbar"))
+	var wm: Variant = d.get("weapon_mods", {})
+	c.weapon_mods = (wm as Dictionary).duplicate(true) if wm is Dictionary else {}
 	var ld: Variant = d.get("load", {})
 	c.load = (ld as Dictionary).duplicate() if ld is Dictionary else {}
 	c.cold = float(d.get("cold", 1.0))
@@ -75,6 +78,7 @@ func to_dict() -> Dictionary:
 		"mate": mate_id,
 		"pack_max": pack_max,
 		"weapon": weapon(),
+		"weapon_mods": weapon_mods.duplicate(true),
 		"load": load.duplicate(),
 		"cold": cold,
 		"danger": danger,

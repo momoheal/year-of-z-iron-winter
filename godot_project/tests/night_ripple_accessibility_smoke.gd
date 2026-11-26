@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke — 声纹可访问性冗余（FIX-P0-3）
 ##
 ## Run: Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_ripple_accessibility_smoke.gd
@@ -20,21 +20,10 @@ const OverlayScript := preload("res://scripts/night/NightOverlay.gd")
 ## 会报 "Identifier not found: SaveGame" 并让本套件挂住。
 ## PauseMenu 的 headless 运行由既有 save_pause_smoke.gd（实例化真实菜单）覆盖。
 
-var passes: int = 0
-var failures: Array[String] = []
 
 
 func _init() -> void:
 	_run.call_deferred()
-
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 
 func _src(path: String) -> String:

@@ -119,8 +119,16 @@ func _ready() -> void:
 	# 取回复用；否则才开新档。
 	if RaidBridge.active:
 		sim = RaidBridge.take_sim()
-	else:
+	if sim == null:
+		# 桥上没有 sim（新游戏 / 异常路径）：开新档，而不是在后面对 null 取 sound_on 崩溃
 		sim = SimScript.new()
+	elif _unsettled_node_raid(sim):
+		# 节点化夜潜没有提交结果就回来了（场景异常退出等）：作废这一局、退回携带物，
+		# 不能把它当旧灰盒夜潜在 602 的界面里原地跑起来。
+		push_warning("Campaign: returned from a node raid without a result; departure cancelled")
+		sim.cancel_departure()
+	# 流程层把数据桥注入给 sim：sim 不再自己去场景树里找 autoload
+	sim.raid_bridge = RaidBridge
 	font = SystemFont.new()
 	font.font_names = PackedStringArray([
 		"Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", "SimHei",
@@ -140,6 +148,12 @@ func _ready() -> void:
 	add_child(sfx)
 	for i in 160:
 		snow.append(Vector3(randf() * SCREEN.x, randf() * SCREEN.y, 12.0 + randf() * 46.0))
+
+## 回到战役时这一局仍开着、又是节点化地点（不该在本场景里跑灰盒）→ true。
+static func _unsettled_node_raid(s) -> bool:
+	if s.phase != "raid" or s.raid == null or s.pending_scene != "":
+		return false
+	return String(s.raid.loc.get("scene", "")) != ""
 
 func _on_ui_sfx(name: String) -> void:
 	if sfx != null and sfx.has_method(name):
@@ -169,14 +183,14 @@ func _process(delta: float) -> void:
 	sim.sound_on = hud.sound_on        # depart 时把它塞进 cfg，交给夜潜场景
 	var paused: bool = sim.story_open or sim.abort_confirm or sim.logbook_open or sim.help_open \
 		or hud.overlay_active() or sim.pending_scene != ""
-	if sim.phase == "raid" and sim.raid != null and not sim.raid.over and not paused:
+	if sim.phase == "raid" and sim.greybox_raid() != null and not sim.greybox_raid().over and not paused:
 		var move := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		var mouse_world := screen_to_world(get_viewport().get_mouse_position())
-		sim.raid.update(delta, move, Input.is_action_pressed("crouch"),
+		sim.greybox_raid().update(delta, move, Input.is_action_pressed("crouch"),
 			Input.is_action_pressed("sprint"), mouse_world, Input.is_action_pressed("interact"))
 		_drain_sfx()
-		if sim.raid.over and sim.phase == "raid":
-			sim.finish_raid(sim.raid.phase)
+		if sim.greybox_raid().over and sim.phase == "raid":
+			sim.finish_raid(sim.greybox_raid().phase)
 	_autosave()
 	shimmy_snow(delta)
 	hud.refresh()
@@ -211,9 +225,9 @@ func request_autosave() -> void:
 	_autosave()
 
 func _drain_sfx() -> void:
-	if sim.raid == null or sfx == null:
+	if sim.greybox_raid() == null or sfx == null:
 		return
-	for e in sim.raid.drain_sfx():
+	for e in sim.greybox_raid().drain_sfx():
 		var name: String = String(SFX_ALIAS.get(String(e), String(e)))
 		sfx.play(name)
 
@@ -273,7 +287,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if k == KEY_L and sim.phase != "raid":
 			sim.toggle_lang()
 			return
-		if sim.phase == "raid" and sim.raid != null:
+		if sim.phase == "raid" and sim.greybox_raid() != null:
 			_raid_key(k)
 			return
 		if k == KEY_ENTER or k == KEY_KP_ENTER:
@@ -295,24 +309,24 @@ func _unhandled_input(event: InputEvent) -> void:
 		if mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT:
 			if sim.phase == "map":
 				_pick_node(get_viewport().get_mouse_position())
-			elif sim.phase == "raid" and sim.raid != null and not sim.raid.over \
+			elif sim.phase == "raid" and sim.greybox_raid() != null and not sim.greybox_raid().over \
 					and not (sim.story_open or sim.abort_confirm or sim.logbook_open or sim.help_open):
-				sim.raid.attack()
+				sim.greybox_raid().attack()
 
 func _raid_key(k: int) -> void:
-	if sim.raid.over:
+	if sim.greybox_raid().over:
 		return
 	match k:
 		KEY_Q:
-			sim.raid.drink()
+			sim.greybox_raid().drink()
 		KEY_H:
-			sim.raid.use_bandage()
+			sim.greybox_raid().use_bandage()
 		KEY_R:
-			sim.raid.reload_gun()
+			sim.greybox_raid().reload_gun()
 		KEY_G:
-			sim.raid.throw_can(screen_to_world(get_viewport().get_mouse_position()))
+			sim.greybox_raid().throw_can(screen_to_world(get_viewport().get_mouse_position()))
 		KEY_SPACE:
-			sim.raid.attack()
+			sim.greybox_raid().attack()
 
 func _pick_node(mouse: Vector2) -> void:
 	var local := (mouse - MAP_RECT.position)
@@ -333,9 +347,9 @@ func _pick_node(mouse: Vector2) -> void:
 # 世界 ↔ 屏幕
 # ============================================================================
 func screen_to_world(sp: Vector2) -> Vector2:
-	if sim.phase != "raid" or sim.raid == null:
+	if sim.phase != "raid" or sim.greybox_raid() == null:
 		return Vector2.ZERO
-	var cam: Vector2 = sim.raid.cam
+	var cam: Vector2 = sim.greybox_raid().cam
 	return Vector2((sp.x - VIEW_C.x) / Data.PPM + cam.x,
 		(sp.y - VIEW_C.y) / (Data.PPM * Data.SQUASH) + cam.y)
 
@@ -350,17 +364,19 @@ func project(sim_raid, wx: float, wy: float) -> Vector2:
 func _draw() -> void:
 	if sim == null:
 		return
-	var in_raid: bool = sim.phase == "raid"
+	# 只有灰盒夜潜在本场景里画地图；节点化夜潜切场景前的那几帧（出发剧情）仍画城区地图
+	var in_raid: bool = sim.phase == "raid" and sim.greybox_raid() != null
+	var departing: bool = sim.phase == "raid" and not in_raid
 	if backdrop != null:
 		backdrop.visible = not in_raid
-		backdrop.mode = String(sim.phase)
+		backdrop.mode = "map" if departing else String(sim.phase)
 	if in_raid:
 		draw_rect(Rect2(Vector2.ZERO, SCREEN), COL["bg"], true)
 		_draw_raid()
-	elif sim.phase == "map":
+	elif sim.phase == "map" or departing:
 		_draw_city_map()
 	_draw_snow()
-	if sim.phase == "raid" and sim.raid != null:
+	if sim.phase == "raid" and sim.greybox_raid() != null:
 		_draw_raid_overlays()
 
 func _draw_snow() -> void:
@@ -415,7 +431,7 @@ func _draw_city_map() -> void:
 # 夜潜世界
 # ----------------------------------------------------------------------------
 func _draw_raid() -> void:
-	var R = sim.raid
+	var R = sim.greybox_raid()
 	if R == null:
 		return
 	var g: PackedByteArray = R.grid
@@ -819,7 +835,7 @@ func _ellipse_arc(c: Vector2, rx: float, ry: float, a0: float, a1: float, steps:
 	draw_polyline(pts, col, width, true)
 
 func _draw_raid_overlays() -> void:
-	var R = sim.raid
+	var R = sim.greybox_raid()
 	if R == null:
 		return
 	var p = R.player

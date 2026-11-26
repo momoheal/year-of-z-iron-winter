@@ -1,25 +1,14 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 const Arsenal := preload("res://scripts/night/Arsenal.gd")
 ## 伙伴跟随 + 实时特性 smoke（headless）。
 ## 覆盖：跟随实体生成 / 行走帧加载 / 跟随移动 / 灰烬嗅觉标记 / 安娜半人标注 /
 ##       伊万撤离点常亮 / 古丽娅每夜一次急救。
 ## Run: Godot --headless --path godot_project -s tests/night_follower_smoke.gd
 
-var passes: int = 0
-var failures: Array[String] = []
 
 
 func _init() -> void:
 	_run.call_deferred()
-
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 
 func _scene() -> Node:

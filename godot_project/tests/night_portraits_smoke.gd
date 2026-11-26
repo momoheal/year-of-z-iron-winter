@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test — 夜谈立绘情绪契约（角色重绘期间的防回归闸门）。
 ## Run: Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_portraits_smoke.gd
 ##
@@ -27,21 +27,10 @@ const NightMonuments := preload("res://scripts/night/NightMonuments.gd")
 
 const PRT_DIR := "res://art/10_characters/portraits/"
 
-var passes: int = 0
-var failures: Array[String] = []
 
 
 func _init() -> void:
 	_run.call_deferred()
-
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 
 func _run() -> void:

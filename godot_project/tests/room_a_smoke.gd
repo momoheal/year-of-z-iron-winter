@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test for Room A vertical slice (1:1 HTML architecture).
 ## Run:  Godot_v4.7.2-stable_win64.exe --headless --path godot_project -s tests/room_a_smoke.gd
 ##
@@ -10,19 +10,9 @@ extends SceneTree
 ##   扔罐头声波 / 噪声调查 / 蒸汽管隐匿 / 借刀杀人完整闭环 / 暴露被射 /
 ##   撤离胜利 / 被咬死亡。
 
-var passes: int = 0
-var failures: Array[String] = []
 
 func _init() -> void:
 	_run_tests.call_deferred()
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 func _new_scene() -> Node:
 	var packed: PackedScene = load("res://scenes/main.tscn")

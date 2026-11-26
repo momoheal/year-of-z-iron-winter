@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test for the multi-level night pipeline (P4).
 ## Run:  Godot_v4.7.2-stable_win64_console.exe --headless --path godot_project -s tests/night_level_smoke.gd
 ##
@@ -12,8 +12,6 @@ extends SceneTree
 ## 关卡结构本身的静态体检（manifest ↔ 场景 ↔ 规格三层对表）在
 ## tools/art_gen/check_levels.py，沙箱里不用 Godot 也能跑。
 
-var passes: int = 0
-var failures: Array[String] = []
 
 const PPM := 64.0
 const GY := 39.68
@@ -21,14 +19,6 @@ const Data := preload("res://scripts/CampaignData.gd")
 
 func _init() -> void:
 	_run.call_deferred()
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 func _m(x: float, y: float) -> Vector2:
 	return Vector2(x * PPM, y * GY)

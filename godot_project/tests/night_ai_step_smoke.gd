@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke — AI 脚步 + 遮挡衰减（P2.5 收尾）。
 ## 守三件事：
 ##   1) 遮挡口径是纯函数：被 layer-1 挡住就按 NightSfx.OCCLUSION_DB 压低音量；
@@ -9,8 +9,6 @@ extends SceneTree
 
 const NightSfx := preload("res://scripts/night/NightSfx.gd")
 
-var passes: int = 0
-var failures: Array[String] = []
 
 
 class SfxSpy extends Node:
@@ -23,15 +21,6 @@ class SfxSpy extends Node:
 
 func _init() -> void:
 	_run.call_deferred()
-
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 
 func _run() -> void:

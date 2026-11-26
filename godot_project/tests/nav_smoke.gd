@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test — 夜潜寻路网格（NavGrid）
 ##
 ## Run:
@@ -30,21 +30,10 @@ const LEVELS := ["night_explore", "night_marshalling", "night_manor", "night_min
 const FENCE_Y := 310.0 / 351.0 * 40.0
 const GAP := Vector2(311.0, 349.0) * 48.0 / 624.0
 
-var passes := 0
-var failures: Array[String] = []
 
 
 func _init() -> void:
 	_run.call_deferred()
-
-
-func _assert(cond: bool, name: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", name)
-	else:
-		failures.append(name + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", name, "  ", detail)
 
 
 func _m(x: float, y: float) -> Vector2:
