@@ -392,6 +392,8 @@ var _panel: PanelContainer = null
 var _portrait: TextureRect = null
 var _speaker: Label = null
 var _label: Label = null
+var _warmed_mate := ""
+var _prt_cache: Dictionary = {}       # 头像路径 -> Texture2D（首句独白不再现场读盘，避免开场卡一帧）
 
 
 static func info(kind: String) -> Dictionary:
@@ -490,7 +492,23 @@ func spawn(host: Node) -> int:
 			"reach": NEAR_M + foot.x * 0.5, "seen": false})
 		idx += 1
 	_spawn_posters(host, parent)
+	_warm_portraits(["self"])
 	return items.size()
+
+
+## 预读这一关可能用到的头像（按出现的旧物种类 × 说话人）。只读一次，之后从缓存取。
+func _warm_portraits(speakers: Array) -> void:
+	for it in items:
+		for who in speakers:
+			var line := line_for(String(it["kind"]), String(who))
+			if not line.is_empty():
+				_portrait_tex(portrait_path(String(who), String(line["mood"])))
+
+
+func _portrait_tex(path: String) -> Texture2D:
+	if not _prt_cache.has(path):
+		_prt_cache[path] = load(path) as Texture2D if ResourceLoader.exists(path) else null
+	return _prt_cache[path]
 
 
 ## 场景里原本就有的旧物（告示栏、岗楼、铁笼……）：按贴图名认，每种每关只认第一件。
@@ -547,9 +565,16 @@ func update(delta: float) -> void:
 	for a in _anim:
 		var spr := a["spr"] as Sprite2D
 		if is_instance_valid(spr):
-			spr.frame = int(_clock * FLAG_FPS + float(a["phase"])) % int(a["frames"])
+			# 只在帧号真的变了才写：Sprite2D.frame 每次赋值都会发 frame_changed 并重画
+			var f := int(_clock * FLAG_FPS + float(a["phase"])) % int(a["frames"])
+			if spr.frame != f:
+				spr.frame = f
 	if ctl == null or ctl.player == null:
 		return
+	var mate := String(ctl.get("mate_id")) if ctl.get("mate_id") != null else ""
+	if mate != "" and mate != _warmed_mate:
+		_warmed_mate = mate                  # 伙伴是开场后才生成的：知道是谁后预读一次
+		_warm_portraits([mate])
 	_tick_dialogue(delta)
 	var pp: Vector2 = ctl.player.global_position
 	for it in items:
@@ -611,7 +636,7 @@ func _show(q: Dictionary) -> void:
 		return
 	var sp: Dictionary = SPEAKERS.get(who, SPEAKERS["self"])
 	var path := portrait_path(who, mood)
-	_portrait.texture = load(path) as Texture2D if ResourceLoader.exists(path) else null
+	_portrait.texture = _portrait_tex(path)
 	_speaker.text = "%s · %s　｜　%s" % [String(sp["zh"]), String(MOOD_ZH.get(mood, "")), String(q["title"])]
 	_label.text = text
 	_label.add_theme_color_override("font_color", COL_SELF if who == "self" else COL_MATE)

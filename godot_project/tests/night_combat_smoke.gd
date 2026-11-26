@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test for the combat slice (P5 / 撬棍与枪械).
 ## Run:  Godot_v4.7.2-stable_win64 --headless --path godot_project -s tests/night_combat_smoke.gd
 ##
@@ -10,8 +10,6 @@ extends SceneTree
 ##
 ## 全程直接调方法，不依赖帧循环 —— headless 里结果确定。
 
-var passes: int = 0
-var failures: Array[String] = []
 
 const Arsenal := preload("res://scripts/night/Arsenal.gd")
 
@@ -20,15 +18,6 @@ var _s: Node = null
 
 func _init() -> void:
 	_run.call_deferred()
-
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 
 func _scene(path: String) -> Node:

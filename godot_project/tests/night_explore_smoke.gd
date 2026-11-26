@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test for the night-exploration art slice (scenes/night_explore.tscn).
 ## Run:  Godot_v4.7.2-stable_win64_console.exe --headless --path godot_project -s tests/night_explore_smoke.gd
 ##
@@ -8,22 +8,12 @@ extends SceneTree
 ##       天亮最后 20% 的天色渐变（P1.5）/ 程序化音效与定位（P2.5）/ 镜头震动 /
 ##       战役 cfg 口径（pack_max · load · night · cold · sound_on）。
 
-var passes: int = 0
-var failures: Array[String] = []
 
 const PPM := 64.0
 const GY := 39.68
 
 func _init() -> void:
 	_run.call_deferred()
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 func _m(x: float, y: float) -> Vector2:
 	return Vector2(x * PPM, y * GY)

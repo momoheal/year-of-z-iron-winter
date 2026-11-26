@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## 地面贴花层 smoke（headless）。
 ## 覆盖：地面变换矩阵的正确性（det ≡ SQ、θ=90° 的轴向）/ add_decal 的挂载与灯掩码 /
 ##       marks·tracks 双池容量与隔离 / 脚印左右交替与落点 / 走路真的踩出印子 /
@@ -18,8 +18,6 @@ const MARKS_CAP := 48
 const TRACKS_CAP := 64
 const BLOOD_KEYS := ["blood_s", "blood_m", "blood_l", "blood_trail"]
 
-var passes: int = 0
-var failures: Array[String] = []
 
 
 func _init() -> void:
@@ -33,15 +31,6 @@ func _guard() -> void:
 	await create_timer(150.0).timeout
 	printerr("!! night_decals_smoke watchdog timeout — _run 协程多半已经因脚本错误中断")
 	quit(1)
-
-
-func _assert(cond: bool, n: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", n)
-	else:
-		failures.append(n + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", n, "  ", detail)
 
 
 func _scene() -> Node:

@@ -653,10 +653,33 @@ func _rebuild_body() -> void:
 		_:
 			_build_title()
 
-func _update_live() -> void:
-	if sim.phase != "raid" or sim.raid == null:
+## 节点化夜潜：出发剧情播放期间、切进夜潜场景之前的那几帧，显示一张出发简报（以前是空白 / 无用的灰盒地图）。
+func _build_departure_card() -> void:
+	if sim.raid == null:
 		return
-	var R = sim.raid
+	var loc: Dictionary = sim.raid.loc
+	var card := _panel()
+	card.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	card.offset_left = -300
+	card.offset_right = 300
+	card.offset_top = -150
+	card.offset_bottom = -40
+	var v := _vbox(6)
+	v.add_child(_label(_tr("出发", "DEPARTING"), FONT_SIZES["small"], Color("#c8a257")))
+	v.add_child(_label(String(loc.get("zh" if sim.lang == "zh" else "en", loc.get("id", ""))), FONT_SIZES["h2"], Color("#e3ddcd")))
+	var mate_txt := _tr("独自出发", "Alone")
+	if String(sim.raid.mate_id) != "":
+		var md: Dictionary = Data.mate(String(sim.raid.mate_id))
+		mate_txt = String(md.get("zh" if sim.lang == "zh" else "en", sim.raid.mate_id))
+	v.add_child(_label(_tr("同行：%s  ·  背包 %d 格", "With: %s  ·  Pack %d slots") % [mate_txt, int(sim.raid.pack_max)],
+		FONT_SIZES["body"], Color("#b9b5a8")))
+	card.add_child(v)
+	body.add_child(card)
+
+func _update_live() -> void:
+	if sim.phase != "raid" or sim.greybox_raid() == null:
+		return
+	var R = sim.greybox_raid()
 	var p = R.player
 	if _live.has("clock"):
 		(_live["clock"] as Label).text = R.clock_text()
@@ -708,9 +731,9 @@ func _update_live() -> void:
 		(_live["choice"] as PanelContainer).visible = R.choice_open
 
 func _pack_text() -> String:
-	if sim.raid == null:
+	if sim.greybox_raid() == null:
 		return ""
-	var R = sim.raid
+	var R = sim.greybox_raid()
 	var parts: Array[String] = []
 	var counts: Dictionary = {}
 	for id in R.pack:
@@ -1447,7 +1470,8 @@ func show_departure_error() -> void:
 # 夜潜 HUD
 # ============================================================================
 func _build_raid_hud() -> void:
-	if sim.raid == null:
+	if sim.greybox_raid() == null:
+		_build_departure_card()
 		return
 	_live.clear()
 	# ---- 左上：时钟 / 生命体征 ----
@@ -1456,14 +1480,14 @@ func _build_raid_hud() -> void:
 	var tv := _vbox(6)
 	var hrow := _hbox(10)
 	hrow.add_child(_label(_tr("夜", "TIME"), FONT_SIZES["small"], Color("#c8a257")))
-	var clock := _label(sim.raid.clock_text(), 24, Color("#e3ddcd"))
+	var clock := _label(sim.greybox_raid().clock_text(), 24, Color("#e3ddcd"))
 	_live["clock"] = clock
 	hrow.add_child(clock)
-	var loc_now: Dictionary = sim.raid.loc
+	var loc_now: Dictionary = sim.greybox_raid().loc
 	hrow.add_child(_chip(String(loc_now["zh"] if sim.lang == "zh" else loc_now["en"]), Color("#343c3f")))
 	tv.add_child(hrow)
 	var nrow := _hbox(8)
-	var night := _bar(100.0 * sim.raid.night_left / maxf(1.0, sim.raid.night_max), Color("#b2ab9f"), 8)
+	var night := _bar(100.0 * sim.greybox_raid().night_left / maxf(1.0, sim.greybox_raid().night_max), Color("#b2ab9f"), 8)
 	night.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	night.custom_minimum_size = Vector2(180, 8)
 	_live["night"] = night
@@ -1504,7 +1528,7 @@ func _build_raid_hud() -> void:
 
 	var stam_row := _hbox(8)
 	stam_row.add_child(_label("STA", FONT_SIZES["small"], Color("#6d6f66")))
-	var stam := _bar(sim.raid.player.stam, Color("#8fd9a8"), 6)
+	var stam := _bar(sim.greybox_raid().player.stam, Color("#8fd9a8"), 6)
 	stam.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_live["stam_bar"] = stam
 	stam_row.add_child(stam)
@@ -1579,7 +1603,7 @@ func _build_raid_hud() -> void:
 	jl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_live["jam_label"] = jl
 	jam.add_child(jl)
-	jam.visible = sim.raid.jam_active
+	jam.visible = sim.greybox_raid().jam_active
 	_live["jam"] = jam
 	body.add_child(jam)
 
@@ -1596,7 +1620,7 @@ func _build_raid_hud() -> void:
 	cl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	ch.add_child(cl)
-	ch.visible = sim.raid.choice_open
+	ch.visible = sim.greybox_raid().choice_open
 	_live["choice"] = ch
 	body.add_child(ch)
 
@@ -1665,6 +1689,15 @@ func _build_report() -> void:
 		ggrid.add_child(_chip("%s %s ×%d" % [sim.item_icon(String(k)), sim.item_name(String(k)), int(gained[k])],
 			Color("#2b3235")))
 	lv.add_child(ggrid)
+	# 丢在路上的：让天亮隔项 / 倒下 / 放弃的代价看得见（旧存档没有这个键就不显示）
+	var lost: Dictionary = R.get("lost", {})
+	if not lost.is_empty():
+		lv.add_child(_label(_tr("丢在路上", "LEFT BEHIND"), FONT_SIZES["small"], Color("#b8281c")))
+		var lgrid := _hbox(6)
+		for k in R.get("lost_order", lost.keys()):
+			lgrid.add_child(_chip("%s %s ×%d" % [sim.item_icon(String(k)), sim.item_name(String(k)), int(lost[k])],
+				Color("#2a1715"), Color("#d9a39b")))
+		lv.add_child(lgrid)
 	lv.add_child(_sep())
 	lv.add_child(_label(_tr("本次记录", "THIS RUN"), FONT_SIZES["h3"], Color("#e3ddcd")))
 	lv.add_child(_kv(_tr("搜刮容器", "Containers searched"), "%d / %d" % [int(R["looted"]), int(R["total"])]))
@@ -1749,6 +1782,8 @@ func _kv(k: String, v: String) -> Control:
 	return h
 
 func _report_sleep() -> void:
+	if sim.phase != "report":
+		return                       # 已经离开结算页（重复触发 / 按键连发）：不能再推进一天
 	sim.to_base()
 	sim.prepare_base_story_events()
 	if sim.phase != "ending" and not sim.story_open and not sim.has_pending_story_slides() \
@@ -1829,7 +1864,7 @@ func _build_modal() -> void:
 		_build_help_modal()
 	elif sim.abort_confirm:
 		_build_abort_modal()
-	elif sim.phase == "raid" and sim.raid != null and sim.raid.choice_open:
+	elif sim.phase == "raid" and sim.greybox_raid() != null and sim.greybox_raid().choice_open:
 		_build_choice_modal()
 
 func _select_room_zone(zone: String) -> void:
@@ -2329,12 +2364,12 @@ func play_aftermath(story_id: String, choice_index: int, res: Dictionary, compan
 
 func _build_choice_modal() -> void:
 	_modal_kind = "choice"
-	if sim.raid == null or sim.raid.choice_ent == null:
-		sim.raid.choice_open = false
+	if sim.greybox_raid() == null or sim.greybox_raid().choice_ent == null:
+		sim.greybox_raid().choice_open = false
 		return
 	_dim()
-	var e = sim.raid.choice_ent
-	var R = sim.raid
+	var e = sim.greybox_raid().choice_ent
+	var R = sim.greybox_raid()
 	var has_med: bool = int(R.load.get("asp", 0)) > 0 and int(R.load.get("water", 0)) > 0
 	var v := _modal_panel(900.0)
 	v.add_child(_label(_tr("抉择 A · 你是否还承认他是人", "CHOICE A · Do you still call him human?"), 28, Color("#c8a257")))
@@ -2357,11 +2392,11 @@ func _build_choice_modal() -> void:
 		FONT_SIZES["small"], Color("#6d6f66")))
 
 func _choice(idx: int) -> void:
-	if sim.raid == null:
+	if sim.greybox_raid() == null:
 		return
-	sim.raid.set_choice(idx)
-	if sim.raid.choice_result.get("ok", true) == false:
-		sim.raid.choice_open = false
+	sim.greybox_raid().set_choice(idx)
+	if sim.greybox_raid().choice_result.get("ok", true) == false:
+		sim.greybox_raid().choice_open = false
 	_sig = ""
 
 func _build_logbook_modal() -> void:

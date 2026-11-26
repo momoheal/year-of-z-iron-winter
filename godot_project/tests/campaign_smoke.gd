@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Headless smoke test — 「一夜」探索循环（Campaign）
 ##
 ## Run:
@@ -20,20 +20,10 @@ const SaveGameScript := preload("res://autoload/SaveGame.gd")
 
 const FRAME := 1.0 / 60.0
 
-var passes: int = 0
-var failures: Array[String] = []
 var scene: Node
 
 func _init() -> void:
 	_run_tests.call_deferred()
-
-func _assert(cond: bool, name: String, detail: String = "") -> void:
-	if cond:
-		passes += 1
-		print("  PASS  ", name)
-	else:
-		failures.append(name + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", name, "  ", detail)
 
 func _frames(n: int) -> void:
 	for i in n:
@@ -91,6 +81,8 @@ func _run_tests() -> void:
 	root.add_child(scene)
 	await _frames(4)
 	var sim = scene.get("sim")
+	# 这套测试直接驱动灰盒 RaidSim 的机制（搜刮 / 卡门 / 撤离…）；节点化地点默认只建轻量当局容器（T04）
+	sim.force_greybox = true
 	var hud = scene.get("hud")
 	_assert(sim != null and hud != null, "3. campaign scene wires sim + hud")
 	_assert(sim.phase == "title", "4. boots into the title screen")

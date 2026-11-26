@@ -40,6 +40,9 @@ const NightMiniMapScript := preload("res://scripts/night/NightMiniMap.gd")
 const NightCoachScript := preload("res://scripts/night/NightCoach.gd")
 const StorySlidesScript := preload("res://scripts/ui/StorySlides.gd")
 const CutsceneData := preload("res://scripts/data/CutsceneData.gd")
+const RaidResultScript := preload("res://scripts/raid/RaidResult.gd")
+## 夜潜真正结束的状态；只有这些能回战役结算（cutscene / interaction / modding 不算）。
+const END_STATES := ["extracted", "dawn", "downed", "frozen", "abort"]
 
 const MAP_ART_DIRS := {
 	"yard": "Yard", "marshalling": "Marshalling", "manor": "Manor",
@@ -142,6 +145,8 @@ var rail_y: Array = []         # 铁轨中心线（米）→ 脚步材质
 # 天亮（P1.5）
 var dawn_t := 0.0              # 夜长最后 20% 的进度 0..1（未缓动）
 var dawn_cued := false         # 「天边发白」的提示 / 汽笛只放一次
+var dawn_final_cued := false   # 最后 15 秒的催促只放一次
+const DAWN_FINAL_WARN := 15.0
 var chill_step := 0            # 失温提示音打到第几档
 
 # 镜头震动 / 推镜
@@ -413,6 +418,8 @@ func _ready() -> void:
 	monuments.spawn(self)          # 必须在烘寻路网格之前：纪念物挡人
 	_build_nav()
 	player.global_position = $Markers/Spawn.global_position
+	if player.has_method("snap_visual"):
+		player.snap_visual()
 	cam.global_position = player.global_position
 	cam.reset_smoothing()
 	_setup_breath()
@@ -444,8 +451,8 @@ func _start_coach() -> void:
 
 
 func _on_coach_finished() -> void:
-	if RaidBridge.sim != null and RaidBridge.sim.get("seen") is Dictionary:
-		RaidBridge.sim.seen["night"] = true
+	if not campaign_seen_set.has("night"):
+		campaign_seen_set.append("night")      # 结算时写回战役（T04：夜里不直接改战役）
 	_coach = null
 
 
@@ -644,7 +651,9 @@ func _process(delta: float) -> void:
 			_osk_bark_priority = 0
 			if _osk_bark_panel != null:
 				_osk_bark_panel.visible = false
-	cam.global_position = player.global_position + Vector2(0, -40)
+	# 跟随插值后的显示位置：高刷新率屏上镜头不再随 60 Hz 物理帧一顿一顿
+	var follow: Vector2 = player.visual_position() if player.has_method("visual_position") else player.global_position
+	cam.global_position = follow + Vector2(0, -40)
 	_apply_shake(delta)
 	if _minimap != null and is_instance_valid(_minimap):
 		_minimap.queue_redraw()
@@ -663,7 +672,7 @@ func _process(delta: float) -> void:
 	_update_fx(delta)
 	_update_fade()
 	_update_post()
-	_refresh_hud()
+	_hud_tick(delta)
 	$OverlayLayer/Overlay.queue_redraw()
 
 
@@ -701,9 +710,9 @@ func _show_night_story_slides(event_id: String) -> void:
 
 
 func _on_night_story_choice_selected(choice_id: String) -> void:
-	if level_id == "eagle_beak_cliff" and in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
+	if level_id == "eagle_beak_cliff" and _campaign_attempt() != null:
 		if choice_id in ["all", "lana"]:
-			RaidBridge.sim.raid.crag_rescue_scope = choice_id
+			_campaign_attempt().crag_rescue_scope = choice_id
 
 
 func _on_night_story_qte_finished(success: bool) -> void:
@@ -756,6 +765,13 @@ func update_dawn() -> void:
 		add_shake(0.12)
 		spawn_float(player.global_position + Vector2(0, -150),
 			"天边发白了 —— %s" % extract_zh, Color("#fcd34d"))
+	# 最后 15 秒再催一次，并把规则说清楚：天亮被抓到只带得回一半
+	if in_campaign and night_left > 0.0 and night_left <= DAWN_FINAL_WARN and not dawn_final_cued:
+		dawn_final_cued = true
+		sfx.play("dawn_horn", -1.0)
+		add_shake(0.18)
+		spawn_float(player.global_position + Vector2(0, -170),
+			"还有 %d 秒天亮 —— 来不及撤离，背包只带得回一半" % int(ceil(night_left)), Color("#fca5a5"))
 
 func _update_interact(delta: float) -> void:
 	var h = nearest_half()
@@ -933,7 +949,7 @@ func _spawn_loot_pickup(kind: String, id: String, pos: Vector2, label_text: Stri
 	tag.size = Vector2(164, 22)
 	tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tag.add_theme_font_override("font", SovietUI.mono_font())
-	tag.add_theme_font_size_override("font_size", 11)
+	tag.add_theme_font_size_override("font_size", 12)
 	tag.add_theme_color_override("font_color", Color("#f3d293"))
 	tag.add_theme_color_override("font_outline_color", Color("#131719"))
 	tag.add_theme_constant_override("outline_size", 5)
@@ -1443,8 +1459,8 @@ func interact_point(c: Node2D) -> Vector2:
 func _remove_pack_item(slot: int) -> void:
 	if slot < 0:
 		return
-	if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
-		var attempt = RaidBridge.sim.raid
+	var attempt = _campaign_attempt()
+	if attempt != null:
 		if slot == attempt.archive_copy_slot:
 			attempt.archive_copy_slot = -1
 		elif slot < attempt.archive_copy_slot:
@@ -1482,41 +1498,43 @@ func _finish_search(c: Node2D) -> void:
 	for i in n:
 		var pool: Array = Data.LOOT_CATS[cats[rng.randi() % cats.size()]]
 		got.append(String(pool[rng.randi() % pool.size()]))
+	var attempt = _campaign_attempt()          # 当局容器；独立跑 / 已结算为 null
+	var camp_flags: Dictionary = RaidBridge.sim.flags if attempt != null else {}
 	var names: Array[String] = []
 	for id in got:
-		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+		if attempt != null \
 		and level_id == "manor" and c.name == &"BatchPallet" and id == "dial" \
-		and bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
-			RaidBridge.sim.raid.manor_trade_slot = -2 # Ration slip is carried in the story, not in the pack.
+		and bool(camp_flags.get("manor_plan_trade", false)):
+			attempt.manor_trade_slot = -2 # Ration slip is carried in the story, not in the pack.
 			continue
-		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+		if attempt != null \
 		and level_id == "manor" and c.name == &"IncineratorFeed" and id == "photo" \
-		and (bool(RaidBridge.sim.flags.get("manor_plan_trade", false)) \
-			or bool(RaidBridge.sim.flags.get("manor_plan_release", false))):
+		and (bool(camp_flags.get("manor_plan_trade", false)) \
+			or bool(camp_flags.get("manor_plan_release", false))):
 			continue
 		if pack.size() >= bag_max:
 			spawn_float(c.global_position + Vector2(0, -90), "背包满了 · Bag full", Color("#fbbf24"))
 			break
-		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+		if attempt != null \
 			and level_id == "manor" and c.name == &"IncineratorFeed" and id == "photo" \
-			and RaidBridge.sim.raid.manor_photo_slot < 0:
-			RaidBridge.sim.raid.manor_photo_slot = pack.size()
-		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+			and attempt.manor_photo_slot < 0:
+			attempt.manor_photo_slot = pack.size()
+		if attempt != null \
 			and level_id == "manor" and c.name == &"BatchPallet" and id == "dial" \
-			and RaidBridge.sim.raid.manor_trade_slot < 0:
-			RaidBridge.sim.raid.manor_trade_slot = pack.size()
-		if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null \
+			and attempt.manor_trade_slot < 0:
+			attempt.manor_trade_slot = pack.size()
+		if attempt != null \
 			and level_id == "archive" and c.name == &"File0420" and id == "intel" \
-			and RaidBridge.sim.raid.archive_copy_slot < 0:
-			RaidBridge.sim.raid.archive_copy_slot = pack.size()
+			and attempt.archive_copy_slot < 0:
+			attempt.archive_copy_slot = pack.size()
 		pack.append(id)
 		names.append(item_name(id))
-	if in_campaign and RaidBridge.sim != null and RaidBridge.sim.raid != null:
+	if attempt != null:
 		var clue := (level_id == "station_buran_yard" and c.name == &"DispatchLocker") \
 			or (level_id == "eagle_beak_cliff" and c.name == &"BrakeVan") \
 			or (level_id == "broadcast_tower_302" and c.name == &"RadioDesk")
 		if clue:
-			RaidBridge.sim.raid.story_objective_reached = true
+			attempt.story_objective_reached = true
 			var message := "目标已完成：撤离后确认结果"
 			if level_id == "eagle_beak_cliff":
 				message = "车厢门已打开。先看清里面的人。"
@@ -1527,21 +1545,21 @@ func _finish_search(c: Node2D) -> void:
 				_show_night_story_slides("crag_reveal")
 		if level_id == "manor":
 			var manor_plan := "evidence"
-			if bool(RaidBridge.sim.flags.get("manor_plan_trade", false)):
+			if bool(camp_flags.get("manor_plan_trade", false)):
 				manor_plan = "trade"
-			elif bool(RaidBridge.sim.flags.get("manor_plan_release", false)):
+			elif bool(camp_flags.get("manor_plan_release", false)):
 				manor_plan = "release"
 			var manor_goal_reached := false
 			if manor_plan == "evidence":
-				manor_goal_reached = c.name == &"IncineratorFeed" and RaidBridge.sim.raid.manor_photo_slot >= 0
+				manor_goal_reached = c.name == &"IncineratorFeed" and attempt.manor_photo_slot >= 0
 			elif manor_plan == "trade":
-				manor_goal_reached = c.name == &"BatchPallet" and RaidBridge.sim.raid.manor_trade_slot != -1
+				manor_goal_reached = c.name == &"BatchPallet" and attempt.manor_trade_slot != -1
 			elif manor_plan == "release" and c.name == &"GateBox":
-				RaidBridge.sim.raid.manor_release_reached = true
+				attempt.manor_release_reached = true
 				manor_goal_reached = true
 				spawn_float(c.global_position + Vector2(0, -150), "锁盒里的铁栓弹开了。地下室有人沿墙向外走。", SovietUI.OCHRE)
 			if manor_goal_reached:
-				RaidBridge.sim.raid.story_objective_reached = true
+				attempt.story_objective_reached = true
 				var done_note := "地下室的人已放出。现在可以撤离。" if manor_plan == "release" else "目标已完成。现在可以撤离。"
 				spawn_float(c.global_position + Vector2(0, -176), done_note, SovietUI.OCHRE)
 	if not names.is_empty():
@@ -2022,7 +2040,7 @@ func on_rabid_killed(r: Node2D, by: String) -> void:
 	r.set_meta("corpse_searched", true)
 	if level_id == "canteen" and String(r.name) == "Rabid_Vasily" and by in ["player", "companion"] \
 	and in_campaign and RaidBridge.sim != null:
-		RaidBridge.sim.flags["vasily_killed"] = true
+		_set_campaign_flag("vasily_killed")
 	var pocket_items := _roll_items(CORPSE_CATS, 2 if mate_id == "zakhar" else 1)
 	for i in pocket_items.size():
 		_spawn_item_drop(pocket_items[i], r.global_position + Vector2(22 + i * 16, 10 + i * 8))
@@ -2134,67 +2152,115 @@ func _end(reason: String) -> void:
 			sfx.play("bonejam", -2.0)
 			add_shake(0.7)
 
-# P1: 把夜潜结果填进 RaidSim 数据容器，走 CampaignSim.finish_raid 统一结算，
+# P1 / M1: 把夜潜结果收成 RaidResult，交 CampaignSim.submit_raid_result 唯一入口结算，
 #     再切回 campaign.tscn（_ready 会 take_sim 取回原 sim）。
 func _return_to_campaign(reason: String) -> void:
 	if not in_campaign:
 		return
+	if not END_STATES.has(reason):
+		return                      # 过场 / 交互 / 改装面板里的 Enter / Esc 不是结束夜潜
 	var sim = RaidBridge.sim
-	if sim == null or sim.raid == null:
+	if sim == null:
 		RaidBridge.clear()
+		get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+		return
+	if sim.raid == null:
+		# 这一局已经结算（按钮与 Enter 同帧等重复触发）：只回战役，保留桥上的 sim，不再结算。
 		get_tree().change_scene_to_file("res://scenes/campaign.tscn")
 		return
 	if reason == "extracted" and is_instance_valid(_coach):
 		_coach.finish()
-	var R = sim.raid
-	R.pack = pack.duplicate()
-	R.player.hp = hp
-	R.player.warmth = warmth
-	R.load = {}            # 携带消耗品已并入 pack，finish_raid 不再重复归还
-	R.half_saved = half_saved
-	R.killed = borrowed + rabid_kills + companion_kills    # 借刀、亲手击杀、伙伴协助击杀
-	# 枪里的余弹带回去（战役结算里武器行显示「弹匣 / 备弹」）
-	match String(R.weapon.get("id", "")):
-		"mosin":
-			R.ammo = int(mag.get("rifle", 0)) + int(reserve.get("rifle", 0))
-		"shotgun":
-			R.ammo = int(mag.get("shotgun", 0)) + int(reserve.get("shotgun", 0))
-	R.looted = _count_searched()
-	R.total_cont = containers.size()
-	R.events.clear()
-	if not pack.is_empty():
-		R.add_event("good", "带回 %d 件物资" % pack.size(), "Brought back %d items" % pack.size())
-	if half_saved > 0:
-		R.add_event("good", "救下半人 %d 名" % half_saved, "Saved %d half-humans" % half_saved)
-	if borrowed > 0:
-		R.add_event("knife", "借刀杀人 ×%d" % borrowed, "Borrowed knife ×%d" % borrowed)
-	if rabid_kills > 0:
-		R.add_event("good", "亲手放倒狂暴者 ×%d" % rabid_kills, "Rabids put down ×%d" % rabid_kills)
-	if companion_kills > 0:
-		R.add_event("good", "伙伴协助击杀 ×%d" % companion_kills, "Companion assists ×%d" % companion_kills)
-	if soldier_kills > 0:
-		R.add_event("witness", "打死清杀兵 ×%d" % soldier_kills, "OSK soldiers killed ×%d" % soldier_kills)
-	if half_lost > 0:
-		R.add_event("witness", "清杀队误杀半人 %d 名" % half_lost, "OSK gunned down %d half-humans" % half_lost)
-	if reason == "dawn":
-		R.add_event("note", "天亮前没回到撤离点：只带得回一半。", "Caught by dawn: only half the haul comes home.")
-	# 道德账回写
-	if conscience != 0.0:
-		sim.raid_add_conscience(conscience)
-	if tally > 0:
-		sim.raid_add_tally(tally, "夜潜%s：亲手灭口" % level_zh, "%s: mercy kill" % level_en)
-	sim.sound_on = not muted        # 战役里的音效开关跟着人走
-	sim.weapon_mods = weapon_mods.duplicate(true)
-	var settlement_reason := "downed" if reason == "frozen" else reason
-	sim.finish_raid(settlement_reason)
-	if first_coldstore_visit:
-		sim.last_report["checked_north_awning"] = COLDSTORE_TRACE in landmark_seen
-		if COLDSTORE_TRACE in landmark_seen:
-			sim.add_log("四号冷库北雨棚：转运票残号 04，姓名栏缺失。",
-				"North awning, Cold Storage No.4: torn transfer slip, digits 04. Name missing.")
-	if osk_rifle_recovered and settlement_reason not in ["downed", "abort"]:
-		sim.register_salvaged_weapon("mosin")
+	sim.submit_raid_result(build_raid_result(reason))
 	get_tree().change_scene_to_file("res://scenes/campaign.tscn")
+
+## 把这一夜的局部状态收成 RaidResult（M1 / T02）；不写任何战役状态，结算由 CampaignSim 负责。
+## 剧情进度（目标达成、庄园 / 档案槽位、鹰嘴崖救援范围）夜里记在当局容器 sim.raid 上，这里一并带走。
+func build_raid_result(reason: String):
+	var settlement_reason: String = RaidResultScript.normalize_reason(reason)
+	var sim = RaidBridge.sim
+	var R = sim.raid if sim != null else null
+	var res
+	if R != null:
+		res = RaidResultScript.from_raid_sim(R, settlement_reason)
+	else:
+		res = RaidResultScript.create()
+		res.reason = settlement_reason
+		res.loc_id = level_id
+	var cfg_id := String(RaidBridge.cfg.get("raid_id", ""))
+	if cfg_id != "":
+		res.raid_id = cfg_id
+	res.pack.clear()
+	for id in pack:
+		res.pack.append(String(id))
+	res.refund_load = {}        # 携带消耗品出发时已并入 pack，结算不再重复归还
+	res.hp = hp
+	res.warmth = warmth
+	res.half_saved = half_saved
+	res.killed = borrowed + rabid_kills + companion_kills    # 借刀、亲手击杀、伙伴协助击杀
+	# 枪里的余弹带回去（战役结算里武器行显示「弹匣 / 备弹」）
+	var wv: Variant = R.weapon if R != null else RaidBridge.cfg.get("weapon", "")
+	var campaign_weapon: String = String((wv as Dictionary).get("id", "")) if wv is Dictionary else String(wv)
+	match campaign_weapon:
+		"mosin":
+			res.ammo = int(mag.get("rifle", 0)) + int(reserve.get("rifle", 0))
+		"shotgun":
+			res.ammo = int(mag.get("shotgun", 0)) + int(reserve.get("shotgun", 0))
+	res.looted = _count_searched()
+	res.total_cont = containers.size()
+	res.events.clear()
+	if not pack.is_empty():
+		res.add_event("good", "带回 %d 件物资" % pack.size(), "Brought back %d items" % pack.size())
+	if half_saved > 0:
+		res.add_event("good", "救下半人 %d 名" % half_saved, "Saved %d half-humans" % half_saved)
+	if borrowed > 0:
+		res.add_event("knife", "借刀杀人 ×%d" % borrowed, "Borrowed knife ×%d" % borrowed)
+	if rabid_kills > 0:
+		res.add_event("good", "亲手放倒狂暴者 ×%d" % rabid_kills, "Rabids put down ×%d" % rabid_kills)
+	if companion_kills > 0:
+		res.add_event("good", "伙伴协助击杀 ×%d" % companion_kills, "Companion assists ×%d" % companion_kills)
+	if soldier_kills > 0:
+		res.add_event("witness", "打死清杀兵 ×%d" % soldier_kills, "OSK soldiers killed ×%d" % soldier_kills)
+	if half_lost > 0:
+		res.add_event("witness", "清杀队误杀半人 %d 名" % half_lost, "OSK gunned down %d half-humans" % half_lost)
+	if settlement_reason == "dawn":
+		res.add_event("note", "天亮前没回到撤离点：只带得回一半。", "Caught by dawn: only half the haul comes home.")
+	# 道德账：结算入口一次性入账
+	res.conscience_delta = conscience
+	res.tally_delta = tally
+	res.tally_reason_zh = "夜潜%s：亲手灭口" % level_zh
+	res.tally_reason_en = "%s: mercy kill" % level_en
+	res.sound_on = not muted        # 战役里的音效开关跟着人走
+	res.weapon_mods = weapon_mods.duplicate(true)
+	if first_coldstore_visit:
+		res.coldstore_trace = COLDSTORE_TRACE in landmark_seen
+	if osk_rifle_recovered:
+		res.salvaged_weapons.append("mosin")
+	for f in campaign_flags_set:
+		res.flags_set.append(f)
+	for k in campaign_seen_set:
+		res.seen_set.append(k)
+	return res
+
+## T04：夜里触发的永久旗标 / 看完的引导先记在本地，收场时随 RaidResult 一次提交，不再直接改战役。
+var campaign_flags_set: Array[String] = []
+var campaign_seen_set: Array[String] = []
+
+func _set_campaign_flag(flag: String) -> void:
+	if not campaign_flags_set.has(flag):
+		campaign_flags_set.append(flag)
+
+## 战役里已有，或这一夜已经触发过。
+func _campaign_flag(flag: String) -> bool:
+	if campaign_flags_set.has(flag):
+		return true
+	return in_campaign and RaidBridge.sim != null and bool(RaidBridge.sim.flags.get(flag, false))
+
+## 当前战役这一局的当局容器（RaidSim，夜里记剧情进度用）；独立跑 / 已结算时为 null。
+func _campaign_attempt():
+	if in_campaign and RaidBridge.sim != null:
+		return RaidBridge.sim.raid
+	return null
+
 
 func _count_searched() -> int:
 	var n := 0
@@ -3343,13 +3409,13 @@ func _update_landmarks() -> void:
 				spawn_float(player.global_position + Vector2(0, -136), note, SovietUI.BONE_DIM)
 			var story_trigger := String(l.get("story_trigger", ""))
 			if level_id == "mine" and nm == "爆破断面" and in_campaign and RaidBridge.sim != null \
-			and not bool(RaidBridge.sim.flags.get("mine_inscriptions_seen", false)):
-				RaidBridge.sim.flags["mine_inscriptions_seen"] = true
+			and not _campaign_flag("mine_inscriptions_seen"):
+				_set_campaign_flag("mine_inscriptions_seen")
 				_show_night_story_slides("mine_inscriptions")
 				return
 			if story_trigger == "redzone_mother" and level_id == "yard" and in_campaign \
-			and RaidBridge.sim != null and not bool(RaidBridge.sim.flags.get("redzone_mother_seen", false)):
-				RaidBridge.sim.flags["redzone_mother_seen"] = true
+			and RaidBridge.sim != null and not _campaign_flag("redzone_mother_seen"):
+				_set_campaign_flag("redzone_mother_seen")
 				_show_night_story_slides("redzone_mother")
 				return
 			if story_trigger == "broadcast" and in_campaign:
@@ -3677,7 +3743,7 @@ func _build_hud() -> void:
 	rv.add_child(_lbl_exit)
 	_lbl_threat = _label("", 13, SovietUI.SIGNAL)
 	rv.add_child(_lbl_threat)
-	_lbl_landmarks = _label("", 12, SovietUI.ASH)
+	_lbl_landmarks = _label("", 13, SovietUI.BONE_DIM)   # 可读性：12→13 px，ASH 在深底上对比不足
 	rv.add_child(_lbl_landmarks)
 
 	# ---- 底部：电传打字机（长按 E 的提示都从这里打出来） ----
@@ -3755,7 +3821,7 @@ func _build_hud() -> void:
 	_brief_card.scale = Vector2(0.78, 0.78)
 	_brief_card.pivot_offset = Vector2(360, 0)
 	hud_root.add_child(_brief_card)
-	_brief_lbl = _label("", 14, SovietUI.BONE)
+	_brief_lbl = _label("", 16, SovietUI.BONE)   # 卡片整体缩到 0.78，16 px 实际约 12.5 px
 	_brief_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_brief_card.add_child(_brief_lbl)
 
@@ -4001,26 +4067,85 @@ func _nearest_unvisited_landmark() -> Dictionary:
 	return best
 
 
+## ---------------------------------------------------------------------------
+## HUD 按变化刷新：每帧只算一个廉价签名（HUD 文字依赖的状态 + 量化后的玩家位置 + 进度百分比 + 时钟秒），
+## 签名变了才整页重排文字；签名不变时最多 HUD_MAX_STALE 秒也强制刷一次（敌人走动带来的距离 / 方位变化）。
+## 仪表与屏幕边框每帧照常更新。直接调用 _refresh_hud()（事件、测试）仍然是整页刷新。
+## ---------------------------------------------------------------------------
+const HUD_MAX_STALE := 0.1
+const HUD_POS_QUANT := 24.0       # 玩家位置量化步长（像素）：约 0.4 米，方位 / 距离文字够用
+var _hud_sig: int = 0
+var _hud_age := 0.0
+var hud_full_refreshes := 0       # 计数：基准与测试用来确认节流生效
+
+func _hud_signature() -> int:
+	var pp: Vector2 = player.global_position if player != null else Vector2.ZERO
+	var attempt = _campaign_attempt()
+	var story_bits := 0
+	if attempt != null:
+		story_bits = (1 if attempt.story_objective_reached else 0) | (2 if attempt.manor_release_reached else 0)
+		story_bits += (attempt.manor_photo_slot + 2) * 4 + (attempt.manor_trade_slot + 3) * 4096
+	return hash([state, pack, weapon, int(mag.get(weapon, 0)), int(reserve.get(weapon, 0)), reload_left > 0.0,
+		cans, borrowed, int(conscience), tally, int(hp), int(warmth), zone_id,
+		player.crouching if player != null else false, player.sprinting if player != null else false,
+		player.flashlight_on if player != null else false, player.on_slush if player != null else false,
+		Vector2i(pp / HUD_POS_QUANT), floori(extract_prog * 100.0), floori(search_prog * 100.0),
+		int(night_left), dawn_t > 0.0, landmark_seen.size(), beat_phase, int(ceil(maxf(0.0, beat_timer))),
+		interaction_kind, int(ceil(_yelena_stop_cooldown)), weapon_mods.get(weapon, []).size(),
+		mission_marker != null, story_bits, half_saved, half_lost])
+
+func _hud_tick(delta: float) -> void:
+	if _m_warm == null:
+		return
+	_hud_age += delta
+	var sig := _hud_signature()
+	if sig != _hud_sig or _hud_age >= HUD_MAX_STALE:
+		_hud_sig = sig
+		_hud_age = 0.0
+		_refresh_hud()
+		return
+	# 文字不变：只喂仪表与边框（都自带去抖）
+	_m_warm.set_value(warmth / 100.0)
+	_m_hp.set_value(hp / 100.0)
+	if _chrome != null:
+		var d := clampf(maxf(tension_level(), beat_flare), 0.0, 1.0)
+		if state == "downed":
+			d = 1.0
+		_chrome.set_danger(d)
+
+
+## HUD 每帧刷新的颜色覆盖只在变化时才写：add_theme_color_override 每次都会发主题变更通知、触发重排。
+var _hud_color_cache: Dictionary = {}
+
+func _hud_color(c: Control, col: Color) -> void:
+	if c == null:
+		return
+	var key := c.get_instance_id()
+	if _hud_color_cache.get(key) == col:
+		return
+	_hud_color_cache[key] = col
+	c.add_theme_color_override("font_color", col)
+
+
 func _refresh_hud() -> void:
 	if _m_warm == null:
 		return
+	hud_full_refreshes += 1
 	_m_warm.set_value(warmth / 100.0)
 	_m_hp.set_value(hp / 100.0)
 	_m_warm.fill = _warm_color()
 	_lbl_warm_val.text = SovietUI.pct(warmth / 100.0)
 	_lbl_hp_val.text = SovietUI.pct(hp / 100.0)
-	_lbl_warm_val.add_theme_color_override("font_color", _warm_color())
-	_lbl_hp_val.add_theme_color_override("font_color",
-		SovietUI.BLOOD_LIT if hp <= 35.0 else SovietUI.BONE_DIM)
+	_hud_color(_lbl_warm_val, _warm_color())
+	_hud_color(_lbl_hp_val, SovietUI.BLOOD_LIT if hp <= 35.0 else SovietUI.BONE_DIM)
 
 	# --- 时钟（战役里是离天亮还有多久；F2 独立跑是自由行动） ---
 	if in_campaign:
 		_lbl_clock.text = ("天亮 %s" if dawn_t <= 0.0 else "发白 %s") % SovietUI.clock(night_left)
-		_lbl_clock.add_theme_color_override("font_color",
-			SovietUI.SIGNAL if dawn_t > 0.0 else SovietUI.BONE)
+		_hud_color(_lbl_clock, SovietUI.SIGNAL if dawn_t > 0.0 else SovietUI.BONE)
 	else:
 		_lbl_clock.text = "СВОБОДНЫЙ РЕЙД"
-		_lbl_clock.add_theme_color_override("font_color", SovietUI.BONE_DIM)
+		_hud_color(_lbl_clock, SovietUI.BONE_DIM)
 
 	# --- 姿态 / 读数一行 ---
 	var stance := "蹲伏" if player.crouching else ("冲刺" if player.sprinting else "步行")
@@ -4041,7 +4166,7 @@ func _refresh_hud() -> void:
 			elif zone_id == "black":
 				line += "  ·  尸群无上限"
 			_lbl_zone.text = "所在区  " + line
-			_lbl_zone.add_theme_color_override("font_color", inf.get("hud_col", SovietUI.BONE_DIM))
+			_hud_color(_lbl_zone, inf.get("hud_col", SovietUI.BONE_DIM))
 
 	# --- 手里的家伙 ---
 	var slots: Array[String] = []
@@ -4060,18 +4185,24 @@ func _refresh_hud() -> void:
 	elif cur_is_gun() and int(mag.get(weapon, 0)) == 0:
 		wline += "  空仓 · R 装填"
 	_lbl_weapon.text = "%s\n%s" % [wline, "　".join(slots)]
-	_lbl_weapon.add_theme_color_override("font_color",
-		SovietUI.SIGNAL if cur_is_gun() and int(mag.get(weapon, 0)) == 0 else SovietUI.BONE)
+	_hud_color(_lbl_weapon, SovietUI.SIGNAL if cur_is_gun() and int(mag.get(weapon, 0)) == 0 else SovietUI.BONE)
 
 	var names: Array[String] = []
 	for id in pack:
 		names.append(item_name(id))
-	_lbl_bag.text = "背包 %d/%d：%s" % [pack.size(), bag_max,
+	var bag_line := "背包 %d/%d：%s" % [pack.size(), bag_max,
 		"、".join(names) if not names.is_empty() else "—"]
+	# 天色发白后预告天亮的损失：按背包顺序隔项保留（与结算规则同口径）
+	if in_campaign and dawn_t > 0.0 and pack.size() > 1:
+		var keep: Array[String] = []
+		for i in range(0, names.size(), 2):
+			keep.append(names[i])
+		bag_line += "\n天亮被抓只保得住：" + "、".join(keep)
+	_lbl_bag.text = bag_line
 
 	# --- 地图、任务与世界标记使用相同的任务状态 ---
 	var has_prize := pack.has(prize)
-	var attempt = RaidBridge.sim.raid if in_campaign and RaidBridge.sim != null else null
+	var attempt = _campaign_attempt()
 	mission_marker = objective_px if objective_px != exit_px and not has_prize else null
 	mission_marker_title = "目标"
 	mission_marker_optional = false
@@ -4083,7 +4214,7 @@ func _refresh_hud() -> void:
 			if search_target != null and search_target.name == &"RadioDesk":
 				_lbl_target.text = "正在传输 · %d%%" % int(search_prog * 100)
 		_lbl_bearing.text = "" if attempt.story_objective_reached else "目标方位  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
-		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
+		_hud_color(_lbl_bearing, SovietUI.OCHRE)
 	elif attempt != null and level_id == "manor" and not RaidBridge.sim.flags.get("truth", false):
 		mission_marker = objective_px
 		var manor_plan := "evidence"
@@ -4109,7 +4240,7 @@ func _refresh_hud() -> void:
 		else:
 			_lbl_target.text = "在焚化炉进料口拍下台账，保留一格背包。"
 			_lbl_bearing.text = "进料口  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
-		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
+		_hud_color(_lbl_bearing, SovietUI.OCHRE)
 	elif first_coldstore_visit:
 		var checked := COLDSTORE_TRACE in landmark_seen
 		var sealed_meds: Node2D = $World/Props/SealedMeds
@@ -4133,15 +4264,15 @@ func _refresh_hud() -> void:
 					mission_marker_optional = true
 					_lbl_bearing.text = "◇ 可选 · 北雨棚  " + SovietUI.bearing_line(to_m(mission_marker - player.global_position))
 					break
-		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
+		_hud_color(_lbl_bearing, SovietUI.OCHRE)
 	elif has_prize:
 		_lbl_target.text = "%s 已经在背包里 —— 回撤离点。" % item_name(prize)
 		_lbl_bearing.text = "目标方位  已完成"
-		_lbl_bearing.add_theme_color_override("font_color", SovietUI.ASH)
+		_hud_color(_lbl_bearing, SovietUI.ASH)
 	else:
 		_lbl_target.text = objective_zh
 		_lbl_bearing.text = "目标方位  " + SovietUI.bearing_line(to_m(objective_px - player.global_position))
-		_lbl_bearing.add_theme_color_override("font_color", SovietUI.OCHRE)
+		_hud_color(_lbl_bearing, SovietUI.OCHRE)
 	_lbl_bearing.visible = not _lbl_bearing.text.is_empty()
 	var exit_delta: Vector2 = exit_px - player.global_position
 	var near_exit := dist_m(player.global_position, exit_px) <= REACH
@@ -4178,8 +4309,7 @@ func _refresh_hud() -> void:
 		threats.append("环境警报：正在进行")
 	_lbl_threat.text = "\n".join(threats)
 	_lbl_threat.visible = not threats.is_empty()
-	_lbl_threat.add_theme_color_override("font_color",
-		SovietUI.BLOOD_LIT if (chasing > 0 or (near_s != null and near_s.state == "alert")) else SovietUI.SIGNAL)
+	_hud_color(_lbl_threat, SovietUI.BLOOD_LIT if (chasing > 0 or (near_s != null and near_s.state == "alert")) else SovietUI.SIGNAL)
 
 	var lmk := "勘踏 %d/%d" % [landmark_seen.size(), landmarks.size()]
 	var nxt := _nearest_unvisited_landmark()
@@ -4250,16 +4380,16 @@ func _refresh_hud() -> void:
 			var downed_text := "被狂暴者扑倒了\n高烧的身体烫得像炉子。" \
 				if not downed_by_osk else "被清杀队枪击倒下\n枪声在雪地里远远传开。"
 			_lbl_center.text = "%s\n\n%s" % [downed_text, again_hint]
-			_lbl_center.add_theme_color_override("font_color", Color("#fca5a5"))
+			_hud_color(_lbl_center, Color("#fca5a5"))
 		"frozen":
 			_lbl_center.text = "体温耗尽，倒在了雪里\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", Color("#bae6fd"))
+			_hud_color(_lbl_center, Color("#bae6fd"))
 		"dawn":
 			_lbl_center.text = "天亮了\n你连滚带爬回到撤离点——只带得回一半。\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", Color("#bae6fd"))
+			_hud_color(_lbl_center, Color("#bae6fd"))
 		"abort":
 			_lbl_center.text = "你放弃了这次夜潜\n背包里的东西全留在了雪里。\n\n%s" % again_hint
-			_lbl_center.add_theme_color_override("font_color", SovietUI.SIGNAL)
+			_hud_color(_lbl_center, SovietUI.SIGNAL)
 		"extracted":
 			var names2: Array[String] = []
 			for id in pack:
@@ -4276,7 +4406,7 @@ func _refresh_hud() -> void:
 			_lbl_center.text = "撤离成功 · %d 件物资\n%s\n%s\n%s\n%s\n\n%s" % [
 				pack.size(), "、".join(names2), line, moral, lmk_line,
 				"F5 / Enter / Esc 再来一夜" if not in_campaign else "Enter 回 602 室 · 结算"]
-			_lbl_center.add_theme_color_override("font_color", Color("#bbf7d0"))
+			_hud_color(_lbl_center, Color("#bbf7d0"))
 	if _btn_end_return != null:
 		_btn_end_return.visible = in_campaign and state not in ["play", "choice", "modding", "interaction"]
 		_btn_end_return.text = "回到 602 室" if in_campaign else ""

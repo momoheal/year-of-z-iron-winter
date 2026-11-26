@@ -1,4 +1,4 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Verifies all five campaign endings have a loadable CG and that mapped aftermath pages resolve.
 ## Run: Godot_v4.7.2-stable_win64_console.exe --headless --path godot_project -s res://tests/ending_cg_smoke.gd
 
@@ -27,19 +27,9 @@ const EXPECTED_AFTERMATH := {
 	"TRUE_BETA_OUTLAND_FIRE": "cg_aftermath_true_beta.jpg",
 }
 
-var passes := 0
-var failures: Array[String] = []
 
 func _init() -> void:
 	_run.call_deferred()
-
-func _assert(ok: bool, label: String, detail: String = "") -> void:
-	if ok:
-		passes += 1
-		print("  PASS  ", label)
-	else:
-		failures.append(label + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", label, "  ", detail)
 
 func _run() -> void:
 	print("== ending_cg_smoke ==")

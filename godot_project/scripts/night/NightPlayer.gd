@@ -4,6 +4,7 @@ extends CharacterBody2D
 ## 世界单位：屏幕像素；地面 1 米 = (64, 39.68) px。速度与噪声半径都按「逻辑米」给出。
 ## 精灵表 CHR_01_Aleksei_Sheet：12 列 × 3 行（S / E / N），W = E 水平翻转。
 
+const NightLighting := preload("res://scripts/night/NightLighting.gd")
 const PPM := 64.0
 const SQ := 0.62
 const SPEED_WALK := 2.6
@@ -24,6 +25,11 @@ var frozen := false                    # 搜刮 / 撤离 / 结束时锁定移动
 
 var _anim := 0.0
 var _step := 0.0
+# 渲染插值：移动在物理帧（60 Hz）里算，显示器刷新率更高时画面会一顿一顿。
+# 只把可见子节点按物理帧的插值比例平移到「上一帧 → 这一帧」之间，碰撞与逻辑位置不变。
+var _prev_pos := Vector2.ZERO
+var _cur_pos := Vector2.ZERO
+var _visual_base: Array = []          # [[Node2D, 原始本地坐标], …]（不含碰撞体）
 
 @onready var sprite: Sprite2D = $Sprite
 @onready var flash_pivot: Node2D = $Flashlight/Pivot
@@ -31,18 +37,38 @@ var _step := 0.0
 
 func _ready() -> void:
 	_configure_flashlight_occlusion()
+	for c in get_children():
+		if c is Node2D and not (c is CollisionShape2D or c is CollisionPolygon2D):
+			_visual_base.append([c, (c as Node2D).position])
+	snap_visual()
+
+
+## 传送（出生点、剧情挪位）后调用：插值从新位置重新开始，不会从旧位置滑过来。
+func snap_visual() -> void:
+	_prev_pos = global_position
+	_cur_pos = global_position
+
+
+## 本帧应该画在哪：物理位置在上一 tick 与这一 tick 之间按插值比例取点。
+## 两个 tick 之间被代码直接改过位置（传送）就直接用当前位置。
+func visual_position() -> Vector2:
+	if global_position != _cur_pos:
+		return global_position
+	return _prev_pos.lerp(_cur_pos, clampf(Engine.get_physics_interpolation_fraction(), 0.0, 1.0))
+
+
+func _process(_delta: float) -> void:
+	var off := visual_position() - global_position
+	for pair in _visual_base:
+		var n = pair[0]
+		if is_instance_valid(n):
+			n.position = pair[1] + off
 
 
 func _configure_flashlight_occlusion() -> void:
 	# The Objects pass lights characters and props; it must use the same wall
 	# occluders as the ground pass or the visible cone leaks through walls.
-	var objects_light := flash_pivot.get_node_or_null("Objects") as PointLight2D
-	if objects_light == null:
-		return
-	objects_light.shadow_enabled = true
-	objects_light.shadow_filter = 1
-	objects_light.shadow_filter_smooth = 1.5
-	objects_light.shadow_item_cull_mask = 1
+	NightLighting.configure_objects_occlusion(flash_pivot)
 
 
 func _physics_process(delta: float) -> void:
@@ -59,7 +85,10 @@ func _physics_process(delta: float) -> void:
 	if on_slush:
 		spd *= 0.65
 	velocity = Vector2(dir.x * PPM, dir.y * PPM * SQ) * spd
+	# 插值起点 = 本 tick 移动前的位置（期间若被传送，起点就是传送后的位置，不会从旧处滑过来）
+	_prev_pos = global_position
 	move_and_slide()
+	_cur_pos = global_position
 	moving = dir != Vector2.ZERO and get_real_velocity().length() > 4.0
 
 	# 朝向跟随鼠标（按地面坐标计算，抵消 y 压缩）

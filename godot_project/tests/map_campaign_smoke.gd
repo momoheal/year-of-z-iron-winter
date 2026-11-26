@@ -1,23 +1,13 @@
-extends SceneTree
+extends "res://tests/smoke_kit.gd"
 ## Smoke test for the three completed map packages and their campaign gates.
 ## Run: Godot_v4.7.2-stable_win64_console.exe --headless --path godot_project -s tests/map_campaign_smoke.gd
 
 const Data := preload("res://scripts/CampaignData.gd")
 const SimScript := preload("res://scripts/CampaignSim.gd")
 
-var passes := 0
-var failures: Array[String] = []
 
 func _init() -> void:
 	_run.call_deferred()
-
-func _assert(ok: bool, label: String, detail: String = "") -> void:
-	if ok:
-		passes += 1
-		print("  PASS  ", label)
-	else:
-		failures.append(label + ((" — " + detail) if detail != "" else ""))
-		print("  FAIL  ", label, "  ", detail)
 
 func _frames(n: int = 2) -> void:
 	for _i in n:

@@ -182,8 +182,8 @@ func _build() -> void:
 	ahint.text = "声纹的线型与图标始终显示，不依赖此开关。"
 	ahint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	SovietUI.label_font(ahint)
-	ahint.add_theme_font_size_override("font_size", 11)
-	ahint.add_theme_color_override("font_color", SovietUI.ASH)
+	ahint.add_theme_font_size_override("font_size", 13)
+	ahint.add_theme_color_override("font_color", SovietUI.BONE_DIM)
 	v.add_child(ahint)
 
 	v.add_child(SovietUI.rule(SovietUI.STEEL))
@@ -194,7 +194,7 @@ func _build() -> void:
 	_lbl_hint = Label.new()
 	_lbl_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	SovietUI.label_font(_lbl_hint)
-	_lbl_hint.add_theme_font_size_override("font_size", 12)
+	_lbl_hint.add_theme_font_size_override("font_size", 13)
 	_lbl_hint.add_theme_color_override("font_color", SovietUI.BONE_DIM)
 	v.add_child(_lbl_hint)
 
@@ -206,8 +206,8 @@ func _build() -> void:
 	foot.text = "存档点：每次回到 602 室和结算页自动存档。夜潜中途退出 = 这一夜没发生过。"
 	foot.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	SovietUI.label_font(foot)
-	foot.add_theme_font_size_override("font_size", 11)
-	foot.add_theme_color_override("font_color", SovietUI.ASH)
+	foot.add_theme_font_size_override("font_size", 13)
+	foot.add_theme_color_override("font_color", SovietUI.BONE_DIM)
 	v.add_child(foot)
 
 

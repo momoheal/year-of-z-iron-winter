@@ -86,6 +86,12 @@ class ThrownCan extends RefCounted:
 
 # ---------------- 状态 ----------------
 var camp                          # CampaignSim
+var raid_id: String = ""          # 本次出发的局标识（cfg.raid_id；结算时核对，见 CampaignSim.submit_raid_result）
+# T04：夜里不直接写战役，攒在这里，结算入口按顺序一次性入账（放弃 / 倒下也照样入账，与原先的实时写入等价）
+var conscience_steps: Array[float] = []   # 良知逐笔（原先每笔各自 clamp 到 0..100，按顺序重放才等价）
+var tally_marks: Array[Dictionary] = []   # {n, zh, en}
+var flags_set: Array[String] = []
+var node_left_delta: float = 0.0          # 搜刮带走的节点余量
 var loc: Dictionary = {}
 var map: Dictionary = {}
 var W: int = Gen.W
@@ -170,6 +176,7 @@ var sfx_events: Array[String] = []
 # ============================================================================
 func _init(campaign, cfg: Dictionary) -> void:
 	camp = campaign
+	raid_id = String(cfg.get("raid_id", ""))
 	loc = cfg["loc"]
 	mate_id = String(cfg.get("mate", ""))
 	pack_max = int(cfg.get("pack_max", Data.BAG))
@@ -535,7 +542,7 @@ func drink() -> void:
 	player.hp = minf(100.0, player.hp + 6.0)
 	player.drink = 1.2
 	spawn_float(player.x, player.y - 0.6, "喝下热水 · 体温 +22", "Hot water · warmth +22", "#7dd3fc")
-	if bool(camp.flags.get("ptsd", false)):
+	if bool(camp.flags.get("ptsd", false)) or flags_set.has("ptsd"):
 		spawn_float(player.x, player.y - 1.2, "……Пить（水/渴）……", "…Пить (Water / Thirst)…", "#f43f5e")
 
 func use_bandage() -> void:
@@ -586,7 +593,7 @@ func set_choice(choice_index: int) -> void:
 		0:
 			load["asp"] = int(load.get("asp", 0)) - 1
 			load["water"] = int(load.get("water", 0)) - 1
-			camp.raid_add_conscience(7.0)
+			conscience_steps.append(7.0)
 			half_saved += 1
 			if pack.size() < pack_max:
 				pack.append("intel")
@@ -598,7 +605,7 @@ func set_choice(choice_index: int) -> void:
 			spawn_float(e.x, e.y - 0.8, "他眼底的紫黑血翳一点点退去，瞳孔重新聚起了人的光彩：「……谢谢你没拿撬棍砸死我……去西站水塔底下，找那个戴蓝毛线帽的老列车长……」",
 				"His fever-dark eyes clear: '…thank you for sparing me…under the west water tower, find the old conductor in the blue wool cap…'", "#34d399")
 		1:
-			camp.raid_add_conscience(-2.0)
+			conscience_steps.append(-2.0)
 			add_event("note", "A2 绕行：你听见了身后的枪声", "A2 Bypassed: you heard the shots behind you")
 			e.dead = true
 			emit_noise(e.x, e.y, 9.0, "#7dd3fc", "osk")
@@ -607,9 +614,9 @@ func set_choice(choice_index: int) -> void:
 		_:
 			e.hp = 0.0
 			e.dead = true
-			camp.raid_add_tally(1, "抉择 A3：撬棍灭口", "Choice A3: crowbar kill")
-			camp.raid_add_conscience(-10.0)
-			camp.raid_set_flag("betrayed")
+			tally_marks.append({"n": 1, "zh": "抉择 A3：撬棍灭口", "en": "Choice A3: crowbar kill"})
+			conscience_steps.append(-10.0)
+			_defer_flag("betrayed")
 			if pack.size() < pack_max:
 				pack.append("can")
 			if pack.size() < pack_max:
@@ -620,6 +627,10 @@ func set_choice(choice_index: int) -> void:
 				"You cut a red stroke into the logbook. The tin is heavy; the stroke is heavier.", "#f43f5e")
 	choice_open = false
 	choice_ent = null
+
+func _defer_flag(flag: String) -> void:
+	if not flags_set.has(flag):
+		flags_set.append(flag)
 
 func request_abort() -> void:
 	finish("abort")
@@ -1018,8 +1029,7 @@ func _finish_search(idx: int) -> void:
 		spawn_float(c["x"], float(c["y"]) - 0.6, "搜出：" + "、".join(names),
 			"Found: " + ", ".join(names), "#fbbf24")
 	# 容器余量刷新
-	var st: Dictionary = camp.node_state(String(loc["id"]))
-	st["left"] = maxf(0.0, float(st["left"]) - 1.0 / maxf(1.0, float(total_cont)))
+	node_left_delta += 1.0 / maxf(1.0, float(total_cont))
 
 # ============================================================================
 # AI
@@ -1060,8 +1070,8 @@ func _update_rabid(e, dt: float, p) -> void:
 					p.bpm += 18.0
 					_sfx("hit")
 					emit_noise(p.x, p.y, 6.0, "#ef4444", "hit")
-					if rng.randf() < 0.30 and not bool(camp.flags.get("glasses", false)):
-						camp.raid_set_flag("glasses")
+					if rng.randf() < 0.30 and not bool(camp.flags.get("glasses", false)) and not flags_set.has("glasses"):
+						_defer_flag("glasses")
 						sight_range = Data.SIGHT_CRACKED
 						spawn_float(p.x, p.y - 0.9, "镜片裂了：视距 12m → 7.2m，边缘重影。",
 							"Lens cracked: sight 12m → 7.2m, ghosting at the edges.", "#7dd3fc")
@@ -1114,7 +1124,7 @@ func _update_osk(e, dt: float, p) -> void:
 				else:
 					add_event("witness", "你看着清杀队射杀了那个正在退烧的人。",
 						"You watched the purge squad gun down a recovering person.")
-					camp.raid_add_conscience(-3.0)
+					conscience_steps.append(-3.0)
 	e.bite = clampf(e.bite + (dt if npc_in_cone else -dt), 0.0, 1.0)
 
 	if e.suspect >= 1.0 and d < 14.0 and clear and not hidden:
